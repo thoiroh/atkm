@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide de migration - ATK AI</title>
+  <link rel="stylesheet" href="atk.docs.global.styles.css">
+  <style>
+    /* Styles pour les boutons de copie */
+    .code-container {
+      position: relative;
+    }
+
+    .copy-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8em;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .copy-button:hover {
+      background: #c0392b;
+      transform: scale(1.05);
+    }
+
+    .copy-button.copied {
+      background: #27ae60;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="document-container">
+    <div class="document-wrapper">
+      <div class="document-header">
+        <h1 class="document-title">🔄 guide de migration - atk.ai</h1>
+        <div class="document-subtitle">Unification des configurations Windows 11 et macOS Sequoia</div>
+      </div>
+
+      <div class="metadata-section">
+        <div class="metadata-box">
+          <div class="metadata-item">
+            <span class="metadata-label">📅 Date :</span> 9 août 2025
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">👤 Projet :</span> atk.ai
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">🏗️ Stack :</span> Angular 20 + PHP 8.3 + Docker
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">📊 Status :</span> <span class="status-success">✅ Configuration unifiée</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="objective-section">
+          <h2 class="objective-title"><span class="emoji-icon">🎯</span>objectif de la migration</h2>
+          <p class="section-text">Créer <strong>un seul repository Git</strong> qui fonctionne parfaitement sur Windows
+            11 et macOS Sequoia, avec des optimisations spécifiques à chaque plateforme mais une configuration Docker
+            unifiée.</p>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">1️⃣</span>problème actuel</h2>
+
+          <div class="alert-box alert-warning">
+            <strong>⚠️ Situation actuelle :</strong> Vous avez deux repositories séparés avec des configurations
+            différentes pour Windows et macOS, ce qui complique la maintenance et la synchronisation.
+          </div>
+
+          <div class="cards-grid">
+            <div class="info-card">
+              <h4 class="card-title">🖥️ configuration windows</h4>
+              <div class="card-content">
+                <ul class="content-list">
+                  <li class="list-item">Docker-compose standard</li>
+                  <li class="list-item">WSL2 pour la virtualisation</li>
+                  <li class="list-item">Volumes Docker classiques</li>
+                  <li class="list-item">Nom: atomeek-datamatrix</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h4 class="card-title">🍎 configuration macos</h4>
+              <div class="card-content">
+                <ul class="content-list">
+                  <li class="list-item">Docker-compose avec optimisations</li>
+                  <li class="list-item">Virtualisation native macOS</li>
+                  <li class="list-item">Volumes Docker avec :cached</li>
+                  <li class="list-item">Variables d'optimisation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">2️⃣</span>solution unifiée</h2>
+
+          <div class="alert-box alert-success">
+            <strong>✅ Nouvelle approche :</strong> Un repository unique avec détection automatique de l'OS et
+            optimisations spécifiques, renommé en "atk.ai" pour plus de simplicité.
+          </div>
+
+          <h3 class="section-subtitle">🎯 avantages de l'unification</h3>
+          <div class="cards-grid">
+            <div class="info-card">
+              <h4 class="card-title">🔄 synchronisation simplifiée</h4>
+              <div class="card-content">
+                <ul class="content-list">
+                  <li class="list-item">Un seul git clone</li>
+                  <li class="list-item">Commits synchronisés</li>
+                  <li class="list-item">Pas de divergence de versions</li>
+                  <li class="list-item">Maintenance unifiée</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h4 class="card-title">⚡ optimisations intelligentes</h4>
+              <div class="card-content">
+                <ul class="content-list">
+                  <li class="list-item">Détection automatique OS</li>
+                  <li class="list-item">Variables d'environnement adaptées</li>
+                  <li class="list-item">Scripts d'installation automatiques</li>
+                  <li class="list-item">Configuration Docker optimisée</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">3️⃣</span>procédure de migration</h2>
+
+          <h3 class="section-subtitle">🛡️ étape 1 : sauvegarde</h3>
+          <div class="steps-container">
+            <div class="steps-title">Sauvegarder vos configurations actuelles :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Sur Windows
+cp -r atomeek-datamatrix atomeek-datamatrix-backup-windows
+
+# Sur macOS
+cp -r atomeek-datamatrix atomeek-datamatrix-backup-mac</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">📁 étape 2 : renommage du projet</h3>
+          <div class="steps-container">
+            <div class="steps-title">Renommer le projet en "atk.ai" :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Sur Windows (PowerShell)
+Rename-Item -Path "atomeek-datamatrix" -NewName "atk.ai"
+cd atk.ai
+
+# Sur macOS (Terminal)
+mv atomeek-datamatrix atk.ai
+cd atk.ai</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">🔧 étape 3 : mise à jour des configurations</h3>
+          <div class="alert-box alert-info">
+            <strong>📋 Fichiers à modifier :</strong> Tous les fichiers de configuration doivent être mis à jour avec le
+            nouveau nom "atk.ai" et les optimisations unifiées.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">4️⃣</span>fichiers de configuration unifiés</h2>
+
+          <h3 class="section-subtitle">🐳 docker-compose.yml unifié</h3>
+          <div class="file-path">Chemin : /docker-compose.yml</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre>version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: atk_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: atk_ai
+      MYSQL_USER: atk_user
+      MYSQL_PASSWORD: atk_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - atk_network
+
+  # PHP-FPM 8.3
+  php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: atk_php
+    restart: unless-stopped
+    volumes:
+      - ./atkm_back:/var/www/html:cached  # :cached optimise macOS, ignoré sur Windows
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=atk_ai
+      - DB_USER=atk_user
+      - DB_PASS=atk_pass
+      - PHP_ENV=development
+      # Variables d'optimisation (optionnelles sur Windows)
+      - COMPOSE_DOCKER_CLI_BUILD=${COMPOSE_DOCKER_CLI_BUILD:-0}
+      - DOCKER_BUILDKIT=${DOCKER_BUILDKIT:-0}
+    depends_on:
+      - mysql
+    networks:
+      - atk_network
+
+  # Nginx
+  nginx:
+    image: nginx:1.25
+    container_name: atk_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./atkm_back/public:/var/www/html/public:cached
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:cached
+    depends_on:
+      - php
+    networks:
+      - atk_network
+
+  # Angular Development Server
+  angular:
+    build:
+      context: ./atkm
+      dockerfile: Dockerfile
+    container_name: atk_angular
+    restart: unless-stopped
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./atkm:/app:cached        # :cached optimise macOS, ignoré sur Windows
+      - /app/node_modules          # Volume délégué pour node_modules
+    environment:
+      - NODE_ENV=development
+      # Variables d'optimisation (optionnelles)
+      - COMPOSE_DOCKER_CLI_BUILD=${COMPOSE_DOCKER_CLI_BUILD:-0}
+      - DOCKER_BUILDKIT=${DOCKER_BUILDKIT:-0}
+    networks:
+      - atk_network
+
+  # PhpMyAdmin (optional)
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    container_name: atk_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST=mysql
+      PMA_USER=atk_user
+      PMA_PASSWORD=atk_pass
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - atk_network
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7.2-alpine
+    container_name: atk_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - atk_network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  atk_network:
+    driver: bridge</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h3 class="section-subtitle">📄 fichiers d'environnement par os</h3>
+
+          <h4 class="card-title">🍎 .env.macos - optimisations macos</h4>
+          <div class="file-path">Chemin : /.env.macos</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Configuration optimisée macOS pour ATK AI
+# Copier ce fichier en .env sur macOS pour de meilleures performances
+
+# Database Configuration
+DB_HOST=mysql
+DB_PORT=3306
+DB_NAME=atk_ai
+DB_USER=atk_user
+DB_PASS=atk_pass
+
+# Application Environment
+APP_ENV=development
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+# Redis Configuration (optional)
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+# JWT Configuration
+JWT_SECRET=atk-ai-secret-key-change-in-production
+JWT_EXPIRY=3600
+
+# Upload Configuration
+UPLOAD_MAX_SIZE=50M
+UPLOAD_PATH=/var/www/html/public/uploads
+
+# Optimisations macOS - Améliore les performances Docker
+COMPOSE_DOCKER_CLI_BUILD=1
+DOCKER_BUILDKIT=1
+DOCKER_SCAN_SUGGEST=false</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h4 class="card-title">🖥️ .env.windows - configuration windows</h4>
+          <div class="file-path">Chemin : /.env.windows</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Configuration standard Windows pour ATK AI
+# Copier ce fichier en .env sur Windows
+
+# Database Configuration
+DB_HOST=mysql
+DB_PORT=3306
+DB_NAME=atk_ai
+DB_USER=atk_user
+DB_PASS=atk_pass
+
+# Application Environment
+APP_ENV=development
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+# Redis Configuration (optional)
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+# JWT Configuration
+JWT_SECRET=atk-ai-secret-key-change-in-production
+JWT_EXPIRY=3600
+
+# Upload Configuration
+UPLOAD_MAX_SIZE=50M
+UPLOAD_PATH=/var/www/html/public/uploads
+
+# Configuration Windows (optionnel)
+# COMPOSE_DOCKER_CLI_BUILD=0
+# DOCKER_BUILDKIT=0</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h3 class="section-subtitle">📄 package.json mis à jour</h3>
+          <div class="file-path">Chemin : /atkm/package.json</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre>{
+  "name": "atk-ai-frontend",
+  "version": "1.0.0",
+  "description": "Frontend Angular pour ATK AI",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --host 0.0.0.0",
+    "start:dev": "ng serve --configuration development --host 0.0.0.0",
+    "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "test:headless": "ng test --watch=false --browsers=ChromeHeadless",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^20.0.0",
+    "@angular/cdk": "^20.0.0",
+    "@angular/common": "^20.0.0",
+    "@angular/compiler": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/material": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/platform-browser-dynamic": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "@ngrx/effects": "^20.0.0",
+    "@ngrx/router-store": "^20.0.0",
+    "@ngrx/store": "^20.0.0",
+    "@ngrx/store-devtools": "^20.0.0",
+    "@ngrx/entity": "^20.0.0",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.7.0",
+    "zone.js": "^0.15.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^20.0.0",
+    "@angular/cli": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
+    "@angular-eslint/builder": "^18.0.1",
+    "@angular-eslint/eslint-plugin": "^18.0.1",
+    "@angular-eslint/eslint-plugin-template": "^18.0.1",
+    "@angular-eslint/schematics": "^18.0.1",
+    "@angular-eslint/template-parser": "^18.0.1",
+    "@types/jasmine": "^5.1.4",
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^22.5.4",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.9.1",
+    "jasmine-core": "^5.2.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "typescript": "^5.6.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h3 class="section-subtitle">📄 angular.json mis à jour</h3>
+          <div class="file-path">Chemin : /atkm/angular.json</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre>{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "atk-ai": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:application": {
+          "strict": true,
+          "style": "scss",
+          "routing": true,
+          "standalone": true
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "atk",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/atk-ai",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "/assets/"
+              }
+            ],
+            "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": false
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "atk-ai:build:production"
+            },
+            "development": {
+              "buildTarget": "atk-ai:build:development"
+            }
+          },
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4200,
+            "host": "0.0.0.0"
+          }
+        }
+      }
+    }
+  }
+}</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h3 class="section-subtitle">📄 composer.json mis à jour</h3>
+          <div class="file-path">Chemin : /atkm_back/composer.json</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre>{
+    "name": "atk/ai-backend",
+    "description": "Backend API pour ATK AI",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "binance/binance-connector-php": "^1.6",
+        "cboden/ratchet": "^0.4.4",
+        "vlucas/phpdotenv": "^5.6",
+        "firebase/php-jwt": "^6.10",
+        "ramsey/uuid": "^4.7",
+        "monolog/monolog": "^3.5",
+        "respect/validation": "^2.3",
+        "league/flysystem": "^3.28",
+        "intervention/image": "^3.7",
+        "predis/predis": "^2.2",
+        "symfony/http-foundation": "^7.1",
+        "guzzlehttp/guzzle": "^7.8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0",
+        "squizlabs/php_codesniffer": "^3.10",
+        "phpstan/phpstan": "^1.10",
+        "mockery/mockery": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-html coverage",
+        "cs-fix": "phpcbf",
+        "cs-check": "phpcs",
+        "analyse": "phpstan analyse src tests --level=7",
+        "post-install-cmd": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ]
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">5️⃣</span>scripts d'installation automatiques</h2>
+
+          <h3 class="section-subtitle">🍎 script macos</h3>
+          <div class="file-path">Chemin : /setup-macos.sh</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre>#!/bin/bash
+
+echo "🍎 Configuration ATK AI pour macOS"
+echo "================================="
+
+# Vérifier les prérequis
+echo "📋 Vérification des prérequis..."
+
+# Vérifier Docker
+if ! command -v docker &> /dev/null; then
+    echo "❌ Docker n'est pas installé. Veuillez installer Docker Desktop for Mac."
+    exit 1
+fi
+
+# Vérifier Node.js
+if ! command -v node &> /dev/null; then
+    echo "🟢 Installation de Node.js via Homebrew..."
+    brew install node@20
+    brew link node@20 --force
+fi
+
+# Copier le fichier d'environnement macOS
+echo "⚙️ Configuration de l'environnement macOS..."
+if [ ! -f .env ]; then
+    cp .env.macos .env
+    echo "✅ Fichier .env créé avec optimisations macOS"
+else
+    echo "ℹ️ Fichier .env existe déjà"
+fi
+
+# Créer les dossiers nécessaires si manquants
+echo "📁 Vérification de la structure des dossiers..."
+mkdir -p atkm_back/public
+mkdir -p atkm_back/src/app
+mkdir -p atkm/src/app
+mkdir -p database
+mkdir -p docker/php
+mkdir -p docker/nginx
+
+# Ajuster les permissions
+echo "🔐 Ajustement des permissions..."
+chmod -R 755 atkm_back/public
+chmod -R 755 atkm
+chmod -R 755 docker
+
+# Construire et démarrer
+echo "🚀 Construction et démarrage des containers..."
+docker-compose up --build -d
+
+# Attendre que les services soient prêts
+echo "⏳ Attente du démarrage des services..."
+sleep 10
+
+# Installer les dépendances PHP
+echo "📦 Installation des dépendances PHP..."
+docker-compose exec php composer install
+
+# Vérifier les services
+echo "✅ Vérification des services..."
+echo "📱 Angular: http://localhost:4200"
+echo "🌐 API PHP: http://localhost:8000"
+echo "🐬 PhpMyAdmin: http://localhost:8080"
+
+echo ""
+echo "🎉 Installation terminée !"
+echo "Votre environnement ATK AI est prêt sur macOS."</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h3 class="section-subtitle">🖥️ script windows</h3>
+          <div class="file-path">Chemin : /setup-windows.ps1</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Configuration ATK AI pour Windows 11
+Write-Host "🖥️ Configuration ATK AI pour Windows 11" -ForegroundColor Cyan
+Write-Host "=======================================" -ForegroundColor Cyan
+
+# Vérifier les prérequis
+Write-Host "📋 Vérification des prérequis..." -ForegroundColor Yellow
+
+# Vérifier Docker
+try {
+    docker --version | Out-Null
+    Write-Host "✅ Docker est installé" -ForegroundColor Green
+}
+catch {
+    Write-Host "❌ Docker n'est pas installé. Veuillez installer Docker Desktop." -ForegroundColor Red
+    exit 1
+}
+
+# Vérifier Node.js
+try {
+    node --version | Out-Null
+    Write-Host "✅ Node.js est installé" -ForegroundColor Green
+}
+catch {
+    Write-Host "❌ Node.js n'est pas installé. Veuillez installer Node.js 20.x" -ForegroundColor Red
+    exit 1
+}
+
+# Copier le fichier d'environnement Windows
+Write-Host "⚙️ Configuration de l'environnement Windows..." -ForegroundColor Yellow
+if (!(Test-Path ".env")) {
+    Copy-Item ".env.windows" ".env"
+    Write-Host "✅ Fichier .env créé pour Windows" -ForegroundColor Green
+}
+else {
+    Write-Host "ℹ️ Fichier .env existe déjà" -ForegroundColor Blue
+}
+
+# Créer les dossiers nécessaires si manquants
+Write-Host "📁 Vérification de la structure des dossiers..." -ForegroundColor Yellow
+$folders = @(
+    "atkm_back/public",
+    "atkm_back/src/app",
+    "atkm/src/app",
+    "database",
+    "docker/php",
+    "docker/nginx"
+)
+
+foreach ($folder in $folders) {
+    if (!(Test-Path $folder)) {
+        New-Item -ItemType Directory -Path $folder -Force | Out-Null
+    }
+}
+
+# Construire et démarrer
+Write-Host "🚀 Construction et démarrage des containers..." -ForegroundColor Yellow
+docker-compose up --build -d
+
+# Attendre que les services soient prêts
+Write-Host "⏳ Attente du démarrage des services..." -ForegroundColor Yellow
+Start-Sleep -Seconds 10
+
+# Installer les dépendances PHP
+Write-Host "📦 Installation des dépendances PHP..." -ForegroundColor Yellow
+docker-compose exec php composer install
+
+# Vérifier les services
+Write-Host "✅ Vérification des services..." -ForegroundColor Green
+Write-Host "📱 Angular: http://localhost:4200" -ForegroundColor Cyan
+Write-Host "🌐 API PHP: http://localhost:8000" -ForegroundColor Cyan
+Write-Host "🐬 PhpMyAdmin: http://localhost:8080" -ForegroundColor Cyan
+
+Write-Host ""
+Write-Host "🎉 Installation terminée !" -ForegroundColor Green
+Write-Host "Votre environnement ATK AI est prêt sur Windows 11." -ForegroundColor Green</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">6️⃣</span>readme.md unifié</h2>
+
+          <div class="file-path">Chemin : /README.md</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># 🚀 ATK AI
+
+> Application Angular 20 + PHP 8.3 + Docker
+> Compatible Windows 11 & macOS Sequoia
+
+## 📋 Prérequis
+
+### Windows 11
+- Docker Desktop avec WSL2
+- Node.js 20.x LTS
+- Git
+- PowerShell
+
+### macOS Sequoia
+- Docker Desktop for Mac
+- Node.js 20.x LTS (via Homebrew)
+- Git (Xcode Command Line Tools)
+- Terminal
+
+## ⚡ Installation rapide
+
+### 🍎 macOS
+```bash
+# Cloner le projet
+git clone [votre-repo] atk.ai
+cd atk.ai
+
+# Lancer le script d'installation
+chmod +x setup-macos.sh
+./setup-macos.sh
+```
+
+### 🖥️ Windows 11
+```powershell
+# Cloner le projet
+git clone [votre-repo] atk.ai
+cd atk.ai
+
+# Lancer le script d'installation (PowerShell en tant qu'admin)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+.\setup-windows.ps1
+```
+
+## 🎯 URLs de développement
+
+- **Angular** : http://localhost:4200
+- **API PHP** : http://localhost:8000
+- **PhpMyAdmin** : http://localhost:8080
+
+## 🔧 Installation manuelle
+
+### 1. Configuration de l'environnement
+
+```bash
+# macOS - Optimisations de performance
+cp .env.macos .env
+
+# Windows - Configuration standard
+cp .env.windows .env
+```
+
+### 2. Démarrage des containers
+
+```bash
+# Construction et démarrage
+docker-compose up --build -d
+
+# Vérification des services
+docker-compose ps
+
+# Installation des dépendances PHP
+docker-compose exec php composer install
+```
+
+## 📁 Structure du projet
+
+```
+atk.ai/
+├── .env.macos              # Config optimisée macOS
+├── .env.windows            # Config standard Windows
+├── docker-compose.yml      # Configuration unifiée
+├── setup-macos.sh          # Script d'installation macOS
+├── setup-windows.ps1       # Script d'installation Windows
+├── atkm/                  # Frontend Angular 20
+│   ├── src/
+│   ├── package.json
+│   ├── angular.json
+│   └── Dockerfile
+├── atkm_back/             # Backend PHP 8.3
+│   ├── public/
+│   ├── src/
+│   ├── composer.json
+│   └── .env
+├── docker/                 # Configuration containers
+│   ├── php/
+│   └── nginx/
+└── docs/                   # Documentation complète
+```
+
+## 🚀 Fonctionnalités
+
+- ✅ Angular 20 avec Hot Reload
+- ✅ PHP 8.3 avec Composer
+- ✅ MySQL 8.0 avec PhpMyAdmin
+- ✅ Redis pour le cache
+- ✅ Nginx comme reverse proxy
+- ✅ Configuration unifiée Windows/macOS
+- ✅ Scripts d'installation automatiques
+- ✅ Optimisations de performance par OS
+
+## 📄 Licence
+
+Projet propriétaire ATK - 2025</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">7️⃣</span>procédure de migration step-by-step</h2>
+
+          <h3 class="section-subtitle">🚀 étapes de migration</h3>
+
+          <div class="steps-container">
+            <div class="steps-title">1. Préparation :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Arrêter tous les containers existants
+docker-compose down
+
+# Sauvegarder la configuration actuelle
+if ($PSVersionTable) { cp -r . ("../atk.ai-backup-" + (Get-Date -Format "yyyyMMdd")) } else { cp -r . ../atk.ai-backup-$(date +%Y%m%d) }</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <div class="steps-container">
+            <div class="steps-title">2. Mise à jour des fichiers :</div>
+            <ol class="steps-list">
+              <li class="step-item">Remplacer docker-compose.yml par la version unifiée</li>
+              <li class="step-item">Créer .env.macos et .env.windows</li>
+              <li class="step-item">Mettre à jour package.json, angular.json, composer.json</li>
+              <li class="step-item">Ajouter les scripts setup-*.sh et setup-*.ps1</li>
+              <li class="step-item">Mettre à jour README.md</li>
+            </ol>
+          </div>
+
+          <div class="steps-container">
+            <div class="steps-title">3. Test sur la plateforme actuelle :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Windows
+cp .env.windows .env
+.\setup-windows.ps1
+
+# macOS
+cp .env.macos .env
+./setup-macos.sh</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <div class="steps-container">
+            <div class="steps-title">4. Commit et synchronisation :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Ajouter tous les nouveaux fichiers
+git add .
+
+# Commit de la migration
+git commit -m "Migration vers ATK AI - Configuration unifiée Windows/macOS"
+
+# Push vers le repository
+git push origin main</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <div class="steps-container">
+            <div class="steps-title">5. Test sur l'autre plateforme :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Sur l'autre OS - récupérer la configuration unifiée
+git pull origin main
+
+# Tester l'installation
+# Windows : .\setup-windows.ps1
+# macOS : ./setup-macos.sh</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">8️⃣</span>vérification post-migration</h2>
+
+          <h3 class="section-subtitle">✅ checklist de validation</h3>
+          <div class="cards-grid">
+            <div class="info-card">
+              <h4 class="card-title">🔄 fonctionnalités de base</h4>
+              <div class="card-content">
+                <ul class="content-list">
+                  <li class="list-item">Angular fonctionne sur :4200</li>
+                  <li class="list-item">API PHP répond sur :8000</li>
+                  <li class="list-item">PhpMyAdmin accessible sur :8080</li>
+                  <li class="list-item">Base de données "atk_ai" créée</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h4 class="card-title">🎯 optimisations spécifiques</h4>
+              <div class="card-content">
+                <ul class="content-list">
+                  <li class="list-item">Volumes :cached sur macOS</li>
+                  <li class="list-item">Variables d'optimisation correctes</li>
+                  <li class="list-item">Scripts d'installation fonctionnels</li>
+                  <li class="list-item">Hot reload Angular rapide</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">🧪 tests de synchronisation</h3>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Test de synchronisation entre Windows et macOS
+
+# 1. Sur une plateforme - faire un changement
+echo "// Test synchronisation" >> atkm/src/app/app.component.ts
+
+# 2. Commit et push
+git add .
+git commit -m "Test synchronisation inter-OS"
+git push
+
+# 3. Sur l'autre plateforme - pull et vérifier
+git pull
+docker-compose restart angular
+
+# 4. Vérifier que le changement est bien pris en compte</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+        </div>
+
+        <div class="next-steps-section">
+          <h2 class="next-steps-title"><span class="emoji-icon">✅</span>migration terminée</h2>
+          <p class="section-text">Félicitations ! Vous avez maintenant <strong>un repository unifié ATK AI</strong> qui
+            fonctionne parfaitement sur Windows 11 et macOS Sequoia avec des optimisations spécifiques à chaque
+            plateforme.</p>
+
+          <h3 class="section-subtitle">🎯 avantages obtenus :</h3>
+          <ul class="content-list">
+            <li class="list-item"><strong>Synchronisation parfaite :</strong> Un seul git clone, commits unifiés</li>
+            <li class="list-item"><strong>Installation automatique :</strong> Scripts dédiés par OS</li>
+            <li class="list-item"><strong>Optimisations intelligentes :</strong> Performance maximale sur chaque
+              plateforme</li>
+            <li class="list-item"><strong>Maintenance simplifiée :</strong> Plus de divergence de configurations</li>
+          </ul>
+
+          <h3 class="section-subtitle">🚀 prochaines étapes :</h3>
+          <ul class="content-list">
+            <li class="list-item">Développer les fonctionnalités métier ATK AI</li>
+            <li class="list-item">Configurer l'API backend avec les routes spécifiques</li>
+            <li class="list-item">Implémenter l'interface Angular selon vos besoins</li>
+            <li class="list-item">Déployer en production avec les mêmes configurations</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="document-footer">
+        <div class="footer-title">🔄 atk ai - guide de migration réussi</div>
+        <p>Configuration unifiée Windows 11 & macOS Sequoia - Repository unique optimisé</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fonction de copie dans le presse-papiers
+    async function copyToClipboard(button) {
+      const codeBlock = button.previousElementSibling;
+      const code = codeBlock.innerText;
+
+      try {
+        await navigator.clipboard.writeText(code);
+
+        // Feedback visuel
+        const originalText = button.textContent;
+        button.textContent = 'Copié !';
+        button.classList.add('copied');
+
+        // Retour à l'état normal après 2 secondes
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove('copied');
+        }, 2000);
+
+      } catch (err) {
+        // Fallback pour les navigateurs plus anciens
+        const textArea = document.createElement('textarea');
+        textArea.value = code;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        // Feedback visuel
+        const originalText = button.textContent;
+        button.textContent = 'Copié !';
+        button.classList.add('copied');
+
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove('copied');
+        }, 2000);
+      }
+    }
+
+    // Smooth scrolling pour les liens d'ancrage
+    document.addEventListener('DOMContentLoaded', function () {
+      const links = document.querySelectorAll('a[href^="#"]');
+      links.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

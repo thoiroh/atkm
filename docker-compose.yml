@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: atkm_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: atkm_database
+      MYSQL_USER: atkm_user
+      MYSQL_PASSWORD: atkm_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - atkm_network
+
+  # PHP-FPM 8.3
+  php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: atkm_php
+    restart: unless-stopped
+    volumes:
+      - ./atkm_back:/var/www/html
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=atkm_database
+      - DB_USER=atkm_user
+      - DB_PASS=atkm_pass
+      - PHP_ENV=development
+    depends_on:
+      - mysql
+    networks:
+      - atkm_network
+
+  # Nginx
+  nginx:
+    image: nginx:1.25
+    container_name: atkm_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./atkm_back/public:/var/www/html/public
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - atkm_network
+
+  # Angular Development Server
+  angular:
+    build:
+      context: ./atkm
+      dockerfile: Dockerfile
+    container_name: atkm_angular
+    restart: unless-stopped
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./atkm:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - atkm_network
+
+  # PhpMyAdmin (optional)
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    container_name: atkm_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: atkm_user
+      PMA_PASSWORD: atkm_pass
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - atkm_network
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7.2-alpine
+    container_name: atkm_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - atkm_network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  atkm_network:
+    driver: bridge

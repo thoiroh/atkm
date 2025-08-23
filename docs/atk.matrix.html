@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATK Matrix - Résumé Configuration & Organisation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .document {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .meta-info {
+            background: #ecf0f1;
+            padding: 20px;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .meta-single {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e74c3c;
+        }
+
+        .meta-line {
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .meta-line:last-child {
+            border-bottom: none;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            border: 2px solid #3498db;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3 {
+            color: #34495e;
+            font-size: 1.3em;
+            margin: 20px 0 10px 0;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .tech-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #3498db;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tech-card h4 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .folder-structure {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #34495e;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .folder-structure .folder {
+            color: #f39c12;
+        }
+
+        .folder-structure .file {
+            color: #3498db;
+        }
+
+        .entities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .entity-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .entity-card h4 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .status-check {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .status-warning {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .command-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .next-steps {
+            background: linear-gradient(135deg, #55a3ff 0%, #003d82 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #003d82;
+            margin: 30px 0;
+        }
+
+        .next-steps h3 {
+            color: white;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .objective {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e84393;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .objective h2 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin: 10px 0 10px 30px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        .footer {
+            background: #34495e;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="document">
+            <div class="header">
+                <h1>📁 ATK Matrix</h1>
+                <div class="subtitle">Configuration & Organisation - Résumé Complet</div>
+            </div>
+
+            <div class="meta-info">
+                <div class="meta-single">
+                    <div class="meta-line">
+                        <strong>📅 Date :</strong> 28 juin 2025
+                    </div>
+                    <div class="meta-line">
+                        <strong>📁 Participants :</strong> Tom (Thomas) + Claude
+                    </div>
+                    <div class="meta-line">
+                        <strong>📁 Projet :</strong> ATK Matrix - Redéveloppement Datalab
+                    </div>
+                    <div class="meta-line">
+                        <strong>📊 Status :</strong> <span class="status-check">✅ Prêt pour développement</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="section">
+                    <h2><span class="icon">🎯</span>Vision ATK Matrix</h2>
+                    <p><strong>Redéveloppement moderne de Datalab</strong> après 30 ans d'expérience technologique. Le
+                        projet vise à transformer 40 ans d'anticipation en revenus concrets grâce à une architecture
+                        modulaire évolutive.</p>
+
+                    <h3>Concept d'atomisation</h3>
+                    <div class="entities-grid">
+                        <div class="entity-card">
+                            <h4>1️⃣ DOSSIERS</h4>
+                            <p>Conteneurs, structure organisationnelle, hiérarchie</p>
+                        </div>
+                    </div>
+                    <div class="entities-grid">
+                        <div class="entity-card">
+                            <h4>2️⃣ IDENTITÉS</h4>
+                            <p>Clients, adversaires, intervenants, contacts, organisations</p>
+                        </div>
+                    </div>
+                    <div class="entities-grid">
+                        <div class="entity-card">
+                            <h4>3️⃣ ÉVÉNEMENTS</h4>
+                            <p>Date, durée, coût, génération documents, facturation</p>
+                        </div>
+                    </div>
+                    <div class="entities-grid">
+                        <div class="entity-card">
+                            <h4>4️⃣ DOCUMENTS</h4>
+                            <p>Word, Excel, PDF, emails, templates, versioning</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><span class="icon">🛠️</span>Stack Technique</h2>
+                    <div class="tech-stack">
+                        <div class="tech-card">
+                            <h4>📕 Frontend</h4>
+                            <ul>
+                                <li><strong>Angular 20</strong> (dernière version)</li>
+                                <li>TypeScript moderne</li>
+                                <li>API Signals stable</li>
+                                <li>Détection zoneless</li>
+                            </ul>
+                        </div>
+                        <div class="tech-card">
+                            <h4>📘 Backend</h4>
+                            <ul>
+                                <li><strong>PHP</strong> avec MVC personnalisé</li>
+                                <li>Ratchet/ReactPHP (WebSockets)</li>
+                                <li>Guzzle HTTP (APIs externes)</li>
+                                <li>Binance API (trading)</li>
+                            </ul>
+                        </div>
+                        <div class="tech-card">
+                            <h4>🔧 DevOps</h4>
+                            <ul>
+                                <li><strong>XAMPP</strong> (Apache + PHP + MySQL)</li>
+                                <li>VS Code avec workspace</li>
+                                <li>Git versioning</li>
+                                <li>Claude Pro assistance</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><span class="icon">📁</span>Structure Finale Validée</h2>
+                    <div class="folder-structure">
+                        📁 <span class="folder">atk_matrix/</span><br>
+                        ├── 📕 <span
+                            class="folder">atk_front/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Frontend
+                        Angular 20)<br>
+                        ├── 📘 <span
+                            class="folder">atk_back/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Backend
+                        PHP existant)<br>
+                        ├── 📚 <span
+                            class="folder">.docs/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Documentation)<br>
+                        ├── 📂 <span
+                            class="folder">.assets/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Ressources
+                        partagées)<br>
+                        └── 📄 <span class="file">atk_matrix.code-workspace</span>&nbsp;(Configuration VS Code)
+                    </div>
+
+                    <h3>Architecture Modulaire Évolutive</h3>
+                    <p><strong>Structure <code>atk_xxx</code> future :</strong></p>
+                    <ul>
+                        <li><strong>atk_front + atk_back</strong> → Socle commun (4 entités atomiques)</li>
+                        <li><strong>atk_trading</strong> → Module trading spécialisé</li>
+                        <li><strong>atk_legal</strong> → Module juridique (expertise Tom)</li>
+                        <li><strong>atk_crm</strong> → Module CRM/clients</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h2><span class="icon">💻</span>Environnement Tom</h2>
+                    <div class="tech-stack">
+                        <div class="tech-card">
+                            <h4>🖥️ Matériel</h4>
+                            <ul>
+                                <li>MacBook Pro : macOS Sequoia 15.4.1</li>
+                                <li>Windows 11 (Bootcamp)</li>
+                                <li>PC Windows 11</li>
+                            </ul>
+                        </div>
+                        <div class="tech-card">
+                            <h4>📁 Logiciels</h4>
+                            <ul>
+                                <li>XAMPP : <code>C:\xampp\</code></li>
+                                <li>Node.js : 22.12.0</li>
+                                <li>Angular CLI : 18.0.3 → 20.0.3</li>
+                                <li>Git + Claude Pro</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><span class="icon">📁</span>Configuration VS Code Workspace</h2>
+                    <h3>Fonctionnalités configurées</h3>
+                    <ul>
+                        <li><strong>Extensions automatiques :</strong> Angular Language Service, PHP Intelephense,
+                            Prettier</li>
+                        <li><strong>Debugging :</strong> Angular + PHP simultané</li>
+                        <li><strong>Tâches :</strong> npm install, ng serve, build prod, XAMPP</li>
+                        <li><strong>Format automatique :</strong> à la sauvegarde</li>
+                    </ul>
+
+                    <h3>Commande de création workspace</h3>
+                    <div class="command-block">
+                        # Créer nouveau projet Angular 20
+                        npm install -g @angular/cli@20
+                        ng new atk_front --routing --style=css --ssr=false
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><span class="icon">📊</span>Git & Versioning</h2>
+                    <p><strong>Repository GitHub :</strong> <code>https://github.com/ThomBarth/atk_matrix.git</code></p>
+
+                    <h3>Configuration .gitignore</h3>
+                    <ul>
+                        <li><span class="status-check">✅ Angular :</span> node_modules, dist, .angular</li>
+                        <li><span class="status-check">✅ PHP :</span> vendor, .env, logs</li>
+                        <li><span class="status-check">✅ Système :</span> .DS_Store, Thumbs.db</li>
+                        <li><span class="status-check">✅ Sécurité :</span> clés, secrets, fichiers sensibles</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h2><span class="icon">📁</span>Ressources Angular AI</h2>
+                    <p><strong>Fichiers llms.txt récupérés et stockés sur Google Drive :</strong></p>
+                    <div class="tech-stack">
+                        <div class="tech-card">
+                            <h4>📄 llms.txt</h4>
+                            <p>Fichier index avec liens vers ressources clés Angular</p>
+                            <span class="status-check">✅ Disponible sur Drive</span>
+                        </div>
+                        <div class="tech-card">
+                            <h4>📄 llms-full.txt</h4>
+                            <p>Compilation complète documentation Angular</p>
+                            <span class="status-check">✅ Disponible sur Drive</span>
+                        </div>
+                    </div>
+                    <p><strong>Usage :</strong> Optimisation des prompts Claude pour génération de code Angular moderne
+                        et correct.</p>
+                </div>
+
+                <div class="section">
+                    <h2><span class="icon">🔄</span>Workflow Établi</h2>
+                    <h3>Approche hybride optimale</h3>
+                    <div class="tech-stack">
+                        <div class="tech-card">
+                            <h4>1️⃣ VS Code</h4>
+                            <p>Développement quotidien, coding, debugging</p>
+                        </div>
+                        <div class="tech-card">
+                            <h4>2️⃣ Claude Web</h4>
+                            <p>Architecture, analyse complexe, génération composants</p>
+                        </div>
+                        <div class="tech-card">
+                            <h4>3️⃣ Copilot</h4>
+                            <p>Autocomplétion rapide (complément)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="next-steps">
+                    <h2><span class="icon">🎯</span>Prochaines Étapes Identifiées</h2>
+                    <h3>1. Installation Angular 20</h3>
+                    <div class="command-block">
+                        npm install -g @angular/cli@20
+                        ng new atk_front --routing --style=css --ssr=false
+                    </div>
+
+                    <h3>2. Configuration workspace</h3>
+                    <ul>
+                        <li>Ouvrir <code>atk_matrix.code-workspace</code> dans VS Code</li>
+                        <li>Vérifier extensions automatiques</li>
+                        <li>Tester debugging Angular + PHP</li>
+                    </ul>
+
+                    <h3>3. Développement première entité</h3>
+                    <ul>
+                        <li>Implémenter module IDENTITÉS</li>
+                        <li>Tester communication frontend/backend</li>
+                        <li>Valider architecture 4 entités atomiques</li>
+                    </ul>
+                </div>
+
+                <div class="objective">
+                    <h2>🎯 Objectif Stratégique</h2>
+                    <p><strong>Transformer 40 ans d'anticipation technologique en revenus concrets</strong></p>
+                    <p>En capitalisant sur l'architecture éprouvée Datalab, les technologies modernes et l'expertise
+                        métier (juridique + trading)</p>
+                    <div style="margin-top: 20px;">
+                        <strong>✅ Architecture éprouvée • ✅ Technologies modernes • ✅ Vision modulaire • ✅ Expertise
+                            métier</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                🚀 <strong>ATK Matrix - Configuration Complète - Prêt pour Développement</strong> 🚀
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,28 +1,144 @@
-# Angular specific
+# ============================================
+# ATKM PROJECT - GITIGNORE OPTIMIZED
+# Project: ATKM (Angular + PHP + Docker)
+# Author: Claude (on Tom's request)
+# Date: August 23, 2025
+# ============================================
+
+# === DOCS EXCLUSION ===
+# Complete exclusion of docs directory
+# /docs/
+# docs/
+
+# === DEPENDENCIES ===
+# Node modules at all levels
+node_modules/
+**/node_modules/
+
+# Package manager files
+package-lock.json
+yarn.lock
+composer.lock
+
+# === ANGULAR SPECIFIC ===
+# Build outputs
 /dist/
 /out-tsc/
 /tmp/
 /coverage/
 /e2e/test-output/
+
+# Angular CLI and cache
 /.angular/
 .angular/
-
-# Node modules and dependency files
-/node_modules/
-/package-lock.json
-/yarn.lock
-
-# Environment files
-/.env
-
-# Angular CLI and build artefacts
-/.angular-cli.json
 /.ng/
-
-# TypeScript cache
 *.tsbuildinfo
 
-# Logs
+# Angular configuration
+/.angular-cli.json
+.angular/config.json
+
+# === ENVIRONMENT FILES ===
+# All environment variants
+.env
+.env.*
+.env.local
+.env.staging
+.env.production
+
+# === LOGS ===
+# All log types
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+
+# === PHP SPECIFIC ===
+# Vendor dependencies
+vendor/
+composer.phar
+
+# === IDE AND EDITORS ===
+# VS Code
+.vscode/
+*.code-workspace
+
+# IntelliJ/PHPStorm
+.idea/
+*.iml
+*.iws
+
+# === SYSTEM FILES ===
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# === PROJECT SPECIFIC ===
+# ATKM specific exclusions
+atkm/node_modules/
+atkm/.angular/
+atkm/dist/
+atkm/out-tsc/
+atkm/coverage/
+atkm/.angular/cache/
+atkm/.vscode/
+atkm/.idea/
+atkm/package-lock.json
+atkm/tsconfig.build.json
+
+# ATKM Backend specific
+atkm_back/vendor/
+atkm_back/storage/logs/*.log
+atkm_back/storage/framework/cache/*
+atkm_back/storage/framework/sessions/*
+atkm_back/storage/framework/testing/*
+atkm_back/storage/framework/views/*
+
+# AI development folders
+**/_/
+**/ai.ang/
+**/ai.claude/
+**/ai.tchatGPT/
+**/dev.languages/
+**/vs.workspaces/
+**/w11.system/
+**/_/**
+
+# === DOCKER ===
+# Docker volumes and data
+mysql_data/
+redis_data/
+
+# === TESTING ===
+# Test outputs and configurations
+testem.log
+karma.conf.js
+/e2e/
+*.spec.js.map
+
+# === BACKUP AND TEMPORARY ===
+# Backup files
+*.bak
+*.backup
+*.tmp
+*.temp
+
+# === SECURITY ===
+# Sensitive files
+*.key
+*.pem
+*.p12
+*.pfx

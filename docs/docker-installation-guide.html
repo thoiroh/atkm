@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide d'Installation Docker - ATKM</title>
+  <link rel="stylesheet" href="atk.docs.global.styles.css">
+</head>
+
+<body>
+  <!-- Bouton pour tout développer/réduire -->
+  <button class="global-toggle" onclick="toggleAll()">📋 Tout développer</button>
+
+  <div class="document-container">
+    <div class="document-wrapper">
+
+      <!-- En-tête du document -->
+      <div class="document-header">
+        <h1 class="document-title">🐳 Guide d'Installation Docker</h1>
+        <div class="document-subtitle">Configuration complète pour le projet ATKM</div>
+        <div class="meta-info">
+          <div class="meta-item">📅 Août 2025</div>
+          <div class="meta-item">🖥️ macOS & Windows</div>
+          <div class="meta-item">🐳 Docker Desktop</div>
+          <div class="meta-item">⚡ ATKM Ready</div>
+        </div>
+      </div>
+
+      <!-- Métadonnées -->
+      <div class="metadata-section">
+        <div class="metadata-box">
+          <div class="metadata-item">
+            <span class="metadata-label">📋 Projet :</span>
+            <span>ATKM - Installation Docker complète</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">👥 Destiné à :</span>
+            <span>Développeurs, équipe ATKM</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">⏱️ Durée :</span>
+            <span>30-45 minutes</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">🎯 Objectif :</span>
+            <span>Installation Docker opérationnelle pour ATKM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenu principal -->
+      <div class="main-content">
+
+        <!-- Section Objectif -->
+        <div class="objective-section">
+          <h2 class="objective-title">🎯 Objectif</h2>
+          <p>Installer et configurer Docker Desktop pour faire fonctionner l'environnement de développement ATKM avec
+            Angular, PHP, MySQL et tous les services associés.</p>
+        </div>
+
+        <!-- Prérequis système -->
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">💻</span>
+            Prérequis Système
+          </h2>
+
+          <div class="expandable-content">
+            <div class="cards-grid">
+              <div class="info-card">
+                <h3 class="card-title">
+                  <span class="emoji-icon">🍎</span>
+                  macOS Requirements
+                </h3>
+                <div class="card-content">
+                  <ul class="content-list">
+                    <li class="list-item">macOS 10.15 Catalina ou supérieur</li>
+                    <li class="list-item">4 GB RAM minimum (8 GB recommandé)</li>
+                    <li class="list-item">Processeur Intel ou Apple Silicon</li>
+                    <li class="list-item">VirtualBox non installé (conflits)</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <h3 class="card-title">
+                  <span class="emoji-icon">🪟</span>
+                  Windows Requirements
+                </h3>
+                <div class="card-content">
+                  <ul class="content-list">
+                    <li class="list-item">Windows 10 version 2004+ ou Windows 11</li>
+                    <li class="list-item">WSL 2 activé (Windows Subsystem for Linux)</li>
+                    <li class="list-item">4 GB RAM minimum (8 GB recommandé)</li>
+                    <li class="list-item">Virtualisation activée dans le BIOS</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Installation Docker Desktop -->
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">⬇️</span>
+            Installation Docker Desktop
+          </h2>
+
+          <div class="expandable-content">
+            <h3 class="section-subtitle">🍎 Installation sur macOS</h3>
+
+            <div class="steps-container">
+              <div class="steps-title">Étapes d'installation macOS :</div>
+              <ol class="steps-list">
+                <li class="step-item">Télécharger Docker Desktop depuis
+                  <strong>docker.com/products/docker-desktop</strong>
+                </li>
+                <li class="step-item">Choisir la version correcte (Intel ou Apple Silicon)</li>
+                <li class="step-item">Double-cliquer sur le fichier <code>Docker.dmg</code></li>
+                <li class="step-item">Glisser l'icône Docker vers le dossier Applications</li>
+                <li class="step-item">Lancer Docker depuis le dossier Applications</li>
+                <li class="step-item">Accepter les autorisations système demandées</li>
+              </ol>
+            </div>
+
+            <div class="alert-box alert-info">
+              <strong>💡 Astuce macOS :</strong> Docker peut demander les privilèges administrateur lors du premier
+              lancement. C'est normal et nécessaire.
+            </div>
+
+            <h3 class="section-subtitle">🪟 Installation sur Windows</h3>
+
+            <div class="steps-container">
+              <div class="steps-title">Étapes d'installation Windows :</div>
+              <ol class="steps-list">
+                <li class="step-item">Activer WSL 2 si pas déjà fait :
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre>wsl --install</pre>
+                    </div>
+                  </div>
+                </li>
+                <li class="step-item">Redémarrer Windows après l'installation WSL</li>
+                <li class="step-item">Télécharger Docker Desktop depuis <strong>docker.com</strong></li>
+                <li class="step-item">Lancer l'installateur en tant qu'administrateur</li>
+                <li class="step-item">Cocher "Use WSL 2 instead of Hyper-V"</li>
+                <li class="step-item">Suivre l'installation jusqu'au bout</li>
+                <li class="step-item">Redémarrer Windows</li>
+              </ol>
+            </div>
+
+            <div class="alert-box alert-warning">
+              <strong>⚠️ Attention Windows :</strong> La virtualisation doit être activée dans le BIOS. Vérifiez dans
+              Gestionnaire des tâches > Performances > Processeur que "Virtualisation" indique "Activé".
+            </div>
+          </div>
+        </div>
+
+        <!-- Vérification installation -->
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">✅</span>
+            Vérification de l'Installation
+          </h2>
+
+          <div class="expandable-content">
+            <div class="section-text">
+              Après l'installation, vérifiez que Docker fonctionne correctement :
+            </div>
+
+            <div class="steps-container">
+              <div class="steps-title">Tests de validation :</div>
+              <ol class="steps-list">
+                <li class="step-item">Ouvrir un terminal (Terminal sur macOS, PowerShell sur Windows)</li>
+                <li class="step-item">Vérifier la version Docker :
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre>docker --version</pre>
+                    </div>
+                  </div>
+                  <div class="section-text">Résultat attendu : <code class="status-success">Docker version 24.x.x</code>
+                  </div>
+                </li>
+                <li class="step-item">Vérifier Docker Compose :
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre>docker-compose --version</pre>
+                    </div>
+                  </div>
+                </li>
+                <li class="step-item">Tester avec un conteneur simple :
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre>docker run hello-world</pre>
+                    </div>
+                  </div>
+                  <div class="section-text">Doit afficher un message de bienvenue Docker</div>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Configuration pour ATKM -->
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">⚙️</span>
+            Configuration pour ATKM
+          </h2>
+
+          <div class="expandable-content">
+            <div class="section-text">
+              Maintenant que Docker est installé, configurons l'environnement ATKM :
+            </div>
+
+            <h3 class="section-subtitle">📁 Structure du projet</h3>
+            <div class="code-container">
+              <div class="code-block">
+                <pre>📁 atkm_project/
+├── 📁 atkm/              (Frontend Angular)
+├── 📁 atkm_back/         (Backend PHP)
+├── 📁 docker/            (Configuration Docker)
+├── 📁 database/          (Scripts SQL)
+├── 📄 docker-compose.yml
+├── 📄 .env
+├── 📄 setup-macos.sh
+└── 📄 setup-windows.ps1</pre>
+              </div>
+            </div>
+
+            <h3 class="section-subtitle">🚀 Lancement rapide</h3>
+
+            <div class="cards-grid">
+              <div class="info-card">
+                <h4 class="card-title">
+                  <span class="emoji-icon">🍎</span>
+                  Sur macOS
+                </h4>
+                <div class="card-content">
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre># Rendre le script exécutable
+chmod +x setup-macos.sh
+
+# Lancer l'installation
+./setup-macos.sh</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <h4 class="card-title">
+                  <span class="emoji-icon">🪟</span>
+                  Sur Windows
+                </h4>
+                <div class="card-content">
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre># Dans PowerShell
+.\setup-windows.ps1</pre>
+                    </div>
+                    <div class="code-container">
+                      <div class="code-block">
+                        <pre># Dans PowerShell exécutez le script en contournant temporairement la politique ExecutionPolicy
+PowerShell -ExecutionPolicy Bypass -File .\setup-windows.ps1</pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert-box alert-success">
+              <strong>✅ Résultat attendu :</strong> Les scripts configurent automatiquement l'environnement, créent les
+              conteneurs et installent les dépendances.
+            </div>
+          </div>
+        </div>
+
+        <!-- Services ATKM -->
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">🔗</span>
+            Services ATKM Disponibles
+          </h2>
+
+          <div class="expandable-content">
+            <div class="entities-grid">
+              <div class="entity-card">
+                <h4>🅰️ Angular Frontend</h4>
+                <p><strong>http://localhost:4200</strong></p>
+                <p>Interface utilisateur principale</p>
+              </div>
+              <div class="entity-card">
+                <h4>🌐 API PHP Backend</h4>
+                <p><strong>http://localhost:8000</strong></p>
+                <p>Services API et logique métier</p>
+              </div>
+              <div class="entity-card">
+                <h4>🐬 PhpMyAdmin</h4>
+                <p><strong>http://localhost:8080</strong></p>
+                <p>Interface de gestion MySQL</p>
+              </div>
+              <div class="entity-card">
+                <h4>🔴 Redis Cache</h4>
+                <p><strong>localhost:6379</strong></p>
+                <p>Cache et sessions</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Commandes utiles -->
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">⌨️</span>
+            Commandes Docker Utiles
+          </h2>
+
+          <div class="expandable-content">
+            <div class="cards-grid">
+              <div class="info-card">
+                <h4 class="card-title">🏁 Démarrage</h4>
+                <div class="card-content">
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre># Démarrer tous les services
+docker-compose up -d
+
+# Voir les logs en temps réel
+docker-compose logs -f</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <h4 class="card-title">🔍 Surveillance</h4>
+                <div class="card-content">
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre># État des conteneurs
+docker-compose ps
+
+# Statistiques d'utilisation
+docker stats</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <h4 class="card-title">🛑 Arrêt</h4>
+                <div class="card-content">
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre># Arrêter les services
+docker-compose stop
+
+# Arrêter et supprimer
+docker-compose down</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <h4 class="card-title">🔧 Maintenance</h4>
+                <div class="card-content">
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre># Reconstruire les images
+docker-compose build --no-cache
+
+# Nettoyer les images inutilisées
+docker system prune</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dépannage -->
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">🔧</span>
+            Dépannage Courant
+          </h2>
+
+          <div class="expandable-content">
+            <h3 class="section-subtitle">❌ Problèmes fréquents</h3>
+
+            <div class="cards-grid">
+              <div class="info-card">
+                <h4 class="card-title">🚫 Port déjà utilisé</h4>
+                <div class="card-content">
+                  <p><strong>Erreur :</strong> Port 3306, 4200, 8000 déjà utilisé</p>
+                  <p><strong>Solution :</strong></p>
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre># Trouver le processus
+lsof -i :3306    # macOS/Linux
+netstat -ano | findstr :3306    # Windows
+
+# Arrêter XAMPP/MAMP si nécessaire</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <h4 class="card-title">💾 Erreur de permissions</h4>
+                <div class="card-content">
+                  <p><strong>Erreur :</strong> Permission denied, volumes</p>
+                  <p><strong>Solution macOS :</strong></p>
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre>sudo chmod -R 755 atkm_back/
+sudo chown -R $(whoami) atkm_back/</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <h4 class="card-title">🐳 Docker ne démarre pas</h4>
+                <div class="card-content">
+                  <p><strong>Solution :</strong></p>
+                  <ul class="content-list">
+                    <li class="list-item">Redémarrer Docker Desktop</li>
+                    <li class="list-item">Vérifier les ressources (RAM, CPU)</li>
+                    <li class="list-item">Nettoyer : <code>docker system prune -a</code></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <h4 class="card-title">🔄 Conteneur en échec</h4>
+                <div class="card-content">
+                  <p><strong>Diagnostic :</strong></p>
+                  <div class="code-container">
+                    <div class="code-block">
+                      <pre># Voir les logs détaillés
+docker-compose logs atkm_mysql
+docker-compose logs atkm_php
+
+# Redémarrer un service
+docker-compose restart atkm_mysql</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prochaines étapes -->
+        <div class="next-steps-section">
+          <h2 class="next-steps-title">
+            <span class="emoji-icon">🎯</span>
+            Prochaines Étapes
+          </h2>
+
+          <h3>1. Vérification complète</h3>
+          <ul class="content-list">
+            <li class="list-item">Tester tous les services sur leurs ports respectifs</li>
+            <li class="list-item">Vérifier la connexion à la base de données via PhpMyAdmin</li>
+            <li class="list-item">S'assurer que Angular compile sans erreur</li>
+          </ul>
+
+          <h3>2. Configuration finale</h3>
+          <ul class="content-list">
+            <li class="list-item">Ajuster le fichier <code>.env</code> selon vos besoins</li>
+            <li class="list-item">Configurer VS Code avec le workspace ATKM</li>
+            <li class="list-item">Importer les schémas de base de données</li>
+          </ul>
+
+          <h3>3. Développement</h3>
+          <ul class="content-list">
+            <li class="list-item">Commencer par le module IDENTITÉS</li>
+            <li class="list-item">Tester la communication Angular ↔ PHP</li>
+            <li class="list-item">Implémenter les 4 entités atomiques ATKM</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Pied de page -->
+      <div class="document-footer">
+        <div class="footer-title">🐳 Docker ATKM - Installation Complète</div>
+        <p>Environnement de développement prêt pour Angular + PHP + MySQL</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let allExpanded = false;
+
+    // Fonction pour basculer une section individuelle
+    function toggleSection(headerElement) {
+      const section = headerElement.parentElement;
+      const content = section.querySelector('.expandable-content');
+      const arrow = headerElement.querySelector('.expand-arrow');
+
+      if (content.classList.contains('collapsed')) {
+        // Développer
+        content.classList.remove('collapsed');
+        section.classList.remove('collapsed');
+        arrow.classList.add('expanded');
+        arrow.textContent = '▶';
+      } else {
+        // Réduire
+        content.classList.add('collapsed');
+        section.classList.add('collapsed');
+        arrow.classList.remove('expanded');
+        arrow.textContent = '▶';
+      }
+    }
+
+    // Fonction pour basculer toutes les sections
+    function toggleAll() {
+      const sections = document.querySelectorAll('.content-section.collapsible');
+      const toggleButton = document.querySelector('.global-toggle');
+
+      sections.forEach(section => {
+        const header = section.querySelector('.expandable-header');
+        const content = section.querySelector('.expandable-content');
+        const arrow = header.querySelector('.expand-arrow');
+
+        if (allExpanded) {
+          // Tout réduire
+          content.classList.add('collapsed');
+          section.classList.add('collapsed');
+          arrow.classList.remove('expanded');
+          arrow.textContent = '▶';
+        } else {
+          // Tout développer
+          content.classList.remove('collapsed');
+          section.classList.remove('collapsed');
+          arrow.classList.add('expanded');
+          arrow.textContent = '▶';
+        }
+      });
+
+      allExpanded = !allExpanded;
+      toggleButton.textContent = allExpanded ? '📋 Tout réduire' : '📋 Tout développer';
+    }
+
+    // Initialisation au chargement de la page
+    document.addEventListener('DOMContentLoaded', function () {
+      // Réduire toutes les sections au chargement
+      const sections = document.querySelectorAll('.content-section.collapsible');
+      sections.forEach(section => {
+        const content = section.querySelector('.expandable-content');
+        const arrow = section.querySelector('.expand-arrow');
+
+        content.classList.add('collapsed');
+        section.classList.add('collapsed');
+        arrow.textContent = '▶';
+      });
+
+      // Ajouter des boutons de copie aux blocs de code
+      const codeBlocks = document.querySelectorAll('.code-block');
+
+      codeBlocks.forEach((block, index) => {
+        const container = block.parentElement;
+        if (!container.querySelector('.copy-button')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-button';
+          copyBtn.textContent = 'copy';
+          copyBtn.onclick = function () {
+            const code = block.textContent.trim();
+            navigator.clipboard.writeText(code).then(() => {
+              copyBtn.textContent = 'copied';
+              copyBtn.classList.add('copied');
+              setTimeout(() => {
+                copyBtn.textContent = 'copy';
+                copyBtn.classList.remove('copied');
+              }, 2000);
+            });
+          };
+          container.appendChild(copyBtn);
+        }
+      });
+    });
+
+    // Raccourci clavier pour tout développer/réduire (Ctrl + E)
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey && e.key === 'e') {
+        e.preventDefault();
+        toggleAll();
+      }
+    });
+  </script>
+
+</body>
+
+</html>

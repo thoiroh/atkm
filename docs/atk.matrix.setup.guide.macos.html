@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide d'installation macOS - Atomeek DataMatrix</title>
+  <link rel="stylesheet" href="atk.docs.global.styles.css">
+  <style>
+    /* Styles pour les boutons de copie */
+    .code-container {
+      position: relative;
+    }
+
+    .copy-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8em;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .copy-button:hover {
+      background: #c0392b;
+      transform: scale(1.05);
+    }
+
+    .copy-button.copied {
+      background: #27ae60;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="document-container">
+    <div class="document-wrapper">
+      <div class="document-header">
+        <h1 class="document-title">🍎 guide d'installation macos - atomeek datamatrix</h1>
+        <div class="document-subtitle">Configuration complète Angular 20 + PHP 8.3 + Docker sur macOS Sequoia</div>
+      </div>
+
+      <div class="metadata-section">
+        <div class="metadata-box">
+          <div class="metadata-item">
+            <span class="metadata-label">📅 Date :</span> 9 août 2025
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">👤 Projet :</span> atomeek-datamatrix
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">🏗️ Stack :</span> Angular 20 + PHP 8.3 + Docker
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">📊 Status :</span> <span class="status-success">✅ Adapté pour macOS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">1️⃣</span>prérequis système macos</h2>
+
+          <div class="cards-grid">
+            <div class="info-card">
+              <h4 class="card-title">🍎 système macos sequoia</h4>
+              <div class="card-content">
+                <ul class="content-list">
+                  <li class="list-item">macOS Sequoia 15.4.1+ (version actuelle)</li>
+                  <li class="list-item">RAM : Minimum 8GB (16GB recommandé)</li>
+                  <li class="list-item">Stockage : 20GB libres minimum</li>
+                  <li class="list-item">Architecture : Apple Silicon (M1/M2/M3) ou Intel</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h4 class="card-title">🛠️ outils de développement</h4>
+              <div class="card-content">
+                <ul class="content-list">
+                  <li class="list-item">Node.js : Version 20.x LTS (via Homebrew)</li>
+                  <li class="list-item">Git : Préinstallé ou via Xcode Command Line Tools</li>
+                  <li class="list-item">VS Code : Version macOS</li>
+                  <li class="list-item">Docker Desktop for Mac : Version récente</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert-box alert-info">
+            <strong>🎯 Avantage macOS :</strong> Pas besoin de WSL2 ! Docker fonctionne nativement avec une meilleure
+            performance qu'avec WSL2 sur Windows.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">2️⃣</span>installation des prérequis macos</h2>
+
+          <h3 class="section-subtitle">🍺 étape 1 : installation homebrew</h3>
+          <div class="steps-container">
+            <div class="steps-title">Si Homebrew n'est pas installé :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Installer Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Ajouter Homebrew au PATH
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+source ~/.zshrc</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">⚙️ étape 2 : installation xcode command line tools</h3>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Installer Xcode Command Line Tools (inclut Git)
+xcode-select --install</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h3 class="section-subtitle">🟢 étape 3 : installation node.js</h3>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Installer Node.js 20 LTS via Homebrew
+brew install node@20
+
+# Lier Node.js 20 comme version par défaut
+brew link node@20 --force
+
+# Vérifier l'installation
+node --version
+npm --version</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h3 class="section-subtitle">🐳 étape 4 : installation docker desktop for mac</h3>
+          <div class="steps-container">
+            <div class="steps-title">Installation Docker Desktop :</div>
+            <ol class="steps-list">
+              <li class="step-item">Aller sur <code>https://www.docker.com/products/docker-desktop</code></li>
+              <li class="step-item">Télécharger "Docker Desktop for Mac"</li>
+              <li class="step-item">Choisir la version selon votre Mac :
+                <ul>
+                  <li><strong>Apple Silicon :</strong> Puce M1/M2/M3</li>
+                  <li><strong>Intel :</strong> Processeur Intel</li>
+                </ul>
+              </li>
+              <li class="step-item">Glisser Docker.app dans le dossier Applications</li>
+              <li class="step-item">Lancer Docker Desktop et accepter les permissions</li>
+            </ol>
+          </div>
+
+          <h3 class="section-subtitle">✅ vérification installation</h3>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Test Docker
+docker --version
+docker run hello-world
+
+# Test Docker Compose
+docker-compose --version
+
+# Vérifier Node.js
+node --version
+npm --version</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">3️⃣</span>récupération du projet</h2>
+
+          <h3 class="section-subtitle">📥 clonage depuis windows</h3>
+          <div class="steps-container">
+            <div class="steps-title">Transfert via Git repository :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Sur votre Mac, dans le Terminal
+cd ~/Documents  # ou votre dossier de projets préféré
+
+# Cloner le repository (remplacer par votre URL)
+git clone [votre-repo-url] atomeek-datamatrix
+cd atomeek-datamatrix
+
+# Vérifier la structure
+ls -la</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">🔧 optimisations spécifiques macos</h3>
+
+          <h4 class="card-title">📄 modification docker-compose.yml pour mac</h4>
+          <div class="file-path">Optimisation des volumes pour macOS</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Dans docker-compose.yml, modifier la section Angular :
+  angular:
+    build:
+      context: ./atkm
+      dockerfile: Dockerfile
+    container_name: atomeek_angular
+    restart: unless-stopped
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./atkm:/app:cached  # Ajouter :cached pour optimiser les performances
+      - /app/node_modules    # Volume délégué pour node_modules
+    environment:
+      - NODE_ENV=development
+      - COMPOSE_DOCKER_CLI_BUILD=1  # Optimisation macOS
+      - DOCKER_BUILDKIT=1           # Optimisation macOS
+    networks:
+      - atomeek_network</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h4 class="card-title">📄 ajout du fichier .env optimisé macos</h4>
+          <div class="file-path">Ajouter dans /atkm_back/.env</div>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Optimisations spécifiques macOS
+COMPOSE_DOCKER_CLI_BUILD=1
+DOCKER_BUILDKIT=1
+
+# Configuration macOS pour de meilleures performances
+DOCKER_SCAN_SUGGEST=false</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h3 class="section-subtitle">🔐 permissions de fichiers</h3>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Ajuster les permissions pour macOS
+chmod -R 755 atkm_back/public
+chmod -R 755 atkm
+chmod -R 755 docker
+
+# Rendre les scripts exécutables si nécessaire
+find . -name "*.sh" -exec chmod +x {} \;</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">4️⃣</span>configuration docker (identique)</h2>
+
+          <div class="alert-box alert-success">
+            <strong>✅ Bonne nouvelle :</strong> Toute la configuration Docker reste identique ! Les fichiers
+            docker-compose.yml, Dockerfiles, et configurations restent exactement les mêmes qu'sur Windows.
+          </div>
+
+          <h3 class="section-subtitle">📁 structure des dossiers (identique)</h3>
+          <div class="code-container">
+            <div class="code-block">
+              <pre>atomeek-datamatrix/
+├── .git/
+├── assets/                   # Assets partagés
+├── atkm/                    # Frontend Angular 20
+│   ├── src/
+│   │   ├── app/
+│   │   ├── assets/
+│   │   └── environments/
+│   ├── public/
+│   ├── angular.json
+│   ├── package.json
+│   ├── proxy.conf.json
+│   ├── tsconfig.json
+│   ├── tsconfig.app.json
+│   └── Dockerfile
+├── atkm_back/               # Backend PHP 8.3
+│   ├── public/               # Point d'entrée web
+│   │   ├── index.php
+│   │   ├── .htaccess
+│   │   └── uploads/
+│   ├── src/
+│   │   └── app/
+│   ├── vendor/
+│   ├── composer.json
+│   └── .env
+├── database/                 # Schemas et migrations
+├── docker/                   # Configuration Docker
+│   ├── nginx/
+│   │   └── nginx.conf
+│   ├── php/
+│   │   ├── Dockerfile
+│   │   └── php.ini
+│   └── mysql/
+├── docs/
+├── scripts/
+├── shared/
+├── docker-compose.yml
+├── .gitignore
+└── README.md</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">5️⃣</span>démarrage sur macos</h2>
+
+          <h3 class="section-subtitle">🚀 procédure de démarrage</h3>
+
+          <div class="steps-container">
+            <div class="steps-title">1. Vérification des prérequis :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Dans le dossier du projet
+cd atomeek-datamatrix
+
+# Vérifier que Docker est démarré
+docker --version
+docker info
+
+# Vérifier la structure des fichiers
+ls -la atkm/src/
+ls -la atkm_back/public/</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <div class="steps-container">
+            <div class="steps-title">2. Construction et démarrage :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Construire et démarrer tous les containers
+docker-compose up --build -d
+
+# Vérifier le status des containers
+docker-compose ps
+
+# Voir les logs en temps réel
+docker-compose logs -f</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <div class="steps-container">
+            <div class="steps-title">3. Installation des dépendances PHP :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># Installer les dépendances PHP via Composer
+docker-compose exec php composer install
+
+# Vérifier les logs PHP
+docker-compose logs php</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">✅ vérification de l'installation</h3>
+          <div class="cards-grid">
+            <div class="info-card">
+              <h4 class="card-title">🅰️ angular (port 4200)</h4>
+              <div class="card-content">
+                <p><code>http://localhost:4200</code></p>
+                <p>Interface utilisateur Atomeek DataMatrix</p>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h4 class="card-title">🌐 api php (port 8000)</h4>
+              <div class="card-content">
+                <p><code>http://localhost:8000</code></p>
+                <p>API JSON de développement</p>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h4 class="card-title">🐬 phpmyadmin (port 8080)</h4>
+              <div class="card-content">
+                <p><code>http://localhost:8080</code></p>
+                <p>Interface de gestion MySQL</p>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h4 class="card-title">🔴 redis (port 6379)</h4>
+              <div class="card-content">
+                <p>Cache en mémoire (optionnel)</p>
+                <p>Accessible via les containers</p>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">🧪 tests rapides</h3>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Test API PHP
+curl -X GET http://localhost:4200
+
+# Test de l'API
+curl -X GET http://localhost:8000
+
+# Vérifier les containers actifs
+docker-compose ps
+
+# Voir l'utilisation des ressources
+docker stats</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">6️⃣</span>spécificités macos</h2>
+
+          <h3 class="section-subtitle">🚀 avantages sur macos</h3>
+          <div class="cards-grid">
+            <div class="info-card">
+              <h4 class="card-title">⚡ performances</h4>
+              <div class="card-content">
+                <ul class="content-list">
+                  <li class="list-item">Pas de couche WSL2 → plus rapide</li>
+                  <li class="list-item">Docker natif macOS</li>
+                  <li class="list-item">Apple Silicon très performant</li>
+                  <li class="list-item">Gestion mémoire optimisée</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h4 class="card-title">🔧 outils intégrés</h4>
+              <div class="card-content">
+                <ul class="content-list">
+                  <li class="list-item">Terminal puissant (zsh)</li>
+                  <li class="list-item">Git préinstallé</li>
+                  <li class="list-item">Homebrew pour les packages</li>
+                  <li class="list-item">VS Code natif</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">🔧 commandes utiles macos</h3>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Gestion des containers
+docker-compose up -d          # Démarrer en arrière-plan
+docker-compose down           # Arrêter tout
+docker-compose restart       # Redémarrer tout
+
+# Monitoring spécifique macOS
+top -o cpu                   # Voir l'utilisation CPU
+activity_monitor             # Moniteur d'activité (GUI)
+
+# Nettoyage Docker
+docker system prune -a       # Nettoyer tout Docker
+docker volume prune          # Nettoyer les volumes
+
+# Homebrew utile
+brew update                  # Mettre à jour Homebrew
+brew upgrade                 # Mettre à jour les packages
+brew list                    # Lister les packages installés</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h3 class="section-subtitle">🐞 troubleshooting macos</h3>
+          <div class="cards-grid">
+            <div class="info-card">
+              <h4 class="card-title">❌ problème : "Permission denied"</h4>
+              <div class="card-content">
+                <div class="code-container">
+                  <div class="code-block">
+                    <pre># Corriger les permissions
+sudo chown -R $(whoami) /path/to/project
+chmod -R 755 atkm_back/public</pre>
+                  </div>
+                  <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h4 class="card-title">❌ problème : "Port already in use"</h4>
+              <div class="card-content">
+                <div class="code-container">
+                  <div class="code-block">
+                    <pre># Trouver le processus utilisant le port
+sudo lsof -i :4200
+sudo lsof -i :8000
+
+# Tuer le processus (remplacer PID)
+kill -9 [PID]</pre>
+                  </div>
+                  <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h4 class="card-title">❌ problème : Docker lent</h4>
+              <div class="card-content">
+                <div class="code-container">
+                  <div class="code-block">
+                    <pre># Augmenter la mémoire Docker
+# Dans Docker Desktop → Settings → Resources
+# CPU: 4+ cores
+# Memory: 8GB+
+# Swap: 2GB</pre>
+                  </div>
+                  <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 class="section-title"><span class="emoji-icon">7️⃣</span>développement quotidien</h2>
+
+          <h3 class="section-subtitle">🔄 workflow de développement</h3>
+          <div class="steps-container">
+            <div class="steps-title">Démarrage quotidien :</div>
+            <div class="code-container">
+              <div class="code-block">
+                <pre># 1. Ouvrir le Terminal et aller dans le projet
+cd ~/Documents/atomeek-datamatrix
+
+# 2. Vérifier que Docker Desktop est lancé
+docker info
+
+# 3. Démarrer les containers
+docker-compose up -d
+
+# 4. Vérifier que tout fonctionne
+open http://localhost:4200
+open http://localhost:8000
+open http://localhost:8080
+
+# 5. Voir les logs si nécessaire
+docker-compose logs -f angular</pre>
+              </div>
+              <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">🛠️ développement avec vs code</h3>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Ouvrir VS Code depuis le Terminal
+code .
+
+# Ou créer un alias pratique dans ~/.zshrc
+echo 'alias atk="cd ~/Documents/atomeek-datamatrix && code ."' >> ~/.zshrc
+source ~/.zshrc
+
+# Utiliser l'alias
+atk</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+
+          <h3 class="section-subtitle">🔗 synchronisation avec windows</h3>
+          <div class="code-container">
+            <div class="code-block">
+              <pre># Synchroniser les changements entre Windows et Mac
+# Via Git repository
+
+# 1. Commit sur Windows
+git add .
+git commit -m "Modifications Windows"
+git push
+
+# 2. Pull sur Mac
+git pull origin main
+
+# 3. Redémarrer les containers si nécessaire
+docker-compose restart</pre>
+            </div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Copier</button>
+          </div>
+        </div>
+
+        <div class="next-steps-section">
+          <h2 class="next-steps-title"><span class="emoji-icon">✅</span>installation macos réussie</h2>
+          <p class="section-text">Votre environnement <strong>atomeek datamatrix</strong> est maintenant opérationnel
+            sur macOS Sequoia avec des performances optimisées !</p>
+
+          <h3 class="section-subtitle">🎯 URLs de développement :</h3>
+          <ul class="content-list">
+            <li class="list-item"><strong>Angular :</strong> <code>http://localhost:4200</code></li>
+            <li class="list-item"><strong>API PHP :</strong> <code>http://localhost:8000</code></li>
+            <li class="list-item"><strong>PhpMyAdmin :</strong> <code>http://localhost:8080</code></li>
+          </ul>
+
+          <h3 class="section-subtitle">⚡ performances attendues :</h3>
+          <ul class="content-list">
+            <li class="list-item">Démarrage plus rapide qu'avec WSL2</li>
+            <li class="list-item">Hot reload Angular instantané</li>
+            <li class="list-item">Synchronisation fichiers optimisée</li>
+            <li class="list-item">Consommation mémoire réduite</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="document-footer">
+        <div class="footer-title">🍎 atomeek datamatrix - guide d'installation macos</div>
+        <p>Documentation adaptée pour macOS Sequoia avec optimisations spécifiques</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fonction de copie dans le presse-papiers
+    async function copyToClipboard(button) {
+      const codeBlock = button.previousElementSibling;
+      const code = codeBlock.innerText;
+
+      try {
+        await navigator.clipboard.writeText(code);
+
+        // Feedback visuel
+        const originalText = button.textContent;
+        button.textContent = 'Copié !';
+        button.classList.add('copied');
+
+        // Retour à l'état normal après 2 secondes
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove('copied');
+        }, 2000);
+
+      } catch (err) {
+        // Fallback pour les navigateurs plus anciens
+        const textArea = document.createElement('textarea');
+        textArea.value = code;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        // Feedback visuel
+        const originalText = button.textContent;
+        button.textContent = 'Copié !';
+        button.classList.add('copied');
+
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove('copied');
+        }, 2000);
+      }
+    }
+
+    // Smooth scrolling pour les liens d'ancrage
+    document.addEventListener('DOMContentLoaded', function () {
+      const links = document.querySelectorAll('a[href^="#"]');
+      links.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
