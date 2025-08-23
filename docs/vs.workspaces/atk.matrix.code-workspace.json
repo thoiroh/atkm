@@ -1,0 +1,136 @@
+{
+  "folders": [
+    {
+      "name": "📕 atk_front (angular)",
+      "path": "./atk_front"
+    },
+    {
+      "name": "📘 atk_back (php)",
+      "path": "./atk_back"
+    },
+    {
+      "name": "📚 documentation",
+      "path": "./.docs"
+    },
+    {
+      "name": "📂 assets",
+      "path": "./.assets"
+    }
+  ],
+  "settings": {
+    "typescript.preferences.includePackageJsonAutoImports": "on",
+    "angular.enable-strict-mode-prompt": false,
+    "php.suggest.basic": false,
+    "php.validate.executablePath": "C:\\xampp\\php\\php.exe",
+    "files.associations": {
+      "*.php": "php",
+      "*.ts": "typescript",
+      "*.html": "html"
+    },
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.git": false,
+      "**/.angular": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.angular": true
+    },
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "git.enabled": true,
+    "git.path": "git"
+  },
+  "extensions": {
+    "recommendations": ["angular.ng-template", "ms-vscode.vscode-typescript-next", "bradlc.vscode-tailwindcss", "bmewburn.vscode-intelephense-client", "ms-vscode.vscode-json", "esbenp.prettier-vscode", "ms-vscode.vscode-eslint", "formulahendry.auto-rename-tag", "christian-kohler.path-intellisense", "ms-vscode.powershell"]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "🚀 Angular Dev Server",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/frontend/node_modules/@angular/cli/bin/ng",
+        "args": ["serve", "--port", "4200"],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen"
+      },
+      {
+        "name": "⚡ PHP Debug",
+        "type": "php",
+        "request": "launch",
+        "port": 9003,
+        "pathMappings": {
+          "/var/www/html": "${workspaceFolder}/backend"
+        }
+      }
+    ],
+    "compounds": [
+      {
+        "name": "🔥 ATK Full Stack",
+        "configurations": ["🚀 Angular Dev Server", "⚡ PHP Debug"]
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "📦 Install Frontend Dependencies",
+        "type": "shell",
+        "command": "npm install",
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder}/frontend"
+        },
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "🚀 Start Angular Dev",
+        "type": "shell",
+        "command": "ng serve --port 4200 --open",
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder}/frontend"
+        },
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "🏗️ Build Angular Prod",
+        "type": "shell",
+        "command": "ng build --configuration production",
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder}/frontend"
+        }
+      },
+      {
+        "label": "⚡ Start XAMPP",
+        "type": "shell",
+        "command": "C:\\xampp\\xampp-control.exe",
+        "group": "test",
+        "presentation": {
+          "echo": true,
+          "reveal": "always"
+        }
+      }
+    ]
+  }
+}
