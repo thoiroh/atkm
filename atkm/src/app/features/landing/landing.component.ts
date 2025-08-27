@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ConfigService, ILandingConfig } from '../../core/services/config.service';
 import { ContentMainComponent } from '../../shared/components/content-main/content-main.component';
@@ -10,9 +9,7 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
 
 @Component({
   selector: 'atk-landing',
-  standalone: true,
   imports: [
-    CommonModule,
     NavbarMainComponent,
     NavbarBrandComponent,
     NavbarToolsComponent,
@@ -21,30 +18,32 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
     SidebarConfigComponent
   ],
   template: `
-    <div class="main-container" *ngIf="config">
-      <!-- GRILLE 1: MENU PRINCIPAL (gauche) -->
-      <atk-navbar-main [config]="config.navbar"></atk-navbar-main>
+    @if (config) {
+      <div class="main-container">
+        <!-- GRILLE 1: MENU PRINCIPAL (gauche) -->
+        <atk-navbar-main [config]="config.navbar" />
 
-      <!-- GRILLE 2: ZONE CENTRALE TRANSPARENTE (centre) -->
-      <atk-navbar-brand [config]="config.navbar"></atk-navbar-brand>
+        <!-- GRILLE 2: ZONE CENTRALE TRANSPARENTE (centre) -->
+        <atk-navbar-brand [config]="config.navbar" />
 
-      <!-- GRILLE 3: OUTILS UTILISATEUR (droite) -->
-      <atk-navbar-tools></atk-navbar-tools>
+        <!-- GRILLE 3: OUTILS UTILISATEUR (droite) -->
+        <atk-navbar-tools />
 
-      <!-- GRILLE 4: NAVIGATION SIDEBAR (gauche) -->
-      <atk-sidebar-nav [config]="config.sidebar"></atk-sidebar-nav>
+        <!-- GRILLE 4: NAVIGATION SIDEBAR (gauche) -->
+        <atk-sidebar-nav [config]="config.sidebar" />
 
-      <!-- GRILLE 5: CONTENU PRINCIPAL (centre) -->
-      <atk-content-main [feeds]="config.feeds"></atk-content-main>
+        <!-- GRILLE 5: CONTENU PRINCIPAL (centre) -->
+        <atk-content-main [feeds]="config.feeds" />
 
-      <!-- GRILLE 6: PANNEAU CONFIGURATION (droite) -->
-      <atk-sidebar-config [sections]="config.configPanel"></atk-sidebar-config>
-    </div>
-
-    <!-- Loading state -->
-    <div class="loading-container" *ngIf="!config">
-      <div class="loading-spinner">Chargement...</div>
-    </div>
+        <!-- GRILLE 6: PANNEAU CONFIGURATION (droite) -->
+        <atk-sidebar-config [sections]="config.configPanel" />
+      </div>
+    } @else {
+      <!-- Loading state -->
+      <div class="loading-container">
+        <div class="loading-spinner">Chargement...</div>
+      </div>
+    }
   `,
   styles: [`
     .loading-container {

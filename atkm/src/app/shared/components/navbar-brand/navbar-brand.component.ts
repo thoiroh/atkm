@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { INavbarConfig } from '../../../core/services/config.service';
 
 @Component({
@@ -9,11 +9,11 @@ import { INavbarConfig } from '../../../core/services/config.service';
   template: `
     <div class="menu-center">
       <div class="menu-center-content">
-        <h1 class="menu-center-title">{{config?.centerTitle}}</h1>
+        <h1 class="menu-center-title">{{config?.centerTitle || ''}}</h1>
         <p class="menu-center-subtitle">
-          {{config?.centerSubtitle}}
+          {{config?.centerSubtitle || ''}}
           <span class="menu-center-badge" *ngIf="config?.centerBadge">
-            {{config.centerBadge}}
+            {{config?.centerBadge || ''}}
           </span>
         </p>
       </div>

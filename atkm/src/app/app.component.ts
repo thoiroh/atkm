@@ -3,33 +3,17 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'adm-root',
+  selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, CommonModule],
   template: `
-    <div class="app-container">
-      <header class="app-header">
-        <h1>🚀 Atomeek </h1>
-        <p>Application Angular 200 + PHP 8.3 + Docker</p>
-      </header>
+    <div class="">
 
-      <main class="app-main">
-        <div class="status-card">
-          <h2>✅ Status de l'application</h2>
-          <ul>
-            <li>Angular 20 : Opérationnel</li>
-            <li>Docker : Conteneurs démarrés</li>
-            <li>API PHP : Connectée</li>
-          </ul>
-        </div>
-
+      <main class="">
         <router-outlet></router-outlet>
       </main>
 
-      <footer class="app-footer">
-        <p>&copy; 2025 Atomeek - Environnement de développement</p>
-      </footer>
-    </div>
+   </div>
   `,
   styles: [`
     .app-container {

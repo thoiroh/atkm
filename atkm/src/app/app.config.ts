@@ -1,17 +1,31 @@
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideAnimations } from '@angular/platform-browser/animations';
-
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideRouter, withComponentInputBinding, withRouterConfig } from '@angular/router';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    // Configuration de Zone.js optimisée pour Angular 20
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
-    provideHttpClient(
-      withInterceptors([])  // Pour ajouter des intercepteurs plus tard
+
+    // Router avec binding automatique des @Input
+    provideRouter(routes,
+      withComponentInputBinding(),
+      withRouterConfig({
+        onSameUrlNavigation: 'reload',
+        paramsInheritanceStrategy: 'always'
+      })
     ),
-    provideAnimations()  // Pour Angular Material et les animations
+
+    // HttpClient avec Fetch API (recommandé pour Angular 20)
+    provideHttpClient(
+      withFetch(),
+      // Ajoutez vos intercepteurs ici si nécessaire
+      // withInterceptors([authInterceptor, errorInterceptor])
+    ),
+
+    // Animations asynchrones pour performance optimale
+    provideAnimationsAsync()
   ]
 };

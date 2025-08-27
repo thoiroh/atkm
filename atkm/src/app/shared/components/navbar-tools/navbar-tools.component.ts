@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'atk-navbar-tools',
-  standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="user-tools">
       <div class="search-container">
@@ -12,15 +10,15 @@ import { CommonModule } from '@angular/common';
           <svg class="search-icon" aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
             <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"></path>
           </svg>
-          <input type="text" 
-                 class="search-input" 
+          <input type="text"
+                 class="search-input"
                  placeholder="Type / to search"
                  (keydown)="handleSearchShortcut($event)" />
         </div>
       </div>
 
       <div class="user-actions">
-        <button class="action-btn" 
+        <button class="action-btn"
                 aria-label="Créer quelque chose de nouveau"
                 (click)="handleAction('create')">
           <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
@@ -28,7 +26,7 @@ import { CommonModule } from '@angular/common';
           </svg>
         </button>
 
-        <button class="action-btn" 
+        <button class="action-btn"
                 aria-label="Vos issues"
                 (click)="handleAction('issues')">
           <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
@@ -37,7 +35,7 @@ import { CommonModule } from '@angular/common';
           </svg>
         </button>
 
-        <button class="action-btn" 
+        <button class="action-btn"
                 aria-label="Vos pull requests"
                 (click)="handleAction('pulls')">
           <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
@@ -45,40 +43,125 @@ import { CommonModule } from '@angular/common';
           </svg>
         </button>
 
-        <button class="action-btn" 
+        <button class="action-btn"
                 aria-label="Notifications"
                 (click)="handleAction('notifications')">
           <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
-            <path d="M2.8 2.06A1.75 1.75 0 0 1 4.41 1h7.18c.7 0 1.333.417 1.61 1.06l2.74 6.395c.04.093.06.194.06.295v4.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25v-4.5c0-.101.02-.202.06-.295Zm1.61.44a.25.25 0 0 0-.23.152L1.887 8H4.75a.75.75 0 0 1 .6.3L6.625 10h2.75l1.275-1.7a.75.75 0 0 1 .6-.3h2.863L11.82 2.652a.25.25 0 0 0-.23-.152Zm10.09 7h-2.875l-1.275 1.7a.75.75 0 0 1-.6.3h-3.5a.75.75 0 0 1-.6-.3L4.375 9.5H1.5v3.75c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25Z"></path>
+            <path d="M8 16a2 2 0 0 0 1.985-1.75c.017-.137-.097-.25-.235-.25h-3.5c-.138 0-.252.113-.235.25A2 2 0 0 0 8 16ZM3 5a5 5 0 0 1 10 0v2.947c0 .05.015.098.042.139l1.703 2.555A1.519 1.519 0 0 1 13.482 13H2.518a1.516 1.516 0 0 1-1.263-2.36l1.703-2.554A.255.255 0 0 0 3 7.947Zm5-3.5A3.5 3.5 0 0 0 4.5 5v2.947c0 .346-.102.683-.294.97l-1.703 2.556a.017.017 0 0 0-.003.01l.001.006c0 .002.002.004.004.006l.006.004.007.001h10.964l.007-.001.006-.004.004-.006.001-.007a.017.017 0 0 0-.003-.01l-1.703-2.554a1.745 1.745 0 0 1-.294-.97V5A3.5 3.5 0 0 0 8 1.5Z"></path>
           </svg>
         </button>
 
-        <button class="action-btn user-avatar" 
-                aria-label="Menu utilisateur"
-                (click)="handleAction('profile')">
-          <img src="https://avatars.githubusercontent.com/u/32144309?v=4" 
-               alt="@ThomBarth" 
-               class="avatar" 
-               width="24" 
-               height="24" />
-        </button>
+        <div class="user-menu">
+          <button class="user-avatar-btn" (click)="toggleUserMenu()">
+            <img src="https://avatars.githubusercontent.com/u/1?v=4"
+                 alt="@user"
+                 class="user-avatar"
+                 width="20"
+                 height="20" />
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   `,
   styles: [`
-    /* Styles spécifiques si nécessaire */
+    .user-tools {
+      grid-area: user-tools;
+      background-color: var(--color-canvas-subtle);
+      border-bottom: 2px solid var(--color-border-default);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 16px;
+      gap: 16px;
+    }
+
+    .search-container {
+      flex: 1;
+      max-width: 400px;
+    }
+
+    .search-wrapper {
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-fg-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--color-canvas-default);
+      border: 1px solid var(--color-border-default);
+      border-radius: 6px;
+      color: var(--color-fg-default);
+      padding: 5px 12px 5px 34px;
+      font-size: 14px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--color-accent-emphasis);
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-btn {
+      background: transparent;
+      border: none;
+      color: var(--color-fg-default);
+      padding: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--color-btn-hover-bg);
+    }
+
+    .user-avatar-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .user-avatar {
+      border-radius: 50%;
+    }
   `]
 })
 export class NavbarToolsComponent {
   handleSearchShortcut(event: KeyboardEvent): void {
-    if (event.key === '/' && event.ctrlKey) {
+    if (event.key === '/' && (event.ctrlKey || event.metaKey)) {
       event.preventDefault();
-      // Focus sur la recherche
+      const input = event.target as HTMLInputElement;
+      input.focus();
     }
   }
 
   handleAction(action: string): void {
-    console.log('Action:', action);
-    // Implémenter les actions plus tard
+    console.log('Action clicked:', action);
+  }
+
+  toggleUserMenu(): void {
+    console.log('Toggle user menu');
   }
 }
