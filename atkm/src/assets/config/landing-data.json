@@ -1,0 +1,159 @@
+{
+  "navbar": {
+    "logo": {
+      "svg": "atk-logo",
+      "alt": "atkm",
+      "link": "/"
+    },
+    "breadcrumb": ["Dashboard", "victory.is.tomorrow"],
+    "centerTitle": "atkm.dashboard",
+    "centerSubtitle": "2025.08.26.190743",
+    "centerBadge": "βeta"
+  },
+  "sidebar": {
+    "userContext": {
+      "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+      "username": "ThomBarth"
+    },
+    "sections": [
+      {
+        "title": "Top repositories",
+        "action": {
+          "label": "New",
+          "action": "createRepo"
+        },
+        "items": [
+          {
+            "icon": "repo",
+            "label": "ThomBarth/atk_system",
+            "link": "/repo/atk_system"
+          },
+          {
+            "icon": "repo",
+            "label": "ashuraraw/atkNode",
+            "link": "/repo/atkNode"
+          },
+          {
+            "icon": "repo",
+            "label": "ThomBarth/atk_raw",
+            "link": "/repo/atk_raw"
+          },
+          {
+            "icon": "repo",
+            "label": "ThomBarth/atk_backbone",
+            "link": "/repo/atk_backbone"
+          },
+          {
+            "icon": "repo",
+            "label": "ThomBarth/atk_matrix",
+            "link": "/repo/atk_matrix"
+          }
+        ]
+      },
+      {
+        "title": "Recent activity",
+        "items": []
+      }
+    ]
+  },
+  "feeds": [
+    {
+      "id": "feed-1",
+      "title": "2025.08.26.102157-Feed",
+      "items": [
+        {
+          "id": "item-1",
+          "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+          "action": "joaeff starred a repository",
+          "time": "10 hours ago",
+          "repo": {
+            "name": "asyncio/big_space",
+            "link": "/repo/big_space",
+            "description": "ai reconstruit entièrement le fichier pour garantir que chaque section contient désormais une démo visible..."
+          },
+          "stats": {
+            "language": {
+              "name": "Rust",
+              "color": "#dea584"
+            },
+            "stars": 638
+          }
+        },
+        {
+          "id": "item-2",
+          "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+          "action": "Repository update",
+          "time": "2 days ago",
+          "repo": {
+            "name": "moeru-ai/airi",
+            "link": "/repo/airi",
+            "description": "Self hosted, you owned Grok Companion; a container of souls of waifu; cyber livings"
+          },
+          "stats": {
+            "language": {
+              "name": "Vue",
+              "color": "#41b883"
+            },
+            "stars": 10000
+          }
+        }
+      ]
+    }
+  ],
+  "configPanel": [
+    {
+      "title": "Configuration Dashboard",
+      "icon": "settings",
+      "items": [
+        {
+          "icon": "display",
+          "title": "Paramètres d'affichage",
+          "description": "Configuration des vues et filtres de la grille 4",
+          "link": "/config/display"
+        },
+        {
+          "icon": "user",
+          "title": "Préférences utilisateur",
+          "description": "Personnalisation de l'interface et des composants",
+          "link": "/config/preferences"
+        },
+        {
+          "icon": "keyboard",
+          "title": "Raccourcis clavier",
+          "description": "Configuration des shortcuts et hotkeys",
+          "link": "/config/shortcuts"
+        },
+        {
+          "icon": "layout",
+          "title": "Layout des composants",
+          "description": "Organisation et disposition des éléments",
+          "link": "/config/layout"
+        }
+      ]
+    },
+    {
+      "title": "Outils rapides",
+      "icon": "tools",
+      "items": [
+        {
+          "icon": "download",
+          "title": "Export données",
+          "description": "Exporter le contenu de la grille principale",
+          "link": "/tools/export"
+        },
+        {
+          "icon": "upload",
+          "title": "Import fichiers",
+          "description": "Importer des données dans l'application",
+          "link": "/tools/import"
+        },
+        {
+          "icon": "action",
+          "title": "Actions rapides",
+          "description": "Raccourcis vers les fonctions principales",
+          "link": "/tools/quick-actions"
+        }
+      ]
+    }
+  ]
+}

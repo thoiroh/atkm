@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>atk.matrix - configuration & organization overview</title>
+  <link rel="stylesheet" href="atk.docs.global.styles.css">
+</head>
+
+<body>
+  <!-- Bouton pour tout développer/réduire -->
+  <button class="global-toggle" onclick="toggleAll()">📋 Tout développer</button>
+
+  <div class="document-container">
+    <div class="document-wrapper">
+      <div class="document-header">
+        <h1 class="document-title">📁 ATK Matrix</h1>
+        <div class="document-subtitle">configuration & organization overview</div>
+      </div>
+
+      <div class="metadata-section">
+        <div class="metadata-box">
+          <div class="metadata-item">
+            <span class="metadata-label">📅 Date :</span> 28 juin 2025
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">👃 Participants :</span> Tom (Thomas) + Claude
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">🗂 Projet :</span> ATK Matrix - Redéveloppement Datalab
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">📊 Status :</span> <span class="status-success">✅ Prêt pour
+              développement</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">🎯</span>Vision ATK Matrix
+          </h2>
+          <div class="expandable-content">
+            <p class="section-text"><strong>Redéveloppement moderne de Datalab</strong> après 30 ans d'expérience
+              technologique. Le
+              projet vise à transformer 40 ans d'anticipation en revenus concrets grâce à une architecture
+              modulaire évolutive.</p>
+
+            <h3 class="section-subtitle">Concept d'atomisation</h3>
+            <div class="entities-grid">
+              <div class="entity-card">
+                <h4>1️⃣ DOSSIERS</h4>
+                <p>Conteneurs, structure organisationnelle, hiérarchie</p>
+              </div>
+              <div class="entity-card">
+                <h4>2️⃣ IDENTITÉS</h4>
+                <p>Clients, adversaires, intervenants, contacts, organisations</p>
+              </div>
+              <div class="entity-card">
+                <h4>3️⃣ ÉVÉNEMENTS</h4>
+                <p>Date, durée, coût, génération documents, facturation</p>
+              </div>
+              <div class="entity-card">
+                <h4>4️⃣ DOCUMENTS</h4>
+                <p>Word, Excel, PDF, emails, templates, versioning</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">🛠️</span>Stack Technique
+          </h2>
+          <div class="expandable-content">
+            <div class="cards-grid">
+              <div class="info-card">
+                <h4 class="card-title">🔴 Frontend</h4>
+                <div class="card-content">
+                  <ul class="content-list">
+                    <li class="list-item"><strong>Angular 20</strong> (dernière version)</li>
+                    <li class="list-item">TypeScript moderne</li>
+                    <li class="list-item">API Signals stable</li>
+                    <li class="list-item">Détection zoneless</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="info-card">
+                <h4 class="card-title">🔵 Backend</h4>
+                <div class="card-content">
+                  <ul class="content-list">
+                    <li class="list-item"><strong>PHP</strong> avec MVC personnalisé</li>
+                    <li class="list-item">Ratchet/ReactPHP (WebSockets)</li>
+                    <li class="list-item">Guzzle HTTP (APIs externes)</li>
+                    <li class="list-item">Binance API (trading)</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="info-card">
+                <h4 class="card-title">🔧 DevOps</h4>
+                <div class="card-content">
+                  <ul class="content-list">
+                    <li class="list-item"><strong>XAMPP</strong> (Apache + PHP + MySQL)</li>
+                    <li class="list-item">VS Code avec workspace</li>
+                    <li class="list-item">Git versioning</li>
+                    <li class="list-item">Claude Pro assistance</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">📂</span>Structure Finale Validée
+          </h2>
+          <div class="expandable-content">
+            <div class="code-block">
+              📁 <span style="color: #f39c12;">atk_matrix/</span><br>
+              ├── 🔴 <span
+                style="color: #f39c12;">atk_front/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Frontend
+              Angular 20)<br>
+              ├── 🔵 <span
+                style="color: #f39c12;">atk_back/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Backend
+              PHP existant)<br>
+              ├── 📚 <span
+                style="color: #f39c12;">.docs/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Documentation)<br>
+              ├── 📂 <span
+                style="color: #f39c12;">.assets/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Ressources
+              partagées)<br>
+              └── 📄 <span style="color: #3498db;">atk_matrix.code-workspace</span>&nbsp;(Configuration VS Code)
+            </div>
+
+            <h3 class="section-subtitle">Architecture Modulaire Évolutive</h3>
+            <p class="section-text"><strong>Structure <code>atk_xxx</code> future :</strong></p>
+            <ul class="content-list">
+              <li class="list-item"><strong>atk_front + atk_back</strong> → Socle commun (4 entités atomiques)</li>
+              <li class="list-item"><strong>atk_trading</strong> → Module trading spécialisé</li>
+              <li class="list-item"><strong>atk_legal</strong> → Module juridique (expertise Tom)</li>
+              <li class="list-item"><strong>atk_crm</strong> → Module CRM/clients</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">💻</span>Environnement Tom
+          </h2>
+          <div class="expandable-content">
+            <div class="cards-grid">
+              <div class="info-card">
+                <h4 class="card-title">🖥️ Matériel</h4>
+                <div class="card-content">
+                  <ul class="content-list">
+                    <li class="list-item">MacBook Pro : macOS Sequoia 15.4.1</li>
+                    <li class="list-item">Windows 11 (Bootcamp)</li>
+                    <li class="list-item">PC Windows 11</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="info-card">
+                <h4 class="card-title">📄 Logiciels</h4>
+                <div class="card-content">
+                  <ul class="content-list">
+                    <li class="list-item">XAMPP : <code>C:\xampp\</code></li>
+                    <li class="list-item">Node.js : 22.12.0</li>
+                    <li class="list-item">Angular CLI : 18.0.3 → 20.0.3</li>
+                    <li class="list-item">Git + Claude Pro</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">📊</span>Configuration VS Code Workspace
+          </h2>
+          <div class="expandable-content">
+            <h3 class="section-subtitle">Fonctionnalités configurées</h3>
+            <ul class="content-list">
+              <li class="list-item"><strong>Extensions automatiques :</strong> Angular Language Service, PHP Intelephense,
+                Prettier</li>
+              <li class="list-item"><strong>Debugging :</strong> Angular + PHP simultané</li>
+              <li class="list-item"><strong>Tâches :</strong> npm install, ng serve, build prod, XAMPP</li>
+              <li class="list-item"><strong>Format automatique :</strong> à la sauvegarde</li>
+            </ul>
+
+            <h3 class="section-subtitle">Commande de création workspace</h3>
+            <div class="code-block">
+              # Créer nouveau projet Angular 20
+              npm install -g @angular/cli@20
+              ng new atk_front --routing --style=css --ssr=false
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">📊</span>Git & Versioning
+          </h2>
+          <div class="expandable-content">
+            <p class="section-text"><strong>Repository GitHub :</strong>
+              <code>https://github.com/ThomBarth/atk_matrix.git</code>
+            </p>
+
+            <h3 class="section-subtitle">Configuration .gitignore</h3>
+            <ul class="content-list">
+              <li class="list-item"><span class="status-success">✅ Angular :</span> node_modules, dist, .angular</li>
+              <li class="list-item"><span class="status-success">✅ PHP :</span> vendor, .env, logs</li>
+              <li class="list-item"><span class="status-success">✅ Système :</span> .DS_Store, Thumbs.db</li>
+              <li class="list-item"><span class="status-success">✅ Sécurité :</span> clés, secrets, fichiers sensibles
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">📄</span>Ressources Angular AI
+          </h2>
+          <div class="expandable-content">
+            <p class="section-text"><strong>Fichiers llms.txt récupérés et stockés sur Google Drive :</strong></p>
+            <div class="cards-grid">
+              <div class="info-card">
+                <h4 class="card-title">📄 llms.txt</h4>
+                <div class="card-content">
+                  <p>Fichier index avec liens vers ressources clés Angular</p>
+                  <span class="status-success">✅ Disponible sur Drive</span>
+                </div>
+              </div>
+              <div class="info-card">
+                <h4 class="card-title">📄 llms-full.txt</h4>
+                <div class="card-content">
+                  <p>Compilation complète documentation Angular</p>
+                  <span class="status-success">✅ Disponible sur Drive</span>
+                </div>
+              </div>
+            </div>
+            <p class="section-text"><strong>Usage :</strong> Optimisation des prompts Claude pour génération de code
+              Angular moderne et correct.</p>
+          </div>
+        </div>
+
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">📄</span>Workflow Établi
+          </h2>
+          <div class="expandable-content">
+            <h3 class="section-subtitle">Approche hybride optimale</h3>
+            <div class="cards-grid">
+              <div class="info-card">
+                <h4 class="card-title">1️⃣ VS Code</h4>
+                <div class="card-content">
+                  <p>Développement quotidien, coding, debugging</p>
+                </div>
+              </div>
+              <div class="info-card">
+                <h4 class="card-title">2️⃣ Claude Web</h4>
+                <div class="card-content">
+                  <p>Architecture, analyse complexe, génération composants</p>
+                </div>
+              </div>
+              <div class="info-card">
+                <h4 class="card-title">3️⃣ Copilot</h4>
+                <div class="card-content">
+                  <p>Autocomplétion rapide (complément)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="next-steps-section">
+          <h2 class="next-steps-title"><span class="emoji-icon">🎯</span>Prochaines Étapes Identifiées</h2>
+          <h3>1. Installation Angular 20</h3>
+          <div class="code-block">
+            npm install -g @angular/cli@20
+            ng new atk_front --routing --style=css --ssr=false
+          </div>
+
+          <h3>2. Configuration workspace</h3>
+          <ul class="content-list">
+            <li class="list-item">Ouvrir <code>atk_matrix.code-workspace</code> dans VS Code</li>
+            <li class="list-item">Vérifier extensions automatiques</li>
+            <li class="list-item">Tester debugging Angular + PHP</li>
+          </ul>
+
+          <h3>3. Développement première entité</h3>
+          <ul class="content-list">
+            <li class="list-item">Implémenter module IDENTITÉS</li>
+            <li class="list-item">Tester communication frontend/backend</li>
+            <li class="list-item">Valider architecture 4 entités atomiques</li>
+          </ul>
+        </div>
+
+        <div class="objective-section">
+          <h2 class="objective-title">🎯 Objectif Stratégique</h2>
+          <p><strong>Transformer 40 ans d'anticipation technologique en revenus concrets</strong></p>
+          <p>En capitalisant sur l'architecture éprouvée Datalab, les technologies modernes et l'expertise
+            métier (juridique + trading)</p>
+          <div style="margin-top: 20px;">
+            <strong>✅ Architecture éprouvée • ✅ Technologies modernes • ✅ Vision modulaire • ✅ Expertise
+              métier</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="document-footer">
+        <div class="footer-title">🚀 ATK Matrix - Configuration Complète - Prêt pour Développement 🚀</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let allExpanded = false;
+
+    // Fonction pour basculer une section individuelle
+    function toggleSection(headerElement) {
+      const section = headerElement.parentElement;
+      const content = section.querySelector('.expandable-content');
+      const arrow = headerElement.querySelector('.expand-arrow');
+
+      if (content.classList.contains('collapsed')) {
+        // Développer
+        content.classList.remove('collapsed');
+        section.classList.remove('collapsed');
+        arrow.classList.add('expanded');
+        arrow.textContent = '▶';
+      } else {
+        // Réduire
+        content.classList.add('collapsed');
+        section.classList.add('collapsed');
+        arrow.classList.remove('expanded');
+        arrow.textContent = '▶';
+      }
+    }
+
+    // Fonction pour basculer toutes les sections
+    function toggleAll() {
+      const sections = document.querySelectorAll('.content-section.collapsible');
+      const toggleButton = document.querySelector('.global-toggle');
+
+      sections.forEach(section => {
+        const header = section.querySelector('.expandable-header');
+        const content = section.querySelector('.expandable-content');
+        const arrow = header.querySelector('.expand-arrow');
+
+        if (allExpanded) {
+          // Tout réduire
+          content.classList.add('collapsed');
+          section.classList.add('collapsed');
+          arrow.classList.remove('expanded');
+          arrow.textContent = '▶';
+        } else {
+          // Tout développer
+          content.classList.remove('collapsed');
+          section.classList.remove('collapsed');
+          arrow.classList.add('expanded');
+          arrow.textContent = '▶';
+        }
+      });
+
+      allExpanded = !allExpanded;
+      toggleButton.textContent = allExpanded ? '📋 Tout réduire' : '📋 Tout développer';
+    }
+
+    // Initialisation au chargement de la page
+    document.addEventListener('DOMContentLoaded', function () {
+      // Réduire toutes les sections au chargement
+      const sections = document.querySelectorAll('.content-section.collapsible');
+      sections.forEach(section => {
+        const content = section.querySelector('.expandable-content');
+        const arrow = section.querySelector('.expand-arrow');
+
+        content.classList.add('collapsed');
+        section.classList.add('collapsed');
+        arrow.textContent = '▶';
+      });
+
+      // Ajouter des boutons de copie aux blocs de code
+      const codeBlocks = document.querySelectorAll('.code-block');
+
+      codeBlocks.forEach((block, index) => {
+        const container = block.parentElement || block;
+        if (!container.querySelector('.copy-button')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-button';
+          copyBtn.textContent = 'copy';
+          copyBtn.style.position = 'absolute';
+          copyBtn.style.top = '10px';
+          copyBtn.style.right = '10px';
+          copyBtn.style.zIndex = '10';
+          
+          // Positionner le conteneur du code en relatif
+          if (block.parentElement && !block.parentElement.classList.contains('code-container')) {
+            block.style.position = 'relative';
+          }
+          
+          copyBtn.onclick = function () {
+            const code = block.textContent.trim();
+            navigator.clipboard.writeText(code).then(() => {
+              copyBtn.textContent = 'copied';
+              copyBtn.classList.add('copied');
+              setTimeout(() => {
+                copyBtn.textContent = 'copy';
+                copyBtn.classList.remove('copied');
+              }, 2000);
+            });
+          };
+          
+          if (block.parentElement && block.parentElement.classList.contains('code-container')) {
+            container.appendChild(copyBtn);
+          } else {
+            block.style.position = 'relative';
+            block.appendChild(copyBtn);
+          }
+        }
+      });
+    });
+
+    // Raccourci clavier pour tout développer/réduire (Ctrl + E)
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey && e.key === 'e') {
+        e.preventDefault();
+        toggleAll();
+      }
+    });
+  </script>
+
+</body>
+
+</html>

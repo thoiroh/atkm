@@ -9,7 +9,7 @@ import { RouterOutlet } from '@angular/router';
   template: `
     <div class="app-container">
       <header class="app-header">
-        <h1>🚀 Atomeek DataMatrix</h1>
+        <h1>🚀 Atomeek </h1>
         <p>Application Angular 200 + PHP 8.3 + Docker</p>
       </header>
 
