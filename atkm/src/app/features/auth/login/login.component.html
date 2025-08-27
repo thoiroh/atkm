@@ -1,0 +1,71 @@
+@if (appPageDatas$ | async; as appPageDatas) {
+<div id="media-wrap" class="media-wrap">
+  <video #mediaVideo muted="" autoplay="" loop="" [attr.width]="params.width" [attr.height]="params.height" class="">
+    <source [attr.src]="mediaSource" type="video/mp4"> Your browser does not support the video tag.
+  </video>
+</div>
+<div #signin_wrap id="signin_wrap" class="signin-wrap" eventsClickDirective>
+  <!-- @let terminalComp = terminalComponent.terminalComponents; -->
+  <!-- @let terminalLdcs = terminalComponent.pageComponents; -->
+  <div #signin_A01 class="signin-A01">
+    <!-- @if (terminalComponent$ | async; as terminalComponent) { -->
+    <!-- <h1>{{terminalComponent.terminalComponents.T01.title}}</h1> -->
+    <!-- <div class="signin-label-center"><h2>{{terminalComponent.title}}</h2></div> -->
+    <!-- <div class="signin-label-center"><span>&nbsp;&#9733;&nbsp;terminal_A02&nbsp;&#9733;&nbsp;</span></div> -->
+    <!-- } -->
+    <div #signin_prev_button id="signin_prev_button" class="signin-button button hidden">
+      <div id="signin_prev_button-icon" class="signin-button-icon">&nbsp;&#171;&nbsp;</div>
+      <div class="signin-button-label"><span>T01</span></div>
+    </div>
+  </div>
+  <div #signin_A02 class="signin-A02">
+    <div>
+      @if (appPageDatas.iconPath!='') {
+      <app-svgicon class="signin-icon" svgpath="{{appPageDatas.iconPath}}" />
+      &nbsp;
+      }
+      <div class="signin-title">{{appPageDatas.title}}</div>
+    </div>
+    <!-- <h1>{{terminalComponent.terminalComponents.T01.title}}</h1> -->
+    <!-- <div class="signin-label-center"><h2>{{terminalComponent.title}}</h2></div> -->
+    <!-- <div class="signin-label-center"><span>&nbsp;&#9733;&nbsp;terminal_A02&nbsp;&#9733;&nbsp;</span></div> -->
+  </div>
+  <div #signin_A03 class="signin-A03">
+    <!-- <span>{{terminalComponent.id}}</span> -->
+    <div #signin_next_button id="signin_next_button" class="signin-button button hidden">
+      <div id="signin_next_button-icon" class="signin-button-icon">&nbsp;&#187;&nbsp;</div>
+      <!-- <div class="signin-button-label"><span>T03</span></div> -->
+    </div>
+  </div>
+  <div #signin_B01 class="signin-B01">
+    @if (controls$ | async; as controls) {
+    <form (ngSubmit)="onSubmit()" [formGroup]="form" class="dfm-form">
+      @for (control of controls; track control) {
+      @switch (control.type) {
+      @case ('checkbox') {
+      <app-dynamicform #dyFields class="{{control.params.rowClass}}" [control]="control" [form]="form"
+        (change)="onChangeControl($event)" />
+      }
+      @default {
+      <app-dynamicform #dyFields class="{{control.params.rowClass}}" [control]="control" [form]="form"
+        (change)="onChangeControl($event)" />
+      }}}
+      <div class="dfm-separator"></div>
+      <div class="dfm-row-button">
+        <button type="submit" id="dfm_button_01" class="dfm-button">submit</button>
+        <div class="dfm-button-text">submit query & sign-in</div>
+      </div>
+      <!-- <div class="dfm-row-button">
+        <button (click)="onButtonClick($event)" id="dfm_button_02"
+          class="dfm-button">signup</button>
+        <span class="dfm-button-text">get a free account</span>
+      </div> -->
+      <div class="dfm-separator"></div>
+    </form>
+
+    }
+    <span class="signin-field-errors">{{fieldsErrors}}</span><!-- <h1>signin</h1> -->
+  </div>
+
+</div>
+}
