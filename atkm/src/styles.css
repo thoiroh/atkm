@@ -29,47 +29,62 @@ body {
   color: var(--color-fg-default);
   line-height: 1.5;
   scrollbar-color: var(--color-border-default) var(--color-canvas-default);
-  /* thumb / track */
   scrollbar-width: thin;
-  /* auto | thin | none */
 }
 
-/* ========================= STRUCTURE PRINCIPALE : 6 GRILLES ========================= */
+html,
+body {
+  height: 100%;
+}
+
+/* ========================= STRUCTURE PRINCIPALE : 6 GRILLES  ========================= */
+
 .main-container {
   height: 100vh;
-  display: grid;
+  display: grid !important;
+  /* FORCE LE GRID */
   grid-template-areas:
     "menu-main menu-center user-tools"
-    "sidebar-nav main-content config-panel";
-  /* Les zones gauche et droite ont une largeur max de 25% */
-  grid-template-columns: minmax(200px, 25%) 1fr minmax(200px, 25%);
-  grid-template-rows: 85px 1fr;
-  background-color: var(--color-canvas-default);
-  gap: 0;
+    "sidebar-nav main-content config-panel" !important;
+  grid-template-columns: minmax(200px, 25%) 1fr minmax(200px, 25%) !important;
+  grid-template-rows: minmax(85px, 85px) 1fr !important;
+  background-color: var(--color-canvas-emphasis);
+  /* AJOUT GAP POUR VISUALISER */
+  gap: 2px;
   position: relative;
+  /* DIAGNOSTIC */
+  /* border: 3px solid lime !important; */
 }
 
 /* ========================= GRILLE 1: MENU PRINCIPAL (haut gauche) ========================= */
+
 .menu-main {
-  grid-area: menu-main;
+  /* FORCE GRID-AREA */
+  grid-area: menu-main !important;
   background-color: var(--color-canvas-subtle);
-  /* Suppression des bordures verticales */
+  background-color: var(--color-canvas-subtle);
   border-bottom: 2px solid var(--color-border-default);
-  display: flex;
+  /* FORCE FLEX */
+  display: flex !important;
   align-items: center;
   padding: 0 16px;
   gap: 12px;
-  /* Permet le débordement sur la zone centrale */
   z-index: 10;
   position: relative;
+  /* DIAGNOSTIC */
+  /* border: 2px solid red !important; */
+  /* ASSURE HAUTEUR MINIMUM */
+  min-height: 85px;
 }
 
 .menu-main .logo {
-  background-color: var(--color-canvas-default);
+  background-color: var(--color-canvas-subtle);
   color: var(--color-fg-default);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 8px;
+  border-radius: 4px;
 }
 
 .menu-main .hamburger-btn {
@@ -89,22 +104,24 @@ body {
   border-color: #656d76;
 }
 
-/* ========================= Grille 2 : ZONE CENTRALE TRANSPARENTE (haut centre) ========================= */
+/* ========================= GRILLE 2: ZONE CENTRALE (haut centre) ========================= */
+
 .menu-center {
-  grid-area: menu-center;
-  /* Zone transparente - pas de background */
+  grid-area: menu-center !important;
+  /* FORCE GRID-AREA */
   background-color: var(--color-canvas-subtle);
   border-bottom: 2px solid var(--color-border-default);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   padding: 10px 20px;
   text-align: center;
-  /* La zone peut être écrasée par les zones latérales */
   position: relative;
   z-index: 5;
-  /* Transition pour la disparition en douceur */
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  /* DIAGNOSTIC */
+  /* border: 2px solid blue !important; */
+  /* ASSURE HAUTEUR MINIMUM */
+  min-height: 85px;
 }
 
 .menu-center-content {
@@ -112,8 +129,6 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* gap: 4px; */
-  /* Le contenu peut disparaître quand les zones se chevauchent */
   white-space: nowrap;
   overflow: hidden;
 }
@@ -132,8 +147,6 @@ body {
   line-height: 2;
 }
 
-/* Badge ou indicateur de statut */
-.btn-action,
 .menu-center-badge {
   color: white;
   font-size: 8px;
@@ -141,36 +154,32 @@ body {
   padding: 2px 8px 3px 8px;
   margin-left: 10px;
   border-radius: 5px;
-  /* text-transform: uppercase; */
-  letter-spacing: 0.5px;
-}
-
-.menu-center-badge {
   background: linear-gradient(135deg, var(--color-accent-emphasis), #58a6ff);
 }
 
-.btn-action {
-  background: var(--color-success-emphasis);
-}
-
 /* ========================= GRILLE 3: OUTILS UTILISATEUR (haut droite) ========================= */
+
 .user-tools {
-  grid-area: user-tools;
+  /* FORCE GRID-AREA */
+  grid-area: user-tools !important;
   background-color: var(--color-canvas-subtle);
-  /* Suppression des bordures verticales */
   border-bottom: 2px solid var(--color-border-default);
   display: flex;
   align-items: center;
   padding: 0 16px;
   justify-content: flex-end;
-  /* Permet le débordement sur la zone centrale */
-  z-index: 10;
   position: relative;
+  z-index: 10;
+  /* DIAGNOSTIC */
+  /* border: 2px solid green !important; */
+  /* ASSURE HAUTEUR MINIMUM */
+  min-height: 85px;
 }
 
 .search-container {
   flex: 1;
-  max-width: 400px;
+  max-width: 500px;
+  min-width: 200px;
   margin: 0 20px;
 }
 
@@ -231,29 +240,7 @@ body {
   border-color: #656d76;
 }
 
-.user-avatar {
-  border-radius: 50%;
-  padding: 4px;
-}
-
-.avatar {
-  border-radius: 50%;
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: middle;
-}
-
-/* ========================= GRILLE 4: NAVIGATION SIDEBAR (gauche) ========================= */
-.sidebar-nav {
-  grid-area: sidebar-nav;
-  background-color: var(--color-canvas-default);
-  padding: 16px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* Permet l'extension sur la zone centrale si nécessaire */
-  position: relative;
-  z-index: 8;
-}
+/* ========================= GRILLE 4: SIDEBAR NAVIGATION ========================= */
 
 .user-context {
   display: flex;
@@ -280,267 +267,282 @@ body {
 }
 
 .sidebar-section h3 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 12px;
   color: var(--color-fg-default);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .repo-list {
   list-style: none;
 }
 
-.repo-list li {
-  margin: 4px 0;
+.repo-list li,
+.repo-item {
+  margin-bottom: 4px;
 }
 
-.repo-list a {
+.repo-list a,
+.repo-link {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: var(--color-fg-muted);
+  padding: 4px 8px;
+  color: var(--color-fg-default);
   text-decoration: none;
-  padding: 6px 8px;
   border-radius: 6px;
   font-size: 14px;
+  transition: background-color 0.1s ease;
 }
 
-.repo-list a:hover {
+.repo-list a:hover,
+.repo-link:hover {
   background-color: var(--color-canvas-subtle);
-  color: var(--color-fg-default);
 }
 
 .repo-icon {
   width: 16px;
   height: 16px;
-  fill: currentColor;
+  margin-right: 5px;
+  fill: var(--color-fg-muted);
 }
 
-.recent-activity {
-  color: var(--color-fg-muted);
-  font-size: 14px;
-  text-align: center;
-  padding: 20px;
-}
-
-.btn-action {
-  background: var(--color-success-emphasis);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 10px;
-  cursor: pointer;
-}
-
-
-/* ========================= GRILLE 5: CONTENU PRINCIPAL (centre) ========================= */
-.main-content {
-  grid-area: main-content;
-  padding: 24px 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-color: var(--color-canvas-default);
-  border-right: 2px solid var(--color-border-default);
-  border-left: 2px solid var(--color-border-default);
-  border-radius: 12px 0px 0px 12px;
-
-  position: relative;
-  z-index: 1;
-}
+/* ========================= GRILLE 5: CONTENU PRINCIPAL ========================= */
 
 .content-wrapper {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
-.main-header h1 {
-  font-size: 24px;
-  font-weight: 400;
-  margin-bottom: 20px;
-  color: var(--color-fg-default);
-}
-
-/* Section Copilot */
-.copilot-section {
-  background: var(--color-canvas-subtle);
-  border: 1px solid var(--color-border-default);
-  border-radius: 8px;
-  padding: 20px;
+.content-header {
   margin-bottom: 24px;
 }
 
-.copilot-section h2 {
-  font-size: 16px;
+.content-title {
+  font-size: 24px;
   font-weight: 600;
-  margin-bottom: 16px;
   color: var(--color-fg-default);
+  margin: 0 0 8px 0;
+}
+
+.content-subtitle {
+  color: var(--color-fg-muted);
+  font-size: 16px;
+  margin: 0;
+}
+
+/* ========================= COPILOT SECTION ========================= */
+
+.copilot-section {
+  background-color: var(--color-canvas-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.copilot-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  margin: 0 0 16px 0;
+}
+
+.copilot-input-container {
+  position: relative;
+  margin-bottom: 16px;
 }
 
 .copilot-input {
   width: 100%;
   background: var(--color-canvas-default);
   border: 1px solid var(--color-border-default);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 12px 16px;
   color: var(--color-fg-default);
-  resize: vertical;
-  min-height: 48px;
   font-size: 14px;
+  resize: vertical;
+  min-height: 50px;
 }
 
 .copilot-input::placeholder {
   color: var(--color-fg-muted);
 }
 
-.copilot-suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 16px;
+.copilot-input:focus {
+  outline: none;
+  border-color: var(--color-accent-emphasis);
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
 }
 
-.suggestion-btn {
-  background: var(--color-canvas-default);
-  border: 1px solid var(--color-border-default);
-  border-radius: 20px;
-  padding: 8px 16px;
-  color: var(--color-fg-default);
-  font-size: 13px;
-  cursor: pointer;
+.copilot-actions {
   display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.copilot-btn {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s;
+  padding: 8px 16px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  background: var(--color-btn-bg);
+  color: var(--color-fg-default);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.1s ease;
+  cursor: pointer;
 }
 
-.suggestion-btn:hover {
+.copilot-btn:hover {
   background: var(--color-btn-hover-bg);
   border-color: var(--color-btn-hover-border);
+  text-decoration: none;
 }
 
-/* Section Feed */
+.copilot-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* ========================= FEED SECTION ========================= */
+
 .feed-section {
-  margin-bottom: 24px;
+  background-color: var(--color-canvas-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 24px;
 }
 
 .feed-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border-muted);
 }
 
-.feed-header h2 {
-  font-size: 16px;
+.feed-title {
+  font-size: 18px;
   font-weight: 600;
   color: var(--color-fg-default);
+  margin: 0;
 }
 
-.filter-btn {
+.feed-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.feed-action-btn {
   background: transparent;
   border: 1px solid var(--color-border-default);
-  border-radius: 6px;
-  padding: 8px 16px;
-  color: var(--color-fg-default);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.filter-btn:hover {
-  background: var(--color-canvas-subtle);
-}
-
-/* Feed items */
-.feed-item {
-  background: var(--color-canvas-subtle);
-  border: 1px solid var(--color-border-default);
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 16px;
-}
-
-.feed-item-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
   color: var(--color-fg-muted);
-  font-size: 14px;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
 }
 
-.feed-item-content .repo-name {
+.feed-action-btn:hover {
+  background: var(--color-canvas-default);
+  color: var(--color-fg-default);
+}
+
+/* ========================= FEED ITEMS ========================= */
+
+.feed-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feed-item {
+  display: flex;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-border-muted);
+}
+
+.feed-item:last-child {
+  border-bottom: none;
+}
+
+.feed-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.feed-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.feed-action {
+  color: var(--color-fg-default);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.feed-repo-link {
   color: var(--color-accent-fg);
   text-decoration: none;
   font-weight: 600;
-  font-size: 16px;
 }
 
-.feed-item-content .repo-name:hover {
+.feed-repo-link:hover {
   text-decoration: underline;
 }
 
-.repo-description {
+.feed-description {
   color: var(--color-fg-muted);
-  font-size: 14px;
-  margin: 12px 0;
+  font-size: 13px;
   line-height: 1.4;
+  margin-bottom: 8px;
 }
 
-.repo-stats {
+.feed-meta {
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
+  align-items: center;
   gap: 16px;
-  margin-top: 12px;
   font-size: 12px;
   color: var(--color-fg-muted);
 }
 
-.stat-item {
+.feed-language {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.language-dot {
-  width: 12px;
-  height: 12px;
+.feed-language-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
 }
 
-.language-dot.rust {
-  background-color: #dea584;
+.feed-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.language-dot.shell {
-  background-color: #89e051;
+.feed-time {
+  margin-left: auto;
 }
 
-.language-dot.vue {
-  background-color: #41b883;
-}
-
-/* ========================= GRILLE 6: PANNEAU CONFIGURATION (droite) ========================= */
-.config-panel {
-  grid-area: config-panel;
-  background-color: var(--color-canvas-default);
-  /* Suppression de la bordure gauche */
-  padding: 24px 16px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* Permet l'extension sur la zone centrale si nécessaire */
-  position: relative;
-  z-index: 8;
-}
+/* ========================= GRILLE 6: SIDEBAR CONFIG ========================= */
 
 .config-section {
   margin-bottom: 32px;
@@ -597,6 +599,60 @@ body {
   color: var(--color-fg-muted);
   font-size: 12px;
   line-height: 1.4;
+}
+
+.show-more-link {
+  color: var(--color-accent-fg);
+  font-size: 14px;
+  margin-top: 8px;
+  display: block;
+  text-decoration: none;
+}
+
+.show-more-link:hover {
+  text-decoration: underline;
+}
+
+/* ========================= GRILLES 4, 5, 6: ZONES BASSES ========================= */
+
+.sidebar-nav {
+  grid-area: sidebar-nav !important;
+  background-color: var(--color-canvas-default);
+  padding: 16px;
+  overflow-y: auto;
+  /* DIAGNOSTIC */
+  /* border: 2px solid orange !important; */
+}
+
+.main-content {
+  grid-area: main-content !important;
+  background-color: var(--color-canvas-default);
+  padding: 24px 16px;
+  overflow-y: auto;
+  /* DIAGNOSTIC */
+  /* border: 2px solid purple !important; */
+}
+
+.config-panel {
+  grid-area: config-panel !important;
+  background-color: var(--color-canvas-default);
+  padding: 24px 16px;
+  overflow-y: auto;
+  /* DIAGNOSTIC */
+  /* border: 2px solid yellow !important; */
+}
+
+/* BREADCRUMB - Styles spécifiques */
+.breadcrumb-item {
+  color: var(--color-fg-default);
+  margin-left: 8px;
+  font-weight: 600;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+  content: '/';
+  margin: 0 8px;
+  color: var(--color-fg-muted);
 }
 
 /* ========================= RESPONSIVE ========================= */

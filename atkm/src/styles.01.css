@@ -34,6 +34,12 @@ body {
   /* auto | thin | none */
 }
 
+html,
+body {
+  height: 100%;
+}
+
+
 /* ========================= STRUCTURE PRINCIPALE : 6 GRILLES ========================= */
 .main-container {
   height: 100vh;
@@ -43,7 +49,7 @@ body {
     "sidebar-nav main-content config-panel";
   /* Les zones gauche et droite ont une largeur max de 25% */
   grid-template-columns: minmax(200px, 25%) 1fr minmax(200px, 25%);
-  grid-template-rows: 85px 1fr;
+  grid-template-rows: minmax(85px, 85px) 1fr;
   background-color: var(--color-canvas-default);
   gap: 0;
   position: relative;
@@ -170,7 +176,8 @@ body {
 
 .search-container {
   flex: 1;
-  max-width: 400px;
+  max-width: 600px;
+  min-width: 300px;
   margin: 0 20px;
 }
 

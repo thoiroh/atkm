@@ -1,0 +1,280 @@
+/* Variables CSS extraites du HTML GitHub */
+:root {
+  --fontStack-monospace: "Monaspace Neon", ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  --color-canvas-default: #0d1117;
+  --color-canvas-subtle: #161b22;
+  --color-border-default: #30363d;
+  --color-border-muted: #21262d;
+  --color-fg-default: #e6edf3;
+  --color-fg-muted: #7d8590;
+  --color-fg-subtle: #656d76;
+  --color-accent-emphasis: #1f6feb;
+  --color-accent-fg: #58a6ff;
+  --color-btn-bg: #21262d;
+  --color-btn-border: #30363d;
+  --color-btn-hover-bg: #30363d;
+  --color-btn-hover-border: #8b949e;
+  --color-success-emphasis: #238636;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+  background-color: var(--color-canvas-default);
+  color: var(--color-fg-default);
+  line-height: 1.5;
+  scrollbar-color: var(--color-border-default) var(--color-canvas-default);
+  scrollbar-width: thin;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/* ========================= STRUCTURE PRINCIPALE : 6 GRILLES - DIAGNOSTIC ========================= */
+.main-container {
+  height: 100vh;
+  display: grid !important;
+  /* FORCE LE GRID */
+  grid-template-areas:
+    "menu-main menu-center user-tools"
+    "sidebar-nav main-content config-panel" !important;
+  grid-template-columns: minmax(200px, 25%) 1fr minmax(200px, 25%) !important;
+  grid-template-rows: minmax(85px, 85px) 1fr !important;
+  background-color: var(--color-canvas-default);
+  gap: 2px;
+  /* AJOUT GAP POUR VISUALISER */
+  position: relative;
+
+  /* BORDURE DIAGNOSTIC - À SUPPRIMER APRÈS */
+  border: 3px solid lime !important;
+}
+
+/* ========================= GRILLE 1: MENU PRINCIPAL (haut gauche) - DIAGNOSTIC ========================= */
+.menu-main {
+  grid-area: menu-main !important;
+  /* FORCE GRID-AREA */
+  background-color: var(--color-canvas-subtle);
+  border-bottom: 2px solid var(--color-border-default);
+  display: flex !important;
+  /* FORCE FLEX */
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  z-index: 10;
+  position: relative;
+
+  /* BORDURE DIAGNOSTIC - À SUPPRIMER APRÈS */
+  border: 2px solid red !important;
+  min-height: 85px;
+  /* ASSURE HAUTEUR MINIMUM */
+}
+
+.menu-main .logo {
+  background-color: var(--color-canvas-default);
+  color: var(--color-fg-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.menu-main .hamburger-btn {
+  background: #30363d;
+  border: 1px solid #484f58;
+  color: #f0f6fc;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-main .hamburger-btn:hover {
+  background-color: #424a53;
+  border-color: #656d76;
+}
+
+/* ========================= GRILLE 2: ZONE CENTRALE (haut centre) - DIAGNOSTIC ========================= */
+.menu-center {
+  grid-area: menu-center !important;
+  /* FORCE GRID-AREA */
+  background-color: var(--color-canvas-subtle);
+  border-bottom: 2px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  text-align: center;
+  position: relative;
+  z-index: 5;
+
+  /* BORDURE DIAGNOSTIC - À SUPPRIMER APRÈS */
+  border: 2px solid blue !important;
+  min-height: 85px;
+  /* ASSURE HAUTEUR MINIMUM */
+}
+
+.menu-center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.menu-center-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  margin: 0;
+}
+
+.menu-center-subtitle {
+  font-size: 12px;
+  color: var(--color-fg-muted);
+  margin: 0;
+  line-height: 2;
+}
+
+.menu-center-badge {
+  color: white;
+  font-size: 8px;
+  font-weight: 600;
+  padding: 2px 8px 3px 8px;
+  margin-left: 10px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, var(--color-accent-emphasis), #58a6ff);
+}
+
+/* ========================= GRILLE 3: OUTILS UTILISATEUR (haut droite) - DIAGNOSTIC ========================= */
+.user-tools {
+  grid-area: user-tools !important;
+  /* FORCE GRID-AREA */
+  background-color: var(--color-canvas-subtle);
+  border-bottom: 2px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 10;
+
+  /* BORDURE DIAGNOSTIC - À SUPPRIMER APRÈS */
+  border: 2px solid green !important;
+  min-height: 85px;
+  /* ASSURE HAUTEUR MINIMUM */
+}
+
+.search-container {
+  flex: 1;
+  max-width: 400px;
+  margin: 0 20px;
+}
+
+.search-container .search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-container .search-icon {
+  position: absolute;
+  left: 12px;
+  z-index: 1;
+  color: var(--color-fg-muted);
+  pointer-events: none;
+}
+
+.search-container .search-input {
+  width: 100%;
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  padding: 8px 12px 8px 36px;
+  color: var(--color-fg-default);
+  font-size: 14px;
+}
+
+.search-container .search-input::placeholder {
+  color: var(--color-fg-muted);
+}
+
+.search-container .search-input:focus {
+  outline: none;
+  border-color: var(--color-accent-emphasis);
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.action-btn {
+  background: #30363d;
+  border: 1px solid #484f58;
+  color: #f0f6fc;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  background-color: #424a53;
+  border-color: #656d76;
+}
+
+/* ========================= GRILLES 4, 5, 6: ZONES BASSES - DIAGNOSTIC ========================= */
+.sidebar-nav {
+  grid-area: sidebar-nav !important;
+  background-color: var(--color-canvas-default);
+  padding: 16px;
+  overflow-y: auto;
+  border: 2px solid orange !important;
+  /* DIAGNOSTIC */
+}
+
+.main-content {
+  grid-area: main-content !important;
+  background-color: var(--color-canvas-default);
+  padding: 24px 16px;
+  overflow-y: auto;
+  border: 2px solid purple !important;
+  /* DIAGNOSTIC */
+}
+
+.config-panel {
+  grid-area: config-panel !important;
+  background-color: var(--color-canvas-default);
+  padding: 24px 16px;
+  overflow-y: auto;
+  border: 2px solid yellow !important;
+  /* DIAGNOSTIC */
+}
+
+/* BREADCRUMB - Styles spécifiques */
+.breadcrumb-item {
+  color: var(--color-fg-default);
+  margin-left: 8px;
+  font-weight: 600;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+  content: '/';
+  margin: 0 8px;
+  color: var(--color-fg-muted);
+}
