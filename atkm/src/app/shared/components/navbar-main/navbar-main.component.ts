@@ -15,7 +15,6 @@ import { INavbarConfig } from '../../../core/services/config.service';
       </button>
 
       <a class="logo" [href]="config?.logo?.link || '#'" aria-label="Homepage">
-        <!-- Logo ATK intégré en SVG -->
         <svg aria-hidden="true" height="32" viewBox="0 0 32 32" version="1.1" width="32">
           <defs>
             <style>
@@ -27,14 +26,12 @@ import { INavbarConfig } from '../../../core/services/config.service';
       </a>
 
       <nav role="navigation" aria-label="ATK Breadcrumb">
-        <span *ngFor="let item of config?.breadcrumb || []; let last = last"
-              class="breadcrumb-item">
+        <span *ngFor="let item of config?.breadcrumb || []; let last = last">
           {{item}}
         </span>
       </nav>
     </header>
-  `,
-  styles: [``]
+  `
 })
 export class NavbarMainComponent {
   @Input() config: INavbarConfig | null = null;

@@ -39,8 +39,21 @@ body {
   height: 100%;
 }
 
+/* =========================
+   FIX POUR LES COMPOSANTS ANGULAR DANS LA GRILLE
+   ========================= */
+
+atk-navbar-main,
+atk-navbar-brand,
+atk-navbar-tools,
+atk-sidebar-nav,
+atk-sidebar-config,
+atk-content-main {
+  display: contents;
+}
 
 /* ========================= STRUCTURE PRINCIPALE : 6 GRILLES ========================= */
+
 .main-container {
   height: 100vh;
   display: grid;
@@ -56,6 +69,7 @@ body {
 }
 
 /* ========================= GRILLE 1: MENU PRINCIPAL (haut gauche) ========================= */
+
 .menu-main {
   grid-area: menu-main;
   background-color: var(--color-canvas-subtle);
@@ -110,7 +124,8 @@ body {
   position: relative;
   z-index: 5;
   /* Transition pour la disparition en douceur */
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  /* transition: opacity 0.3s ease, visibility 0.3s ease; */
 }
 
 .menu-center-content {
@@ -322,7 +337,7 @@ body {
 .repo-icon {
   width: 16px;
   height: 16px;
-  fill: currentColor;
+  fill: var(--color-fg-default);
 }
 
 .recent-activity {
@@ -485,6 +500,14 @@ body {
   font-size: 14px;
 }
 
+.feed-item-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-fg-muted);
+  font-size: 14px;
+}
+
 .feed-item-content .repo-name {
   color: var(--color-accent-fg);
   text-decoration: none;
@@ -494,6 +517,12 @@ body {
 
 .feed-item-content .repo-name:hover {
   text-decoration: underline;
+}
+
+.repo-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .repo-description {
@@ -635,12 +664,9 @@ body {
     display: none;
   }
 
-  /* La zone centrale disparaît progressivement */
-  .menu-center {
-    opacity: 0.5;
-  }
-
+  /* La zone centrale disparaît progressivement - seul le contenu */
   .menu-center-content {
+    opacity: 0.5;
     font-size: 0.8em;
   }
 }
@@ -739,11 +765,20 @@ body {
 
 /* Quand l'espace devient trop petit */
 @media (max-width: 900px) {
-  .menu-center {
+  .menu-center-content {
     opacity: 0;
     pointer-events: none;
     transform: scale(0.8);
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
+
+  /* La zone menu-center garde son background et sa bordure */
+  .menu-center {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
 }
 
 /* ========================= UTILITAIRES ========================= */

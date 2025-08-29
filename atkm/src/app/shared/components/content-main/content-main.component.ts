@@ -50,49 +50,60 @@ import { Component, Input } from '@angular/core';
 
         <!-- Feeds Section -->
         @if (feeds && feeds.length > 0) {
-          <div class="feeds-section">
+          <div class="feed-section">
             @for (feed of feeds; track feed.id) {
               <div class="feed-container">
                 <div class="feed-header">
                   <h2>{{feed.title}}</h2>
-                  <button class="feed-filter" (click)="handleFilter(feed.id)">
+                  <button class="filter-btn" (click)="handleFilter(feed.id)">
                     <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
                       <path d="M7.75 8a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5ZM5 12.75a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Zm-1.5-4a.75.75 0 0 0 0-1.5h-.75a.75.75 0 0 0 0 1.5h.75ZM3 11.25a.75.75 0 0 1 .75-.75h.5a.75.75 0 0 1 0 1.5h-.5a.75.75 0 0 1-.75-.75Z"></path>
                     </svg>
+                    Filter
                   </button>
                 </div>
 
                 <div class="feed-items">
                   @for (item of feed.items; track item.id) {
                     <div class="feed-item">
+
+
+                    <div class="feed-item-header">
+                    <div class="feed-item-header-title">
                       <img [src]="item.avatar"
-                           alt="Avatar"
-                           class="feed-avatar"
-                           width="32"
-                           height="32" />
+                      alt="Avatar"
+                      class="avatar"
+                      width="18"
+                      height="18" />
+                      <span [innerHTML]="item.action"></span>
+                    </div>
+                    <span class="feed-time">{{item.time}}</span>
+                    </div>
 
-                      <div class="feed-content">
-                        <div class="feed-action">
-                          <span [innerHTML]="item.action"></span>
-                          <span class="feed-time">{{item.time}}</span>
-                        </div>
-
-                        <div class="feed-repo">
+                    <div class="feed-item-content">
+                        <div class="repo-title">
+                          <svg class="repo-icon" aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="var(--color-fg-muted)">
+                           <path
+                              d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8Z">
+                            </path>
+                          </svg>
                           <a [href]="item.repo.link" class="repo-name">
                             {{item.repo.name}}
                           </a>
+                          </div>
                           <p class="repo-description">{{item.repo.description}}</p>
 
                           <div class="repo-stats">
                             @if (item.stats.language) {
-                              <span class="repo-language">
-                                <span class="language-color"
+                              <span class="stat-item">
+                                <span class="language-dot"
+                                      [class]="item.stats.language.name.toLowerCase()"
                                       [style.background-color]="item.stats.language.color"></span>
                                 {{item.stats.language.name}}
                               </span>
                             }
                             @if (item.stats.stars) {
-                              <span class="repo-stars">
+                              <span class="stat-item">
                                 <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
                                   <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"></path>
                                 </svg>
@@ -100,7 +111,6 @@ import { Component, Input } from '@angular/core';
                               </span>
                             }
                           </div>
-                        </div>
                       </div>
                     </div>
                   }
@@ -111,80 +121,7 @@ import { Component, Input } from '@angular/core';
         }
       </div>
     </main>
-  `,
-  styles: [`
-
-
-
-
-
-    .feed-item {
-      display: flex;
-      gap: 12px;
-      padding: 16px;
-      background: var(--color-canvas-subtle);
-      border: 1px solid var(--color-border-default);
-      border-radius: 6px;
-      margin-bottom: 8px;
-    }
-
-    .feed-avatar {
-      border-radius: 50%;
-    }
-
-    .feed-content {
-      flex: 1;
-    }
-
-    .feed-action {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      color: var(--color-fg-muted);
-      font-size: 14px;
-    }
-
-    .repo-name {
-      color: var(--color-accent-fg);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .repo-name:hover {
-      text-decoration: underline;
-    }
-
-    .repo-description {
-      color: var(--color-fg-default);
-      margin: 8px 0;
-    }
-
-    .repo-stats {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      font-size: 12px;
-      color: var(--color-fg-muted);
-    }
-
-    .repo-language {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .language-color {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-
-    .repo-stars {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-  `]
+  `
 })
 export class ContentMainComponent {
   @Input() feeds: any[] = [];

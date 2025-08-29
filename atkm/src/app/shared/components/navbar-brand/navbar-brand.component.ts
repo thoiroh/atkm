@@ -18,8 +18,7 @@ import { INavbarConfig } from '../../../core/services/config.service';
         </p>
       </div>
     </div>
-  `,
-  styles: [``]
+  `
 })
 export class NavbarBrandComponent {
   @Input() config: INavbarConfig | null = null;

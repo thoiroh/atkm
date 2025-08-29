@@ -50,20 +50,17 @@ import { ISidebarNavConfig } from '../../../core/services/config.service';
 
       <a href="#" class="show-more-link">Show more</a>
     </aside>
-  `,
-  styles: [``]
+  `
 })
 export class SidebarNavComponent {
   @Input() config: ISidebarNavConfig | null = null;
 
   handleAction(action: string): void {
     console.log('Action:', action);
-    // Implémenter l'action
   }
 
   navigateToRepo(event: Event, link: string): void {
     event.preventDefault();
     console.log('Navigate to:', link);
-    // Implémenter la navigation
   }
 }
