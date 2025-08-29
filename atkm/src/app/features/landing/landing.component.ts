@@ -45,34 +45,7 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
       </div>
     }
   `,
-  styles: [`
-    // .main-container {
-    //   height: 100vh;
-    //   display: grid !important; /* FORCER LE GRID */
-    //   grid-template-areas:
-    //     "menu-main menu-center user-tools"
-    //     "sidebar-nav main-content config-panel" !important;
-    //   grid-template-columns: minmax(200px, 25%) 1fr minmax(200px, 25%) !important;
-    //   grid-template-rows: minmax(85px, 85px) 1fr !important;
-    //   background-color: var(--color-canvas-default);
-    //   gap: 0;
-    //   position: relative;
-    // }
-
-    .loading-container {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: var(--color-canvas-default);
-      color: var(--color-fg-default);
-    }
-
-    .loading-spinner {
-      font-size: 18px;
-      color: var(--color-accent-fg);
-    }
-  `]
+  styles: [``]
 })
 export class LandingComponent implements OnInit {
   config: ILandingConfig | null = null;

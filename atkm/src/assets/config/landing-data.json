@@ -96,6 +96,42 @@
             },
             "stars": 10000
           }
+        },
+        {
+          "id": "item-2",
+          "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+          "action": "Repository update",
+          "time": "2 days ago",
+          "repo": {
+            "name": "moeru-ai/airi",
+            "link": "/repo/airi",
+            "description": "Self hosted, you owned Grok Companion; a container of souls of waifu; cyber livings"
+          },
+          "stats": {
+            "language": {
+              "name": "Vue",
+              "color": "#41b883"
+            },
+            "stars": 10000
+          }
+        },
+        {
+          "id": "item-2",
+          "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+          "action": "Repository update",
+          "time": "2 days ago",
+          "repo": {
+            "name": "moeru-ai/airi",
+            "link": "/repo/airi",
+            "description": "ai reconstruit entièrement le fichier pour garantir que chaque section contient désormais une démo visible (en dehors des), avec un petit style local dans le Tu devrais voir, section par section : scrollbar, surlignage ::target-text, ruby, double carte light-dark() (light vs dark forcé), accordéons exclusifs, scroller interne pour content-visibility, comparaison font-size-adjust, bouton pour transition-behavior, barre de progression via @property, et le point animé avec offset-path. ai reconstruit entièrement le fichier pour garantir que chaque section contient désormais une démo visible (en dehors des), avec un petit style local dans le Tu devrais voir, section par section : scrollbar, surlignage ::target-text, ruby, double carte light-dark() (light vs dark forcé), accordéons exclusifs, scroller interne pour content-visibility, comparaison font-size-adjust, bouton pour transition-behavior, barre de progression via @property, et le point animé avec offset-path."
+          },
+          "stats": {
+            "language": {
+              "name": "Vue",
+              "color": "#41b883"
+            },
+            "stars": 10000
+          }
         }
       ]
     }

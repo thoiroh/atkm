@@ -113,68 +113,10 @@ import { Component, Input } from '@angular/core';
     </main>
   `,
   styles: [`
-    .main-content {
-      grid-area: main-content;
-      background-color: var(--color-canvas-default);
-      padding: 24px;
-      overflow-y: auto;
-    }
 
-    .copilot-section {
-      background: var(--color-canvas-subtle);
-      border: 1px solid var(--color-border-default);
-      border-radius: 6px;
-      padding: 16px;
-      margin-bottom: 24px;
-    }
 
-    .copilot-input {
-      width: 100%;
-      background: var(--color-canvas-default);
-      border: 1px solid var(--color-border-default);
-      border-radius: 6px;
-      color: var(--color-fg-default);
-      padding: 8px 12px;
-      resize: none;
-      font-family: inherit;
-      margin: 12px 0;
-    }
 
-    .copilot-suggestions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
 
-    .suggestion-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      background: var(--color-btn-bg);
-      border: 1px solid var(--color-btn-border);
-      border-radius: 6px;
-      color: var(--color-fg-default);
-      cursor: pointer;
-      font-size: 14px;
-      transition: background 0.2s;
-    }
-
-    .suggestion-btn:hover {
-      background: var(--color-btn-hover-bg);
-      border-color: var(--color-btn-hover-border);
-    }
-
-    .feed-container {
-      margin-bottom: 32px;
-    }
-
-    .feed-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
 
     .feed-item {
       display: flex;

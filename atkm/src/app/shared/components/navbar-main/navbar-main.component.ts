@@ -34,19 +34,7 @@ import { INavbarConfig } from '../../../core/services/config.service';
       </nav>
     </header>
   `,
-  styles: [`
-    .breadcrumb-item {
-      color: var(--color-fg-default);
-      margin-left: 8px;
-      font-weight: 600;
-    }
-
-    .breadcrumb-item:not(:last-child)::after {
-      content: '/';
-      margin: 0 8px;
-      color: var(--color-fg-muted);
-    }
-  `]
+  styles: [``]
 })
 export class NavbarMainComponent {
   @Input() config: INavbarConfig | null = null;

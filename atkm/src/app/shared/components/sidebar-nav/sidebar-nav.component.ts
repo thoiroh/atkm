@@ -51,19 +51,7 @@ import { ISidebarNavConfig } from '../../../core/services/config.service';
       <a href="#" class="show-more-link">Show more</a>
     </aside>
   `,
-  styles: [`
-    .show-more-link {
-      color: var(--color-accent-fg);
-      font-size: 14px;
-      margin-top: 8px;
-      display: block;
-      text-decoration: none;
-    }
-
-    .show-more-link:hover {
-      text-decoration: underline;
-    }
-  `]
+  styles: [``]
 })
 export class SidebarNavComponent {
   @Input() config: ISidebarNavConfig | null = null;

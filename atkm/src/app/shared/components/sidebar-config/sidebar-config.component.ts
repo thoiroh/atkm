@@ -50,9 +50,7 @@ import { IConfigPanelSection } from '../../../core/services/config.service';
       }
     </aside>
   `,
-  styles: [`
-    /* Styles spécifiques si nécessaire */
-  `]
+  styles: [``]
 })
 export class SidebarConfigComponent {
   @Input() sections: IConfigPanelSection[] = [];

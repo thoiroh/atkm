@@ -19,9 +19,7 @@ import { INavbarConfig } from '../../../core/services/config.service';
       </div>
     </div>
   `,
-  styles: [`
-    /* Styles spécifiques si nécessaire - sinon ils sont dans atk.styles.css */
-  `]
+  styles: [``]
 })
 export class NavbarBrandComponent {
   @Input() config: INavbarConfig | null = null;
