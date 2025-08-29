@@ -62,7 +62,7 @@ composer.phar
 # === IDE AND EDITORS ===
 # VS Code
 .vscode/
-*.code-workspace
+#*.code-workspace
 
 # IntelliJ/PHPStorm
 .idea/
