@@ -6,32 +6,7 @@ import { INavbarConfig } from '../../../core/services/config.service';
   selector: 'atk-navbar-main',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <header class="menu-main">
-      <button class="hamburger-btn" aria-label="Ouvrir le menu de navigation">
-        <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
-          <path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Zm0 5A.75.75 0 0 1 1.75 7h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 7.75ZM1.75 12h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z"></path>
-        </svg>
-      </button>
-
-      <a class="logo" [href]="config?.logo?.link || '#'" aria-label="Homepage">
-        <svg aria-hidden="true" height="32" viewBox="0 0 32 32" version="1.1" width="32">
-          <defs>
-            <style>
-              .st0 { fill: #fff; }
-            </style>
-          </defs>
-          <path fill="#fff" d="M20.32,22.66l-4.27-10.64-.06.1c-1.73,4.18-3.17,8.51-4.92,12.68-.24.61-.51,1-1.26.89-.63-.04-1.42.04-2.05-.04-.65-.08-1.04-.87-.75-1.44L14.58,4.09c.49-1.26,2.54-.95,2.95.22,2.34,6.34,5.04,12.57,7.25,18.95.28.79.59,1.38-.2,2.03-.65.53-1.22.28-1.97.39-2.05-.1-4.21.12-6.24,0-1.26-.08-1.44-1.1-1.36-2.15.02-.28.14-.55.37-.71.04-.04.3-.16.35-.16,0,0,4.61,0,4.61,0Z"/>
-        </svg>
-      </a>
-
-      <nav role="navigation" aria-label="ATK Breadcrumb">
-        <span *ngFor="let item of config?.breadcrumb || []; let last = last">
-          {{item}}
-        </span>
-      </nav>
-    </header>
-  `
+  templateUrl: './navbar-main.component.html',
 })
 export class NavbarMainComponent {
   @Input() config: INavbarConfig | null = null;
