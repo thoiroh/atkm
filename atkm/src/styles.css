@@ -60,12 +60,12 @@ atk-content-main {
   grid-template-areas:
     "menu-main menu-center user-tools"
     "sidebar-nav main-content config-panel";
-  /* Les zones gauche et droite ont une largeur max de 25% */
+  /* Grille par défaut avec config-panel */
   grid-template-columns: minmax(200px, 25%) 1fr minmax(200px, 25%);
   grid-template-rows: minmax(85px, 85px) 1fr;
   background-color: var(--color-canvas-default);
-  /* gap: 0; */
   position: relative;
+  transition: grid-template-columns 0.3s ease-in-out;
 }
 
 /* ========================= GRILLE 1: MENU PRINCIPAL (haut gauche) ========================= */
@@ -353,6 +353,22 @@ atk-content-main {
   color: var(--color-fg-default);
 }
 
+.repo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.repo-title {
+  width: 85%;
+}
+
+.repo-title:hover {
+  background-color: var(--color-canvas-subtle);
+  border-radius: 6px;
+  color: var(--color-fg-default);
+}
+
 .repo-icon {
   width: 16px;
   height: 16px;
@@ -388,9 +404,27 @@ atk-content-main {
   border-right: 2px solid var(--color-border-default);
   border-left: 2px solid var(--color-border-default);
   border-radius: 12px 0px 0px 12px;
-
   position: relative;
   z-index: 1;
+  transition: border-radius 0.3s ease-in-out, border 0.3s ease-in-out;
+}
+
+/* Quand config-panel est collapsed, main-content s'étend */
+.main-container.config-collapsed .main-content {
+  border-right: none;
+  border-radius: 12px 12px 12px 12px;
+  /* S'étend sur toute la zone disponible grâce au grid-template-areas */
+  z-index: 0;
+}
+
+.main-container.config-collapsed {
+  grid-template-areas:
+    "menu-main menu-center user-tools"
+    "sidebar-nav main-content main-content";
+  grid-template-columns: 25% 73% 0%;
+  grid-template-rows: minmax(85px, 85px) 1fr;
+  height: auto;
+  transition: grid-template-columns 0.3s ease-in-out;
 }
 
 .content-wrapper {
@@ -587,16 +621,60 @@ atk-content-main {
 }
 
 /* ========================= GRILLE 6: PANNEAU CONFIGURATION (droite) ========================= */
+
 .config-panel {
   grid-area: config-panel;
   background-color: var(--color-canvas-default);
-  /* Suppression de la bordure gauche */
   padding: 24px 16px;
   overflow-y: auto;
   overflow-x: hidden;
-  /* Permet l'extension sur la zone centrale si nécessaire */
   position: relative;
   z-index: 8;
+  transition: transform 0.3s ease-in-out;
+  overflow: visible;
+}
+
+.config-panel.collapsed {
+  transform: translateX(100%);
+}
+
+.config-panel.expanded {
+  transform: translateX(0);
+}
+
+/* Étiquette toggle - Position fixe à droite */
+.config-toggle {
+  position: absolute;
+  top: 0px;
+  left: -33px;
+  width: 32px;
+  height: 50px;
+  background: var(--color-canvas-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px 0 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  color: var(--color-fg-muted);
+  transition: right 0.3s ease-in-out;
+}
+
+/* Quand le panneau est ouvert, déplacer le toggle */
+.main-container .config-collapsed .config-toggle {
+  right: 16px;
+  z-index: 10;
+}
+
+.config-toggle:hover {
+  background: var(--color-btn-hover-bg);
+  color: var(--color-fg-default);
+}
+
+/* Contenu du panneau */
+.config-content {
+  height: 100%;
 }
 
 .config-section {

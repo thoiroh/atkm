@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class ContentMainComponent {
   @Input() feeds: any[] = [];
+  @Input() configPanelCollapsed: boolean = false;
 
   handleCopilotInput(event: any): void {
     console.log('Copilot input:', event.target.value);

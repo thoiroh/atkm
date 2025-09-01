@@ -16,6 +16,11 @@ export interface INavbarConfig {
   centerBadge?: string;
 }
 
+type RepoAction = false | {
+  label: string;
+  action: string;
+};
+
 export interface ISidebarNavConfig {
   userContext: {
     avatar: string;
@@ -23,15 +28,13 @@ export interface ISidebarNavConfig {
   };
   sections: Array<{
     title: string;
-    action?: {
-      label: string;
-      action: string;
-    };
+    action?: RepoAction;
     items: Array<{
       icon: string;
       label: string;
       link: string;
       type?: string;
+      action?: RepoAction;
     }>;
   }>;
 }
@@ -74,7 +77,10 @@ export interface ILandingConfig {
     title: string;
     items: IFeedItem[];
   }>;
-  configPanel: IConfigPanelSection[];
+  configPanel: {
+    isCollapsed: boolean;
+    sections: IConfigPanelSection[];
+  }
 }
 
 @Injectable({

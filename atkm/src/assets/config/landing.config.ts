@@ -13,6 +13,11 @@ export interface INavbarConfig {
   centerBadge?: string;
 }
 
+type RepoAction = false | {
+  label: string;
+  action: string;
+};
+
 export interface ISidebarNavConfig {
   userContext: {
     avatar: string;
@@ -20,15 +25,12 @@ export interface ISidebarNavConfig {
   };
   sections: Array<{
     title: string;
-    action?: {
-      label: string;
-      action: string;
-    };
     items: Array<{
       icon: string;
       label: string;
       link: string;
       type?: string;
+      action?: RepoAction;
     }>;
   }>;
 }
@@ -55,6 +57,7 @@ export interface IFeedItem {
 export interface IConfigPanelSection {
   title: string;
   icon?: string;
+  isCollapsed: boolean;
   items: Array<{
     icon: string;
     title: string;

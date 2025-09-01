@@ -26,27 +26,38 @@
           {
             "icon": "repo",
             "label": "ThomBarth/atk_system",
-            "link": "/repo/atk_system"
+            "link": "/repo/atk_system",
+            "action": false
           },
           {
             "icon": "repo",
             "label": "ashuraraw/atkNode",
-            "link": "/repo/atkNode"
+            "link": "/repo/atkNode",
+            "action": {
+              "label": "New",
+              "action": "createRepo"
+            }
           },
           {
             "icon": "repo",
             "label": "ThomBarth/atk_raw",
-            "link": "/repo/atk_raw"
+            "link": "/repo/atk_raw",
+            "action": false
           },
           {
             "icon": "repo",
             "label": "ThomBarth/atk_backbone",
-            "link": "/repo/atk_backbone"
+            "link": "/repo/atk_backbone",
+            "action": {
+              "label": "New",
+              "action": "createRepo"
+            }
           },
           {
             "icon": "repo",
             "label": "ThomBarth/atk_matrix",
-            "link": "/repo/atk_matrix"
+            "link": "/repo/atk_matrix",
+            "action": false
           }
         ]
       },
@@ -136,60 +147,63 @@
       ]
     }
   ],
-  "configPanel": [
-    {
-      "title": "Configuration Dashboard",
-      "icon": "settings",
-      "items": [
-        {
-          "icon": "display",
-          "title": "Paramètres d'affichage",
-          "description": "Configuration des vues et filtres de la grille 4",
-          "link": "/config/display"
-        },
-        {
-          "icon": "user",
-          "title": "Préférences utilisateur",
-          "description": "Personnalisation de l'interface et des composants",
-          "link": "/config/preferences"
-        },
-        {
-          "icon": "keyboard",
-          "title": "Raccourcis clavier",
-          "description": "Configuration des shortcuts et hotkeys",
-          "link": "/config/shortcuts"
-        },
-        {
-          "icon": "layout",
-          "title": "Layout des composants",
-          "description": "Organisation et disposition des éléments",
-          "link": "/config/layout"
-        }
-      ]
-    },
-    {
-      "title": "Outils rapides",
-      "icon": "tools",
-      "items": [
-        {
-          "icon": "download",
-          "title": "Export données",
-          "description": "Exporter le contenu de la grille principale",
-          "link": "/tools/export"
-        },
-        {
-          "icon": "upload",
-          "title": "Import fichiers",
-          "description": "Importer des données dans l'application",
-          "link": "/tools/import"
-        },
-        {
-          "icon": "action",
-          "title": "Actions rapides",
-          "description": "Raccourcis vers les fonctions principales",
-          "link": "/tools/quick-actions"
-        }
-      ]
-    }
-  ]
+  "configPanel": {
+    "isCollapsed": false,
+    "sections": [
+      {
+        "title": "Configuration Dashboard",
+        "icon": "settings",
+        "items": [
+          {
+            "icon": "display",
+            "title": "Paramètres d'affichage",
+            "description": "Configuration des vues et filtres de la grille 4",
+            "link": "/config/display"
+          },
+          {
+            "icon": "user",
+            "title": "Préférences utilisateur",
+            "description": "Personnalisation de l'interface et des composants",
+            "link": "/config/preferences"
+          },
+          {
+            "icon": "keyboard",
+            "title": "Raccourcis clavier",
+            "description": "Configuration des shortcuts et hotkeys",
+            "link": "/config/shortcuts"
+          },
+          {
+            "icon": "layout",
+            "title": "Layout des composants",
+            "description": "Organisation et disposition des éléments",
+            "link": "/config/layout"
+          }
+        ]
+      },
+      {
+        "title": "Outils rapides",
+        "icon": "tools",
+        "items": [
+          {
+            "icon": "download",
+            "title": "Export données",
+            "description": "Exporter le contenu de la grille principale",
+            "link": "/tools/export"
+          },
+          {
+            "icon": "upload",
+            "title": "Import fichiers",
+            "description": "Importer des données dans l'application",
+            "link": "/tools/import"
+          },
+          {
+            "icon": "action",
+            "title": "Actions rapides",
+            "description": "Raccourcis vers les fonctions principales",
+            "link": "/tools/quick-actions"
+          }
+        ]
+      }
+    ]
+  }
 }

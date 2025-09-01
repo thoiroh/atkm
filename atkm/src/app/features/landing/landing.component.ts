@@ -19,8 +19,7 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
   ],
   template: `
     @if (config) {
-      <div class="main-container">
-        <!-- GRILLE 1: MENU PRINCIPAL (gauche) -->
+      <div class="main-container" [class.config-collapsed]="config?.configPanel?.isCollapsed">        <!-- GRILLE 1: MENU PRINCIPAL (gauche) -->
         <atk-navbar-main [config]="config.navbar" />
 
         <!-- GRILLE 2: ZONE CENTRALE TRANSPARENTE (centre) -->
@@ -33,10 +32,15 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
         <atk-sidebar-nav [config]="config.sidebar" />
 
         <!-- GRILLE 5: CONTENU PRINCIPAL (centre) -->
-        <atk-content-main [feeds]="config.feeds" />
+        <atk-content-main
+          [feeds]="config.feeds"
+          [configPanelCollapsed]="config?.configPanel?.isCollapsed" />
 
         <!-- GRILLE 6: PANNEAU CONFIGURATION (droite) -->
-        <atk-sidebar-config [sections]="config.configPanel" />
+        <atk-sidebar-config
+          [sections]="config.configPanel.sections"
+          [isCollapsed]="config.configPanel.isCollapsed"
+          (togglePanel)="toggleConfigPanel()" />
       </div>
     } @else {
       <!-- Loading state -->
@@ -50,6 +54,7 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
 export class LandingComponent implements OnInit {
   config: ILandingConfig | null = null;
 
+
   constructor(private configService: ConfigService) { }
 
   ngOnInit(): void {
@@ -61,5 +66,11 @@ export class LandingComponent implements OnInit {
         console.error('Erreur lors du chargement de la configuration:', error);
       }
     });
+  }
+
+  toggleConfigPanel(): void {
+    if (this.config) {
+      this.config.configPanel.isCollapsed = !this.config.configPanel.isCollapsed;
+    }
   }
 }
