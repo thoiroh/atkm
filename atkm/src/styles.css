@@ -141,13 +141,14 @@ atk-content-main {
 
 .menu-center-title {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-fg-default);
   margin: 0;
 }
 
 .menu-center-subtitle {
   font-size: 12px;
+  font-weight: 600;
   color: var(--color-fg-muted);
   margin: 0;
   line-height: 2;
@@ -192,7 +193,7 @@ atk-content-main {
 .search-container {
   flex: 1;
   max-width: 400px;
-  margin: 0 20px;
+  margin: 0 12px 0 20px;
 }
 
 .search-container .search-wrapper {
@@ -211,6 +212,7 @@ atk-content-main {
 
 .search-container .search-input {
   width: 100%;
+  min-width: 200px;
   background: var(--color-canvas-default);
   border: 1px solid var(--color-border-default);
   border-radius: 6px;
@@ -232,7 +234,7 @@ atk-content-main {
 .user-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .action-btn {
@@ -247,12 +249,27 @@ atk-content-main {
   justify-content: center;
 }
 
+.user-btn:hover,
 .action-btn:hover {
   background-color: #424a53;
   border-color: #656d76;
 }
 
+.user-btn {
+  background: #30363d;
+  border: 1px solid #484f58;
+  color: #f0f6fc;
+  border-radius: 6px;
+  padding: 0px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .user-avatar {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   padding: 4px;
 }
@@ -307,7 +324,9 @@ atk-content-main {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 12px;
+  padding-bottom: 12px;
   color: var(--color-fg-default);
+  border-bottom: 2px solid var(--color-border-muted);
 }
 
 .repo-list {
@@ -338,6 +357,7 @@ atk-content-main {
   width: 16px;
   height: 16px;
   fill: var(--color-fg-default);
+  margin-top: 4px;
 }
 
 .recent-activity {
@@ -610,7 +630,7 @@ atk-content-main {
   width: 16px;
   height: 16px;
   fill: var(--color-fg-muted);
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .config-item-content {

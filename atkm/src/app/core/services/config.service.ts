@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 export interface INavbarConfig {
@@ -84,10 +84,10 @@ export class ConfigService {
   private configSubject = new BehaviorSubject<ILandingConfig | null>(null);
   public config$ = this.configSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   loadLandingConfig(): Observable<ILandingConfig> {
-    return this.http.get<ILandingConfig>('/assets/config/landing-data.json')
+    return this.http.get<ILandingConfig>('assets/config/landing-data.json')
       .pipe(
         tap(config => this.configSubject.next(config))
       );

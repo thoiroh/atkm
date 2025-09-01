@@ -19,7 +19,6 @@
     <h3>
       {{ section?.title || '' }}
     </h3>
-
     @if (section?.items && section.items.length > 0) {
     <ul class="repo-list">
       @for (item of section.items; track $index) {

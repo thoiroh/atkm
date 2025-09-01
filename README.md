@@ -25,8 +25,8 @@
 
 ```bash
 # Cloner le projet
-git clone [votre-repo] atk.ai
-cd atk.ai
+git clone [votre-repo] atkm
+cd atkm
 
 # Lancer le script d'installation
 chmod +x setup-macos.sh
@@ -37,8 +37,8 @@ chmod +x setup-macos.sh
 
 ```powershell
 # Cloner le projet
-git clone [votre-repo] atk.ai
-cd atk.ai
+git clone [votre-repo] atkm
+cd atkm
 
 # Lancer le script d'installation (PowerShell en tant qu'admin)
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -79,7 +79,7 @@ docker-compose exec php composer install
 ## 📁 Structure du projet
 
 ```ts
-atk.ai/
+atkm/
 ├── .env.macos              # Config optimisée macOS
 ├── .env.windows            # Config standard Windows
 ├── docker-compose.yml      # Configuration unifiée

@@ -65,6 +65,7 @@
 
         <div class="feed-items">
           @for (item of feed.items; track item.id) {
+
           <div class="feed-item">
             <div class="feed-item-header">
               <div class="feed-item-header-title">
@@ -73,6 +74,7 @@
               </div>
               <span class="feed-time">{{item.time}}</span>
             </div>
+
             <div class="feed-item-content">
               <div class="repo-title">
                 <svg class="repo-icon" aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16"
