@@ -1,4 +1,11 @@
-<div class="user-tools">
+<div class="user-tools" [class.config-collapsed]="configPanelCollapsed">
+
+  @if (!configPanelCollapsed) {
+  <span class="toggle-arrow right">▶</span>
+  } @else {
+  <!-- <atk-navbar-brand [config]="config.navbar" /> -->
+  <span class="toggle-arrow left">◀</span>
+  }
   <div class="search-container">
     <div class="search-wrapper">
       <svg class="search-icon" aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16"

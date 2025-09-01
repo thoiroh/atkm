@@ -17,43 +17,11 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
     ContentMainComponent,
     SidebarConfigComponent
   ],
-  template: `
-    @if (config) {
-      <div class="main-container" [class.config-collapsed]="config?.configPanel?.isCollapsed">        <!-- GRILLE 1: MENU PRINCIPAL (gauche) -->
-        <atk-navbar-main [config]="config.navbar" />
-
-        <!-- GRILLE 2: ZONE CENTRALE TRANSPARENTE (centre) -->
-        <atk-navbar-brand [config]="config.navbar" />
-
-        <!-- GRILLE 3: OUTILS UTILISATEUR (droite) -->
-        <atk-navbar-tools />
-
-        <!-- GRILLE 4: NAVIGATION SIDEBAR (gauche) -->
-        <atk-sidebar-nav [config]="config.sidebar" />
-
-        <!-- GRILLE 5: CONTENU PRINCIPAL (centre) -->
-        <atk-content-main
-          [feeds]="config.feeds"
-          [configPanelCollapsed]="config?.configPanel?.isCollapsed" />
-
-        <!-- GRILLE 6: PANNEAU CONFIGURATION (droite) -->
-        <atk-sidebar-config
-          [sections]="config.configPanel.sections"
-          [isCollapsed]="config.configPanel.isCollapsed"
-          (togglePanel)="toggleConfigPanel()" />
-      </div>
-    } @else {
-      <!-- Loading state -->
-      <div class="loading-container">
-        <div class="loading-spinner">Chargement...</div>
-      </div>
-    }
-  `,
+  templateUrl: './landing.component.html',
   styles: [``]
 })
 export class LandingComponent implements OnInit {
   config: ILandingConfig | null = null;
-
 
   constructor(private configService: ConfigService) { }
 

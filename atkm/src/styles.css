@@ -60,13 +60,53 @@ atk-content-main {
   grid-template-areas:
     "menu-main menu-center user-tools"
     "sidebar-nav main-content config-panel";
-  /* Grille par défaut avec config-panel */
   grid-template-columns: minmax(200px, 25%) 1fr minmax(200px, 25%);
-  grid-template-rows: minmax(85px, 85px) 1fr;
+  grid-template-rows: 80px 1fr;
   background-color: var(--color-canvas-default);
   position: relative;
-  transition: grid-template-columns 0.3s ease-in-out;
+  transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
+
+/* Collapse asymétrique: seule la row 2, col 3 est masquée */
+.main-container.config-collapsed {
+  grid-template-columns: minmax(200px, 25%) 1fr 0px;
+  grid-template-rows: 80px 1fr;
+}
+
+/* .main-content.config-collapsed {
+  height: 100%;
+} */
+
+
+/* Étendre le contenu central sur col 2 → 3 uniquement en row 2 */
+/* .main-container.config-collapsed .main-content {
+  border-right: none;
+  border-radius: 12px;
+} */
+
+
+/* Faire sortir le panneau de config hors écran */
+/* .main-container.config-collapsed .config-panel {
+  transform: translateX(100%) translateZ(0);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+  overflow: hidden;
+  contain: layout paint;
+} */
+
+/* Ramener le toggle en bord de grille malgré le translate du parent */
+/* .main-container.config-collapsed .config-toggle {
+  position: fixed;
+  top: 20px;
+  right: 0;
+  left: auto;
+  transform: none;
+  z-index: 1000;
+  pointer-events: auto;
+} */
+
 
 /* ========================= GRILLE 1: MENU PRINCIPAL (haut gauche) ========================= */
 
@@ -176,8 +216,10 @@ atk-content-main {
 }
 
 /* ========================= GRILLE 3: OUTILS UTILISATEUR (haut droite) ========================= */
+
 .user-tools {
   grid-area: user-tools;
+  /* si tu veux l’utiliser */
   background-color: var(--color-canvas-subtle);
   /* Suppression des bordures verticales */
   border-bottom: 2px solid var(--color-border-default);
@@ -188,6 +230,10 @@ atk-content-main {
   /* Permet le débordement sur la zone centrale */
   z-index: 10;
   position: relative;
+}
+
+.user-tools.config-collapsed {
+  grid-column: 2 / 3;
 }
 
 .search-container {
@@ -282,6 +328,7 @@ atk-content-main {
 }
 
 /* ========================= GRILLE 4: NAVIGATION SIDEBAR (gauche) ========================= */
+
 .sidebar-nav {
   grid-area: sidebar-nav;
   background-color: var(--color-canvas-default);
@@ -395,6 +442,7 @@ atk-content-main {
 
 
 /* ========================= GRILLE 5: CONTENU PRINCIPAL (centre) ========================= */
+
 .main-content {
   grid-area: main-content;
   padding: 24px 0;
@@ -406,25 +454,9 @@ atk-content-main {
   border-radius: 12px 0px 0px 12px;
   position: relative;
   z-index: 1;
-  transition: border-radius 0.3s ease-in-out, border 0.3s ease-in-out;
-}
-
-/* Quand config-panel est collapsed, main-content s'étend */
-.main-container.config-collapsed .main-content {
-  border-right: none;
-  border-radius: 12px 12px 12px 12px;
-  /* S'étend sur toute la zone disponible grâce au grid-template-areas */
-  z-index: 0;
-}
-
-.main-container.config-collapsed {
-  grid-template-areas:
-    "menu-main menu-center user-tools"
-    "sidebar-nav main-content main-content";
-  grid-template-columns: 25% 73% 0%;
-  grid-template-rows: minmax(85px, 85px) 1fr;
-  height: auto;
-  transition: grid-template-columns 0.3s ease-in-out;
+  transition: border-radius 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    border 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    margin 0.4s ease-out;
 }
 
 .content-wrapper {
@@ -626,50 +658,53 @@ atk-content-main {
   grid-area: config-panel;
   background-color: var(--color-canvas-default);
   padding: 24px 16px;
-  overflow-y: auto;
-  overflow-x: hidden;
   position: relative;
   z-index: 8;
-  transition: transform 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
   overflow: visible;
-}
-
-.config-panel.collapsed {
-  transform: translateX(100%);
-}
-
-.config-panel.expanded {
-  transform: translateX(0);
 }
 
 /* Étiquette toggle - Position fixe à droite */
 .config-toggle {
   position: absolute;
-  top: 0px;
-  left: -33px;
-  width: 32px;
+  top: 78px;
+  left: -30px;
+  width: 30px;
   height: 50px;
-  background: var(--color-canvas-subtle);
-  border: 1px solid var(--color-border-default);
+  background: var(--color-canvas-default);
+  border: 2px solid var(--color-border-default);
+  border-right: none;
   border-radius: 8px 0 0 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10;
+  z-index: 15;
   color: var(--color-fg-muted);
-  transition: right 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
-/* Quand le panneau est ouvert, déplacer le toggle */
-.main-container .config-collapsed .config-toggle {
-  right: 16px;
-  z-index: 10;
+.toggle-arrow {
+  color: var(--color-fg-muted);
+  padding: 10px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  font-size: 10px;
+  font-weight: bold;
 }
 
-.config-toggle:hover {
-  background: var(--color-btn-hover-bg);
-  color: var(--color-fg-default);
+/* .config-toggle:hover, */
+.toggle-arrow.right:hover {
+  display: inline-block;
+  animation: move-right 1s linear infinite;
+  transition-delay: 1s;
+}
+
+.toggle-arrow.left:hover {
+  display: inline-block;
+  animation: move-left 1s linear infinite;
+  transition-delay: 1s;
+  /* 1s de délai */
 }
 
 /* Contenu du panneau */
@@ -879,7 +914,15 @@ atk-content-main {
 
 }
 
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
 /* ========================= UTILITAIRES ========================= */
+
 .sr-only {
   position: absolute !important;
   width: 1px !important;
@@ -890,4 +933,32 @@ atk-content-main {
   clip: rect(0, 0, 0, 0) !important;
   white-space: nowrap !important;
   border: 0 !important;
+}
+
+@keyframes move-right {
+  0% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(10px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes move-left {
+  0% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-10px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
 }
