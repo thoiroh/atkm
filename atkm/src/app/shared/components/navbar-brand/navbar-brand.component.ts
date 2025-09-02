@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { INavbarConfig } from '../../../core/services/config.service';
+import { ILandingConfig } from '../../../core/services/config.service';
 
 @Component({
   selector: 'atk-navbar-brand',
@@ -9,5 +9,6 @@ import { INavbarConfig } from '../../../core/services/config.service';
   templateUrl: './navbar-brand.component.html',
 })
 export class NavbarBrandComponent {
-  @Input() config: INavbarConfig | null = null;
+  @Input() configPanelCollapsed: boolean = false;
+  @Input() config: ILandingConfig | null = null;
 }

@@ -1,10 +1,10 @@
 @if (config) {
-<div class="main-container" [class.config-collapsed]="config?.configPanel?.isCollapsed">
+<div class="landing-container" [class.config-collapsed]="config?.configPanel?.isCollapsed">
   <!-- GRILLE 1: MENU PRINCIPAL (gauche) -->
   <atk-navbar-main [config]="config" />
 
   <!-- GRILLE 2: ZONE CENTRALE TRANSPARENTE (centre) -->
-  <!-- <atk-navbar-brand [config]="config.navbar" /> -->
+  <atk-navbar-brand [config]="config" />
 
   <!-- GRILLE 3: OUTILS UTILISATEUR (droite) -->
   <atk-navbar-tools [configPanelCollapsed]="config?.configPanel?.isCollapsed" />
@@ -14,11 +14,12 @@
   <atk-sidebar-nav [config]="config.sidebar" />
 
   <!-- GRILLE 5: CONTENU PRINCIPAL (centre) -->
-  <atk-content-main [feeds]="config.feeds" [configPanelCollapsed]="config?.configPanel?.isCollapsed" />
-
   <!-- GRILLE 6: PANNEAU CONFIGURATION (droite) -->
-  <atk-sidebar-config [sections]="config.configPanel.sections" [isCollapsed]="config.configPanel.isCollapsed"
-    (togglePanel)="toggleConfigPanel()" />
+  <div class="main-container">
+    <atk-content-main [feeds]="config.feeds" [configPanelCollapsed]="config?.configPanel?.isCollapsed" />
+    <atk-sidebar-config [sections]="config.configPanel.sections" [isCollapsed]="config.configPanel.isCollapsed"
+      (togglePanel)="toggleConfigPanel()" />
+  </div>
 </div>
 } @else {
 <!-- Loading state -->

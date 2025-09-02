@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { ConfigService, ILandingConfig } from '../../../core/services/config.service';
-import { NavbarBrandComponent } from '../navbar-brand/navbar-brand.component';
 
 @Component({
   selector: 'atk-navbar-main',
   standalone: true,
-  imports: [CommonModule, NavbarBrandComponent],
+  imports: [CommonModule],
   templateUrl: './navbar-main.component.html',
 })
 export class NavbarMainComponent implements OnInit {

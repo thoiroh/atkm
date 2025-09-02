@@ -1,10 +1,10 @@
-<div class="menu-center">
-  <div class="menu-center-content">
-    <h1 class="menu-center-title">{{config?.centerTitle || ''}}</h1>
-    <p class="menu-center-subtitle">
-      {{config?.centerSubtitle || ''}}
-      <span class="menu-center-badge" *ngIf="config?.centerBadge">
-        {{config?.centerBadge || ''}}
+<div class="menu-brand" [class.config-collapsed]="configPanelCollapsed">
+  <div class="menu-brand-content">
+    <h1 class="menu-brand-title">{{config?.navbar.centerTitle || ''}}</h1>
+    <p class="menu-brand-subtitle">
+      {{config?.navbar.centerSubtitle || ''}}
+      <span class="menu-brand-badge" *ngIf="config?.navbar.centerBadge">
+        {{config?.navbar.centerBadge || ''}}
       </span>
     </p>
   </div>

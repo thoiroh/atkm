@@ -41,6 +41,7 @@ body {
 FIX POUR LES COMPOSANTS ANGULAR DANS LA GRILLE
 /* ======================================================================================================== */
 
+atk-navbar-landing,
 atk-navbar-main,
 atk-navbar-brand,
 atk-navbar-tools,
@@ -55,41 +56,53 @@ atk-content-main {
 /* ========================= STRUCTURE PRINCIPALE : 6 GRILLES =========================================== */
 /* ====================================================================================================== */
 
-.main-container {
+.landing-container {
   height: 100vh;
+  width: 100vw;
   display: grid;
   grid-template-areas:
-    "menu-main menu-center user-tools"
-    "sidebar-nav main-content config-panel";
+    "menu-main menu-brand menu-tools"
+    "sidebar-nav main-content main-content";
   grid-template-columns: minmax(200px, 25%) 1fr minmax(200px, 25%);
   grid-template-rows: 80px 1fr;
-  background-color: var(--color-canvas-default);
   position: relative;
+  background-color: var(--color-canvas-default);
   transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
-.main-container.config-collapsed {
+/* .landing-container.config-collapsed {
   grid-template-columns: minmax(200px, 25%) 1fr 0px;
   grid-template-rows: 80px 1fr;
-}
+} */
 
 
 /* ====================================================================================================== */
 /* ========================= GRILLE 1: MENU PRINCIPAL (haut gauche) ===================================== */
 /* ====================================================================================================== */
 
-.menu-main {
+.side-main {
   grid-area: menu-main;
-  grid-column: 1 / 2;
-
+  grid-column: 1;
   display: flex;
   position: relative;
   align-items: center;
+  justify-content: flex-start;
   padding: 0 16px;
   gap: 12px;
   background-color: var(--color-canvas-subtle);
   border-bottom: 2px solid var(--color-border-default);
+  z-index: 10;
+}
+
+.menu-main {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 16px;
+  gap: 12px;
+  background-color: var(--color-canvas-subtle);
   z-index: 10;
 }
 
@@ -123,21 +136,23 @@ atk-content-main {
 /* ========================= Grille 2 : ZONE CENTRALE TRANSPARENTE (haut centre) ========================= */
 /* ======================================================================================================= */
 
-.menu-center {
-  grid-area: menu-center;
+.menu-brand {
+  grid-area: menu-brand;
   display: flex;
-  position: relative;
   align-items: flex-end;
   justify-content: center;
-  background-color: var(--color-canvas-subtle);
+  min-width: 100%;
   border-bottom: 2px solid var(--color-border-default);
+  background-color: var(--color-canvas-subtle);
   padding: 10px 20px;
   text-align: center;
   z-index: 5;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.menu-center-content {
+/* .menu-brand.config-collapsed {} */
+
+.menu-brand-content {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -146,14 +161,14 @@ atk-content-main {
   overflow: hidden;
 }
 
-.menu-center-title {
+.menu-brand-title {
   font-size: 16px;
   font-weight: 700;
   color: var(--color-fg-default);
   margin: 0;
 }
 
-.menu-center-subtitle {
+.menu-brand-subtitle {
   font-size: 12px;
   font-weight: 600;
   color: var(--color-fg-muted);
@@ -163,7 +178,7 @@ atk-content-main {
 
 /* Badge ou indicateur de statut */
 .btn-action,
-.menu-center-badge {
+.menu-brand-badge {
   color: white;
   font-size: 8px;
   font-weight: 600;
@@ -173,7 +188,7 @@ atk-content-main {
   letter-spacing: 0.5px;
 }
 
-.menu-center-badge {
+.menu-brand-badge {
   background: linear-gradient(135deg, var(--color-accent-emphasis), #58a6ff);
 }
 
@@ -187,7 +202,7 @@ atk-content-main {
 /* ======================================================================================================== */
 
 .user-tools {
-  grid-area: user-tools;
+  grid-area: menu-tools;
   display: flex;
   position: relative;
   align-items: center;
@@ -196,10 +211,11 @@ atk-content-main {
   border-bottom: 2px solid var(--color-border-default);
   padding: 0 16px;
   z-index: 10;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
 }
 
 .user-tools.config-collapsed {
-  grid-column: 2 / 3;
+  grid-area: menu-tools;
 }
 
 .search-container {
@@ -287,7 +303,10 @@ atk-content-main {
 }
 
 .avatar {
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
+  margin-left: -5px;
   display: inline-block;
   overflow: hidden;
   vertical-align: middle;
@@ -301,8 +320,10 @@ atk-content-main {
 .sidebar-nav {
   grid-area: sidebar-nav;
   position: relative;
-  padding: 16px;
+  padding: 20px;
   background-color: var(--color-canvas-default);
+  border-right: 2px solid var(--color-border-default);
+  border-radius: 0px 12px 12px 0px;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 8;
@@ -376,6 +397,7 @@ atk-content-main {
 
 .repo-title {
   width: 85%;
+  padding-left: 2px;
 }
 
 .repo-title:hover {
@@ -413,36 +435,41 @@ atk-content-main {
 /* ========================= GRILLE 5: CONTENU PRINCIPAL (centre) ========================================= */
 /* ======================================================================================================== */
 
-.main-content {
+.main-container {
   grid-area: main-content;
-  padding: 24px 0;
+  display: flex;
+  height: auto;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: var(--color-canvas-default);
-  border-right: 2px solid var(--color-border-default);
-  border-left: 2px solid var(--color-border-default);
-  border-radius: 12px 0px 0px 12px;
+}
+
+.main-content {
+  display: flex;
   position: relative;
+  background-color: var(--color-canvas-default);
   z-index: 1;
-  transition: border-radius 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    border 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    margin 0.4s ease-out;
+}
+
+.content-wrapper.config-collapsed {
+  padding: 20px 80px;
+  transition: all 0.3s ease-in-out;
 }
 
 .content-wrapper {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 24px;
+  padding: 20px 40px;
+  border-right: 2px solid var(--color-border-default);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: all 0.3s ease-in-out;
 }
 
 .main-header h1 {
   font-size: 24px;
-  font-weight: 400;
-  margin-bottom: 20px;
+  font-weight: 600;
+  margin: 20px 0 20px 0;
   color: var(--color-fg-default);
 }
 
-/* Section Copilot */
 .copilot-section {
   background: var(--color-canvas-subtle);
   border: 1px solid var(--color-border-default);
@@ -500,9 +527,11 @@ atk-content-main {
   border-color: var(--color-btn-hover-border);
 }
 
-/* Section Feed */
+.suggestion-btn-icon {
+  padding-top: 2px;
+}
 
-
+/* ========================= SECTION FEED ================================================================== */
 .feed-section {
   margin-bottom: 24px;
 }
@@ -512,6 +541,7 @@ atk-content-main {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
+  padding-left: 2px;
 }
 
 .feed-header h2 {
@@ -585,6 +615,7 @@ atk-content-main {
   color: var(--color-fg-muted);
   font-size: 14px;
   margin: 12px 0;
+  padding-left: 4px;
   line-height: 1.4;
 }
 
@@ -628,13 +659,22 @@ atk-content-main {
 /* ============================================================================================================= */
 
 .config-panel {
-  grid-area: config-panel;
-  background-color: var(--color-canvas-default);
-  padding: 24px 16px;
+  width: 30%;
   position: relative;
-  z-index: 8;
+  background-color: var(--color-canvas-default);
   transition: all 0.3s ease-in-out;
-  overflow: visible;
+  z-index: 8;
+}
+
+.config-wrapper {
+  padding: 20px;
+  text-wrap: nowrap;
+  overflow: hidden;
+}
+
+.config-panel.collapsed {
+  width: 0%;
+  transition: width 0.3s ease-in-out;
 }
 
 /* Étiquette toggle - Position fixe à droite */
@@ -749,21 +789,21 @@ atk-content-main {
 
 /* Tablette - La zone centrale commence à se réduire */
 @media (max-width: 1200px) {
-  .main-container {
+  .landing-container {
     grid-template-columns: minmax(200px, 30%) 1fr minmax(200px, 30%);
   }
 
   /* La zone centrale devient plus petite */
-  .menu-center-content {
+  .menu-brand-content {
     font-size: 0.9em;
   }
 }
 
 /* Écrans moyens - La zone centrale peut disparaître */
 @media (max-width: 992px) {
-  .main-container {
+  .landing-container {
     grid-template-areas:
-      "menu-main menu-center user-tools"
+      "menu-main menu-brand menu-tools"
       "sidebar-nav main-content main-content";
     grid-template-columns: minmax(200px, 35%) 1fr minmax(200px, 35%);
   }
@@ -774,7 +814,7 @@ atk-content-main {
   }
 
   /* La zone centrale disparaît progressivement - seul le contenu */
-  .menu-center-content {
+  .menu-brand-content {
     opacity: 0.5;
     font-size: 0.8em;
   }
@@ -782,16 +822,16 @@ atk-content-main {
 
 /* Mobile - Les zones se chevauchent, la zone centrale disparaît */
 @media (max-width: 768px) {
-  .main-container {
+  .landing-container {
     grid-template-areas:
-      "menu-main user-tools"
+      "menu-main menu-tools"
       "main-content main-content";
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 65px 1fr;
   }
 
   /* La zone centrale disparaît complètement */
-  .menu-center {
+  .menu-brand {
     display: none;
   }
 
@@ -832,7 +872,7 @@ atk-content-main {
 
 /* Très petits écrans */
 @media (max-width: 480px) {
-  .main-container {
+  .landing-container {
     grid-template-rows: 55px 1fr;
   }
 
@@ -861,31 +901,31 @@ atk-content-main {
 
 /* Quand les zones latérales sont trop larges, la zone centrale disparaît */
 @media (max-width: 1400px) {
-  .menu-center-title {
+  .menu-brand-title {
     font-size: 16px;
   }
 
-  .menu-center-subtitle {
+  .menu-brand-subtitle {
     font-size: 11px;
   }
 }
 
 /* Animation de transition pour la disparition de la zone centrale */
-.menu-center {
+.menu-brand {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* Quand l'espace devient trop petit */
 @media (max-width: 900px) {
-  .menu-center-content {
+  .menu-brand-content {
     opacity: 0;
     pointer-events: none;
     transform: scale(0.8);
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
 
-  /* La zone menu-center garde son background et sa bordure */
-  .menu-center {
+  /* La zone menu-brand garde son background et sa bordure */
+  .menu-brand {
     opacity: 1;
     pointer-events: auto;
     transform: none;
@@ -923,7 +963,7 @@ atk-content-main {
   }
 
   50% {
-    transform: translateX(10px);
+    transform: translateX(5px);
   }
 
   100% {
@@ -937,7 +977,7 @@ atk-content-main {
   }
 
   50% {
-    transform: translateX(-10px);
+    transform: translateX(-5px);
   }
 
   100% {
