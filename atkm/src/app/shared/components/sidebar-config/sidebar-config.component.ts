@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IConfigPanelSection } from '../../../core/services/config.service';
 
 @Component({
   selector: 'atk-sidebar-config',
+  standalone: true,
   imports: [],
   templateUrl: './sidebar-config.component.html',
 })

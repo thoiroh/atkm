@@ -4,6 +4,7 @@ import { NavbarBrandComponent } from '../navbar-brand/navbar-brand.component';
 
 @Component({
   selector: 'atk-navbar-tools',
+  standalone: true,
   imports: [NavbarBrandComponent],
   templateUrl: './navbar-tools.component.html',
 })

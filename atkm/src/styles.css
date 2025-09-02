@@ -28,10 +28,8 @@ body {
   background-color: var(--color-canvas-default);
   color: var(--color-fg-default);
   line-height: 1.5;
-  scrollbar-color: var(--color-border-default) var(--color-canvas-default);
-  /* thumb / track */
   scrollbar-width: thin;
-  /* auto | thin | none */
+  scrollbar-color: var(--color-border-default) var(--color-canvas-default);
 }
 
 html,
@@ -39,9 +37,9 @@ body {
   height: 100%;
 }
 
-/* =========================
-   FIX POUR LES COMPOSANTS ANGULAR DANS LA GRILLE
-   ========================= */
+/* ======================================================================================================== */
+FIX POUR LES COMPOSANTS ANGULAR DANS LA GRILLE
+/* ======================================================================================================== */
 
 atk-navbar-main,
 atk-navbar-brand,
@@ -52,7 +50,10 @@ atk-content-main {
   display: contents;
 }
 
-/* ========================= STRUCTURE PRINCIPALE : 6 GRILLES ========================= */
+
+/* ====================================================================================================== */
+/* ========================= STRUCTURE PRINCIPALE : 6 GRILLES =========================================== */
+/* ====================================================================================================== */
 
 .main-container {
   height: 100vh;
@@ -68,80 +69,48 @@ atk-content-main {
   overflow: hidden;
 }
 
-/* Collapse asymétrique: seule la row 2, col 3 est masquée */
 .main-container.config-collapsed {
   grid-template-columns: minmax(200px, 25%) 1fr 0px;
   grid-template-rows: 80px 1fr;
 }
 
-/* .main-content.config-collapsed {
-  height: 100%;
-} */
 
-
-/* Étendre le contenu central sur col 2 → 3 uniquement en row 2 */
-/* .main-container.config-collapsed .main-content {
-  border-right: none;
-  border-radius: 12px;
-} */
-
-
-/* Faire sortir le panneau de config hors écran */
-/* .main-container.config-collapsed .config-panel {
-  transform: translateX(100%) translateZ(0);
-  pointer-events: none;
-  opacity: 0;
-  will-change: transform;
-  overflow: hidden;
-  contain: layout paint;
-} */
-
-/* Ramener le toggle en bord de grille malgré le translate du parent */
-/* .main-container.config-collapsed .config-toggle {
-  position: fixed;
-  top: 20px;
-  right: 0;
-  left: auto;
-  transform: none;
-  z-index: 1000;
-  pointer-events: auto;
-} */
-
-
-/* ========================= GRILLE 1: MENU PRINCIPAL (haut gauche) ========================= */
+/* ====================================================================================================== */
+/* ========================= GRILLE 1: MENU PRINCIPAL (haut gauche) ===================================== */
+/* ====================================================================================================== */
 
 .menu-main {
   grid-area: menu-main;
-  background-color: var(--color-canvas-subtle);
-  /* Suppression des bordures verticales */
-  border-bottom: 2px solid var(--color-border-default);
+  grid-column: 1 / 2;
+
   display: flex;
+  position: relative;
   align-items: center;
   padding: 0 16px;
   gap: 12px;
-  /* Permet le débordement sur la zone centrale */
+  background-color: var(--color-canvas-subtle);
+  border-bottom: 2px solid var(--color-border-default);
   z-index: 10;
-  position: relative;
 }
 
 .menu-main .logo {
-  background-color: var(--color-canvas-default);
-  color: var(--color-fg-default);
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--color-canvas-default);
+  color: var(--color-fg-default);
 }
 
 .menu-main .hamburger-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #30363d;
   border: 1px solid #484f58;
   color: #f0f6fc;
   border-radius: 6px;
   padding: 8px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .menu-main .hamburger-btn:hover {
@@ -149,23 +118,23 @@ atk-content-main {
   border-color: #656d76;
 }
 
+
+/* ======================================================================================================= */
 /* ========================= Grille 2 : ZONE CENTRALE TRANSPARENTE (haut centre) ========================= */
+/* ======================================================================================================= */
+
 .menu-center {
   grid-area: menu-center;
-  /* Zone transparente - pas de background */
-  background-color: var(--color-canvas-subtle);
-  border-bottom: 2px solid var(--color-border-default);
   display: flex;
+  position: relative;
   align-items: flex-end;
   justify-content: center;
+  background-color: var(--color-canvas-subtle);
+  border-bottom: 2px solid var(--color-border-default);
   padding: 10px 20px;
   text-align: center;
-  /* La zone peut être écrasée par les zones latérales */
-  position: relative;
   z-index: 5;
-  /* Transition pour la disparition en douceur */
   transition: opacity 0.3s ease, transform 0.3s ease;
-  /* transition: opacity 0.3s ease, visibility 0.3s ease; */
 }
 
 .menu-center-content {
@@ -173,8 +142,6 @@ atk-content-main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* gap: 4px; */
-  /* Le contenu peut disparaître quand les zones se chevauchent */
   white-space: nowrap;
   overflow: hidden;
 }
@@ -203,7 +170,6 @@ atk-content-main {
   padding: 2px 8px 3px 8px;
   margin-left: 10px;
   border-radius: 5px;
-  /* text-transform: uppercase; */
   letter-spacing: 0.5px;
 }
 
@@ -215,21 +181,21 @@ atk-content-main {
   background: var(--color-success-emphasis);
 }
 
-/* ========================= GRILLE 3: OUTILS UTILISATEUR (haut droite) ========================= */
+
+/* ======================================================================================================== */
+/* ========================= GRILLE 3: OUTILS UTILISATEUR (haut droite) =================================== */
+/* ======================================================================================================== */
 
 .user-tools {
   grid-area: user-tools;
-  /* si tu veux l’utiliser */
-  background-color: var(--color-canvas-subtle);
-  /* Suppression des bordures verticales */
-  border-bottom: 2px solid var(--color-border-default);
   display: flex;
-  align-items: center;
-  padding: 0 16px;
-  justify-content: flex-end;
-  /* Permet le débordement sur la zone centrale */
-  z-index: 10;
   position: relative;
+  align-items: center;
+  justify-content: flex-end;
+  background-color: var(--color-canvas-subtle);
+  border-bottom: 2px solid var(--color-border-default);
+  padding: 0 16px;
+  z-index: 10;
 }
 
 .user-tools.config-collapsed {
@@ -327,16 +293,18 @@ atk-content-main {
   vertical-align: middle;
 }
 
-/* ========================= GRILLE 4: NAVIGATION SIDEBAR (gauche) ========================= */
+
+/* ======================================================================================================= */
+/* ========================= GRILLE 4: NAVIGATION SIDEBAR (gauche) ======================================= */
+/* ======================================================================================================= */
 
 .sidebar-nav {
   grid-area: sidebar-nav;
-  background-color: var(--color-canvas-default);
+  position: relative;
   padding: 16px;
+  background-color: var(--color-canvas-default);
   overflow-y: auto;
   overflow-x: hidden;
-  /* Permet l'extension sur la zone centrale si nécessaire */
-  position: relative;
   z-index: 8;
 }
 
@@ -344,18 +312,18 @@ atk-content-main {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 20px;
   padding: 12px 0;
+  margin-bottom: 20px;
   border-bottom: 1px solid var(--color-border-muted);
 }
 
 .user-context-button {
-  background: transparent;
-  border: none;
-  color: var(--color-fg-default);
   display: flex;
   align-items: center;
   gap: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-fg-default);
   font-size: 14px;
   cursor: pointer;
 }
@@ -368,12 +336,12 @@ atk-content-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 16px;
-  font-weight: 600;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  color: var(--color-fg-default);
   border-bottom: 2px solid var(--color-border-muted);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-fg-default);
 }
 
 .repo-list {
@@ -388,16 +356,16 @@ atk-content-main {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--color-fg-muted);
-  text-decoration: none;
   padding: 6px 8px;
   border-radius: 6px;
+  color: var(--color-fg-muted);
   font-size: 14px;
+  text-decoration: none;
 }
 
 .repo-list a:hover {
-  background-color: var(--color-canvas-subtle);
   color: var(--color-fg-default);
+  background-color: var(--color-canvas-subtle);
 }
 
 .repo-item {
@@ -441,7 +409,9 @@ atk-content-main {
 }
 
 
-/* ========================= GRILLE 5: CONTENU PRINCIPAL (centre) ========================= */
+/* ======================================================================================================== */
+/* ========================= GRILLE 5: CONTENU PRINCIPAL (centre) ========================================= */
+/* ======================================================================================================== */
 
 .main-content {
   grid-area: main-content;
@@ -652,7 +622,10 @@ atk-content-main {
   background-color: #41b883;
 }
 
-/* ========================= GRILLE 6: PANNEAU CONFIGURATION (droite) ========================= */
+
+/* ============================================================================================================= */
+/* ========================= GRILLE 6: PANNEAU CONFIGURATION (droite) ========================================== */
+/* ============================================================================================================= */
 
 .config-panel {
   grid-area: config-panel;
@@ -769,7 +742,10 @@ atk-content-main {
   line-height: 1.4;
 }
 
-/* ========================= RESPONSIVE ========================= */
+
+/* =========================================================================================================== */
+/* =============================== RESPONSIVE ================================================================ */
+/* =========================================================================================================== */
 
 /* Tablette - La zone centrale commence à se réduire */
 @media (max-width: 1200px) {
@@ -878,7 +854,10 @@ atk-content-main {
   }
 }
 
-/* ========================= GESTION DU CHEVAUCHEMENT ========================= */
+
+/* ========================================================================================================== */
+/* ========================= GESTION DU CHEVAUCHEMENT ======================================================= */
+/* ========================================================================================================== */
 
 /* Quand les zones latérales sont trop larges, la zone centrale disparaît */
 @media (max-width: 1400px) {
@@ -921,7 +900,10 @@ atk-content-main {
   }
 }
 
-/* ========================= UTILITAIRES ========================= */
+
+/* ========================================================================================================== */
+/* ========================= UTILITAIRES ==================================================================== */
+/* ========================================================================================================== */
 
 .sr-only {
   position: absolute !important;

@@ -9,6 +9,7 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
 
 @Component({
   selector: 'atk-landing',
+  standalone: true,
   imports: [
     NavbarMainComponent,
     NavbarBrandComponent,

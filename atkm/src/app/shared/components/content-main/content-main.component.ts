@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'atk-content-main',
+  standalone: true,
   imports: [],
   templateUrl: './content-main.component.html',
 })
