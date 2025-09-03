@@ -14,6 +14,10 @@ export const routes: Routes = [
     path: 'login',
     loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
   },
+  {
+    path: 'binance',
+    loadChildren: () => import('./features/binance/binance.routes').then(m => m.binanceRoutes)
+  },
   // Route wildcard pour gérer les URLs non trouvées
   {
     path: '**',
