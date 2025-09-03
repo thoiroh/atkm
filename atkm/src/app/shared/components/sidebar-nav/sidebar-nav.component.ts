@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { ISidebarNavConfig } from '../../../core/services/config.service';
 
 @Component({
   selector: 'atk-sidebar-nav',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './sidebar-nav.component.html',
 })
 export class SidebarNavComponent {
@@ -15,8 +16,4 @@ export class SidebarNavComponent {
     console.log('Action:', action);
   }
 
-  navigateToRepo(event: Event, link: string): void {
-    event.preventDefault();
-    console.log('Navigate to:', link);
-  }
 }

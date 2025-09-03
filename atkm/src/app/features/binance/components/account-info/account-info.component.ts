@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { BinanceService } from '../../services/binance.service';
-import { BinanceAccount, BinanceBalance } from '../../models/binance-account.model';
+import { BinanceAccount, BinanceBalance } from '../../models/binance.model';
 
 @Component({
   selector: 'atk-account-info',
@@ -12,13 +12,27 @@ import { BinanceAccount, BinanceBalance } from '../../models/binance-account.mod
   styleUrls: ['./account-info.component.css']
 })
 export class AccountInfoComponent implements OnInit, OnDestroy {
-  account: BinanceAccount | null = null;
-  loading = false;
-  error: string | null = null;
-  
+  // Using Angular signals
+  account = signal<BinanceAccount | null>(null);
+  loading = signal<boolean>(false);
+  error = signal<string | null>(null);
+
   private destroy$ = new Subject<void>();
 
-  constructor(private binanceService: BinanceService) {}
+  // Computed property for significant balances
+  significantBalances = computed(() => {
+    const currentAccount = this.account();
+    if (!currentAccount || !currentAccount.balances) {
+      return [];
+    }
+
+    // Filter balances that have some value (free, locked, or total > 0)
+    return currentAccount.balances.filter(balance =>
+      balance.free > 0 || balance.locked > 0 || balance.total > 0
+    );
+  });
+
+  constructor(private binanceService: BinanceService) { }
 
   ngOnInit(): void {
     this.loadAccountInfo();
@@ -33,19 +47,19 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
    * Charge les informations du compte Binance
    */
   loadAccountInfo(): void {
-    this.loading = true;
-    this.error = null;
+    this.loading.set(true);
+    this.error.set(null);
 
     this.binanceService.getAccount()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (account) => {
-          this.account = account;
-          this.loading = false;
+          this.account.set(account);
+          this.loading.set(false);
         },
         error: (error) => {
-          this.error = error.message;
-          this.loading = false;
+          this.error.set(error.message);
+          this.loading.set(false);
           console.error('Erreur lors du chargement du compte:', error);
         }
       });
@@ -65,9 +79,9 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
     if (value === 0) return '0';
     if (value < 0.00001) return value.toExponential(2);
     if (value < 1) return value.toFixed(8);
-    return value.toLocaleString('fr-FR', { 
+    return value.toLocaleString('fr-FR', {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 8 
+      maximumFractionDigits: 8
     });
   }
 

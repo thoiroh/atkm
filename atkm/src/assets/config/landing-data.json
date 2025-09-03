@@ -25,14 +25,14 @@
         "items": [
           {
             "icon": "repo",
-            "label": "Account History",
-            "link": "/repo/atk_system",
+            "label": "Account Snapshot",
+            "link": "/binance/account",
             "action": false
           },
           {
             "icon": "repo",
-            "label": "Account Snapshot",
-            "link": "/repo/atkNode",
+            "label": "Account History",
+            "link": "/repo/atk_system",
             "action": false
           },
           {

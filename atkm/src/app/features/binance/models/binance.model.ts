@@ -21,3 +21,4 @@ export interface BinanceApiResponse {
   message?: string;
   endpoint?: string;
 }
+
