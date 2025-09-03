@@ -15,6 +15,7 @@
   --color-btn-hover-bg: #30363d;
   --color-btn-hover-border: #8b949e;
   --color-success-emphasis: #238636;
+  --color-btn-action: #58a6ff;
 }
 
 * {
@@ -91,7 +92,7 @@ atk-content-main {
   padding: 0 16px;
   gap: 12px;
   background-color: var(--color-canvas-subtle);
-  border-bottom: 2px solid var(--color-border-default);
+  /* border-bottom: 2px solid var(--color-border-default); */
   z-index: 10;
 }
 
@@ -142,7 +143,6 @@ atk-content-main {
   align-items: flex-end;
   justify-content: center;
   min-width: 100%;
-  border-bottom: 2px solid var(--color-border-default);
   background-color: var(--color-canvas-subtle);
   padding: 10px 20px;
   text-align: center;
@@ -177,9 +177,10 @@ atk-content-main {
 }
 
 /* Badge ou indicateur de statut */
-.btn-action,
+.brand-btn-action,
 .menu-brand-badge {
   color: white;
+  background: var(--color-success-emphasis);
   font-size: 8px;
   font-weight: 600;
   padding: 2px 8px 3px 8px;
@@ -192,11 +193,6 @@ atk-content-main {
   background: linear-gradient(135deg, var(--color-accent-emphasis), #58a6ff);
 }
 
-.btn-action {
-  background: var(--color-success-emphasis);
-}
-
-
 /* ======================================================================================================== */
 /* ========================= GRILLE 3: OUTILS UTILISATEUR (haut droite) =================================== */
 /* ======================================================================================================== */
@@ -208,7 +204,6 @@ atk-content-main {
   align-items: center;
   justify-content: flex-end;
   background-color: var(--color-canvas-subtle);
-  border-bottom: 2px solid var(--color-border-default);
   padding: 0 16px;
   z-index: 10;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
@@ -322,8 +317,9 @@ atk-content-main {
   position: relative;
   padding: 20px;
   background-color: var(--color-canvas-default);
-  border-right: 2px solid var(--color-border-default);
-  border-radius: 0px 12px 12px 0px;
+  border-top: 2px solid var(--color-border-default);
+  /* border-right: 2px solid var(--color-border-default); */
+  border-radius: 0px 8px 0px 0px;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 8;
@@ -420,8 +416,8 @@ atk-content-main {
   padding: 20px;
 }
 
-.btn-action {
-  background: var(--color-success-emphasis);
+.repo-btn-action {
+  background: var(--color-btn-action);
   color: white;
   border: none;
   border-radius: 6px;
@@ -439,6 +435,10 @@ atk-content-main {
   grid-area: main-content;
   display: flex;
   height: auto;
+  border-top: 2px solid var(--color-border-default);
+  border-right: 2px solid var(--color-border-default);
+  border-left: 2px solid var(--color-border-default);
+  border-radius: 6px 0px 0pc 0px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -450,16 +450,15 @@ atk-content-main {
   z-index: 1;
 }
 
-.content-wrapper.config-collapsed {
-  padding: 20px 80px;
+.content-wrapper {
+  padding: 20px 40px;
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: all 0.3s ease-in-out;
 }
 
-.content-wrapper {
-  padding: 20px 40px;
-  border-right: 2px solid var(--color-border-default);
-  overflow-y: auto;
-  overflow-x: hidden;
+.content-wrapper.config-collapsed {
+  padding: 20px 80px;
   transition: all 0.3s ease-in-out;
 }
 
@@ -662,6 +661,8 @@ atk-content-main {
   width: 30%;
   position: relative;
   background-color: var(--color-canvas-default);
+  border-left: 2px solid var(--color-border-default);
+  /* border-radius: 8px 0px 0px 0px; */
   transition: all 0.3s ease-in-out;
   z-index: 8;
 }
@@ -800,7 +801,7 @@ atk-content-main {
 }
 
 /* Écrans moyens - La zone centrale peut disparaître */
-@media (max-width: 992px) {
+@media (max-width: 1100px) {
   .landing-container {
     grid-template-areas:
       "menu-main menu-brand menu-tools"

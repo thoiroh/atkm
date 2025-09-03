@@ -17,7 +17,7 @@
     },
     "sections": [
       {
-        "title": "Top repositories",
+        "title": "Binance Wallet",
         "action": {
           "label": "New",
           "action": "createRepo"
@@ -25,44 +25,29 @@
         "items": [
           {
             "icon": "repo",
-            "label": "ThomBarth/atk_system",
+            "label": "Account History",
             "link": "/repo/atk_system",
             "action": false
           },
           {
             "icon": "repo",
-            "label": "ashuraraw/atkNode",
+            "label": "Account Snapshot",
             "link": "/repo/atkNode",
-            "action": {
-              "label": "New",
-              "action": "createRepo"
-            }
+            "action": false
           },
           {
             "icon": "repo",
-            "label": "ThomBarth/atk_raw",
+            "label": "Live Market Data",
             "link": "/repo/atk_raw",
-            "action": false
-          },
-          {
-            "icon": "repo",
-            "label": "ThomBarth/atk_backbone",
-            "link": "/repo/atk_backbone",
             "action": {
-              "label": "New",
+              "label": "on.going",
               "action": "createRepo"
             }
-          },
-          {
-            "icon": "repo",
-            "label": "ThomBarth/atk_matrix",
-            "link": "/repo/atk_matrix",
-            "action": false
           }
         ]
       },
       {
-        "title": "Top repositories",
+        "title": "IBKR Platform",
         "action": {
           "label": "New",
           "action": "createRepo"
@@ -70,38 +55,20 @@
         "items": [
           {
             "icon": "repo",
-            "label": "ThomBarth/atk_system",
+            "label": "Account History",
             "link": "/repo/atk_system",
             "action": false
           },
           {
             "icon": "repo",
-            "label": "ashuraraw/atkNode",
+            "label": "Account Snapshot",
             "link": "/repo/atkNode",
-            "action": {
-              "label": "New",
-              "action": "createRepo"
-            }
-          },
-          {
-            "icon": "repo",
-            "label": "ThomBarth/atk_raw",
-            "link": "/repo/atk_raw",
             "action": false
           },
           {
             "icon": "repo",
-            "label": "ThomBarth/atk_backbone",
-            "link": "/repo/atk_backbone",
-            "action": {
-              "label": "New",
-              "action": "createRepo"
-            }
-          },
-          {
-            "icon": "repo",
-            "label": "ThomBarth/atk_matrix",
-            "link": "/repo/atk_matrix",
+            "label": "Live Market Data",
+            "link": "/repo/atk_raw",
             "action": false
           }
         ]

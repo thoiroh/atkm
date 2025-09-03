@@ -32,7 +32,7 @@
           {{ item?.label || '' }}
         </a>
         @if (item?.action && item.action !== false) {
-        <button class="btn-action repo-action" (click)="handleAction(item.action.action)">
+        <button class="repo-btn-action repo-action" (click)="handleAction(item.action.action)">
           {{ item.action?.label }}
         </button>
         }
