@@ -3,11 +3,11 @@
     "logo": {
       "svg": "atk-logo",
       "alt": "atkm",
-      "link": "/"
+      "link": "/dashboard"
     },
-    "breadcrumb": ["Dashboard", "Wallet"],
+    "breadcrumb": ["Dashboard"],
     "centerTitle": "atomeek - api management for data integration",
-    "centerSubtitle": "2025.08.26.190743",
+    "centerSubtitle": "2025.01.04.190743",
     "centerBadge": "βeta"
   },
   "sidebar": {
@@ -25,20 +25,20 @@
         "items": [
           {
             "icon": "repo",
-            "label": "Account Snapshot",
-            "link": "/binance/account",
+            "label": "Account History",
+            "link": "/dashboard/binance/account",
             "action": false
           },
           {
             "icon": "repo",
-            "label": "Account History",
-            "link": "/repo/atk_system",
+            "label": "Account Snapshot",
+            "link": "/dashboard/binance/snapshot",
             "action": false
           },
           {
             "icon": "repo",
             "label": "Live Market Data",
-            "link": "/repo/atk_raw",
+            "link": "/dashboard/binance/market-data",
             "action": {
               "label": "on.going",
               "action": "createRepo"
@@ -56,19 +56,19 @@
           {
             "icon": "repo",
             "label": "Account History",
-            "link": "/repo/atk_system",
+            "link": "/dashboard/ibkr/account",
             "action": false
           },
           {
             "icon": "repo",
             "label": "Account Snapshot",
-            "link": "/repo/atkNode",
+            "link": "/dashboard/ibkr/snapshot",
             "action": false
           },
           {
             "icon": "repo",
             "label": "Live Market Data",
-            "link": "/repo/atk_raw",
+            "link": "/dashboard/ibkr/market-data",
             "action": false
           }
         ]
@@ -82,7 +82,7 @@
   "feeds": [
     {
       "id": "feed-1",
-      "title": "2025.08.26.102157-Feed",
+      "title": "2025.01.04.102157-Feed",
       "items": [
         {
           "id": "item-1",
@@ -121,39 +121,21 @@
           }
         },
         {
-          "id": "item-2",
+          "id": "item-3",
           "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
           "action": "Repository update",
-          "time": "2 days ago",
+          "time": "3 days ago",
           "repo": {
-            "name": "moeru-ai/airi",
-            "link": "/repo/airi",
-            "description": "Self hosted, you owned Grok Companion; a container of souls of waifu; cyber livings"
+            "name": "atkm/matrix",
+            "link": "/repo/matrix",
+            "description": "ATK Matrix - Universal API management framework for financial data integration with Angular + PHP + Docker stack"
           },
           "stats": {
             "language": {
-              "name": "Vue",
-              "color": "#41b883"
+              "name": "TypeScript",
+              "color": "#3178c6"
             },
-            "stars": 10000
-          }
-        },
-        {
-          "id": "item-2",
-          "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
-          "action": "Repository update",
-          "time": "2 days ago",
-          "repo": {
-            "name": "moeru-ai/airi",
-            "link": "/repo/airi",
-            "description": "ai reconstruit entièrement le fichier pour garantir que chaque section contient désormais une démo visible (en dehors des), avec un petit style local dans le Tu devrais voir, section par section : scrollbar, surlignage ::target-text, ruby, double carte light-dark() (light vs dark forcé), accordéons exclusifs, scroller interne pour content-visibility, comparaison font-size-adjust, bouton pour transition-behavior, barre de progression via @property, et le point animé avec offset-path. ai reconstruit entièrement le fichier pour garantir que chaque section contient désormais une démo visible (en dehors des), avec un petit style local dans le Tu devrais voir, section par section : scrollbar, surlignage ::target-text, ruby, double carte light-dark() (light vs dark forcé), accordéons exclusifs, scroller interne pour content-visibility, comparaison font-size-adjust, bouton pour transition-behavior, barre de progression via @property, et le point animé avec offset-path."
-          },
-          "stats": {
-            "language": {
-              "name": "Vue",
-              "color": "#41b883"
-            },
-            "stars": 10000
+            "stars": 42
           }
         }
       ]
@@ -168,50 +150,50 @@
         "items": [
           {
             "icon": "display",
-            "title": "Paramètres d'affichage",
-            "description": "Configuration des vues et filtres de la grille 4",
+            "title": "Display Settings",
+            "description": "Configure views and filters for the main grid",
             "link": "/config/display"
           },
           {
             "icon": "user",
-            "title": "Préférences utilisateur",
-            "description": "Personnalisation de l'interface et des composants",
+            "title": "User Preferences",
+            "description": "Customize interface and component settings",
             "link": "/config/preferences"
           },
           {
             "icon": "keyboard",
-            "title": "Raccourcis clavier",
-            "description": "Configuration des shortcuts et hotkeys",
+            "title": "Keyboard Shortcuts",
+            "description": "Configure shortcuts and hotkeys",
             "link": "/config/shortcuts"
           },
           {
             "icon": "layout",
-            "title": "Layout des composants",
-            "description": "Organisation et disposition des éléments",
+            "title": "Component Layout",
+            "description": "Organization and arrangement of elements",
             "link": "/config/layout"
           }
         ]
       },
       {
-        "title": "Outils rapides",
+        "title": "Quick Tools",
         "icon": "tools",
         "items": [
           {
             "icon": "download",
-            "title": "Export données",
-            "description": "Exporter le contenu de la grille principale",
+            "title": "Export Data",
+            "description": "Export main grid content",
             "link": "/tools/export"
           },
           {
             "icon": "upload",
-            "title": "Import fichiers",
-            "description": "Importer des données dans l'application",
+            "title": "Import Files",
+            "description": "Import data into the application",
             "link": "/tools/import"
           },
           {
             "icon": "action",
-            "title": "Actions rapides",
-            "description": "Raccourcis vers les fonctions principales",
+            "title": "Quick Actions",
+            "description": "Shortcuts to main functions",
             "link": "/tools/quick-actions"
           }
         ]
