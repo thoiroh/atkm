@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'atk-content-main',
   standalone: true,
-  imports: [],
+  imports: [RouterOutlet],
   templateUrl: './content-main.component.html',
 })
 export class ContentMainComponent {

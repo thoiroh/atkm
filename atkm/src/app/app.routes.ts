@@ -34,44 +34,44 @@ export const routes: Routes = [
             loadComponent: () => import('./features/binance/components/account-info/account-info.component').then(m => m.AccountInfoComponent),
             data: { breadcrumb: 'Account History' }
           },
-          // {
-          //   path: 'snapshot',
-          //   loadComponent: () => import('./features/binance/components/account-snapshot/account-snapshot.component').then(m => m.AccountSnapshotComponent),
-          //   data: { breadcrumb: 'Account Snapshot' }
-          // },
-          // {
-          //   path: 'market-data',
-          //   loadComponent: () => import('./features/binance/components/market-data/market-data.component').then(m => m.MarketDataComponent),
-          //   data: { breadcrumb: 'Live Market Data' }
-          // }
+          {
+            path: 'snapshot',
+            loadComponent: () => import('./features/binance/components/account-snapshot/account-snapshot.component').then(m => m.AccountSnapshotComponent),
+            data: { breadcrumb: 'Account Snapshot' }
+          },
+          {
+            path: 'market-data',
+            loadComponent: () => import('./features/binance/components/market-data/market-data.component').then(m => m.MarketDataComponent),
+            data: { breadcrumb: 'Live Market Data' }
+          }
         ]
       },
-      // {
-      //   path: 'ibkr',
-      //   data: { breadcrumb: 'IBKR Platform' },
-      //   children: [
-      //     {
-      //       path: '',
-      //       redirectTo: 'account',
-      //       pathMatch: 'full'
-      //     },
-      //     {
-      //       path: 'account',
-      //       loadComponent: () => import('./features/ibkr/components/account-history/account-history.component').then(m => m.IbkrAccountHistoryComponent),
-      //       data: { breadcrumb: 'Account History' }
-      //     },
-      //     {
-      //       path: 'snapshot',
-      //       loadComponent: () => import('./features/ibkr/components/account-snapshot/account-snapshot.component').then(m => m.IbkrAccountSnapshotComponent),
-      //       data: { breadcrumb: 'Account Snapshot' }
-      //     },
-      //     {
-      //       path: 'market-data',
-      //       loadComponent: () => import('./features/ibkr/components/market-data/market-data.component').then(m => m.IbkrMarketDataComponent),
-      //       data: { breadcrumb: 'Live Market Data' }
-      //     }
-      //   ]
-      // }
+      {
+        path: 'ibkr',
+        data: { breadcrumb: 'IBKR Platform' },
+        children: [
+          {
+            path: '',
+            redirectTo: 'account',
+            pathMatch: 'full'
+          },
+          {
+            path: 'account',
+            loadComponent: () => import('./features/ibkr/components/account-history/account-history.component').then(m => m.IbkrAccountHistoryComponent),
+            data: { breadcrumb: 'Account History' }
+          },
+          {
+            path: 'snapshot',
+            loadComponent: () => import('./features/ibkr/components/account-snapshot/account-snapshot.component').then(m => m.IbkrAccountSnapshotComponent),
+            data: { breadcrumb: 'Account Snapshot' }
+          },
+          {
+            path: 'market-data',
+            loadComponent: () => import('./features/ibkr/components/market-data/market-data.component').then(m => m.IbkrMarketDataComponent),
+            data: { breadcrumb: 'Live Market Data' }
+          }
+        ]
+      }
     ]
   },
   {
