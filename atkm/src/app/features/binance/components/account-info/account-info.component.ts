@@ -9,7 +9,7 @@ import { BinanceAccount, BinanceBalance } from '../../models/binance.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './account-info.component.html',
-  styleUrls: ['./account-info.component.css']
+  styleUrls: ['./../binance.component.css']
 })
 export class AccountInfoComponent implements OnInit, OnDestroy {
   // Using Angular signals

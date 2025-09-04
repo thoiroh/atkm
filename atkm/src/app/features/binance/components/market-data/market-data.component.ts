@@ -21,34 +21,7 @@ import { Component } from '@angular/core';
       </div>
     </div>
   `,
-  styles: [`
-    .placeholder-content {
-      padding: 40px;
-      max-width: 800px;
-    }
+  styleUrls: ['./../binance.component.css']
 
-    .feature-list {
-      margin-top: 30px;
-      background: var(--color-canvas-subtle);
-      padding: 20px;
-      border-radius: 8px;
-      border: 1px solid var(--color-border-default);
-    }
-
-    .feature-list h3 {
-      margin-top: 0;
-      color: var(--color-fg-default);
-    }
-
-    .feature-list ul {
-      list-style-type: disc;
-      padding-left: 20px;
-    }
-
-    .feature-list li {
-      margin-bottom: 8px;
-      color: var(--color-fg-muted);
-    }
-  `]
 })
 export class MarketDataComponent { }

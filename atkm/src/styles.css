@@ -64,7 +64,7 @@ atk-content-main {
   grid-template-areas:
     "menu-main menu-brand menu-tools"
     "sidebar-nav main-content main-content";
-  grid-template-columns: minmax(200px, 25%) 1fr minmax(200px, 25%);
+  grid-template-columns: minmax(150px, 22%) 1fr minmax(150px, 25%);
   grid-template-rows: 80px 1fr;
   position: relative;
   background-color: var(--color-canvas-default);
@@ -318,7 +318,7 @@ atk-content-main {
   padding: 20px;
   background-color: var(--color-canvas-default);
   border-top: 2px solid var(--color-border-default);
-  /* border-right: 2px solid var(--color-border-default); */
+  border-bottom: 2px solid var(--color-border-default);
   border-radius: 0px 8px 0px 0px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -341,7 +341,8 @@ atk-content-main {
   border: none;
   background: transparent;
   color: var(--color-fg-default);
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -357,7 +358,7 @@ atk-content-main {
   padding-bottom: 12px;
   border-bottom: 2px solid var(--color-border-muted);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-fg-default);
 }
 
@@ -392,7 +393,7 @@ atk-content-main {
 }
 
 .repo-title {
-  width: 85%;
+  width: 100%;
   padding-left: 2px;
 }
 
@@ -409,21 +410,22 @@ atk-content-main {
   margin-top: 4px;
 }
 
-.recent-activity {
-  color: var(--color-fg-muted);
-  font-size: 14px;
-  text-align: center;
-  padding: 20px;
-}
-
 .repo-btn-action {
   background: var(--color-btn-action);
   color: white;
   border: none;
   border-radius: 6px;
+  margin-left: 8px;
   padding: 4px 8px;
   font-size: 10px;
   cursor: pointer;
+}
+
+.recent-activity {
+  color: var(--color-fg-muted);
+  font-size: 14px;
+  text-align: center;
+  padding: 20px;
 }
 
 
@@ -436,21 +438,28 @@ atk-content-main {
   display: flex;
   height: auto;
   border-top: 2px solid var(--color-border-default);
-  border-right: 2px solid var(--color-border-default);
   border-left: 2px solid var(--color-border-default);
+  border-bottom: 2px solid var(--color-border-default);
   border-radius: 6px 0px 0pc 0px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
+  min-height: 0;
 }
 
 .main-content {
-  display: flex;
   position: relative;
+  display: flex;
+  justify-content: center;
   background-color: var(--color-canvas-default);
-  z-index: 1;
+  flex: 1 1 70%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
   padding: 20px 40px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -467,6 +476,15 @@ atk-content-main {
   font-weight: 600;
   margin: 20px 0 20px 0;
   color: var(--color-fg-default);
+}
+
+.dynamic-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: var(--color-canvas-default);
+  overflow: hidden;
 }
 
 .copilot-section {
@@ -658,24 +676,40 @@ atk-content-main {
 /* ============================================================================================================= */
 
 .config-panel {
-  width: 30%;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 30%;
+  min-width: 0;
   background-color: var(--color-canvas-default);
   border-left: 2px solid var(--color-border-default);
-  /* border-radius: 8px 0px 0px 0px; */
   transition: all 0.3s ease-in-out;
-  z-index: 8;
-}
-
-.config-wrapper {
-  padding: 20px;
-  text-wrap: nowrap;
-  overflow: hidden;
+  overflow: visible;
+  z-index: 20;
 }
 
 .config-panel.collapsed {
-  width: 0%;
-  transition: width 0.3s ease-in-out;
+  flex-basis: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.config-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 20px;
+  white-space: nowrap;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
+}
+
+/* Contenu du panneau */
+.config-content {
+  flex: 0 0 auto;
+  min-height: max-content;
+  overflow-y: visible;
 }
 
 /* Étiquette toggle - Position fixe à droite */
@@ -685,17 +719,17 @@ atk-content-main {
   left: -30px;
   width: 30px;
   height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--color-canvas-default);
   border: 2px solid var(--color-border-default);
   border-right: none;
   border-radius: 8px 0 0 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 15;
   color: var(--color-fg-muted);
+  cursor: pointer;
   transition: all 0.3s ease-in-out;
+  z-index: 21;
 }
 
 .toggle-arrow {
@@ -721,23 +755,20 @@ atk-content-main {
   /* 1s de délai */
 }
 
-/* Contenu du panneau */
-.config-content {
-  height: 100%;
-}
-
 .config-section {
   margin-bottom: 32px;
 }
 
 .config-section h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: var(--color-fg-default);
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--color-border-muted);
+  color: var(--color-fg-default);
+  font-size: 14px;
+
 }
 
 .config-item {
@@ -745,7 +776,6 @@ atk-content-main {
   align-items: flex-start;
   gap: 12px;
   padding: 12px 0;
-  border-bottom: 1px solid var(--color-border-muted);
   margin-left: 16px;
 }
 
@@ -770,7 +800,7 @@ atk-content-main {
   font-size: 14px;
   font-weight: 600;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 0px;
 }
 
 .config-item-title:hover {
@@ -780,7 +810,7 @@ atk-content-main {
 .config-item-desc {
   color: var(--color-fg-muted);
   font-size: 12px;
-  line-height: 1.4;
+  line-height: 1;
 }
 
 
@@ -806,13 +836,14 @@ atk-content-main {
     grid-template-areas:
       "menu-main menu-brand menu-tools"
       "sidebar-nav main-content main-content";
-    grid-template-columns: minmax(200px, 35%) 1fr minmax(200px, 35%);
+    grid-template-columns: minmax(150px, 22%) 1fr minmax(150px, 25%);
   }
 
   /* Cache le panneau de config sur écrans moyens */
   .config-panel {
-    display: none;
+    flex-basis: 0 !important;
   }
+
 
   /* La zone centrale disparaît progressivement - seul le contenu */
   .menu-brand-content {
@@ -833,6 +864,10 @@ atk-content-main {
 
   /* La zone centrale disparaît complètement */
   .menu-brand {
+    display: none;
+  }
+
+  .config-panel {
     display: none;
   }
 

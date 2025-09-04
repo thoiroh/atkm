@@ -23,7 +23,6 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
     SidebarConfigComponent
   ],
   templateUrl: './landing.component.html',
-
   styles: []
 })
 export class LandingComponent implements OnInit {
@@ -37,7 +36,7 @@ export class LandingComponent implements OnInit {
     this.configService.loadLandingConfig().subscribe({
       next: (config) => {
         this.config = config;
-        this.updateConfigForNavigation();
+        // this.updateConfigForNavigation();
       },
       error: (error) => {
         console.error('Erreur lors du chargement de la configuration:', error);
