@@ -1,6 +1,6 @@
 <aside class="sidebar-nav" aria-label="Navigation">
-  <!--
-  <div class="user-context" *ngIf="config?.userContext">
+
+  <!-- <div class="user-context" *ngIf="config?.userContext">
     <img [src]="config.userContext?.avatar || ''" [alt]="'@' + (config.userContext?.username || '')" class="avatar"
       width="20" height="20" />
     <button class="user-context-button">
@@ -11,8 +11,8 @@
         </path>
       </svg>
     </button>
-  </div>
-  -->
+  </div> -->
+
 
   @for (section of (config?.sections || []); track $index) {
   <div class="sidebar-section">

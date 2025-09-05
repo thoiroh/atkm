@@ -45,10 +45,13 @@ body {
 router-outlet,
 atk-landing,
 atk-home-content,
-
 atk-account-info,
 atk-account-snapshot,
 atk-market-data,
+
+atk-ibkr-account-history,
+atk-ibkr-account-snapshot,
+atk-ibkr-market-data,
 
 atk-navbar-landing,
 atk-navbar-main,
@@ -479,6 +482,12 @@ atk-content-main {
   color: var(--color-fg-default);
 }
 
+.content-header h3 {
+  font-size: 16px;
+  margin: 20px 0 20px 0;
+  color: var(--color-fg-default);
+}
+
 .content-dynamic {
   position: relative;
   display: flex;
@@ -521,8 +530,9 @@ atk-content-main {
   font-style: normal;
   font-weight: normal;
   max-width: 98%;
-  padding-top: 10px;
   margin-left: 3px;
+  padding-top: 10px;
+  padding-bottom: 20px;
   border-top: 2px solid var(--color-border-muted);
   color: var(--color-fg-default);
 }
@@ -626,7 +636,7 @@ li,
 }
 
 /* ======================================================================================================== */
-/* ========================= SECTION FEED ================================================================== */
+/* ========================= SECTION FEED ================================================================= */
 /* ======================================================================================================== */
 
 .feed-section {
