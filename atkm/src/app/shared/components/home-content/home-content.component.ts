@@ -6,12 +6,7 @@ import { Component, Input, OnInit } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './home-content.component.html',
-  styles: [`
-    .home-wrapper {
-      padding: 40px;
-      max-width: 800px;
-    }
-  `]
+  styles: []
 })
 export class HomeContentComponent implements OnInit {
   @Input() feeds: any[] = [];

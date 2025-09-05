@@ -38,9 +38,17 @@ body {
   height: 100%;
 }
 
-/* ======================================================================================================== */
-FIX POUR LES COMPOSANTS ANGULAR DANS LA GRILLE
-/* ======================================================================================================== */
+/* ====================================================================================================== */
+/* FIX========================= FIX POUR LES COMPOSANTS ANGULAR DANS LA GRILLE ========================== */
+/* ====================================================================================================== */
+
+router-outlet,
+atk-landing,
+atk-home-content,
+
+atk-account-info,
+atk-account-snapshot,
+atk-market-data,
 
 atk-navbar-landing,
 atk-navbar-main,
@@ -440,7 +448,7 @@ atk-content-main {
 .content-main {
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   background-color: var(--color-canvas-default);
   flex: 1 1 70%;
   min-width: 0;
@@ -452,6 +460,7 @@ atk-content-main {
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
+  width: 100%;
   padding: 20px 40px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -478,6 +487,82 @@ atk-content-main {
   background-color: var(--color-canvas-default);
   overflow: hidden;
 }
+
+
+/* ======================================================================================================== */
+/* ========================= PLACEHOLDER CSS ============================================================== */
+/* ======================================================================================================== */
+
+.placeholder-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* ---------------- */
+  /* grow=1, shrink=1, basis=600px */
+  /* flex: 0 0 auto; */
+  /* ---------------- */
+  /* largeur = 600px, bornée entre 70% et 80% du parent */
+  /* width: clamp(70%, 600px, 80%); */
+  /* ---------------- */
+  /* si le parent est un flex en colonne et n’étire pas les enfants */
+  /* align-self: stretch; */
+  /* retire si inutile */
+  padding: 40px;
+  ;
+}
+
+.placeholder-header h1 {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.placeholder-details h2 {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: normal;
+  max-width: 98%;
+  padding-top: 10px;
+  margin-left: 3px;
+  border-top: 2px solid var(--color-border-muted);
+  color: var(--color-fg-default);
+}
+
+.feature-content {
+  display: flex;
+  flex-direction: column;
+  /* min-width: 600px; */
+  margin-top: 30px;
+  background: var(--color-canvas-subtle);
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-default);
+}
+
+
+.feature-header h3 {
+  align-items: center;
+  font-size: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--color-border-muted);
+}
+
+
+ul,
+.feature-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+li,
+.feature-items {
+  margin-bottom: 8px;
+  color: var(--color-fg-muted);
+}
+
+/* ======================================================================================================== */
+/* ========================= COPILOT SECTION ============================================================== */
+/* ======================================================================================================== */
 
 .copilot-section {
   background: var(--color-canvas-subtle);
@@ -540,7 +625,10 @@ atk-content-main {
   padding-top: 2px;
 }
 
+/* ======================================================================================================== */
 /* ========================= SECTION FEED ================================================================== */
+/* ======================================================================================================== */
+
 .feed-section {
   margin-bottom: 24px;
 }
