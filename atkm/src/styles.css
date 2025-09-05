@@ -57,13 +57,13 @@ atk-content-main {
 /* ========================= STRUCTURE PRINCIPALE : 6 GRILLES =========================================== */
 /* ====================================================================================================== */
 
-.landing-container {
+.landing-wrapper {
   height: 100vh;
   width: 100vw;
   display: grid;
   grid-template-areas:
     "menu-main menu-brand menu-tools"
-    "sidebar-nav main-content main-content";
+    "sidebar-nav content-main content-main";
   grid-template-columns: minmax(150px, 22%) 1fr minmax(150px, 25%);
   grid-template-rows: 80px 1fr;
   position: relative;
@@ -71,11 +71,6 @@ atk-content-main {
   transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
-
-/* .landing-container.config-collapsed {
-  grid-template-columns: minmax(200px, 25%) 1fr 0px;
-  grid-template-rows: 80px 1fr;
-} */
 
 
 /* ====================================================================================================== */
@@ -213,19 +208,16 @@ atk-content-main {
   grid-area: menu-tools;
 }
 
-.search-container {
+.search-wrapper {
   flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
   max-width: 400px;
   margin: 0 12px 0 20px;
 }
 
-.search-container .search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-container .search-icon {
+.search-wrapper .search-icon {
   position: absolute;
   left: 12px;
   z-index: 1;
@@ -233,7 +225,7 @@ atk-content-main {
   pointer-events: none;
 }
 
-.search-container .search-input {
+.search-wrapper .search-input {
   width: 100%;
   min-width: 200px;
   background: var(--color-canvas-default);
@@ -244,11 +236,11 @@ atk-content-main {
   font-size: 14px;
 }
 
-.search-container .search-input::placeholder {
+.search-wrapper .search-input::placeholder {
   color: var(--color-fg-muted);
 }
 
-.search-container .search-input:focus {
+.search-wrapper .search-input:focus {
   outline: none;
   border-color: var(--color-accent-emphasis);
   box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
@@ -433,8 +425,8 @@ atk-content-main {
 /* ========================= GRILLE 5: CONTENU PRINCIPAL (centre) ========================================= */
 /* ======================================================================================================== */
 
-.main-container {
-  grid-area: main-content;
+.landing-main {
+  grid-area: content-main;
   display: flex;
   height: auto;
   border-top: 2px solid var(--color-border-default);
@@ -445,7 +437,7 @@ atk-content-main {
   min-height: 0;
 }
 
-.main-content {
+.content-main {
   position: relative;
   display: flex;
   justify-content: center;
@@ -471,14 +463,14 @@ atk-content-main {
   transition: all 0.3s ease-in-out;
 }
 
-.main-header h1 {
+.content-header h1 {
   font-size: 24px;
   font-weight: 600;
   margin: 20px 0 20px 0;
   color: var(--color-fg-default);
 }
 
-.dynamic-content {
+.content-dynamic {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -820,7 +812,7 @@ atk-content-main {
 
 /* Tablette - La zone centrale commence à se réduire */
 @media (max-width: 1200px) {
-  .landing-container {
+  .landing-wrapper {
     grid-template-columns: minmax(200px, 30%) 1fr minmax(200px, 30%);
   }
 
@@ -832,10 +824,10 @@ atk-content-main {
 
 /* Écrans moyens - La zone centrale peut disparaître */
 @media (max-width: 1100px) {
-  .landing-container {
+  .landing-wrapper {
     grid-template-areas:
       "menu-main menu-brand menu-tools"
-      "sidebar-nav main-content main-content";
+      "sidebar-nav content-main content-main";
     grid-template-columns: minmax(150px, 22%) 1fr minmax(150px, 25%);
   }
 
@@ -854,10 +846,10 @@ atk-content-main {
 
 /* Mobile - Les zones se chevauchent, la zone centrale disparaît */
 @media (max-width: 768px) {
-  .landing-container {
+  .landing-wrapper {
     grid-template-areas:
       "menu-main menu-tools"
-      "main-content main-content";
+      "content-main content-main";
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 65px 1fr;
   }
@@ -888,7 +880,7 @@ atk-content-main {
   }
 
   /* Cache la barre de recherche sur mobile */
-  .search-container {
+  .search-wrapper {
     display: none;
   }
 
@@ -897,7 +889,7 @@ atk-content-main {
     padding: 6px;
   }
 
-  .main-content {
+  .content-main {
     padding: 16px 0;
   }
 
@@ -908,7 +900,7 @@ atk-content-main {
 
 /* Très petits écrans */
 @media (max-width: 480px) {
-  .landing-container {
+  .landing-wrapper {
     grid-template-rows: 55px 1fr;
   }
 

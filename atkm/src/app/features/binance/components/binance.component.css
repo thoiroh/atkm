@@ -61,7 +61,7 @@ li,
 /* ========================= BINANCE CSS ============================================================== */
 /* ======================================================================================================== */
 
-.binance-account-container {
+.binance-account-wrapper {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
@@ -398,7 +398,7 @@ li,
 
 /* Responsive */
 @media (max-width: 768px) {
-  .binance-account-container {
+  .binance-account-wrapper {
     padding: 16px;
   }
 

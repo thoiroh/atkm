@@ -1,4 +1,4 @@
-<div class="home-content">
+<div class="home-wrapper">
   <!-- Section Copilot -->
   <div class="copilot-section">
     <h2>Copilot</h2>
@@ -42,10 +42,10 @@
 
   <!-- Feeds Section -->
   @if (feeds && feeds.length > 0) {
-  <div class="feed-section">
+  <main class="feed-section">
     @for (feed of feeds; track feed.id) {
-    <div class="feed-container">
-      <div class="feed-header">
+    <div class="feed-wrapper">
+      <header class="feed-header">
         <h2>{{feed.title}}</h2>
         <button class="filter-btn" (click)="handleFilter(feed.id)">
           <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
@@ -55,7 +55,7 @@
           </svg>
           Filter
         </button>
-      </div>
+      </header>
 
       <div class="feed-items">
         @for (item of feed.items; track $index) {
@@ -106,6 +106,6 @@
       </div>
     </div>
     }
-  </div>
+  </main>
   }
 </div>

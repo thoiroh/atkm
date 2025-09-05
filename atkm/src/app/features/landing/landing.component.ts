@@ -1,5 +1,4 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { BreadcrumbService } from '../../core/services/breadcrumb.service';
 import { ConfigService, ILandingConfig } from '../../core/services/config.service';
 import { NavigationStateService } from '../../core/services/navigation-state.service';
@@ -14,7 +13,6 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
   selector: 'atk-landing',
   standalone: true,
   imports: [
-    RouterOutlet,
     NavbarMainComponent,
     NavbarBrandComponent,
     NavbarToolsComponent,

@@ -7,8 +7,9 @@ import { Component, Input, OnInit } from '@angular/core';
   imports: [CommonModule],
   templateUrl: './home-content.component.html',
   styles: [`
-    .home-content {
-      padding: 0;
+    .home-wrapper {
+      padding: 40px;
+      max-width: 800px;
     }
   `]
 })
