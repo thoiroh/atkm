@@ -24,7 +24,7 @@
         },
         "items": [
           {
-            "icon": "repo",
+            "icon": "default",
             "label": "Assets Inventory",
             "link": "",
             "action": false,
@@ -50,14 +50,14 @@
             ]
           },
           {
-            "icon": "action",
+            "icon": "default",
             "label": "Global Watchlist",
             "link": "/dashboard/binance/snapshot",
             "action": false,
             "isExpanded": true
           },
           {
-            "icon": "action",
+            "icon": "default",
             "label": "Streaming Market Data",
             "link": "/dashboard/binance/market-data",
             "action": {
@@ -170,25 +170,25 @@
         "icon": "settings",
         "items": [
           {
-            "icon": "action",
+            "icon": "default",
             "title": "Display Settings",
             "description": "Configure views and filters for the main grid",
             "link": "/config/display"
           },
           {
-            "icon": "user",
+            "icon": "default",
             "title": "User Preferences",
             "description": "Customize interface and component settings",
             "link": "/config/preferences"
           },
           {
-            "icon": "keyboard",
+            "icon": "default",
             "title": "Keyboard Shortcuts",
             "description": "Configure shortcuts and hotkeys",
             "link": "/config/shortcuts"
           },
           {
-            "icon": "layout",
+            "icon": "default",
             "title": "Component Layout",
             "description": "Organization and arrangement of elements",
             "link": "/config/layout"
@@ -200,19 +200,19 @@
         "icon": "tools",
         "items": [
           {
-            "icon": "download",
+            "icon": "default",
             "title": "Export Data",
             "description": "Export main grid content",
             "link": "/tools/export"
           },
           {
-            "icon": "upload",
+            "icon": "default",
             "title": "Import Files",
             "description": "Import data into the application",
             "link": "/tools/import"
           },
           {
-            "icon": "action",
+            "icon": "default",
             "title": "Quick Actions",
             "description": "Shortcuts to main functions",
             "link": "/tools/quick-actions"

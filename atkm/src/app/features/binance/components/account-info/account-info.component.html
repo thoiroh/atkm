@@ -1,13 +1,13 @@
 <div class="placeholder-wrapper">
   <!-- <div class="binance-account-wrapper"> -->
   <header class="placeholder-header">
-    <h1>Binance Account Information</h1>
+    <h1>Binance Account Assets Inventory</h1>
     <div class="placeholder-details">
-      <h2>Binance account anformation functionality will be implemented here.</h2>
+      <h2>Binance account information & assets inventory.</h2>
     </div>
   </header>
 
-  <div class="copilot-section">
+  <!-- <div class="copilot-section">
     <textarea class="copilot-input" placeholder="" rows="5"></textarea>
     <div class="copilot-suggestions">
       <button class="refresh-btn" (click)="refreshAccount()" [disabled]="loading()" [class.loading]="loading()">
@@ -18,7 +18,7 @@
         {{ loading() ? 'Chargement...' : 'Actualiser' }}
       </button>
     </div>
-  </div>
+  </div> -->
 
 
 
@@ -118,10 +118,10 @@
       @if (significantBalances().length > 0) {
       <div class="balances-table">
         <div class="table-header">
-          <div class="header-cell">Actif</div>
-          <div class="header-cell">Disponible</div>
-          <div class="header-cell">Bloqué</div>
-          <div class="header-cell">Total</div>
+          <div class="header-cell left">Actif</div>
+          <div class="header-cell right">Disponible</div>
+          <div class="header-cell right">Bloqué</div>
+          <div class="header-cell right">Total</div>
         </div>
 
         @for (balance of significantBalances(); track trackByAsset($index, balance)) {

@@ -363,6 +363,7 @@ atk-content-main {
   font-size: 18px;
   font-weight: 600;
   color: var(--color-fg-default);
+  cursor: pointer;
 }
 
 /* Toggle arrows */
@@ -419,7 +420,9 @@ atk-content-main {
 
 .repo-list a {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: flex-start;
   text-wrap: nowrap;
   gap: 8px;
 }
@@ -536,9 +539,10 @@ atk-content-main {
 .content-main {
   position: relative;
   display: flex;
+  flex-direction: column;
   justify-content: left;
   background-color: var(--color-canvas-default);
-  flex: 1 1 70%;
+  flex: 1 0 70%;
   min-width: 0;
   overflow: hidden;
 }
@@ -547,8 +551,8 @@ atk-content-main {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 100%;
-  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 20px 40px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -578,6 +582,9 @@ atk-content-main {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  min-height: 0;
   background-color: var(--color-canvas-default);
   overflow: hidden;
 }
@@ -692,7 +699,8 @@ li,
 
 .copilot-suggestions {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
   gap: 12px;
   margin-top: 16px;
 }
@@ -948,7 +956,9 @@ li,
 
 .config-item {
   display: flex;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
   padding: 12px 0;
   margin-left: 16px;
@@ -959,8 +969,8 @@ li,
 }
 
 .config-item-icon {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   fill: var(--color-fg-muted);
   margin-top: 4px;
 }
@@ -1155,6 +1165,18 @@ li,
 /* ========================================================================================================== */
 /* ========================= UTILITAIRES ==================================================================== */
 /* ========================================================================================================== */
+
+.left {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
+}
 
 .sr-only {
   position: absolute !important;

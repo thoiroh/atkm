@@ -8,7 +8,7 @@ import { BinanceAccount, BinanceApiResponse } from '../models/binance.model';
   providedIn: 'root'
 })
 export class BinanceService {
-  private readonly apiBaseUrl = 'http://localhost:8080'; // Ajustez selon votre configuration
+  private readonly apiBaseUrl = 'http://localhost:8000'; // Ajustez selon votre configuration
   private http = inject(HttpClient);
 
   /**
