@@ -75,7 +75,7 @@ atk-content-main {
   grid-template-areas:
     "menu-main menu-brand menu-tools"
     "sidebar-nav content-main content-main";
-  grid-template-columns: minmax(150px, 22%) 1fr minmax(150px, 25%);
+  grid-template-columns: minmax(200px, 25%) 1fr minmax(150px, 25%);
   grid-template-rows: 80px 1fr;
   position: relative;
   background-color: var(--color-canvas-default);
@@ -117,7 +117,7 @@ atk-content-main {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-canvas-default);
+  background-color: var(--color-canvas-subtle);
   color: var(--color-fg-default);
 }
 
@@ -356,13 +356,57 @@ atk-content-main {
 .sidebar-section h3 {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-bottom: 12px;
   padding-bottom: 12px;
   border-bottom: 2px solid var(--color-border-muted);
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
   color: var(--color-fg-default);
+}
+
+/* Toggle arrows */
+.section-toggle,
+.sidebar-submenu-toggle {
+  transition: transform 0.3s ease;
+  display: inline-block;
+  margin-right: 8px;
+  color: var(--color-fg-muted);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.section-toggle.expanded {
+  transform: rotate(90deg);
+}
+
+.section-header {
+  cursor: pointer;
+  user-select: none;
+}
+
+.section-content {
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Collapsible content */
+.section-content,
+.sidebar-submenu-list {
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-submenu-toggle {
+  margin-right: 4px;
+  font-size: 10px;
+}
+
+
+.section-content.collapsed,
+.sidebar-submenu-list.collapsed {
+  max-height: 0;
+  opacity: 0;
 }
 
 .repo-list {
@@ -376,28 +420,33 @@ atk-content-main {
 .repo-list a {
   display: flex;
   align-items: center;
+  text-wrap: nowrap;
   gap: 8px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  color: var(--color-fg-muted);
-  font-size: 14px;
-  text-decoration: none;
 }
 
-.repo-list a:hover {
+.repo-list a:hover,
+.sidebar-submenu-item:hover {
   color: var(--color-fg-default);
   background-color: var(--color-canvas-subtle);
+  border-radius: 6px;
 }
 
 .repo-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  /* align-items: center; */
+  /* justify-content: space-between; */
 }
 
 .repo-title {
   width: 100%;
-  padding-left: 2px;
+  padding: 3px 8px;
+  color: var(--color-fg-muted);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
 }
 
 .repo-title:hover {
@@ -422,6 +471,42 @@ atk-content-main {
   padding: 4px 8px;
   font-size: 10px;
   cursor: pointer;
+}
+
+/* Sous-menus styling */
+.sidebar-submenu-list {
+  padding-left: 20px;
+  list-style: none;
+  gap: 8px;
+}
+
+.sidebar-submenu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 3px;
+  padding-left: 3px;
+}
+
+.sidebar-submenu-title {
+  color: var(--color-accent-fg);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  display: block;
+  padding: 3px 9px;
+  margin-bottom: 0px;
+}
+
+.sidebar-submenu-desc {
+  color: var(--color-fg-muted);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
 }
 
 .recent-activity {
@@ -926,7 +1011,7 @@ li,
     grid-template-areas:
       "menu-main menu-brand menu-tools"
       "sidebar-nav content-main content-main";
-    grid-template-columns: minmax(150px, 22%) 1fr minmax(150px, 25%);
+    grid-template-columns: minmax(200px, 25%) 1fr minmax(150px, 25%);
   }
 
   /* Cache le panneau de config sur écrans moyens */

@@ -26,17 +26,24 @@ export interface ISidebarNavConfig {
     avatar: string;
     username: string;
   };
-  sections: Array<{
-    title: string;
-    action?: RepoAction;
-    items: Array<{
-      icon: string;
-      label: string;
-      link: string;
-      type?: string;
-      action?: RepoAction;
-    }>;
-  }>;
+  sections: ISidebarSection[];
+}
+
+export interface ISidebarSection {
+  title: string;
+  action?: RepoAction;
+  items: ISidebarMenuItem[];
+  isExpanded?: boolean;
+}
+
+export interface ISidebarMenuItem {
+  icon: string;
+  label: string;
+  link: string;
+  type?: string;
+  action?: RepoAction;
+  subMenu?: ISidebarMenuItem[];
+  isExpanded?: boolean;
 }
 
 export interface IFeedItem {

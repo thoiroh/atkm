@@ -14,27 +14,86 @@
   </div> -->
 
 
-  @for (section of (config?.sections || []); track $index) {
+  @for (section of (config?.sections || []); track sectionIndex; let sectionIndex = $index) {
   <div class="sidebar-section">
-    <h3>
+    <h3 (click)="toggleSection(sectionIndex)">
+      <span class="section-toggle" [class.expanded]="section.isExpanded">▶</span>
       {{ section?.title || '' }}
     </h3>
     @if (section?.items && section.items.length > 0) {
     <ul class="repo-list">
-      @for (item of section.items; track $index) {
+      @for (item of section.items; track itemIndex; let itemIndex = $index) {
       <li class="repo-item">
-        <a class="repo-title" [routerLink]="item?.link || '#'">
-          <svg class="repo-icon" aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16">
-            <path
-              d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z">
-            </path>
-          </svg>
-          {{ item?.label || '' }}
-        </a>
-        @if (item?.action && item.action !== false) {
-        <button class="repo-btn-action repo-action" (click)="handleAction(item.action.action)">
-          {{ item.action?.label }}
-        </button>
+
+        <!-- Item principal avec toggle si subMenu existe -->
+        <div class="item-header" [class.expanded]="item.isExpanded" (click)="toggleItem(sectionIndex, itemIndex)">
+          <!-- <span class="sidebar-submenu-toggle" [class.expanded]="item.isExpanded">+</span> -->
+          @if (item?.link && item.link.trim() !== '' && item.link !== '#') {
+          <a class="repo-title" [routerLink]="item?.link || ''">
+            <svg class="config-item-icon" aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16">
+              @switch (item.icon) {
+              @case ('display') {
+              <path
+                d="M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.016 1.299l.497 1.138 1.017.215c.653.138 1.153.675 1.245 1.33l.089.649.906.664c.536.389.839 1.034.723 1.687l-.165.93.818.752c.399.365.415.998.04 1.382l-.577.597.213.838c.134.659-.295 1.279-.1007 1.338l-.496.059-.815.644c-.553.43-1.275.43-1.829 0l-.815-.644-.496-.059c-.754-.059-1.339-.679-1.007-1.338l.213-.838-.577-.597c-.375-.384-.359-1.017.04-1.382l.818-.752-.165-.93c-.116-.653.187-1.298.723-1.687l.906-.664.089-.649c.092-.655.592-1.192 1.245-1.33l1.017-.215.497-1.138C6.01.645 6.556.095 7.299.031A8.2 8.2 0 0 1 8 0ZM5.78 8.75a9.64 9.64 0 0 0 1.363 4.177c.255.426.542.832.857 1.215.245-.296.551-.705.857-1.215A9.64 9.64 0 0 0 10.22 8.75Zm4.44-1.5a9.64 9.64 0 0 0-1.363-4.177c-.307-.51-.612-.919-.857-1.215a9.927 9.927 0 0 0-.857 1.215A9.64 9.64 0 0 0 5.78 7.25Z">
+              </path>
+              }
+              @case ('action') {
+              <path
+                d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25Zm7.47 3.97a.75.75 0 0 1 1.06 0l2 2a.75.75 0 0 1 0 1.06l-2 2a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L10.69 8.5H4.25a.75.75 0 0 1 0-1.5h6.44L9.22 5.53a.749.749 0 0 1 .215-.734.749.749 0 0 1 .785-.057Z">
+              </path>
+              }
+              @default {
+              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"></path>
+              }
+              }
+            </svg>
+            {{ item?.label || '' }} {{item.icon}}
+          </a>
+          } @else {
+          <a class="repo-title">
+            <svg class="config-item-icon" aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16">
+              @switch (item.icon) {
+              @case ('display') {
+              <path
+                d="M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.016 1.299l.497 1.138 1.017.215c.653.138 1.153.675 1.245 1.33l.089.649.906.664c.536.389.839 1.034.723 1.687l-.165.93.818.752c.399.365.415.998.04 1.382l-.577.597.213.838c.134.659-.295 1.279-.1007 1.338l-.496.059-.815.644c-.553.43-1.275.43-1.829 0l-.815-.644-.496-.059c-.754-.059-1.339-.679-1.007-1.338l.213-.838-.577-.597c-.375-.384-.359-1.017.04-1.382l.818-.752-.165-.93c-.116-.653.187-1.298.723-1.687l.906-.664.089-.649c.092-.655.592-1.192 1.245-1.33l1.017-.215.497-1.138C6.01.645 6.556.095 7.299.031A8.2 8.2 0 0 1 8 0ZM5.78 8.75a9.64 9.64 0 0 0 1.363 4.177c.255.426.542.832.857 1.215.245-.296.551-.705.857-1.215A9.64 9.64 0 0 0 10.22 8.75Zm4.44-1.5a9.64 9.64 0 0 0-1.363-4.177c-.307-.51-.612-.919-.857-1.215a9.927 9.927 0 0 0-.857 1.215A9.64 9.64 0 0 0 5.78 7.25Z">
+              </path>
+              }
+              @case ('action') {
+              <path
+                d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25Zm7.47 3.97a.75.75 0 0 1 1.06 0l2 2a.75.75 0 0 1 0 1.06l-2 2a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L10.69 8.5H4.25a.75.75 0 0 1 0-1.5h6.44L9.22 5.53a.749.749 0 0 1 .215-.734.749.749 0 0 1 .785-.057Z">
+              </path>
+              }
+              @default {
+              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"></path>
+              }
+              }
+            </svg>
+            {{ item?.label || '' }}
+          </a>
+          }
+          @if (item?.action && item.action !== false) {
+          <button class="repo-btn-action" (click)="handleAction(item.action.action)">
+            {{ item.action?.label }}
+          </button>
+          }
+        </div>
+
+        <!-- Sous-menus (collapsible) -->
+        @if (item.subMenu && item.subMenu.length > 0) {
+        <ul class="sidebar-submenu-list" [class.collapsed]="!item.isExpanded">
+          @for (subItem of item.subMenu; track $index) {
+          <li class="sidebar-submenu-item">
+            <a class="sidebar-submenu-title" [routerLink]="subItem?.link || '#'">
+              {{ subItem?.label || '' }}
+            </a>
+            @if (subItem?.action && subItem.action !== false) {
+            <button class="repo-btn-action" (click)="handleAction(subItem.action.action)">
+              {{ subItem.action?.label }}
+            </button>
+            }
+          </li>
+          }
+        </ul>
         }
       </li>
       }

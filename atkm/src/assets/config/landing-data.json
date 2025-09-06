@@ -25,19 +25,40 @@
         "items": [
           {
             "icon": "repo",
-            "label": "Account History",
-            "link": "/dashboard/binance/account",
-            "action": false
+            "label": "Assets Inventory",
+            "link": "",
+            "action": false,
+            "isExpanded": true,
+            "subMenu": [
+              {
+                "icon": "action",
+                "label": "Transaction History",
+                "link": "/dashboard/binance/account",
+                "action": false,
+                "isExpanded": false
+              },
+              {
+                "icon": "repo",
+                "label": "Deposit History",
+                "link": "/dashboard/binance/account/deposits",
+                "action": {
+                  "label": "active",
+                  "action": "viewDeposits"
+                },
+                "isExpanded": false
+              }
+            ]
           },
           {
-            "icon": "repo",
-            "label": "Account Snapshot",
+            "icon": "action",
+            "label": "Global Watchlist",
             "link": "/dashboard/binance/snapshot",
-            "action": false
+            "action": false,
+            "isExpanded": true
           },
           {
-            "icon": "repo",
-            "label": "Live Market Data",
+            "icon": "action",
+            "label": "Streaming Market Data",
             "link": "/dashboard/binance/market-data",
             "action": {
               "label": "on.going",
@@ -149,7 +170,7 @@
         "icon": "settings",
         "items": [
           {
-            "icon": "display",
+            "icon": "action",
             "title": "Display Settings",
             "description": "Configure views and filters for the main grid",
             "link": "/config/display"
