@@ -17,7 +17,13 @@
   @for (section of (config?.sections || []); track sectionIndex; let sectionIndex = $index) {
   <div class="sidebar-section">
     <h3 (click)="toggleSection(sectionIndex)">
-      <span class="section-toggle" [class.expanded]="section.isExpanded">▶</span>
+      <span class="section-toggle" [class.expanded]="section.isExpanded">
+        <svg class="config-item-icon" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+          <path
+            d="M.989 8 .064 2.68a1.342 1.342 0 0 1 1.85-1.462l13.402 5.744a1.13 1.13 0 0 1 0 2.076L1.913 14.782a1.343 1.343 0 0 1-1.85-1.463L.99 8Zm.603-5.288L2.38 7.25h4.87a.75.75 0 0 1 0 1.5H2.38l-.788 4.538L13.929 8Z">
+          </path>
+        </svg>
+      </span>
       {{ section?.title || '' }}
     </h3>
     @if (section?.items && section.items.length > 0) {
@@ -72,7 +78,7 @@
           </a>
           }
           @if (item?.action && item.action !== false) {
-          <button class="repo-btn-action" (click)="handleAction(item.action.action)">
+          <button class="repo-btn-action" (click)="handleAction(item.action?.action || '')">
             {{ item.action?.label }}
           </button>
           }
@@ -87,7 +93,7 @@
               {{ subItem?.label || '' }}
             </a>
             @if (subItem?.action && subItem.action !== false) {
-            <button class="repo-btn-action" (click)="handleAction(subItem.action.action)">
+            <button class="repo-btn-action" (click)="handleAction(item.action?.action || '')">
               {{ subItem.action?.label }}
             </button>
             }
