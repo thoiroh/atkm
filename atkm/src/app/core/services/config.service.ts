@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import type { IconSpec } from '@shared/models/icon.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -29,15 +30,18 @@ export interface ISidebarNavConfig {
   sections: ISidebarSection[];
 }
 
+
 export interface ISidebarSection {
   title: string;
+  icon: IconSpec;
   action?: RepoAction;
   items: ISidebarMenuItem[];
   isExpanded?: boolean;
 }
 
+
 export interface ISidebarMenuItem {
-  icon: string;
+  icon: IconSpec;
   label: string;
   link: string;
   type?: string;
@@ -67,9 +71,9 @@ export interface IFeedItem {
 
 export interface IConfigPanelSection {
   title: string;
-  icon?: string;
+  icon: IconSpec;
   items: Array<{
-    icon: string;
+    icon: IconSpec;
     title: string;
     description: string;
     link: string;

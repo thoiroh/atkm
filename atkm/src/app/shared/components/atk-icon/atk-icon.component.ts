@@ -1,52 +1,55 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnChanges, signal } from '@angular/core';
-import { IconDef, IconRegistryService } from './icon-registry.service';
+import { Component, computed, inject, input } from '@angular/core';
+import { IconRegistryService } from '../../../core/services/icon-registry.service';
 
 @Component({
   selector: 'atk-icon',
   standalone: true,
-  imports: [CommonModule],
   template: `
-    <svg *ngIf="def()" [attr.viewBox]="viewBox()" [attr.width]="size" [attr.height]="size"
-         [style.color]="color" fill="currentColor" aria-hidden="true">
-      <ng-container *ngFor="let d of def()?.paths || []">
+    <svg
+      [attr.viewBox]="viewBox()"
+      [attr.width]="size()"
+      [attr.height]="size()"
+      [style.color]="resolvedColor()"
+      fill="currentColor"
+      aria-hidden="true">
+      @for (d of (def().paths ?? []); track d) {
         <path [attr.d]="d"></path>
-      </ng-container>
-      <ng-container *ngFor="let c of def()?.circles || []">
+      }
+      @for (c of (def().circles ?? []); track $index) {
         <circle [attr.cx]="c.cx" [attr.cy]="c.cy" [attr.r]="c.r"></circle>
-      </ng-container>
+      }
     </svg>
   `,
   styles: [`
-    :host{ display:inline-flex; line-height:0; }
-    svg { vertical-align:middle; }
+    :host { display:inline-flex; line-height:0; }
+    svg    { vertical-align:middle; }
   `]
 })
-export class AtkIconComponent implements OnChanges {
-  private registry = inject(IconRegistryService);
+export class AtkIconComponent {
+  private reg = inject(IconRegistryService).registry;
 
-  /** ex: "radio-ring" | "display" | "repo" */
-  @Input() name: string = 'repo';
-  /** ex: "dot" -> combiné à name: "radio-dot" */
-  @Input() variant?: string | null;
-  /** couleur pilotable ; défaut registry = #656d76 */
-  @Input() color?: string | null;
-  /** taille en px (width/height) */
-  @Input() size = 16;
+  /** ex: "radio-ring", "repo"… */
+  name = input<string>('repo');
+  /** ex: "dot" -> "radio-dot" */
+  variant = input<string | null>(null);
+  /** couleur courante ; fallback registry.defaults.color */
+  color = input<string | null>(null);
+  /** taille px */
+  size = input<number>(16);
 
-  def = signal<IconDef | null>(null);
-  viewBox = signal<string>('0 0 16 16');
+  private key = computed(() => {
+    const n = (this.name() || 'repo').trim();
+    const v = this.variant()?.trim();
+    return v ? `${n}-${v}` : n;
+  });
 
-  ngOnChanges() {
-    const key = (this.variant?.trim())
-      ? `${this.name}-${this.variant}` : this.name;
+  def = computed(() => {
+    const r = this.reg();
+    const n = (this.name() || 'repo').trim();
+    return r.icons[this.key()] ?? r.icons[n] ?? r.icons['repo'] ?? { paths: [] };
+  });
 
-    this.registry.getRegistry().subscribe(reg => {
-      const d = reg.icons[key] ?? reg.icons[this.name] ?? reg.icons['repo'] ?? { paths: [] };
-      this.def.set(d);
-      this.viewBox.set(d.viewBox ?? reg.defaults?.viewBox ?? '0 0 16 16');
-      // fallback couleur si non fournie
-      if (!this.color) this.color = reg.defaults?.color ?? '#656d76';
-    });
-  }
+  viewBox = computed(() => this.def().viewBox ?? this.reg().defaults.viewBox);
+
+  resolvedColor = computed(() => this.color() ?? this.reg().defaults.color);
 }

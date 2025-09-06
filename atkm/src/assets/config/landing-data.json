@@ -18,6 +18,7 @@
     "sections": [
       {
         "title": "Binance Wallet",
+        "icon": "radio-dot",
         "action": {
           "label": "New",
           "action": "createRepo"
@@ -69,6 +70,7 @@
       },
       {
         "title": "IBKR Platform",
+        "icon": "radio-dot",
         "action": {
           "label": "New",
           "action": "createRepo"
@@ -96,6 +98,7 @@
       },
       {
         "title": "Recent activity",
+        "icon": "default",
         "items": []
       }
     ]
@@ -167,7 +170,7 @@
     "sections": [
       {
         "title": "Configuration Dashboard",
-        "icon": "settings",
+        "icon": "radio-dot",
         "items": [
           {
             "icon": "default",
@@ -197,7 +200,7 @@
       },
       {
         "title": "Quick Tools",
-        "icon": "tools",
+        "icon": "radio-dot",
         "items": [
           {
             "icon": "default",

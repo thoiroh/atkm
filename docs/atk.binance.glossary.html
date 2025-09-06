@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glossaire Crypto (Binance) — ATK</title>
+  <link rel="stylesheet" href="atk.docs.global.styles.css" />
+</head>
+<body>
+  <button class="global-toggle" onclick="toggleAll()">📋 Tout développer</button>
+
+  <div class="document-container">
+    <div class="document-wrapper">
+
+      <div class="document-header">
+        <h1 class="document-title">📖 atk.cash - binance glossary </h1>
+        <div class="document-subtitle">EN terms → FR définitions </div>
+        <div class="meta-info">
+          <div class="meta-item">🌐 EN terms / FR définitions</div>
+          <div class="meta-item">🧩 A/B/C presets par segment</div>
+          <div class="meta-item">🗂️ Alphabétique & thématique</div>
+          <div class="meta-item">📄 Statique (HTML/CSS)</div>
+        </div>
+      </div>
+
+      <div class="metadata-section">
+        <div class="metadata-box">
+          <div class="metadata-item">
+            <span class="metadata-label">📋 Projet :</span>
+            <span> atk.cash — binance glossary</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">👥 Destiné à :</span>
+            <span>Freelances & intégrateurs • PME fintech/crypto • Formateurs & consultants</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+
+        <div class="objective-section">
+          <h2 class="objective-title">🎯 Objectif</h2>
+          <p>Offrir une base claire des principaux termes crypto (titres en anglais), avec des définitions
+          en FR, selon deux points d'entrée : tri alphabétique et regroupements thématiques. Chaque terme
+          inclut trois sous‑toggles adaptés aux segments clients</p>
+        </div>
+
+        <!-- Presets (templates injectés par JS) -->
+        <template id="presetA">
+          <div class="content-section collapsible">
+            <h4 class="section-title expandable-header" onclick="toggleSection(this)">
+              <span class="expand-arrow">▶️</span>
+              <span class="emoji-icon">🧰</span> A. Freelances / Devs indé & intégrateurs
+            </h4>
+            <div class="expandable-content">
+              <ul class="content-list">
+                <li class="list-item">À intégrer : API/SDK, formats d’entrée/sortie et pièges d’implémentation liés à ce terme.</li>
+                <li class="list-item">Bon réflexe : tester sur testnet, auditer quotas, latence et tailles de blocs/transactions.</li>
+                <li class="list-item">Sécurité : coffres à secrets, permissions de contrats, scopes d’API.</li>
+              </ul>
+            </div>
+          </div>
+        </template>
+        <template id="presetB">
+          <div class="content-section collapsible">
+            <h4 class="section-title expandable-header" onclick="toggleSection(this)">
+              <span class="expand-arrow">▶️</span>
+              <span class="emoji-icon">🏭</span> B. PME fintech/crypto (équipe mixte)
+            </h4>
+            <div class="expandable-content">
+              <div class="cards-grid">
+                <div class="info-card">
+                  <h5 class="card-title">Impact produit</h5>
+                  <div class="card-content">Influence la proposition de valeur, la roadmap, et la conformité.</div>
+                </div>
+                <div class="info-card">
+                  <h5 class="card-title">Risques</h5>
+                  <div class="card-content">Marché (volatilité), opérationnel (exécution), technique (bugs, congestion).</div>
+                </div>
+                <div class="info-card">
+                  <h5 class="card-title">KPI à suivre</h5>
+                  <div class="card-content">Adoption (utilisateurs/tx), coûts (frais), performance (latence, succès), satisfaction.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template id="presetC">
+          <div class="content-section collapsible">
+            <h4 class="section-title expandable-header" onclick="toggleSection(this)">
+              <span class="expand-arrow">▶️</span>
+              <span class="emoji-icon">🎓</span> C. Formateurs / Écoles / Bootcamps & Consultants IT/Data
+            </h4>
+            <div class="expandable-content">
+              <div class="alert-box alert-info">
+                <strong>Exemple chiffré :</strong> données non représentatives illustrant le concept et ses limites méthodologiques.
+              </div>
+              <ul class="content-list">
+                <li class="list-item">À ne pas confondre : clarifier les distinctions avec les notions voisines.</li>
+                <li class="list-item">Exercice : un cas d’usage et les métriques pertinentes.</li>
+              </ul>
+            </div>
+          </div>
+        </template>
+
+        <script>
+          function injectPresets(container){
+            const a = document.getElementById('presetA').content.cloneNode(true);
+            const b = document.getElementById('presetB').content.cloneNode(true);
+            const c = document.getElementById('presetC').content.cloneNode(true);
+            container.appendChild(a); container.appendChild(b); container.appendChild(c);
+          }
+        </script>
+
+        <!-- ========================= ZONE 1 : ALPHABÉTIQUE ========================= -->
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">📚</span> Terminologie complète
+          </h2>
+          <div class="expandable-content">
+
+            <!-- Lettre A -->
+            <div class="content-section collapsible">
+              <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+                <span class="expand-arrow">▶️</span>
+                <span class="emoji-icon">🔤</span> Lettre A
+              </h2>
+              <div class="expandable-content">
+
+                <!-- Address -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Address
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text"> Suite alphanumérique unique qui identifie un destinataire sur une blockchain. On l’utilise pour envoyer et recevoir des actifs ; elle peut être révoquée et régénérée selon la blockchain.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Airdrop -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Airdrop
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Distribution gratuite de tokens à des adresses éligibles, souvent pour récompenser l’adoption ou décentraliser la détention. Utile pour amorcer une communauté, mais le risque de dump existe.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Altcoin -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Altcoin
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Toute cryptomonnaie autre que Bitcoin. Sert de catégorie fourre‑tout ; les profils de risque et de liquidité varient fortement selon les projets.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- AMM -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> AMM (Automated Market Maker)
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Un protocole qui fixe les prix via des formules et des pools de liquidité, plutôt que par un carnet d’ordres. Il facilite les swaps instantanés, mais expose aux pertes non permanentes.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- APR -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> APR (Annual Percentage Rate)
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Taux d’intérêt simple annuel appliqué à un dépôt ou à un emprunt. Sert de repère brut ; ne prend pas en compte la capitalisation des intérêts.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- APY -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> APY (Annual Percentage Yield)
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Rendement annuel qui intègre la capitalisation des intérêts. Plus représentatif que l’APR lorsque les intérêts sont fréquemment composés.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Arbitrage -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Arbitrage
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Stratégie consistant à exploiter les écarts de prix d’un même actif entre plateformes. Réduit les inefficiences, mais dépend des frais, de la latence et de l’exécution.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Atomic Swap -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Atomic Swap
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Échange inter‑chaînes sans intermédiaire via des contrats sécurisés. Utile pour la décentralisation des échanges, mais limité par la compatibilité des chaînes.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Lettre B -->
+            <div class="content-section collapsible">
+              <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+                <span class="expand-arrow">▶️</span>
+                <span class="emoji-icon">🔤</span> Lettre B
+              </h2>
+              <div class="expandable-content">
+
+                <!-- Bear Market -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Bear Market
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Phase prolongée de baisse des prix et du sentiment. Elle réduit la liquidité et renforce l’aversion au risque ; les stratégies défensives dominent.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Bitcoin -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Bitcoin
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Première cryptomonnaie fonctionnelle, conçue par Satoshi Nakamoto. Sert de référence de marché (dominance, corrélations) et de réserve de valeur pour certains profils.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Blockchain -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Blockchain
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Grand livre distribué qui enregistre les transactions par blocs en ordre chronologique. Il rend les écritures traçables et vérifiables sans autorité centrale.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Block Height -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Block Height
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Nombre de blocs minés depuis le bloc genèse. Sert de repère temporel technique pour situer une transaction ou un évènement on‑chain.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Block Reward -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Block Reward
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Récompense versée au validateur/miner lorsqu’un bloc est ajouté. Elle peut combiner subvention protocolaire et frais payés par les utilisateurs.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Bridge -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Bridge
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Mécanisme permettant de transférer des actifs/informations entre blockchains. Il élargit l’interopérabilité, mais ajoute une surface de risque.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Burn -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Burn
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Destruction volontaire de tokens pour réduire l’offre. Vise souvent à soutenir la rareté et la valeur perçue ; irréversible par conception.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Lettre C -->
+            <div class="content-section collapsible">
+              <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+                <span class="expand-arrow">▶️</span>
+                <span class="emoji-icon">🔤</span> Lettre C
+              </h2>
+              <div class="expandable-content">
+
+                <!-- CEX -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> CEX (Centralized Exchange)
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Plateforme d’échange gérée par une entité, qui assure la garde et le routage des ordres. Offre de la liquidité et de l’ergonomie, contre une dépendance de confiance.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Circulating Supply -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Circulating Supply
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Quantité de tokens actuellement disponibles sur le marché et non bloqués. Sert d’entrée pour calculer la capitalisation de marché.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Cold Wallet -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Cold Wallet
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Portefeuille hors‑ligne (matériel ou papier) conçu pour réduire l’exposition aux attaques. Utile pour la conservation long terme.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Collateral -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Collateral
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Actif déposé comme garantie pour un prêt ou une position à effet de levier. Protège le prêteur mais expose à la liquidation si la valeur baisse.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Consensus -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Consensus
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Ensemble de règles permettant aux nœuds d’accepter l’état commun du grand livre. PoW/PoS et variantes gèrent sécurité et finalité.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Contract Address -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Contract Address
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Adresse unique d’un smart contract déployé. Permet d’interagir avec les fonctions du contrat et de vérifier son code.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+                <!-- Cross Margin -->
+                <div class="content-section collapsible">
+                  <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                    <span class="expand-arrow">▶️</span>
+                    <span class="emoji-icon">🏷️</span> Cross Margin
+                  </h3>
+                  <div class="expandable-content">
+                    <p class="section-text">Mode où toute la marge disponible couvre la position. Réduit le risque de liquidation locale, mais mutualise le risque sur l’ensemble du compte.</p>
+                    <div class="presets"></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Remarque : cette sélection initiale couvre les lettres A → C selon le schéma ci‑dessus. -->
+
+          </div>
+        </div>
+
+        <!-- ========================= ZONE 2 : THÉMATIQUE ========================= -->
+        <div class="content-section collapsible">
+          <h2 class="section-title expandable-header" onclick="toggleSection(this)">
+            <span class="expand-arrow">▶️</span>
+            <span class="emoji-icon">🧭</span> Zone 2 — Classements thématiques
+          </h2>
+          <div class="expandable-content">
+
+            <!-- 1) Catégories de coins -->
+            <div class="content-section collapsible">
+              <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                <span class="expand-arrow">▶️</span>
+                <span class="emoji-icon">🪙</span> 1) Grandes catégories de coins & catégories associées (y compris contraintes)
+              </h3>
+              <div class="expandable-content">
+                <p class="section-text">Exemples inclus : Bitcoin, Altcoin, Stablecoin, Utility Token, Meme Coin, Layer 1, Layer 2, Wrapped Token, DeFi, DAO, Token.</p>
+              </div>
+            </div>
+
+            <!-- 2) Key metrics -->
+            <div class="content-section collapsible">
+              <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                <span class="expand-arrow">▶️</span>
+                <span class="emoji-icon">📊</span> 2) Key metrics d’un coin & indices utiles à un Financial Statement
+              </h3>
+              <div class="expandable-content">
+                <p class="section-text">Exemples inclus : Market Capitalization, FDV, Circulating Supply, Max Supply, Volume (24h), Liquidity, TVL, Gas, Gas Fee, Hash Rate, TPS, Funding Rate, Volatility.</p>
+              </div>
+            </div>
+
+            <!-- 3) Trades/fees/history -->
+            <div class="content-section collapsible">
+              <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                <span class="expand-arrow">▶️</span>
+                <span class="emoji-icon">💱</span> 3) Trades (ventes/achats), fees, commissions & historique des achats
+              </h3>
+              <div class="expandable-content">
+                <p class="section-text">Exemples inclus : Market Order, Limit Order, Stop‑Limit, Maker, Taker, Slippage, Spot Market, Perpetual Contract, Withdrawal Fee, CEX/DEX, P2P.</p>
+              </div>
+            </div>
+
+            <!-- 4) Spécificités Binance -->
+            <div class="content-section collapsible">
+              <h3 class="section-title expandable-header" onclick="toggleSection(this)">
+                <span class="expand-arrow">▶️</span>
+                <span class="emoji-icon">🟡</span> 4) Spécificités Binance / écosystème
+              </h3>
+              <div class="expandable-content">
+                <p class="section-text">Exemples inclus : IEO, Launchpad/Launchpool (selon disponibilité), Bridge, Whitelist, KYC, Funding Rate (perpétuels), Cross/Isolated Margin, SAFU.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="next-steps-section">
+          <h2 class="next-steps-title"><span class="emoji-icon">🧱</span> Notes d’usage</h2>
+          <ul class="content-list">
+            <li class="list-item">Les intitulés restent en anglais pour cohérence avec les usages marché.</li>
+            <li class="list-item">Les définitions sont paraphrasées en français, sans reproduction mot‑pour‑mot.</li>
+            <li class="list-item">Les entrées peuvent apparaître dans plusieurs catégories thématiques.</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="document-footer">
+        <div class="footer-title">Copyright & Sources</div>
+        <p>This document provides original French-language paraphrases of publicly available definitions from Binance Academy and  Campus for educational purposes. It does not reproduce source texts verbatim. All trademarks and brand names are the property of their respective owners. We are not affiliated with, endorsed by, or sponsored by Binance, Interactive Brokers, or their affiliates. For authoritative materials, refer to: Binance Academy Glossary and IBKR Campus Glossary.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let allExpanded = false;
+    function toggleSection(headerElement) {
+      const section = headerElement.parentElement;
+      const content = section.querySelector('.expandable-content');
+      const arrow = headerElement.querySelector('.expand-arrow');
+      if (content.classList.contains('collapsed')) {
+        content.classList.remove('collapsed');
+        section.classList.remove('collapsed');
+        arrow.classList.add('expanded');
+        arrow.textContent = '▶';
+      } else {
+        content.classList.add('collapsed');
+        section.classList.add('collapsed');
+        arrow.classList.remove('expanded');
+        arrow.textContent = '▶';
+      }
+    }
+    function toggleAll() {
+      const sections = document.querySelectorAll('.content-section.collapsible');
+      const toggleButton = document.querySelector('.global-toggle');
+      sections.forEach(section => {
+        const header = section.querySelector('.expandable-header');
+        const content = section.querySelector('.expandable-content');
+        const arrow = header.querySelector('.expand-arrow');
+        if (allExpanded) {
+          content.classList.add('collapsed');
+          section.classList.add('collapsed');
+          arrow.classList.remove('expanded');
+          arrow.textContent = '▶';
+        } else {
+          content.classList.remove('collapsed');
+          section.classList.remove('collapsed');
+          arrow.classList.add('expanded');
+          arrow.textContent = '▶';
+        }
+      });
+      allExpanded = !allExpanded;
+      toggleButton.textContent = allExpanded ? '📋 Tout réduire' : '📋 Tout développer';
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      const sections = document.querySelectorAll('.content-section.collapsible');
+      sections.forEach(section => {
+        const content = section.querySelector('.expandable-content');
+        const arrow = section.querySelector('.expand-arrow');
+        content.classList.add('collapsed');
+        section.classList.add('collapsed');
+        if (arrow) arrow.textContent = '▶';
+        const presetHolders = section.querySelectorAll('.presets');
+        presetHolders.forEach(holder => injectPresets(holder));
+      });
+    });
+  </script>
+</body>
+</html>

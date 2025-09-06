@@ -372,6 +372,7 @@ atk-content-main {
   transition: transform 0.3s ease;
   display: inline-block;
   margin-right: 8px;
+  margin-top: 4px;
   color: var(--color-fg-muted);
   font-size: 10px;
   cursor: pointer;
@@ -969,8 +970,6 @@ li,
 }
 
 .config-item-icon {
-  width: 12px;
-  height: 12px;
   fill: var(--color-fg-muted);
   margin-top: 4px;
 }
