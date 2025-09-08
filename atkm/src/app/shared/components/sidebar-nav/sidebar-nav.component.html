@@ -1,47 +1,39 @@
 <aside class="sidebar-nav" aria-label="Navigation">
-
-  <!-- <div class="user-context" *ngIf="config?.userContext">
-    <img [src]="config.userContext?.avatar || ''" [alt]="'@' + (config.userContext?.username || '')" class="avatar"
-      width="20" height="20" />
-    <button class="user-context-button">
-      <span>{{config.userContext?.username || ''}}</span>
-      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
-        <path
-          d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z">
-        </path>
-      </svg>
-    </button>
-  </div> -->
-
+  <div class="sidebar-title" hoverDot>
+    <atk-icon name="default" color="#656d76" [size]="16"></atk-icon>
+    Test hover dot
+  </div>
 
   @for (section of (config?.sections || []); track sectionIndex; let sectionIndex = $index) {
-  <div class="sidebar-section">
-    <h3 (click)="toggleSection(sectionIndex)">
-      <span class="section-toggle" [class.expanded]="section.isExpanded">
-        @let ic = (section?.icon | icon: { defaultName: 'default', defaultColor: '#656d76', size: 14 });
-        <atk-icon [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="ic.size"></atk-icon>
-      </span>
-      {{ section?.title || '' }}
-    </h3>
+  <div class="sidebar-section" (click)="toggleSection(sectionIndex)">
+    <div class="sidebar-title">
+
+      <!-- ================================ ICON =============================================================  -->
+      <!-- ===================================================================================================  -->
+      @let ic = (section?.icon | icon: { defaultName: 'default', defaultColor: 'white', size: 16 });
+      <!-- <span class="icon-name">{{ ic.name }}</span> -->
+      <atk-icon class="sidebar-title-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color"
+        [size]="+ic.size" />
+      <div class="sidebar-title-text has-hover-dot" hoverDot icon="radio-dot"> {{ section.title }}</div>
+    </div>
     @if (section?.items && section.items.length > 0) {
     <ul class="repo-list">
       @for (item of section.items; track itemIndex; let itemIndex = $index) {
       <li class="repo-item">
-
-        <!-- Item principal avec toggle si subMenu existe -->
         <div class="item-header" [class.expanded]="item.isExpanded" (click)="toggleItem(sectionIndex, itemIndex)">
-          <!-- <span class="sidebar-submenu-toggle" [class.expanded]="item.isExpanded">+</span> -->
-          @if (item?.link && item.link.trim() !== '' && item.link !== '#') {
-          @let ic = (item?.icon | icon: { defaultName: 'repo', defaultColor: '#656d76', size: 14 });
 
+          <!-- ================================ ICON =============================================================  -->
+          <!-- ===================================================================================================  -->
+          @let ic = (item?.icon | icon: { defaultName: 'repo', defaultColor: 'red', size: 16 });
+          <!-- <span class="icon-name">{{ ic.name }}</span> -->
+          @if (item?.link && item.link.trim() !== '' && item.link !== '#') {
           <a class="repo-title" [routerLink]="item?.link || ''">
-            <atk-icon [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="ic.size"></atk-icon>
+            <atk-icon [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="+ic.size" />
             {{ item?.label || '' }}
           </a>
           } @else {
-          @let ic = (item?.icon | icon: { defaultName: 'repo', defaultColor: '#656d76', size: 14 }); <a
-            class="repo-title">
-            <atk-icon [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="ic.size"></atk-icon>
+          <a class="repo-title">
+            <atk-icon [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="+ic.size" />
             {{ item?.label || '' }}
           </a>
           }
@@ -52,7 +44,8 @@
           }
         </div>
 
-        <!-- Sous-menus (collapsible) -->
+        <!-- ================================ COLLAPSIBLE ======================================================  -->
+        <!-- ===================================================================================================  -->
         @if (item.subMenu && item.subMenu.length > 0) {
         <ul class="sidebar-submenu-list" [class.collapsed]="!item.isExpanded">
           @for (subItem of item.subMenu; track $index) {
@@ -77,10 +70,7 @@
       When you take actions across GitHub, we'll provide links to that activity here.
     </p>
     }
-
-
   </div>
   }
-
-  <a href="#" class="show-more-link">Show more</a>
+  <!-- <a href="#" class="show-more-link">Show more</a> -->
 </aside>

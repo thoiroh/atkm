@@ -18,7 +18,7 @@
     "sections": [
       {
         "title": "Binance Wallet",
-        "icon": "radio-dot",
+        "icon": "default",
         "action": {
           "label": "New",
           "action": "createRepo"
@@ -32,14 +32,14 @@
             "isExpanded": true,
             "subMenu": [
               {
-                "icon": "action",
+                "icon": "default",
                 "label": "Transaction History",
                 "link": "/dashboard/binance/account",
                 "action": false,
                 "isExpanded": false
               },
               {
-                "icon": "repo",
+                "icon": "default",
                 "label": "Deposit History",
                 "link": "/dashboard/binance/account/deposits",
                 "action": {
@@ -77,19 +77,19 @@
         },
         "items": [
           {
-            "icon": "repo",
+            "icon": "default",
             "label": "Account History",
             "link": "/dashboard/ibkr/account",
             "action": false
           },
           {
-            "icon": "repo",
+            "icon": "default",
             "label": "Account Snapshot",
             "link": "/dashboard/ibkr/snapshot",
             "action": false
           },
           {
-            "icon": "repo",
+            "icon": "default",
             "label": "Live Market Data",
             "link": "/dashboard/ibkr/market-data",
             "action": false
@@ -170,7 +170,7 @@
     "sections": [
       {
         "title": "Configuration Dashboard",
-        "icon": "radio-dot",
+        "icon": "default",
         "items": [
           {
             "icon": "default",
@@ -200,7 +200,7 @@
       },
       {
         "title": "Quick Tools",
-        "icon": "radio-dot",
+        "icon": "default",
         "items": [
           {
             "icon": "default",

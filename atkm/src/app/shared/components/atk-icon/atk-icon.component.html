@@ -1,0 +1,29 @@
+<svg [attr.viewBox]="viewBox()" [attr.width]="size()" [attr.height]="size()" [style.color]="resolvedColor()"
+  aria-hidden="true">
+
+  @for (p of paths(); track $index) {
+  <path [attr.d]="p.d" [attr.fill]="p.fill ?? fill()" [attr.stroke]="p.stroke ?? stroke()"
+    [attr.stroke-width]="p.strokeWidth ?? strokeWidth()" [attr.stroke-linecap]="p.strokeLinecap ?? strokeLinecap()"
+    [attr.stroke-linejoin]="p.strokeLinejoin ?? strokeLinejoin()"></path>
+  }
+
+  @for (c of circles(); track $index) {
+  <circle [attr.cx]="c.cx" [attr.cy]="c.cy" [attr.r]="c.r" [attr.fill]="c.fill ?? fill()"
+    [attr.stroke]="c.stroke ?? stroke()" [attr.stroke-width]="c.strokeWidth ?? strokeWidth()"
+    [attr.stroke-linecap]="c.strokeLinecap ?? strokeLinecap()"
+    [attr.stroke-linejoin]="c.strokeLinejoin ?? strokeLinejoin()"></circle>
+  }
+
+  @for (g of polygons(); track $index) {
+  <polygon [attr.points]="g.points" [attr.fill]="g.fill ?? fill()" [attr.stroke]="g.stroke ?? stroke()"
+    [attr.stroke-width]="g.strokeWidth ?? strokeWidth()" [attr.stroke-linecap]="g.strokeLinecap ?? strokeLinecap()"
+    [attr.stroke-linejoin]="g.strokeLinejoin ?? strokeLinejoin()"></polygon>
+  }
+
+  @for (r of rects(); track $index) {
+  <rect [attr.x]="r.x" [attr.y]="r.y" [attr.width]="r.width" [attr.height]="r.height" [attr.rx]="r.rx"
+    [attr.fill]="r.fill ?? fill()" [attr.stroke]="r.stroke ?? stroke()"
+    [attr.stroke-width]="r.strokeWidth ?? strokeWidth()" [attr.stroke-linecap]="r.strokeLinecap ?? strokeLinecap()"
+    [attr.stroke-linejoin]="r.strokeLinejoin ?? strokeLinejoin()"></rect>
+  }
+</svg>

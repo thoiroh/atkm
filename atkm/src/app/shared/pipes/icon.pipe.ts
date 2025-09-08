@@ -29,14 +29,14 @@ export class IconPipe implements PipeTransform {
     } = defaults;
 
     if (typeof value === 'string') {
-      return { name: value.trim() || defaultName, variant: defaultVariant, color: defaultColor, size };
+      return { name: value.trim() || defaultName, variant: defaultVariant, color: defaultColor, size: Number(size) };
     }
     const v = value ?? {};
     return {
       name: (v.name && v.name.trim()) || defaultName,
       variant: v.variant ?? defaultVariant ?? null,
       color: (v.color && v.color.trim()) || defaultColor,
-      size: (v.size ?? size) || size
+      size: Number(v.size ?? size) || Number(size)
     };
   }
 }

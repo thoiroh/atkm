@@ -16,6 +16,7 @@
   --color-btn-hover-border: #8b949e;
   --color-success-emphasis: #238636;
   --color-btn-action: #58a6ff;
+  --color-btn-action: #656d76;
 }
 
 * {
@@ -353,17 +354,34 @@ atk-content-main {
   margin-bottom: 24px;
 }
 
-.sidebar-section h3 {
+.sidebar-title {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin: 0px 10px 12px 0px;
   padding-bottom: 12px;
   border-bottom: 2px solid var(--color-border-muted);
+  cursor: pointer;
+}
+
+.sidebar-title-text {
   font-size: 18px;
   font-weight: 600;
   color: var(--color-fg-default);
   cursor: pointer;
+}
+
+/*
+.sidebar-title:hover {
+  color: var(--color-fg-default);
+  background-color: var(--color-canvas-subtle);
+  border-radius: 6px;
+} */
+
+.sidebar-title-icon {
+  fill: var(--color-fg-muted);
+  margin-top: 0px;
 }
 
 /* Toggle arrows */
@@ -480,6 +498,7 @@ atk-content-main {
 /* Sous-menus styling */
 .sidebar-submenu-list {
   padding-left: 20px;
+  padding-bottom: 10px;
   list-style: none;
   gap: 8px;
 }
@@ -511,12 +530,13 @@ atk-content-main {
 .item-header {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .recent-activity {
   color: var(--color-fg-muted);
   font-size: 14px;
-  text-align: center;
+  text-align: left;
   padding: 20px;
 }
 
@@ -943,7 +963,8 @@ li,
   margin-bottom: 32px;
 }
 
-.config-section h3 {
+.config-title {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -959,6 +980,7 @@ li,
   display: flex;
   flex-direction: row;
   align-items: center;
+  position: relative;
   justify-content: center;
   gap: 12px;
   padding: 12px 0;
@@ -971,7 +993,7 @@ li,
 
 .config-item-icon {
   fill: var(--color-fg-muted);
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .config-item-content {
@@ -1163,6 +1185,91 @@ li,
 
 /* ========================================================================================================== */
 /* ========================= UTILITAIRES ==================================================================== */
+/* ========================================================================================================== */
+
+/* conteneur du titre = point d’ancrage */
+.sidebar-title.has-hover-dot {
+  position: relative;
+  padding-left: 16px;
+}
+
+/* point injecté */
+._hover-dot {
+  position: absolute;
+  left: 20px;
+  top: 16px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  /* line-height: 0; */
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+  display: inline-block;
+  z-index: 2;
+}
+
+.sidebar-title.has-hover-dot:hover ._hover-dot {
+  opacity: 1;
+}
+
+/*
+.has-hover-dot {
+  position: relative;
+}
+
+.has-hover-dot:hover>._hover-dot {
+  opacity: 1;
+}
+
+.has-hover-dot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+._hover-dot-container {
+  flex-shrink: 0;
+}
+
+._hover-dot-container._right {
+  order: 999;
+  margin-left: auto;
+}
+
+/* Animation améliorée */
+/* ._hover-dot-fill {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.has-hover-dot:hover ._hover-dot-fill {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1.1);
+} */
+
+/* Variantes de couleurs */
+/* .has-hover-dot[data-hover-color="success"] ._hover-dot-fill svg {
+  color: #22c55e;
+}
+
+.has-hover-dot[data-hover-color="warning"] ._hover-dot-fill svg {
+  color: #f59e0b;
+}
+
+.has-hover-dot[data-hover-color="error"] ._hover-dot-fill svg {
+  color: #ef4444;
+} */
+
+/* ========================================================================================================== */
+
+.icon-name {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  font-size: 8px;
+}
+
 /* ========================================================================================================== */
 
 .left {

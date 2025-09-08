@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, shareReplay } from 'rxjs/operators';
+import { Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { map, shareReplay } from 'rxjs/operators';
 
 export interface IconCircle { cx: number; cy: number; r: number; }
 export interface IconDef { viewBox?: string; paths?: string[]; circles?: IconCircle[]; }

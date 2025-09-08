@@ -2,29 +2,29 @@
   <button class="config-toggle" (click)="onToggle()"
     [attr.aria-label]="isCollapsed() ? 'Ouvrir configuration' : 'Fermer configuration'">
     @if (!isCollapsed()) {
-    <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76">
-    </atk-icon>
+    <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76"></atk-icon>
     } @else {
-    <atk-icon class="toggle-arrow left" name="triangle-left" [size]="16" color="#656d76">
-    </atk-icon>
+    <atk-icon class="toggle-arrow left" name="triangle-left" [size]="16" color="#656d76"></atk-icon>
     }
-
   </button>
 
   <div class="config-wrapper">
     <div class="config-content">
       @for (section of sections(); track section.title) {
       <div class="config-section">
-        <h3>
-          @let ic = (section.icon | icon: { defaultName: 'action', defaultColor: '#656d76', size: 14 });
+        <div class="config-title">
+          @let ic = (section.icon | icon: { defaultName: 'default', defaultColor: '#656d76', size: 16 });
+          <!-- <span class="icon-name">{{ ic.name }}</span> -->
           <atk-icon class="config-item-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color"
             [size]="ic.size">
           </atk-icon>
           {{ section.title }}
-        </h3>
+        </div>
         @for (item of section.items; track item.title) {
         <div class="config-item">
-          @let ic = (item.icon | icon: { defaultName: 'repo', defaultColor: '#656d76', size: 14 });
+          @let ic = (item.icon | icon: { defaultName: 'default', defaultColor: '#656d76', size: 16 });
+          <!-- <span class="icon-name">{{ ic.name }}</span> -->
+
           <atk-icon class="config-item-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color"
             [size]="ic.size">
           </atk-icon>
