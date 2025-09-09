@@ -12,19 +12,13 @@
     <div class="config-content">
       @for (section of sections(); track section.title) {
       <div class="config-section">
-        <div class="config-title">
-          @let ic = (section.icon | icon: { defaultName: 'default', defaultColor: '#656d76', size: 16 });
-          <!-- <span class="icon-name">{{ ic.name }}</span> -->
-          <atk-icon class="config-item-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color"
-            [size]="ic.size">
-          </atk-icon>
-          {{ section.title }}
+        <div class="config-title has-hover-dot" data-hover-color="red" hoverDot icon="radio-dot">
+          <div class="config-title-text"> {{ section.title }}</div>
         </div>
         @for (item of section.items; track item.title) {
         <div class="config-item">
           @let ic = (item.icon | icon: { defaultName: 'default', defaultColor: '#656d76', size: 16 });
           <!-- <span class="icon-name">{{ ic.name }}</span> -->
-
           <atk-icon class="config-item-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color"
             [size]="ic.size">
           </atk-icon>

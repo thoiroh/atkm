@@ -20,14 +20,7 @@ export class SidebarNavComponent {
   private iconRegistry = inject(IconRegistryService);
 
   constructor() {
-    // DIAGNOSTIC: Vérifier que le service fonctionne
-    console.log('IconRegistry registry signal:', this.iconRegistry.registry());
-
-    // Vérifier les icônes spécifiques
-    // const registry = this.iconRegistry.registry();
-    // console.log('radio-ring icon:', registry.icons['radio-ring']);
-    // console.log('radio-dot icon:', registry.icons['radio-dot']);
-    // console.log('default icon:', registry.icons['default']);
+    // console.log('IconRegistry registry signal:', this.iconRegistry.registry());
   }
 
   // Toggle pour les sections
@@ -44,8 +37,8 @@ export class SidebarNavComponent {
       this.config.sections[sectionIndex].items[itemIndex].isExpanded =
         !this.config.sections[sectionIndex].items[itemIndex].isExpanded;
     }
-  }
 
+  }
   // Toggle pour les sous-menus
   toggleSubMenu(sectionIndex: number, itemIndex: number, subMenuIndex: number): void {
     const subMenuItem = this.config?.sections[sectionIndex]?.items[itemIndex]?.subMenu?.[subMenuIndex];

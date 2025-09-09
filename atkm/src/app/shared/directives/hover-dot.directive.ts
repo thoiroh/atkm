@@ -1,6 +1,8 @@
 import {
   ApplicationRef,
-  ComponentRef, createComponent, Directive, ElementRef, EnvironmentInjector,
+  ComponentRef, createComponent, Directive,
+  effect,
+  ElementRef, EnvironmentInjector,
   inject, Input, OnDestroy, OnInit, Renderer2
 } from '@angular/core';
 import { IconRegistryService } from '@core/services/icon-registry.service';
@@ -20,87 +22,61 @@ export class HoverDotDirective implements OnInit, OnDestroy {
 
   @Input() hoverDot: '' | 'right' | boolean = '';
 
-  constructor(el: ElementRef<HTMLElement>, private r: Renderer2) {
+  private containerElements: {
+    container: HTMLElement;
+    ringWrap: HTMLElement;
+    dotWrap: HTMLElement;
+  } | null = null;
+
+  constructor(
+    private r: Renderer2,
+    el: ElementRef<HTMLElement>) {
     this.hostEl = el.nativeElement;
+    // Effect dans le constructor (contexte d'injection valide)
+    effect(() => {
+      const isLoaded = this.iconRegistry.isLoaded();
+      if (isLoaded && this.containerElements && !this.ringIconRef && !this.dotIconRef) {
+        setTimeout(() => {
+          if (this.containerElements) {
+            this.createIcons(this.containerElements.ringWrap, this.containerElements.dotWrap);
+          }
+        }, 0);
+      }
+    });
   }
 
   ngOnInit(): void {
-    console.log('🔧 HoverDotDirective - Initialisation avec attente registry');
-
     this.r.addClass(this.hostEl, 'has-hover-dot');
+    // Créer les containers immédiatement
+    this.containerElements = this.createContainers();
+  }
 
-    // Container principal
+  private createContainers() {
     const container = this.r.createElement('span');
     this.r.addClass(container, '_hover-dot-container');
     this.r.setAttribute(container, 'aria-hidden', 'true');
-
-    // this.r.setStyle(container, 'position', 'absolute');
-    // this.r.setStyle(container, 'left', '8px');
-    // this.r.setStyle(container, 'top', '50%');
-    // this.r.setStyle(container, 'transform', 'translateY(-50%)');
-    // this.r.setStyle(container, 'width', '18px');
-    // this.r.setStyle(container, 'height', '18px');
-    // this.r.setStyle(container, 'display', 'flex');
-    // this.r.setStyle(container, 'align-items', 'center');
-    // this.r.setStyle(container, 'justify-content', 'center');
-    // this.r.setStyle(container, 'pointer-events', 'none');
-    this.r.setStyle(container, 'z-index', '2');
-
-    // Position droite si demandé
-    if (this.hoverDot === 'right' || this.hostEl.classList.contains('hover-dot-right')) {
+    // this.r.setStyle(container, 'position', 'absolute'); // to add style not in css
+    if (this.hoverDot === 'right' || this.hostEl.classList.contains('hover-dot-right')) { // right position if asked
       this.r.setStyle(container, 'left', 'auto');
-      this.r.setStyle(container, 'right', '-10px');
+      this.r.setStyle(container, 'right', '8px');
     }
 
-    this.r.appendChild(this.hostEl, container);
+    const first = this.hostEl.firstChild;
+    if (first) { this.r.insertBefore(this.hostEl, container, first); } else {
+      this.r.appendChild(this.hostEl, container);
+    }
 
-    // Wrapper pour radio-ring (cercle externe)
     const ringWrap = this.r.createElement('span');
-    this.r.setStyle(ringWrap, 'width', '18px');
-    this.r.setStyle(ringWrap, 'height', '18px');
-    this.r.setStyle(ringWrap, 'display', 'flex');
+    this.r.addClass(ringWrap, '_hover-ring');
     this.r.appendChild(container, ringWrap);
-
-    // Wrapper pour radio-dot (point central)
     const dotWrap = this.r.createElement('span');
-    this.r.setStyle(dotWrap, 'transform', 'translate(-50%, -50%)');
-    this.r.setStyle(dotWrap, 'width', '12px');
-    this.r.setStyle(dotWrap, 'height', '12px');
-    this.r.setStyle(dotWrap, 'display', 'flex');
-    this.r.setStyle(dotWrap, 'opacity', '0');
-    this.r.setStyle(dotWrap, 'transition', 'opacity 0.2s ease');
+    this.r.addClass(dotWrap, '_hover-dot');
     this.r.appendChild(container, dotWrap);
-
-    // 🔧 SOLUTION: Attendre que le registry soit chargé
-    this.waitForRegistryAndCreateIcons(ringWrap, dotWrap);
-  }
-
-  private waitForRegistryAndCreateIcons(ringWrap: HTMLElement, dotWrap: HTMLElement): void {
-    const checkRegistry = () => {
-      const registry = this.iconRegistry.registry();
-      console.log('📊 Registry check:', registry);
-      console.log('📊 Icons disponibles:', Object.keys(registry.icons));
-
-      // Vérifier si les icônes nécessaires sont chargées
-      if (registry.icons['radio-ring'] && registry.icons['radio-dot']) {
-        console.log('✅ Registry chargé, création des icônes...');
-        this.createIcons(ringWrap, dotWrap);
-      } else {
-        console.log('⏳ Registry pas encore chargé, retry dans 50ms...');
-        setTimeout(checkRegistry, 50);
-      }
-    };
-
-    checkRegistry();
+    return { container, ringWrap, dotWrap };
   }
 
   private createIcons(ringWrap: HTMLElement, dotWrap: HTMLElement): void {
     try {
-      // Vérifier une dernière fois avant création
-      const registry = this.iconRegistry.registry();
-      console.log('📋 Final check - radio-ring:', registry.icons['radio-ring']);
-      console.log('📋 Final check - radio-dot:', registry.icons['radio-dot']);
-
       // Créer l'icône radio-ring (cercle externe)
       this.ringIconRef = createComponent(AtkIconComponent, {
         environmentInjector: this.env,
@@ -108,12 +84,10 @@ export class HoverDotDirective implements OnInit, OnDestroy {
       });
 
       this.ringIconRef.setInput('name', 'radio-ring');
-      this.ringIconRef.setInput('color', 'var(--color-fg-subtle)');
-      this.ringIconRef.setInput('size', 18);
+      // this.ringIconRef.setInput('color', 'var(--color-fg-subtle)');
+      // this.ringIconRef.setInput('size', 18);
       this.ringIconRef.changeDetectorRef.detectChanges();
       this.appRef.tick();
-
-      console.log('🎯 Ring créé, HTML:', ringWrap.innerHTML);
 
       // Créer l'icône radio-dot (point central)
       this.dotIconRef = createComponent(AtkIconComponent, {
@@ -122,19 +96,16 @@ export class HoverDotDirective implements OnInit, OnDestroy {
       });
 
       this.dotIconRef.setInput('name', 'radio-dot');
-      this.dotIconRef.setInput('color', 'var(--color-fg-default)');
-      this.dotIconRef.setInput('size', 12);
+      this.dotIconRef.setInput('color', 'currentColor');
+      // this.dotIconRef.setInput('size', 12);
       this.dotIconRef.changeDetectorRef.detectChanges();
       this.appRef.tick();
 
-      console.log('🎯 Dot créé, HTML:', dotWrap.innerHTML);
-      console.log('✅ Icônes créées avec succès');
-
-      // Événements hover
+      // Configurer les événements hover
       this.setupHoverEvents(dotWrap);
 
     } catch (error) {
-      console.error('❌ Erreur création icônes:', error);
+      console.error('❌ Erreur création icônes hover-dot:', error);
     }
   }
 
@@ -153,5 +124,6 @@ export class HoverDotDirective implements OnInit, OnDestroy {
     this.dotIconRef?.destroy();
     this.ringIconRef = null;
     this.dotIconRef = null;
+    this.containerElements = null;
   }
 }

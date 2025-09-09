@@ -25,7 +25,7 @@
         },
         "items": [
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "label": "Assets Inventory",
             "link": "",
             "action": false,
@@ -51,14 +51,14 @@
             ]
           },
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "label": "Global Watchlist",
             "link": "/dashboard/binance/snapshot",
             "action": false,
             "isExpanded": true
           },
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "label": "Streaming Market Data",
             "link": "/dashboard/binance/market-data",
             "action": {
@@ -69,7 +69,7 @@
         ]
       },
       {
-        "title": "IBKR Platform",
+        "title": "Interactives Brokers Platform",
         "icon": "radio-dot",
         "action": {
           "label": "New",
@@ -77,19 +77,19 @@
         },
         "items": [
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "label": "Account History",
             "link": "/dashboard/ibkr/account",
             "action": false
           },
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "label": "Account Snapshot",
             "link": "/dashboard/ibkr/snapshot",
             "action": false
           },
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "label": "Live Market Data",
             "link": "/dashboard/ibkr/market-data",
             "action": false
@@ -173,25 +173,25 @@
         "icon": "default",
         "items": [
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "title": "Display Settings",
             "description": "Configure views and filters for the main grid",
             "link": "/config/display"
           },
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "title": "User Preferences",
             "description": "Customize interface and component settings",
             "link": "/config/preferences"
           },
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "title": "Keyboard Shortcuts",
             "description": "Configure shortcuts and hotkeys",
             "link": "/config/shortcuts"
           },
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "title": "Component Layout",
             "description": "Organization and arrangement of elements",
             "link": "/config/layout"
@@ -203,19 +203,19 @@
         "icon": "default",
         "items": [
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "title": "Export Data",
             "description": "Export main grid content",
             "link": "/tools/export"
           },
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "title": "Import Files",
             "description": "Import data into the application",
             "link": "/tools/import"
           },
           {
-            "icon": "default",
+            "icon": "triangle-right",
             "title": "Quick Actions",
             "description": "Shortcuts to main functions",
             "link": "/tools/quick-actions"

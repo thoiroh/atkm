@@ -1,38 +1,38 @@
 <aside class="sidebar-nav" aria-label="Navigation">
   @for (section of (config?.sections || []); track sectionIndex; let sectionIndex = $index) {
   <div class="sidebar-section" (click)="toggleSection(sectionIndex)">
-    <div class="sidebar-title">
+    <div class="sidebar-title has-hover-dot" data-hover-color="warn" hoverDot icon="radio-dot">
 
       <!-- ================================ ICON =============================================================  -->
       <!-- ===================================================================================================  -->
-      @let ic = (section?.icon | icon: { defaultName: 'default', defaultColor: 'white', size: 16 });
+      <!-- @let ic = (section?.icon | icon: { defaultName: 'default', defaultColor: 'white', size: 16 }); -->
       <!-- <span class="icon-name">{{ ic.name }}</span> -->
       <!-- <atk-icon class="sidebar-title-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="+ic.size" /> -->
-      <div class="sidebar-title-text has-hover-dot" hoverDot icon="radio-dot"> {{ section.title }}</div>
+      <div class="sidebar-title-text"> {{ section.title }}</div>
     </div>
     @if (section?.items && section.items.length > 0) {
-    <ul class="repo-list">
+    <ul class="feature-list">
       @for (item of section.items; track itemIndex; let itemIndex = $index) {
-      <li class="repo-item">
-        <div class="item-header" [class.expanded]="item.isExpanded" (click)="toggleItem(sectionIndex, itemIndex)">
+      <li class="feature-item">
+        <div class="feature-header" [class.expanded]="item.isExpanded" (click)="toggleItem(sectionIndex, itemIndex)">
 
           <!-- ================================ ICON =============================================================  -->
           <!-- ===================================================================================================  -->
-          @let ic = (item?.icon | icon: { defaultName: 'repo', defaultColor: 'red', size: 16 });
+          @let ic = (item?.icon | icon: { defaultName: 'repo', defaultColor: 'var(--color-btn-action)', size: 16 });
           <!-- <span class="icon-name">{{ ic.name }}</span> -->
           @if (item?.link && item.link.trim() !== '' && item.link !== '#') {
-          <a class="repo-title" [routerLink]="item?.link || ''">
+          <a class="feature-title" [routerLink]="item?.link || ''">
             <atk-icon [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="+ic.size" />
             {{ item?.label || '' }}
           </a>
           } @else {
-          <a class="repo-title">
+          <a class="feature-title">
             <atk-icon [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="+ic.size" />
             {{ item?.label || '' }}
           </a>
           }
           @if (item?.action && item.action !== false) {
-          <button class="repo-btn-action" (click)="handleAction(item.action?.action || '')">
+          <button class="feature-btn-action" (click)="handleAction(item.action?.action || '')">
             {{ item.action?.label }}
           </button>
           }
@@ -41,14 +41,14 @@
         <!-- ================================ COLLAPSIBLE ======================================================  -->
         <!-- ===================================================================================================  -->
         @if (item.subMenu && item.subMenu.length > 0) {
-        <ul class="sidebar-submenu-list" [class.collapsed]="!item.isExpanded">
+        <ul class="submenu-list" [class.collapsed]="!item.isExpanded">
           @for (subItem of item.subMenu; track $index) {
-          <li class="sidebar-submenu-item">
-            <a class="sidebar-submenu-title" [routerLink]="subItem?.link || '#'">
+          <li class="submenu-item">
+            <a class="submenu-title" [routerLink]="subItem?.link || '#'">
               {{ subItem?.label || '' }}
             </a>
             @if (subItem?.action && subItem.action !== false) {
-            <button class="repo-btn-action" (click)="handleAction(subItem.action?.action || '')">
+            <button class="feature-btn-action" (click)="handleAction(subItem.action?.action || '')">
               {{ subItem.action?.label }}
             </button>
             }
