@@ -1188,9 +1188,9 @@ li,
 /* ========================================================================================================== */
 
 /* conteneur du titre = point d’ancrage */
-.sidebar-title.has-hover-dot {
+.sidebar-title-text.has-hover-dot {
   position: relative;
-  padding-left: 16px;
+  padding-left: 25px;
 }
 
 /* point injecté */

@@ -1,5 +1,4 @@
-/* Styles pour la directive HoverDot */
-.has-hover-dot {
+/* .has-hover-dot {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -15,7 +14,6 @@
   margin-left: auto;
 }
 
-/* Animation améliorée */
 ._hover-dot-fill {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
@@ -25,7 +23,6 @@
   transform: translate(-50%, -50%) scale(1.1);
 }
 
-/* Variantes de couleurs */
 .has-hover-dot[data-hover-color="success"] ._hover-dot-fill svg {
   color: #22c55e;
 }
@@ -36,4 +33,4 @@
 
 .has-hover-dot[data-hover-color="error"] ._hover-dot-fill svg {
   color: #ef4444;
-}
+} */

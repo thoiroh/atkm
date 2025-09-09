@@ -1,9 +1,4 @@
 <aside class="sidebar-nav" aria-label="Navigation">
-  <div class="sidebar-title" hoverDot>
-    <atk-icon name="default" color="#656d76" [size]="16"></atk-icon>
-    Test hover dot
-  </div>
-
   @for (section of (config?.sections || []); track sectionIndex; let sectionIndex = $index) {
   <div class="sidebar-section" (click)="toggleSection(sectionIndex)">
     <div class="sidebar-title">
@@ -12,8 +7,7 @@
       <!-- ===================================================================================================  -->
       @let ic = (section?.icon | icon: { defaultName: 'default', defaultColor: 'white', size: 16 });
       <!-- <span class="icon-name">{{ ic.name }}</span> -->
-      <atk-icon class="sidebar-title-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color"
-        [size]="+ic.size" />
+      <!-- <atk-icon class="sidebar-title-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="+ic.size" /> -->
       <div class="sidebar-title-text has-hover-dot" hoverDot icon="radio-dot"> {{ section.title }}</div>
     </div>
     @if (section?.items && section.items.length > 0) {

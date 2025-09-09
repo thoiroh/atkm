@@ -34,31 +34,28 @@ export class HoverDotDirective implements OnInit, OnDestroy {
     this.r.addClass(container, '_hover-dot-container');
     this.r.setAttribute(container, 'aria-hidden', 'true');
 
-    this.r.setStyle(container, 'position', 'absolute');
-    this.r.setStyle(container, 'left', '8px');
-    this.r.setStyle(container, 'top', '50%');
-    this.r.setStyle(container, 'transform', 'translateY(-50%)');
-    this.r.setStyle(container, 'width', '18px');
-    this.r.setStyle(container, 'height', '18px');
-    this.r.setStyle(container, 'display', 'flex');
-    this.r.setStyle(container, 'align-items', 'center');
-    this.r.setStyle(container, 'justify-content', 'center');
-    this.r.setStyle(container, 'pointer-events', 'none');
+    // this.r.setStyle(container, 'position', 'absolute');
+    // this.r.setStyle(container, 'left', '8px');
+    // this.r.setStyle(container, 'top', '50%');
+    // this.r.setStyle(container, 'transform', 'translateY(-50%)');
+    // this.r.setStyle(container, 'width', '18px');
+    // this.r.setStyle(container, 'height', '18px');
+    // this.r.setStyle(container, 'display', 'flex');
+    // this.r.setStyle(container, 'align-items', 'center');
+    // this.r.setStyle(container, 'justify-content', 'center');
+    // this.r.setStyle(container, 'pointer-events', 'none');
     this.r.setStyle(container, 'z-index', '2');
 
     // Position droite si demandé
     if (this.hoverDot === 'right' || this.hostEl.classList.contains('hover-dot-right')) {
       this.r.setStyle(container, 'left', 'auto');
-      this.r.setStyle(container, 'right', '8px');
+      this.r.setStyle(container, 'right', '-10px');
     }
 
     this.r.appendChild(this.hostEl, container);
 
     // Wrapper pour radio-ring (cercle externe)
     const ringWrap = this.r.createElement('span');
-    this.r.setStyle(ringWrap, 'position', 'absolute');
-    this.r.setStyle(ringWrap, 'top', '0');
-    this.r.setStyle(ringWrap, 'left', '0');
     this.r.setStyle(ringWrap, 'width', '18px');
     this.r.setStyle(ringWrap, 'height', '18px');
     this.r.setStyle(ringWrap, 'display', 'flex');
@@ -66,9 +63,6 @@ export class HoverDotDirective implements OnInit, OnDestroy {
 
     // Wrapper pour radio-dot (point central)
     const dotWrap = this.r.createElement('span');
-    this.r.setStyle(dotWrap, 'position', 'absolute');
-    this.r.setStyle(dotWrap, 'top', '50%');
-    this.r.setStyle(dotWrap, 'left', '50%');
     this.r.setStyle(dotWrap, 'transform', 'translate(-50%, -50%)');
     this.r.setStyle(dotWrap, 'width', '12px');
     this.r.setStyle(dotWrap, 'height', '12px');
