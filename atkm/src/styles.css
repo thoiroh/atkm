@@ -171,16 +171,16 @@ atk-content-main {
 }
 
 .menu-brand-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--color-fg-default);
+  font-size: .9em;
+  font-weight: 400;
+  color: var(--color-fg-muted);
   margin: 0;
 }
 
 .menu-brand-subtitle {
-  font-size: 12px;
+  font-size: .8em;
   font-weight: 600;
-  color: var(--color-fg-muted);
+  color: var(--color-fg-subtle);
   margin: 0;
   line-height: 2;
 }
@@ -379,7 +379,7 @@ atk-content-main {
 
 .sidebar-title-text {
   flex: 1;
-  font-size: 16px;
+  font-size: 1.2em;
   padding: 12px 0 12px 0;
   color: var(--color-fg-default);
   cursor: pointer;
@@ -459,7 +459,7 @@ atk-content-main {
   flex: 1;
   padding: 3px 8px;
   color: var(--color-accent-fg);
-  font-size: 16px;
+  font-size: 1em;
   text-decoration: none;
   cursor: pointer;
   user-select: none;
@@ -525,7 +525,7 @@ atk-content-main {
   flex: 1;
   text-decoration: none;
   color: var(--color-fg-subtle);
-  font-size: 16px;
+  font-size: .9em;
   display: block;
   padding: 3px 9px;
   margin-bottom: 0px;
@@ -976,12 +976,12 @@ li,
   padding-bottom: 12px;
   border-bottom: 2px solid var(--color-border-muted);
   color: var(--color-fg-default);
-  font-size: 14px;
+  font-size: 1em;
 }
 
 .config-title-text {
   flex: 1;
-  font-size: 16px;
+  font-size: 1em;
   padding: 12px 0 12px 0;
   color: var(--color-fg-default);
   cursor: pointer;
@@ -1250,11 +1250,11 @@ li,
 }
 
 [data-hover-color="red"] ._hover-dot svg {
-  fill: #ef4444;
+  fill: #ff0606;
 }
 
 .has-hover-dot[data-hover-color="warning"] ._hover-dot-fill svg {
-  color: #f59e0b;
+  color: #ffa200;
 }
 
 /* .has-hover-dot[data-hover-color="error"] svg {
