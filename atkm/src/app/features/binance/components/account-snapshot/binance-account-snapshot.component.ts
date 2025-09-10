@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   selector: 'atk-account-snapshot',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './account-snapshot.component.html',
+  templateUrl: './binance-account-snapshot.component.html',
   styleUrls: ['./../binance.component.css']
 
 })

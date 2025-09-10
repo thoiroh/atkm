@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   selector: 'atk-market-data',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './market-data.component.html',
+  templateUrl: './binance-market-data.component.html',
   styleUrls: ['./../binance.component.css']
 
 })

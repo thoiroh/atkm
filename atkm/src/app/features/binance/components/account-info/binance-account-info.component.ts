@@ -8,7 +8,7 @@ import { BinanceAccount, BinanceBalance } from '../../models/binance.model';
   selector: 'atk-account-info',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './account-info.component.html',
+  templateUrl: './binance-account-info.component.html',
   styleUrls: ['./../binance.component.css']
 })
 export class AccountInfoComponent implements OnInit, OnDestroy {

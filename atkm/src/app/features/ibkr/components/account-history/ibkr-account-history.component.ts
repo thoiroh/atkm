@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   selector: 'atk-ibkr-account-history',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './account-history.component.html',
+  templateUrl: './ibkr-account-history.component.html',
   styleUrls: ['./../ibkr.component.css']
 })
 export class IbkrAccountHistoryComponent { }

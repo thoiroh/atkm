@@ -638,7 +638,7 @@ atk-content-main {
 }
 
 .placeholder-header h1 {
-  font-size: 28px;
+  font-size: 1.5em;
   margin-bottom: 16px;
 }
 
@@ -691,7 +691,7 @@ li,
 /* ========================= COPILOT SECTION ============================================================== */
 /* ======================================================================================================== */
 
-.copilot-section {
+.terminal-section {
   background: var(--color-canvas-subtle);
   border: 1px solid var(--color-border-default);
   border-radius: 8px;
@@ -699,14 +699,21 @@ li,
   margin-bottom: 24px;
 }
 
-.copilot-section h2 {
+.terminal-section h1 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--color-fg-default);
+}
+
+.terminal-section h2 {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 16px;
   color: var(--color-fg-default);
 }
 
-.copilot-input {
+.terminal-input {
   width: 100%;
   background: var(--color-canvas-default);
   border: 1px solid var(--color-border-default);
@@ -718,11 +725,11 @@ li,
   font-size: 14px;
 }
 
-.copilot-input::placeholder {
+.terminal-input::placeholder {
   color: var(--color-fg-muted);
 }
 
-.copilot-suggestions {
+.terminal-suggestions {
   display: flex;
   justify-content: flex-end;
   flex-wrap: nowrap;

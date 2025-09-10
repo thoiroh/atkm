@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'atk-ibkr-market-data',
+  selector: 'atk-ibkr-account-snapshot',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './market-data.component.html',
+  templateUrl: './ibkr-account-snapshot.component.html',
   styleUrls: ['./../ibkr.component.css']
 })
-export class IbkrMarketDataComponent { }
+export class IbkrAccountSnapshotComponent { }

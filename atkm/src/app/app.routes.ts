@@ -31,17 +31,17 @@ export const routes: Routes = [
           },
           {
             path: 'account',
-            loadComponent: () => import('./features/binance/components/account-info/account-info.component').then(m => m.AccountInfoComponent),
+            loadComponent: () => import('./features/binance/components/account-info/binance-account-info.component').then(m => m.AccountInfoComponent),
             data: { breadcrumb: 'Account History' }
           },
           {
             path: 'snapshot',
-            loadComponent: () => import('./features/binance/components/account-snapshot/account-snapshot.component').then(m => m.AccountSnapshotComponent),
+            loadComponent: () => import('./features/binance/components/account-snapshot/binance-account-snapshot.component').then(m => m.AccountSnapshotComponent),
             data: { breadcrumb: 'Account Snapshot' }
           },
           {
             path: 'market-data',
-            loadComponent: () => import('./features/binance/components/market-data/market-data.component').then(m => m.MarketDataComponent),
+            loadComponent: () => import('./features/binance/components/market-data/binance-market-data.component').then(m => m.MarketDataComponent),
             data: { breadcrumb: 'Live Market Data' }
           }
         ]
@@ -57,17 +57,17 @@ export const routes: Routes = [
           },
           {
             path: 'account',
-            loadComponent: () => import('./features/ibkr/components/account-history/account-history.component').then(m => m.IbkrAccountHistoryComponent),
+            loadComponent: () => import('./features/ibkr/components/account-history/ibkr-account-history.component').then(m => m.IbkrAccountHistoryComponent),
             data: { breadcrumb: 'Account History' }
           },
           {
             path: 'snapshot',
-            loadComponent: () => import('./features/ibkr/components/account-snapshot/account-snapshot.component').then(m => m.IbkrAccountSnapshotComponent),
+            loadComponent: () => import('./features/ibkr/components/account-snapshot/ibkr-account-snapshot.component').then(m => m.IbkrAccountSnapshotComponent),
             data: { breadcrumb: 'Account Snapshot' }
           },
           {
             path: 'market-data',
-            loadComponent: () => import('./features/ibkr/components/market-data/market-data.component').then(m => m.IbkrMarketDataComponent),
+            loadComponent: () => import('./features/ibkr/components/market-data/ibkr-market-data.component').then(m => m.IbkrMarketDataComponent),
             data: { breadcrumb: 'Live Market Data' }
           }
         ]
