@@ -28,62 +28,64 @@
   @if (account(); as currentAccount) {
   <div class="account-content">
     <!-- Informations générales -->
-    <div class="account-info-section">
-      <h2>Informations générales</h2>
-      <div class="info-grid">
-        <div class="info-item">
-          <label>Type de compte</label>
-          <span class="account-type">{{ currentAccount.accountType }}</span>
+    <div class="terminal-section">
+      <div class="terminal-infos">
+        <textarea class="terminal-input" placeholder="Informations générales" rows="1"></textarea>
+        <div class="infos-title">
+          <h2>Permissions</h2>
         </div>
-        <div class="info-item">
-          <label>Dernière mise à jour</label>
-          <span class="update-time">{{ formatUpdateTime(currentAccount.updateTime) }}</span>
-        </div>
-      </div>
-    </div>
-    <!-- Permissions du compte -->
-    <div class="account-permissions-section">
-      <h2>Permissions</h2>
-      <div class="permissions-grid">
-        <div class="permission-item" [class.enabled]="currentAccount.canTrade">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path
-              d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
-          </svg>
-          <span>Trading</span>
-          <span class="status">{{ currentAccount.canTrade ? 'Activé' : 'Désactivé' }}</span>
-        </div>
-        <div class="permission-item" [class.enabled]="currentAccount.canWithdraw">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path
-              d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
-          </svg>
-          <span>Retrait</span>
-          <span class="status">{{ currentAccount.canWithdraw ? 'Activé' : 'Désactivé' }}</span>
-        </div>
-        <div class="permission-item" [class.enabled]="currentAccount.canDeposit">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path
-              d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
-          </svg>
-          <span>Dépôt</span>
-          <span class="status">{{ currentAccount.canDeposit ? 'Activé' : 'Désactivé' }}</span>
+        <div class="infos-items">
+          <div class="infos-item" [class.enabled]="currentAccount.canTrade">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
+            </svg>
+            <span>Trading</span>
+            <span class="status">{{ currentAccount.canTrade ? 'Activé' : 'Désactivé' }}</span>
+          </div>
+          <div class="infos-item" [class.enabled]="currentAccount.canWithdraw">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
+            </svg>
+            <span>Retrait</span>
+            <span class="status">{{ currentAccount.canWithdraw ? 'Activé' : 'Désactivé' }}</span>
+          </div>
+          <div class="infos-item" [class.enabled]="currentAccount.canDeposit">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
+            </svg>
+            <span>Dépôt</span>
+            <span class="status">{{ currentAccount.canDeposit ? 'Activé' : 'Désactivé' }}</span>
+          </div>
         </div>
       </div>
 
-      @if (currentAccount.permissions.length > 0) {
-      <div class="additional-permissions">
-        <h3>Permissions supplémentaires</h3>
-        <div class="permission-tags">
-          @for (permission of currentAccount.permissions; track permission) {
-          <span class="permission-tag" [ngClass]="getPermissionClass(permission)">
-            {{ permission }}
-          </span>
-          }
+      <div class="terminal-cmd">
+        <div class="cmd-item">
+          <label>Type de compte</label>
+          <span class="account-type">{{ currentAccount.accountType }}</span>
         </div>
+        <div class="cmd-item">
+          <label>Dernière mise à jour</label>
+          <span class="update-time">{{ formatUpdateTime(currentAccount.updateTime) }}</span>
+        </div>
+        @if (currentAccount.permissions.length > 0) {
+        <div class="cmd-item">
+          <label>Permissions supplémentaires</label>
+          <div class="cmd-tags">
+            @for (permission of currentAccount.permissions; track permission) {
+            <span class="cmd-tag" [ngClass]="getPermissionClass(permission)">
+              {{ permission }}
+            </span>
+            }
+          </div>
+        </div>
+        }
       </div>
-      }
     </div>
+
     <!-- Soldes des actifs -->
     <div class="account-balances-section">
       <h2>Soldes des actifs</h2>

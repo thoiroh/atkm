@@ -7,8 +7,9 @@
     <h2>Terminal console information and commands.</h2>
   </div>
   <div class="terminal-section">
-    <div class="terminal">
-      <textarea class="terminal-input" placeholder="Terminal" rows="1" (input)="handleCopilotInput($event)"></textarea>
+    <div class="terminal-section-header">
+      <textarea id="terminal" class="terminal-input" placeholder="Terminal" rows="1"
+        (input)="handleCopilotInput($event)"></textarea>
     </div>
 
     <div class="terminal-cmd">
