@@ -868,7 +868,6 @@ li,
   align-items: flex-end;
   justify-content: flex-start;
   flex-wrap: nowrap;
-  flex: 1;
   gap: 12px;
   padding: 20px;
   border: 1px solid var(--color-border-default);
@@ -912,6 +911,16 @@ li,
 
 .cmd-btn-icon {
   padding-top: 2px;
+}
+
+.cmd-text {
+  font-size: .8em;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  padding: 8px 12px;
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
 }
 
 .cmd-tags {
@@ -1308,6 +1317,7 @@ li,
   .terminal-cmd {
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: nowrap;
     align-items: flex-start;
     width: 100%;
   }

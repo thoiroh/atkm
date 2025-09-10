@@ -69,11 +69,11 @@
       <div class="terminal-cmd">
         <div class="cmd-item">
           <label>Type de compte</label>
-          <span class="account-type">{{ currentAccount.accountType }}</span>
+          <span class="cmd-text">{{ currentAccount.accountType }}</span>
         </div>
         <div class="cmd-item">
           <label>Dernière mise à jour</label>
-          <span class="update-time">{{ formatUpdateTime(currentAccount.updateTime) }}</span>
+          <span class="cmd-text">{{ formatUpdateTime(currentAccount.updateTime) }}</span>
         </div>
         @if (currentAccount.permissions.length > 0) {
         <div class="cmd-item">
