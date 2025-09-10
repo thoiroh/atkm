@@ -26,10 +26,14 @@
 
   <!-- Informations du compte -->
   @if (account(); as currentAccount) {
-  <div class="account-content">
+  <div class="terminal-content">
     <!-- Informations générales -->
     <div class="terminal-section">
-      <div class="terminal-infos">
+      <div class="section-wrapper">
+        <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-default)" />
+        <div class="infos-title">
+          <h2>Terminal</h2>
+        </div>
         <textarea class="terminal-input" placeholder="Informations générales" rows="1"></textarea>
         <div class="infos-title">
           <h2>Permissions</h2>
@@ -87,41 +91,46 @@
     </div>
 
     <!-- Soldes des actifs -->
-    <div class="account-balances-section">
-      <h2>Soldes des actifs</h2>
-      @if (significantBalances().length === 0) {
-      <div class="no-balances">
-        <p>Aucun actif avec solde disponible</p>
-      </div>
-      }
-      @if (significantBalances().length > 0) {
-      <div class="balances-table">
-        <div class="table-header">
-          <div class="header-cell left">Actif</div>
-          <div class="header-cell right">Disponible</div>
-          <div class="header-cell right">Bloqué</div>
-          <div class="header-cell right">Total</div>
+    <div class="terminal-section">
+      <div class="section-wrapper">
+        <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-default)" />
+        <div class="infos-title">
+          <h2>Soldes des actifs</h2>
         </div>
-        @for (balance of significantBalances(); track trackByAsset($index, balance)) {
-        <div class="balance-row">
-          <div class="balance-cell asset-cell">
-            <span class="asset-name">{{ balance.asset }}</span>
+        @if (significantBalances().length === 0) {
+        <div class="no-balances">
+          <p>Aucun actif avec solde disponible</p>
+        </div>
+        }
+        @if (significantBalances().length > 0) {
+        <div class="terminal-table">
+          <div class="table-header">
+            <div class="header-cell left">Actif</div>
+            <div class="header-cell right">Disponible</div>
+            <div class="header-cell right">Bloqué</div>
+            <div class="header-cell right">Total</div>
           </div>
-          <div class="balance-cell amount-cell">
-            <span class="amount">{{ formatBalance(balance.free) }}</span>
+          @for (balance of significantBalances(); track trackByAsset($index, balance)) {
+          <div class="balance-row">
+            <div class="balance-cell asset-cell">
+              <span class="asset-name">{{ balance.asset }}</span>
+            </div>
+            <div class="balance-cell amount-cell">
+              <span class="amount">{{ formatBalance(balance.free) }}</span>
+            </div>
+            <div class="balance-cell amount-cell">
+              <span class="amount locked" [class.has-locked]="balance.locked > 0">
+                {{ formatBalance(balance.locked) }}
+              </span>
+            </div>
+            <div class="balance-cell amount-cell total-cell">
+              <span class="amount total">{{ formatBalance(balance.total) }}</span>
+            </div>
           </div>
-          <div class="balance-cell amount-cell">
-            <span class="amount locked" [class.has-locked]="balance.locked > 0">
-              {{ formatBalance(balance.locked) }}
-            </span>
-          </div>
-          <div class="balance-cell amount-cell total-cell">
-            <span class="amount total">{{ formatBalance(balance.total) }}</span>
-          </div>
+          }
         </div>
         }
       </div>
-      }
     </div>
   </div>
   }

@@ -17,7 +17,7 @@
   --color-btn-hover-border: #8b949e;
   --color-success-emphasis: #238636;
   --color-btn-action: #58a6ff;
-  --color-btn-action: #656d76;
+  --color-btn-default: #656d76;
 }
 
 * {
@@ -46,7 +46,7 @@ body {
 
 router-outlet,
 
-atk-icon,
+/* atk-icon, */
 atk-landing,
 atk-home-content,
 atk-account-info,
@@ -708,6 +708,12 @@ li,
   padding: 40px;
 }
 
+.terminal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
 .terminal-header {
   font-size: 1.5em;
   margin-bottom: 8px;
@@ -731,7 +737,14 @@ li,
   color: var(--color-fg-subtle);
 }
 
+.terminal-toggle {
+  position: absolute;
+  top: 0;
+  left: -30px;
+}
+
 .terminal-section {
+  position: relative;
   display: flex;
   flex-direction: row;
   gap: 12px;
@@ -749,12 +762,13 @@ li,
   color: var(--color-fg-default);
 }
 
-.terminal-infos {
+.section-wrapper {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   flex: 1;
-  padding: 20px;
+  padding: 10px 20px 20px 20px;
+  border: 1px solid var(--color-border-default);
   border-radius: 8px;
   background: var(--color-canvas-subtle);
 }
@@ -764,6 +778,7 @@ li,
   border: 1px solid var(--color-border-default);
   border-radius: 6px;
   padding: 12px 16px;
+  margin-bottom: 12px;
   color: var(--color-fg-default);
   resize: vertical;
   min-height: 50px;
@@ -780,7 +795,7 @@ li,
   font-size: 1em;
   font-weight: 600;
   color: var(--color-fg-default);
-  padding: 12px 0 12px 0;
+  padding: 0px 0 12px 0;
   border-bottom: 1px solid var(--color-border-muted);
 }
 
@@ -799,8 +814,8 @@ li,
   display: flex;
   align-items: center;
   flex-direction: row;
-  gap: 12px;
-  padding: 12px;
+  gap: 6px;
+  padding: 8px;
   flex: 1;
   border: 1px solid var(--color-border-default);
   border-radius: 6px;
@@ -834,8 +849,8 @@ li,
 }
 
 .infos-item .status {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: .8em;
+  font-weight: 400;
   padding: 2px 8px;
   border-radius: 4px;
   background: var(--color-canvas-subtle);
@@ -851,7 +866,7 @@ li,
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-wrap: nowrap;
   flex: 1;
   gap: 12px;
@@ -869,7 +884,7 @@ li,
 }
 
 .cmd-item label {
-  font-size: 14px;
+  font-size: .6em;
   font-weight: 500;
   color: var(--color-fg-muted);
 }
@@ -915,6 +930,89 @@ li,
   font-weight: 500;
   border: 1px solid var(--color-border-default);
   background: var(--color-canvas-default);
+  color: var(--color-fg-default);
+}
+
+/* Tableau des soldes */
+.no-balances {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-fg-muted);
+}
+
+.balances-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.terminal-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.header-cell {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.balance-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--color-border-muted);
+  transition: background-color 0.2s ease;
+}
+
+.balance-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.balance-row:last-child {
+  border-bottom: none;
+}
+
+.balance-cell {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.asset-cell {
+  font-weight: 600;
+}
+
+.asset-name {
+  color: var(--color-accent-fg);
+  font-size: 14px;
+}
+
+.amount-cell {
+  font-family: var(--fontStack-monospace);
+  text-align: right;
+  justify-content: flex-end;
+}
+
+.amount {
+  font-size: 14px;
+  color: var(--color-fg-default);
+}
+
+.amount.locked.has-locked {
+  color: #ffa600;
+}
+
+.total-cell .amount.total {
+  font-weight: 600;
   color: var(--color-fg-default);
 }
 
@@ -1210,7 +1308,7 @@ li,
   .terminal-cmd {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
   }
 
