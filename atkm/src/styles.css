@@ -11,6 +11,7 @@
   --color-accent-emphasis: #1f6feb;
   --color-accent-fg: #58a6ff;
   --color-btn-bg: #21262d;
+  --color-btn-bg-emphasis: #1f6feb;
   --color-btn-border: #30363d;
   --color-btn-hover-bg: #30363d;
   --color-btn-hover-border: #8b949e;
@@ -170,6 +171,16 @@ atk-content-main {
   overflow: hidden;
 }
 
+.menu-brand-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .menu-brand-title {
   font-size: .9em;
   font-weight: 400;
@@ -178,19 +189,18 @@ atk-content-main {
 }
 
 .menu-brand-subtitle {
-  font-size: .8em;
+  font-size: .7em;
   font-weight: 600;
   color: var(--color-fg-subtle);
-  margin: 0;
-  line-height: 2;
+  margin-top: 1px;
 }
 
 /* Badge ou indicateur de statut */
 .brand-btn-action,
 .menu-brand-badge {
   color: white;
-  background: var(--color-success-emphasis);
-  font-size: 8px;
+  background: var(--color-btn-bg-emphasis);
+  font-size: .5em;
   font-weight: 600;
   padding: 2px 8px 3px 8px;
   margin-left: 10px;
@@ -590,7 +600,7 @@ atk-content-main {
 }
 
 .content-header h1 {
-  font-size: 24px;
+  font-size: 1em;
   font-weight: 600;
   margin: 20px 0 20px 0;
   color: var(--color-fg-default);
@@ -688,40 +698,82 @@ li,
 }
 
 /* ======================================================================================================== */
-/* ========================= COPILOT SECTION ============================================================== */
+/* ========================= TERMINAL SECTION ============================================================= */
 /* ======================================================================================================== */
 
+.terminal-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 40px;
+}
+
+.terminal-header {
+  font-size: 1.5em;
+  margin-bottom: 8px;
+}
+
+.terminal-header h1 {
+  font-size: 1.2em;
+}
+
+.terminal-details {
+  max-width: 98%;
+  border-top: 2px solid var(--color-border-muted);
+}
+
+.terminal-details h2 {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: normal;
+  padding-top: 5px;
+  padding-bottom: 20px;
+  color: var(--color-fg-subtle);
+}
+
 .terminal-section {
-  background: var(--color-canvas-subtle);
-  border: 1px solid var(--color-border-default);
-  border-radius: 8px;
-  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: 150px;
   margin-bottom: 24px;
+  container-type: inline-size;
 }
 
 .terminal-section h1 {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: var(--color-fg-default);
-}
-
-.terminal-section h2 {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 16px;
   color: var(--color-fg-default);
 }
 
+.terminal-section h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--color-fg-default);
+}
+
+.terminal {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  background: var(--color-canvas-subtle);
+}
+
 .terminal-input {
-  width: 100%;
   background: var(--color-canvas-default);
   border: 1px solid var(--color-border-default);
   border-radius: 6px;
   padding: 12px 16px;
   color: var(--color-fg-default);
   resize: vertical;
-  min-height: 48px;
+  min-height: 50px;
   font-size: 14px;
 }
 
@@ -729,17 +781,25 @@ li,
   color: var(--color-fg-muted);
 }
 
-.terminal-suggestions {
+.terminal-cmd {
   display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   justify-content: flex-end;
   flex-wrap: nowrap;
   gap: 12px;
-  margin-top: 16px;
+  padding: 20px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  background: var(--color-canvas-subtle);
 }
 
-.suggestion-btn {
+.cmd-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 30px;
   gap: 8px;
   padding: 8px 16px;
   border: 1px solid var(--color-border-default);
@@ -748,15 +808,14 @@ li,
   font-size: 13px;
   color: var(--color-fg-default);
   cursor: pointer;
-  transition: all 0.2s;
 }
 
-.suggestion-btn:hover {
+.cmd-btn:hover {
   background: var(--color-btn-hover-bg);
   border-color: var(--color-btn-hover-border);
 }
 
-.suggestion-btn-icon {
+.cmd-btn-icon {
   padding-top: 2px;
 }
 
@@ -1042,6 +1101,28 @@ li,
 /* =============================== RESPONSIVE ================================================================ */
 /* =========================================================================================================== */
 
+@container (max-width: 605px) {
+
+  .terminal-input {
+    min-height: 50px;
+  }
+
+  .terminal-cmd {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .cmd-btn {
+    text-wrap: nowrap;
+    font-size: 13px;
+    color: var(--color-fg-default);
+    cursor: pointer;
+  }
+}
+
+
 /* Tablette - La zone centrale commence à se réduire */
 @media (max-width: 1200px) {
   .landing-wrapper {
@@ -1052,6 +1133,7 @@ li,
   .menu-brand-content {
     font-size: 0.9em;
   }
+
 }
 
 /* Écrans moyens - La zone centrale peut disparaître */
@@ -1074,6 +1156,7 @@ li,
     opacity: 0.5;
     font-size: 0.8em;
   }
+
 }
 
 /* Mobile - Les zones se chevauchent, la zone centrale disparaît */
@@ -1128,6 +1211,9 @@ li,
   .content-wrapper {
     padding: 0 16px;
   }
+
+
+
 }
 
 /* Très petits écrans */

@@ -166,7 +166,7 @@
     }
   ],
   "configPanel": {
-    "isCollapsed": false,
+    "isCollapsed": true,
     "sections": [
       {
         "title": "Configuration Dashboard",
