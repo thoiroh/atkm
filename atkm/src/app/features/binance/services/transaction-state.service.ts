@@ -1,22 +1,19 @@
 // services/transaction-state.service.ts
 
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, computed, effect, signal } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { computed, effect, Injectable, signal } from '@angular/core';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { catchError, map, tap, } from 'rxjs/operators';
+import { BinanceApiResponse } from '../models/binance.model';
 import {
   BinanceOrderHistory,
   BinanceTradeHistory,
   BinanceTransferHistory,
   DATE_RANGES,
   DateRangeFilter,
-  OrderHistoryResponse,
-  TradeHistoryResponse,
   TransactionHistoryFilter,
   TransactionSummary,
-  TransactionSummaryResponse,
-  TransferHistoryFilter,
-  TransferHistoryResponse
+  TransferHistoryFilter
 } from '../models/transaction-history.model';
 
 export interface TransactionStateData {
@@ -277,9 +274,22 @@ export class TransactionStateService {
     const filter = this.buildTradeFilter(targetSymbol, customFilter);
     const params = this.buildHttpParams(filter);
 
-    return this.http.get<TradeHistoryResponse>(`${this.baseUrl}/api/v3/myTrades`, { params })
+    // MODIFICATION - Gérer la réponse PHP standardisée
+    return this.http.get<BinanceApiResponse<{ symbol: string, trades: BinanceTradeHistory[], totalTrades: number, filters: TransactionHistoryFilter }>>(`${this.baseUrl}/api/v3/myTrades`, { params })
       .pipe(
-        map(response => response.data.trades),
+        map(response => {
+          // AJOUT - Vérification de la réponse PHP
+          if (!response.success) {
+            throw new Error(response.error?.message || 'Failed to load trades');
+          }
+
+          // AJOUT - Validation des données trades
+          if (!response.data || !Array.isArray(response.data.trades)) {
+            throw new Error('Invalid trades data format received');
+          }
+
+          return response.data.trades;
+        }),
         tap(trades => {
           this._state.update(state => ({
             ...state,
@@ -300,8 +310,8 @@ export class TransactionStateService {
   }
 
   /**
-   * Fetch order history for selected symbol
-   */
+ * Fetch order history for selected symbol
+ */
   public loadOrderHistory(symbol?: string, customFilter?: Partial<TransactionHistoryFilter>): Observable<BinanceOrderHistory[]> {
     const targetSymbol = symbol || this._state().selectedSymbol;
     if (!targetSymbol) {
@@ -317,9 +327,22 @@ export class TransactionStateService {
     const filter = this.buildTradeFilter(targetSymbol, customFilter);
     const params = this.buildHttpParams(filter);
 
-    return this.http.get<OrderHistoryResponse>(`${this.baseUrl}/api/v3/allOrders`, { params })
+    // MODIFICATION - Gérer la réponse PHP standardisée
+    return this.http.get<BinanceApiResponse<{ symbol: string, orders: BinanceOrderHistory[], totalOrders: number, filters: TransactionHistoryFilter }>>(`${this.baseUrl}/api/v3/allOrders`, { params })
       .pipe(
-        map(response => response.data.orders),
+        map(response => {
+          // AJOUT - Vérification de la réponse PHP
+          if (!response.success) {
+            throw new Error(response.error?.message || 'Failed to load orders');
+          }
+
+          // AJOUT - Validation des données orders
+          if (!response.data || !Array.isArray(response.data.orders)) {
+            throw new Error('Invalid orders data format received');
+          }
+
+          return response.data.orders;
+        }),
         tap(orders => {
           this._state.update(state => ({
             ...state,
@@ -340,8 +363,8 @@ export class TransactionStateService {
   }
 
   /**
-   * Fetch transfer history (deposits and withdrawals)
-   */
+ * Fetch transfer history (deposits and withdrawals)
+ */
   public loadTransferHistory(coin?: string, customFilter?: Partial<TransferHistoryFilter>): Observable<{
     deposits: BinanceTransferHistory[];
     withdrawals: BinanceTransferHistory[];
@@ -355,42 +378,85 @@ export class TransactionStateService {
     const filter = this.buildTransferFilter(coin, customFilter);
     const params = this.buildHttpParams(filter);
 
-    // Load both deposits and withdrawals concurrently
-    const deposits$ = this.http.get<TransferHistoryResponse>(`${this.baseUrl}/api/v1/capital/deposit/history`, { params });
-    const withdrawals$ = this.http.get<TransferHistoryResponse>(`${this.baseUrl}/api/v1/capital/withdraw/history`, { params });
+    // Gérer les réponses PHP standardisées pour deposits et withdrawals
+    const deposits$ = this.http.get<BinanceApiResponse<{ coin?: string, deposits: BinanceTransferHistory[], totalDeposits: number, filters: TransferHistoryFilter }>>(`${this.baseUrl}/api/v1/capital/deposit/history`, { params })
+      .pipe(
+        map(response => {
+          if (!response.success) {
+            console.warn('Deposits request failed:', (response as any).error?.message);
+            return [];
+          }
 
-    return new Observable(observer => {
-      Promise.all([
-        deposits$.toPromise().catch(() => ({ data: { deposits: [] as BinanceTransferHistory[] } })),
-        withdrawals$.toPromise().catch(() => ({ data: { withdrawals: [] as BinanceTransferHistory[] } }))
-      ]).then(([depositResponse, withdrawalResponse]) => {
-        const deposits = depositResponse?.data.deposits || [];
-        const withdrawals = withdrawalResponse?.data.withdrawals || [];
+          if (!response.data || !Array.isArray(response.data.deposits)) {
+            console.warn('Invalid deposits data format received');
+            return [];
+          }
+
+          return response.data.deposits;
+        }),
+        catchError((error) => {
+          console.warn('Failed to load deposits, using empty array');
+          return of([]);
+        })
+      );
+
+    const withdrawals$ = this.http.get<BinanceApiResponse<{ coin?: string, withdrawals: BinanceTransferHistory[], totalWithdrawals: number, filters: TransferHistoryFilter }>>(`${this.baseUrl}/api/v1/capital/withdraw/history`, { params })
+      .pipe(
+        map(response => {
+          if (!response.success) {
+            console.warn('Withdrawals request failed:', (response as any).error?.message);
+            return [];
+          }
+
+          if (!response.data || !Array.isArray(response.data.withdrawals)) {
+            console.warn('Invalid withdrawals data format received');
+            return [];
+          }
+
+          return response.data.withdrawals;
+        }),
+        catchError((error) => {
+          console.warn('Failed to load withdrawals, using empty array');
+          return of([]);
+        })
+      );
+
+    // ✅ CORRECTION - Utiliser forkJoin au lieu de Promise.all
+    return forkJoin({
+      deposits: deposits$,
+      withdrawals: withdrawals$
+    }).pipe(
+      tap(({ deposits, withdrawals }) => {
+        // Validation finale des résultats
+        const validDeposits = Array.isArray(deposits) ? deposits : [];
+        const validWithdrawals = Array.isArray(withdrawals) ? withdrawals : [];
 
         this._state.update(state => ({
           ...state,
-          deposits,
-          withdrawals,
+          deposits: validDeposits,
+          withdrawals: validWithdrawals,
           loading: { ...state.loading, transfers: false },
           lastUpdated: { ...state.lastUpdated, transfers: Date.now() }
         }));
-
-        observer.next({ deposits, withdrawals });
-        observer.complete();
-      }).catch(error => {
+      }),
+      map(({ deposits, withdrawals }) => ({
+        deposits: Array.isArray(deposits) ? deposits : [],
+        withdrawals: Array.isArray(withdrawals) ? withdrawals : []
+      })),
+      catchError(error => {
         this._state.update(state => ({
           ...state,
           loading: { ...state.loading, transfers: false },
           errors: { ...state.errors, transfers: error.message || 'Failed to load transfers' }
         }));
-        observer.error(error);
-      });
-    });
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
-   * Fetch transaction summary
-   */
+ * Fetch transaction summary
+ */
   public loadTransactionSummary(symbol?: string): Observable<TransactionSummary> {
     const targetSymbol = symbol || this._state().selectedSymbol;
     if (!targetSymbol) {
@@ -409,9 +475,22 @@ export class TransactionStateService {
       .set('startTime', dateRange.startTime?.toString() || '')
       .set('endTime', dateRange.endTime?.toString() || '');
 
-    return this.http.get<TransactionSummaryResponse>(`${this.baseUrl}/api/v1/transaction/summary`, { params })
+    // MODIFICATION - Gérer la réponse PHP standardisée
+    return this.http.get<BinanceApiResponse<TransactionSummary>>(`${this.baseUrl}/api/v1/transaction/summary`, { params })
       .pipe(
-        map(response => response.data),
+        map(response => {
+          // AJOUT - Vérification de la réponse PHP
+          if (!response.success) {
+            throw new Error(response.error?.message || 'Failed to load summary');
+          }
+
+          // AJOUT - Validation des données summary
+          if (!response.data) {
+            throw new Error('Invalid summary data format received');
+          }
+
+          return response.data;
+        }),
         tap(summary => {
           this._state.update(state => ({
             ...state,
@@ -432,8 +511,8 @@ export class TransactionStateService {
   }
 
   /**
-   * Load comprehensive data for a symbol
-   */
+ * Load comprehensive data for a symbol
+ */
   public loadAllDataForSymbol(symbol: string): Observable<{
     trades: BinanceTradeHistory[];
     orders: BinanceOrderHistory[];
@@ -441,22 +520,22 @@ export class TransactionStateService {
   }> {
     this.setSelectedSymbol(symbol);
 
-    return new Observable(observer => {
-      const trades$ = this.loadTradeHistory(symbol);
-      const orders$ = this.loadOrderHistory(symbol);
-      const summary$ = this.loadTransactionSummary(symbol);
-
-      Promise.all([
-        trades$.toPromise(),
-        orders$.toPromise(),
-        summary$.toPromise()
-      ]).then(([trades, orders, summary]) => {
-        observer.next({ trades: trades!, orders: orders!, summary: summary! });
-        observer.complete();
-      }).catch(error => {
-        observer.error(error);
-      });
-    });
+    // ✅ CORRECTION - Utiliser forkJoin au lieu de Promise.all
+    return forkJoin({
+      trades: this.loadTradeHistory(symbol),
+      orders: this.loadOrderHistory(symbol),
+      summary: this.loadTransactionSummary(symbol)
+    }).pipe(
+      map(({ trades, orders, summary }) => ({
+        trades: trades || [],
+        orders: orders || [],
+        summary: summary
+      })),
+      catchError(error => {
+        console.error('Failed to load all data for symbol:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**

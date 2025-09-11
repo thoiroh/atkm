@@ -15,14 +15,26 @@ export class BinanceService {
    * Récupère les informations du compte Binance
    */
   getAccount(): Observable<BinanceAccount> {
-    return this.http.get<BinanceApiResponse>(`${this.apiBaseUrl}/api/v3/account`)
+    return this.http.get<BinanceApiResponse<BinanceAccount>>(`${this.apiBaseUrl}/api/v3/account`)
       .pipe(
         map(response => {
-          if (response.success && response.data) {
-            return response.data;
-          } else {
-            throw new Error(response.message || 'Erreur lors de la récupération du compte');
+          // MODIFICATION - Vérifier la structure de la réponse PHP
+          if (!response.success) {
+            throw new Error(response.error?.message || 'Failed to get account data');
           }
+
+          // AJOUT - Validation des données avant retour
+          const accountData = response.data;
+          if (!accountData) {
+            throw new Error('No account data received from API');
+          }
+
+          // AJOUT - S'assurer que balances est un array
+          if (!Array.isArray(accountData.balances)) {
+            accountData.balances = [];
+          }
+
+          return accountData;
         }),
         catchError(this.handleError)
       );

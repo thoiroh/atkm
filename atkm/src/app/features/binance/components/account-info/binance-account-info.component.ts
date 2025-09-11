@@ -23,14 +23,34 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
   // Computed property for significant balances
   significantBalances = computed(() => {
     const currentAccount = this.account();
-    if (!currentAccount || !currentAccount.balances) {
+    // AJOUT - Vérifications multiples pour éviter les erreurs
+    if (!currentAccount) {
+      console.warn('AccountInfo: No account data available');
       return [];
     }
+    if (!currentAccount.balances) {
+      console.warn('AccountInfo: No balances property in account data');
+      return [];
+    }
+    // AJOUT - Vérification explicite du type Array
+    if (!Array.isArray(currentAccount.balances)) {
+      console.error('AccountInfo: balances is not an array:', typeof currentAccount.balances, currentAccount.balances);
+      return [];
+    }
+    // MODIFICATION - Filtrage sécurisé avec vérifications supplémentaires
+    return currentAccount.balances.filter(balance => {
+      // Vérifier que balance est un objet valide
+      if (!balance || typeof balance !== 'object') {
+        console.warn('AccountInfo: Invalid balance object:', balance);
+        return false;
+      }
+      // Convertir en nombre pour éviter les erreurs de type
+      const free = Number(balance.free) || 0;
+      const locked = Number(balance.locked) || 0;
+      const total = Number(balance.total) || 0;
 
-    // Filter balances that have some value (free, locked, or total > 0)
-    return currentAccount.balances.filter(balance =>
-      balance.free > 0 || balance.locked > 0 || balance.total > 0
-    );
+      return free > 0 || locked > 0 || total > 0;
+    });
   });
 
   constructor(private binanceService: BinanceService) { }

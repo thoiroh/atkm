@@ -25,13 +25,18 @@
         },
         "items": [
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "label": "Assets Inventory",
             "link": "/dashboard/binance/account",
-            "action": {
-              "label": "live",
-              "action": "viewAccount"
-            },
+            "action": false,
+            "isExpanded": true,
+            "subMenu": []
+          },
+          {
+            "icon": "toggle",
+            "label": "Transaction History",
+            "link": "",
+            "action": false,
             "isExpanded": true,
             "subMenu": [
               {
@@ -61,7 +66,7 @@
             ]
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "label": "Popular Coins",
             "link": "",
             "action": false,
@@ -101,14 +106,14 @@
             ]
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "label": "Global Watchlist",
             "link": "/dashboard/binance/snapshot",
             "action": false,
             "isExpanded": false
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "label": "Streaming Market Data",
             "link": "/dashboard/binance/market-data",
             "action": {
@@ -128,19 +133,19 @@
         },
         "items": [
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "label": "Account History",
             "link": "/dashboard/ibkr/account",
             "action": false
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "label": "Account Snapshot",
             "link": "/dashboard/ibkr/snapshot",
             "action": false
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "label": "Live Market Data",
             "link": "/dashboard/ibkr/market-data",
             "action": false
@@ -224,25 +229,25 @@
         "icon": "settings",
         "items": [
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "Favorite Trading Pairs",
             "description": "Manage your most traded cryptocurrency pairs",
             "link": "/config/trading-pairs"
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "Default Time Ranges",
             "description": "Set preferred periods for transaction history",
             "link": "/config/time-ranges"
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "P&L Calculation Method",
             "description": "Choose FIFO, LIFO, or weighted average",
             "link": "/config/calculation-method"
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "Display Currency",
             "description": "USD, EUR, or crypto base currency preferences",
             "link": "/config/display-currency"
@@ -254,25 +259,25 @@
         "icon": "default",
         "items": [
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "Display Settings",
             "description": "Configure views and filters for the main grid",
             "link": "/config/display"
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "User Preferences",
             "description": "Customize interface and component settings",
             "link": "/config/preferences"
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "Keyboard Shortcuts",
             "description": "Configure shortcuts and hotkeys",
             "link": "/config/shortcuts"
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "Component Layout",
             "description": "Organization and arrangement of elements",
             "link": "/config/layout"
@@ -284,25 +289,25 @@
         "icon": "default",
         "items": [
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "Export Transaction Data",
             "description": "Export complete trading history to CSV/Excel",
             "link": "/tools/export-transactions"
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "Import External Data",
             "description": "Import trading data from other platforms",
             "link": "/tools/import"
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "Bulk Analysis Tools",
             "description": "Advanced P&L and performance analysis",
             "link": "/tools/bulk-analysis"
           },
           {
-            "icon": "triangle-right",
+            "icon": "toggle",
             "title": "Tax Reporting Helper",
             "description": "Generate reports for tax purposes",
             "link": "/tools/tax-reporting"

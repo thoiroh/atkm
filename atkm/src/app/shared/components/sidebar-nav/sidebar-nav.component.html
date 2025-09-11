@@ -2,12 +2,6 @@
   @for (section of (config?.sections || []); track sectionIndex; let sectionIndex = $index) {
   <div class="sidebar-section" (click)="toggleSection(sectionIndex)">
     <div class="sidebar-title has-hover-dot" data-hover-color="warn" hoverDot icon="radio-dot">
-
-      <!-- ================================ ICON =============================================================  -->
-      <!-- ===================================================================================================  -->
-      <!-- @let ic = (section?.icon | icon: { defaultName: 'default', defaultColor: 'white', size: 16 }); -->
-      <!-- <span class="icon-name">{{ ic.name }}</span> -->
-      <!-- <atk-icon class="sidebar-title-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="+ic.size" /> -->
       <div class="sidebar-title-text"> {{ section.title }}</div>
     </div>
     @if (section?.items && section.items.length > 0) {
@@ -18,7 +12,8 @@
 
           <!-- ================================ ICON =============================================================  -->
           <!-- ===================================================================================================  -->
-          @let ic = (item?.icon | icon: { defaultName: 'repo', defaultColor: 'var(--color-btn-action)', size: 16 });
+          @let ic = (item?.icon | icon: { defaultName: 'repo', defaultColor: 'var(--color-icon-fill-default)', size: 16
+          });
           <!-- <span class="icon-name">{{ ic.name }}</span> -->
           @if (item?.link && item.link.trim() !== '' && item.link !== '#') {
           <a class="feature-title" [routerLink]="item?.link || ''">

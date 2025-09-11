@@ -28,6 +28,12 @@ export const routes: Routes = [
       // Binance account info (existing)
       {
         path: 'binance/account',
+        loadComponent: () => import('./features/binance/components/binance-debug.component').then(m => m.BinanceDebugComponent),
+        title: 'Binance Account | Debug'
+      },
+      // Binance account info (existing)
+      {
+        path: 'binance/account',
         loadComponent: () => import('./features/binance/components/account-info/binance-account-info.component').then(m => m.AccountInfoComponent),
         title: 'Binance Account | ATK Dashboard'
       },

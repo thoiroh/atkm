@@ -1,0 +1,58 @@
+<div class="terminal-wrapper">
+  <!-- Section Copilot -->
+  <header class="terminal-header">
+    <h1>Binance Debug Component</h1>
+  </header>
+  <div class="terminal-details">
+    <h2>Terminal console information and commands. Debug</h2>
+  </div>
+  <div class="terminal-content">
+    <div class="terminal-section">
+      <div class="terminal-section-wrapper">
+        <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+        <div class="terminal-title">
+          <h2>Terminal</h2>
+        </div>
+        <!-- Step 1: Service injection check -->
+        <textarea #ta class="terminal-input" placeholder="Informations générales" [value]="getTerminalText()"
+          style="height:400px; overflow:auto; scroll-behavior:smooth; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;"></textarea>
+
+      </div>
+      <div class="terminal-cmd">
+        <button class="cmd-btn" (click)="testServiceCall()" [disabled]="serviceLoading()">
+          <div class="cmd-btn-icon" style="color: #10b981;">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path
+                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.22.149-.41.242-.522.3a.727.727 0 0 0-.076.039l-.002.001h-.001a.75.75 0 0 1-.592-1.378c.074-.029.18-.07.281-.119.099-.048.177-.094.232-.143.059-.051.088-.09.106-.113.024-.029.057-.09.057-.188 0-.24-.086-.49-.287-.64C8.471 5.67 8.256 5.5 8 5.5c-.369 0-.597.09-.74.187a1.028 1.028 0 0 0-.34.398ZM8 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z">
+              </path>
+            </svg>
+          </div>
+          {{ serviceLoading() ? 'Testing...' : 'Test Service Call' }}
+        </button>
+
+        <button class="cmd-btn" (click)="testDirectHttp()" [disabled]="directHttpLoading()">
+          <div class="cmd-btn-icon" style="color: #8b5cf6;">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path
+                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.22.149-.41.242-.522.3a.727.727 0 0 0-.076.039l-.002.001h-.001a.75.75 0 0 1-.592-1.378c.074-.029.18-.07.281-.119.099-.048.177-.094.232-.143.059-.051.088-.09.106-.113.024-.029.057-.09.057-.188 0-.24-.086-.49-.287-.64C8.471 5.67 8.256 5.5 8 5.5c-.369 0-.597.09-.74.187a1.028 1.028 0 0 0-.34.398ZM8 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z">
+              </path>
+            </svg>
+          </div>
+          {{ directHttpLoading() ? 'Testing...' : 'Test Direct HTTP Call' }}
+        </button>
+
+        <button class="cmd-btn" style="text-align: #10b981; margin-top: auto;">
+          <div class="cmd-btn-icon" style="color: #10b981;">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path
+                d="m11.28 3.22 4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L13.94 8 10.22 4.28a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215Zm-6.56 0a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.06 8l3.72 3.72a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L.47 8.53a.75.75 0 0 1 0-1.06Z">
+              </path>
+            </svg>
+          </div>
+          Write code
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
