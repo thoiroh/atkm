@@ -1,0 +1,395 @@
+<div class="terminal-wrapper">
+  <header class="terminal-header">
+    <h1>Transaction History</h1>
+    <div class="terminal-details">
+      <h2>Complete trading history with trades, orders, and transfers for {{ selectedSymbol() || 'selected symbol' }}.
+      </h2>
+    </div>
+  </header>
+
+  <!-- Controls Section -->
+  <div class="terminal-section">
+    <div class="section-wrapper">
+      <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-default)" />
+      <div class="infos-title">
+        <h2>Filters & Controls</h2>
+      </div>
+
+      <div class="controls-grid">
+        <!-- Symbol Selection -->
+        <div class="control-group">
+          <label for="symbol-input">Trading Pair</label>
+          <input id="symbol-input" type="text" class="control-input" [value]="selectedSymbol() || ''"
+            (blur)="setSelectedSymbol($any($event.target).value)" placeholder="e.g., BTCUSDT" />
+        </div>
+
+        <!-- Date Range Selection -->
+        <div class="control-group">
+          <label for="date-range">Time Period</label>
+          <select id="date-range" class="control-select" [value]="dateRange().label"
+            (change)="setDateRange(dateRanges[+$any($event.target).selectedIndex])">
+            @for (range of dateRanges; track range.label) {
+            <option [value]="range.label">{{ range.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Custom Date Range Toggle -->
+        <div class="control-group">
+          <button class="cmd-btn" (click)="toggleCustomDatePicker()" [class.active]="showCustomDatePicker()">
+            <atk-icon name="calendar" color="currentColor" />
+            Custom Range
+          </button>
+        </div>
+
+        <!-- Refresh Button -->
+        <div class="control-group">
+          <button class="cmd-btn refresh-btn" (click)="refreshCurrentData()" [disabled]="currentLoading()">
+            @if (currentLoading()) {
+            <div class="spinner"></div>
+            } @else {
+            <atk-icon name="refresh" color="currentColor" />
+            }
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Custom Date Range Picker -->
+      @if (showCustomDatePicker()) {
+      <div class="custom-date-picker">
+        <div class="date-inputs">
+          <div class="date-input-group">
+            <label for="start-date">From</label>
+            <input id="start-date" type="datetime-local" class="control-input" [value]="customDateRange().start"
+              (change)="updateCustomDateRangeStart($event)" />
+          </div>
+          <div class="date-input-group">
+            <label for="end-date">To</label>
+            <input id="end-date" type="datetime-local" class="control-input" [value]="customDateRange().end"
+              (change)="updateCustomDateRangeEnd($event)" />
+          </div>
+          <button class="cmd-btn apply-btn" (click)="applyCustomDateRange()">
+            Apply
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="terminal-section">
+    <div class="tab-navigation">
+      <button class="tab-btn" [class.active]="activeTab() === 'trades'" (click)="setActiveTab('trades')">
+        <atk-icon name="trending-up" color="currentColor" />
+        Trades
+        @if (trades().length > 0) {
+        <span class="tab-count">{{ trades().length }}</span>
+        }
+      </button>
+
+      <button class="tab-btn" [class.active]="activeTab() === 'orders'" (click)="setActiveTab('orders')">
+        <atk-icon name="list" color="currentColor" />
+        Orders
+        @if (orders().length > 0) {
+        <span class="tab-count">{{ orders().length }}</span>
+        }
+      </button>
+
+      <button class="tab-btn" [class.active]="activeTab() === 'transfers'" (click)="setActiveTab('transfers')">
+        <atk-icon name="arrow-left-right" color="currentColor" />
+        Transfers
+        @if (allTransfers().length > 0) {
+        <span class="tab-count">{{ allTransfers().length }}</span>
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (currentLoading()) {
+  <div class="terminal-section">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading {{ activeTab() }}...</p>
+    </div>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (currentError()) {
+  <div class="terminal-section">
+    <div class="error-state">
+      <atk-icon name="alert-circle" color="#ef4444" />
+      <p>{{ currentError() }}</p>
+      <button class="cmd-btn retry-btn" (click)="refreshCurrentData()">
+        Retry
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- No Symbol Selected -->
+  @if (!selectedSymbol() && (activeTab() === 'trades' || activeTab() === 'orders')) {
+  <div class="terminal-section">
+    <div class="empty-state">
+      <atk-icon name="search" color="var(--color-fg-muted)" [size]="32" />
+      <h3>No Trading Pair Selected</h3>
+      <p>Please enter a trading pair symbol (e.g., BTCUSDT) to view transaction history.</p>
+    </div>
+  </div>
+  }
+
+  <!-- Data Tables -->
+  @if (selectedSymbol() && currentData().length > 0 && !currentLoading()) {
+  <div class="terminal-section">
+    <div class="section-wrapper">
+      <div class="table-header">
+        <h3>{{ activeTab() | titlecase }} History</h3>
+        <div class="table-actions">
+          <button class="cmd-btn" (click)="loadSummary()">
+            <atk-icon name="bar-chart" color="currentColor" />
+            Summary
+          </button>
+          <button class="cmd-btn" (click)="exportToCSV()">
+            <atk-icon name="download" color="currentColor" />
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Trades Table -->
+      @if (activeTab() === 'trades') {
+      <div class="data-table">
+        <div class="table-header-row">
+          @for (column of tradeColumns; track column.key) {
+          <div class="table-header-cell" [style.width]="column.width" [class]="'align-' + (column.align || 'left')">
+            {{ column.label }}
+          </div>
+          }
+        </div>
+
+        @for (trade of trades(); track trackByTrade($index, trade)) {
+        <div class="table-row">
+          <div class="table-cell align-left" style="width: 150px">
+            {{ formatDate(trade.time) }}
+          </div>
+          <div class="table-cell align-left" style="width: 100px">
+            <span class="symbol-badge">{{ trade.symbol }}</span>
+          </div>
+          <div class="table-cell align-left" style="width: 80px">
+            <span class="side-badge" [class]="getSideClass(trade.side)">
+              {{ trade.side }}
+            </span>
+          </div>
+          <div class="table-cell align-right" style="width: 120px">
+            <span class="price-value">{{ formatCurrency(trade.price) }}</span>
+          </div>
+          <div class="table-cell align-right" style="width: 120px">
+            {{ formatNumber(trade.quantity) }}
+          </div>
+          <div class="table-cell align-right" style="width: 120px">
+            <span class="total-value">{{ formatCurrency(trade.quoteQuantity) }}</span>
+          </div>
+          <div class="table-cell align-right" style="width: 100px">
+            {{ formatNumber(trade.commission, 6) }} {{ trade.commissionAsset }}
+          </div>
+          <div class="table-cell align-right" style="width: 100px">
+            <span [class]="getPnlClass(trade.realizedPnl)">
+              {{ formatCurrency(trade.realizedPnl) }}
+            </span>
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Orders Table -->
+      @if (activeTab() === 'orders') {
+      <div class="data-table">
+        <div class="table-header-row">
+          @for (column of orderColumns; track column.key) {
+          <div class="table-header-cell" [style.width]="column.width" [class]="'align-' + (column.align || 'left')">
+            {{ column.label }}
+          </div>
+          }
+        </div>
+
+        @for (order of orders(); track trackByOrder($index, order)) {
+        <div class="table-row">
+          <div class="table-cell align-left" style="width: 150px">
+            {{ formatDate(order.time) }}
+          </div>
+          <div class="table-cell align-left" style="width: 100px">
+            <span class="symbol-badge">{{ order.symbol }}</span>
+          </div>
+          <div class="table-cell align-left" style="width: 80px">
+            <span class="side-badge" [class]="getSideClass(order.side)">
+              {{ order.side }}
+            </span>
+          </div>
+          <div class="table-cell align-left" style="width: 100px">
+            <span class="type-badge">{{ order.type }}</span>
+          </div>
+          <div class="table-cell align-left" style="width: 120px">
+            <span class="status-badge" [class]="getStatusClass(order.status)">
+              {{ order.status }}
+            </span>
+          </div>
+          <div class="table-cell align-right" style="width: 120px">
+            <span class="price-value">{{ formatCurrency(order.price) }}</span>
+          </div>
+          <div class="table-cell align-right" style="width: 120px">
+            {{ formatNumber(order.origQty) }}
+          </div>
+          <div class="table-cell align-right" style="width: 120px">
+            {{ formatNumber(order.executedQty) }}
+          </div>
+          <div class="table-cell align-right" style="width: 80px">
+            {{ formatPercentage(order.fillPercentage) }}
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Transfers Table -->
+      @if (activeTab() === 'transfers') {
+      <div class="data-table">
+        <div class="table-header-row">
+          @for (column of transferColumns; track column.key) {
+          <div class="table-header-cell" [style.width]="column.width" [class]="'align-' + (column.align || 'left')">
+            {{ column.label }}
+          </div>
+          }
+        </div>
+
+        @for (transfer of allTransfers(); track trackByTransfer($index, transfer)) {
+        <div class="table-row">
+          <div class="table-cell align-left" style="width: 150px">
+            {{ transfer.time ? formatDate(transfer.time) : 'N/A' }}
+          </div>
+          <div class="table-cell align-left" style="width: 80px">
+            <span class="coin-badge">{{ transfer.coin }}</span>
+          </div>
+          <div class="table-cell align-left" style="width: 100px">
+            <span class="type-badge" [class]="transfer.type.toLowerCase()">
+              {{ transfer.type }}
+            </span>
+          </div>
+          <div class="table-cell align-right" style="width: 150px">
+            {{ formatNumber(transfer.amount) }}
+          </div>
+          <div class="table-cell align-left" style="width: 120px">
+            <span class="status-badge" [class]="getStatusClass(transfer.status)">
+              {{ transfer.status }}
+            </span>
+          </div>
+          <div class="table-cell align-right" style="width: 100px">
+            {{ formatNumber(transfer.fee, 6) }}
+          </div>
+          <div class="table-cell align-left" style="width: 100px">
+            {{ transfer.network || 'N/A' }}
+          </div>
+          <div class="table-cell align-left" style="width: 200px">
+            @if (transfer.txId) {
+            <span class="tx-id" [title]="transfer.txId">
+              {{ transfer.txId.slice(0, 12) }}...
+            </span>
+            } @else {
+            <span class="text-muted">N/A</span>
+            }
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Empty State -->
+  @if (selectedSymbol() && currentData().length === 0 && !currentLoading() && !currentError()) {
+  <div class="terminal-section">
+    <div class="empty-state">
+      <atk-icon name="database" color="var(--color-fg-muted)" [size]="32" />
+      <h3>No {{ activeTab() | titlecase }} Found</h3>
+      <p>No {{ activeTab() }} data available for {{ selectedSymbol() }} in the selected time period.</p>
+      <button class="cmd-btn" (click)="refreshCurrentData()">
+        <atk-icon name="refresh" color="currentColor" />
+        Try Different Period
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- Summary Section -->
+  @if (summary() && !currentLoading()) {
+  <div class="terminal-section">
+    <div class="section-wrapper">
+      <div class="infos-title">
+        <h2>Transaction Summary</h2>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <h4>Trading Volume</h4>
+          <div class="summary-values">
+            <div class="summary-item">
+              <span class="label">Buy Volume:</span>
+              <span class="value">{{ formatCurrency(summary()!.tradingVolume.buy) }} USD</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Sell Volume:</span>
+              <span class="value">{{ formatCurrency(summary()!.tradingVolume.sell) }} USD</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Total Volume:</span>
+              <span class="value total">{{ formatCurrency(summary()!.tradingVolume.total) }} USD</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <h4>Average Prices</h4>
+          <div class="summary-values">
+            <div class="summary-item">
+              <span class="label">Avg Buy:</span>
+              <span class="value">{{ formatCurrency(summary()!.averagePrices.buy) }} USD</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Avg Sell:</span>
+              <span class="value">{{ formatCurrency(summary()!.averagePrices.sell) }} USD</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Net Quantity:</span>
+              <span class="value">{{ formatNumber(summary()!.tradingQuantity.net) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <h4>Performance</h4>
+          <div class="summary-values">
+            <div class="summary-item">
+              <span class="label">Total Trades:</span>
+              <span class="value">{{ summary()!.totalTrades }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Total Commission:</span>
+              <span class="value">{{ formatNumber(summary()!.totalCommission, 6) }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Estimated P&L:</span>
+              <span class="value" [class]="getPnlClass(summary()!.estimatedPnl)">
+                {{ formatCurrency(summary()!.estimatedPnl) }} USD
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>

@@ -8,7 +8,7 @@
     "breadcrumb": ["Dashboard"],
     "centerTitle": "atomeek - api management for data integration",
     "centerSubtitle": "2025.01.04.190743",
-    "centerBadge": "βeta"
+    "centerBadge": "β eta"
   },
   "sidebar": {
     "userContext": {
@@ -27,25 +27,75 @@
           {
             "icon": "triangle-right",
             "label": "Assets Inventory",
+            "link": "/dashboard/binance/account",
+            "action": {
+              "label": "live",
+              "action": "viewAccount"
+            },
+            "isExpanded": true,
+            "subMenu": [
+              {
+                "icon": "trending-up",
+                "label": "Transaction History",
+                "link": "/dashboard/binance/history",
+                "action": {
+                  "label": "new",
+                  "action": "viewHistory"
+                },
+                "isExpanded": false
+              },
+              {
+                "icon": "arrow-down",
+                "label": "Deposit History",
+                "link": "/dashboard/binance/history?tab=transfers&type=deposits",
+                "action": false,
+                "isExpanded": false
+              },
+              {
+                "icon": "arrow-up",
+                "label": "Withdrawal History",
+                "link": "/dashboard/binance/history?tab=transfers&type=withdrawals",
+                "action": false,
+                "isExpanded": false
+              }
+            ]
+          },
+          {
+            "icon": "triangle-right",
+            "label": "Popular Coins",
             "link": "",
             "action": false,
             "isExpanded": true,
             "subMenu": [
               {
-                "icon": "default",
-                "label": "Transaction History",
-                "link": "/dashboard/binance/account",
+                "icon": "currency-bitcoin",
+                "label": "BTC/USDT",
+                "link": "/dashboard/binance/history/BTCUSDT",
+                "action": {
+                  "label": "hot",
+                  "action": "viewBTC"
+                },
+                "isExpanded": false
+              },
+              {
+                "icon": "currency-ethereum",
+                "label": "ETH/USDT",
+                "link": "/dashboard/binance/history/ETHUSDT",
+                "action": false,
+                "isExpanded": false
+              },
+              {
+                "icon": "currency-binance",
+                "label": "BNB/USDT",
+                "link": "/dashboard/binance/history/BNBUSDT",
                 "action": false,
                 "isExpanded": false
               },
               {
                 "icon": "default",
-                "label": "Deposit History",
-                "link": "/dashboard/binance/account/deposits",
-                "action": {
-                  "label": "active",
-                  "action": "viewDeposits"
-                },
+                "label": "ADA/USDT",
+                "link": "/dashboard/binance/history/ADAUSDT",
+                "action": false,
                 "isExpanded": false
               }
             ]
@@ -55,7 +105,7 @@
             "label": "Global Watchlist",
             "link": "/dashboard/binance/snapshot",
             "action": false,
-            "isExpanded": true
+            "isExpanded": false
           },
           {
             "icon": "triangle-right",
@@ -63,13 +113,14 @@
             "link": "/dashboard/binance/market-data",
             "action": {
               "label": "on.going",
-              "action": "createRepo"
-            }
+              "action": "streamData"
+            },
+            "isExpanded": false
           }
         ]
       },
       {
-        "title": "Interactives Brokers Platform",
+        "title": "Interactive Brokers Platform",
         "icon": "radio-dot",
         "action": {
           "label": "New",
@@ -169,7 +220,37 @@
     "isCollapsed": true,
     "sections": [
       {
-        "title": "Configuration Dashboard",
+        "title": "Trading Configuration",
+        "icon": "settings",
+        "items": [
+          {
+            "icon": "triangle-right",
+            "title": "Favorite Trading Pairs",
+            "description": "Manage your most traded cryptocurrency pairs",
+            "link": "/config/trading-pairs"
+          },
+          {
+            "icon": "triangle-right",
+            "title": "Default Time Ranges",
+            "description": "Set preferred periods for transaction history",
+            "link": "/config/time-ranges"
+          },
+          {
+            "icon": "triangle-right",
+            "title": "P&L Calculation Method",
+            "description": "Choose FIFO, LIFO, or weighted average",
+            "link": "/config/calculation-method"
+          },
+          {
+            "icon": "triangle-right",
+            "title": "Display Currency",
+            "description": "USD, EUR, or crypto base currency preferences",
+            "link": "/config/display-currency"
+          }
+        ]
+      },
+      {
+        "title": "Dashboard Configuration",
         "icon": "default",
         "items": [
           {
@@ -204,21 +285,27 @@
         "items": [
           {
             "icon": "triangle-right",
-            "title": "Export Data",
-            "description": "Export main grid content",
-            "link": "/tools/export"
+            "title": "Export Transaction Data",
+            "description": "Export complete trading history to CSV/Excel",
+            "link": "/tools/export-transactions"
           },
           {
             "icon": "triangle-right",
-            "title": "Import Files",
-            "description": "Import data into the application",
+            "title": "Import External Data",
+            "description": "Import trading data from other platforms",
             "link": "/tools/import"
           },
           {
             "icon": "triangle-right",
-            "title": "Quick Actions",
-            "description": "Shortcuts to main functions",
-            "link": "/tools/quick-actions"
+            "title": "Bulk Analysis Tools",
+            "description": "Advanced P&L and performance analysis",
+            "link": "/tools/bulk-analysis"
+          },
+          {
+            "icon": "triangle-right",
+            "title": "Tax Reporting Helper",
+            "description": "Generate reports for tax purposes",
+            "link": "/tools/tax-reporting"
           }
         ]
       }

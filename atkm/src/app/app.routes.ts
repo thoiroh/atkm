@@ -1,86 +1,192 @@
+// app.routes.ts - Extended routes for transaction history
+
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  // Default redirect to landing
   {
     path: '',
     redirectTo: '/dashboard',
     pathMatch: 'full'
   },
+
+  // Main dashboard layout
   {
     path: 'dashboard',
     loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent),
     children: [
+      // Default dashboard home
       {
         path: '',
-        redirectTo: 'home',
-        pathMatch: 'full'
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
       },
+
+      // ===============================================================================================
+      // BINANCE ROUTES
+      // ===============================================================================================
+
+      // Binance account info (existing)
       {
-        path: 'home',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent),
-        data: { breadcrumb: 'Home' }
+        path: 'binance/account',
+        loadComponent: () => import('./features/binance/components/account-info/binance-account-info.component').then(m => m.AccountInfoComponent),
+        title: 'Binance Account | ATK Dashboard'
       },
+
+      // Binance transaction history - main route
       {
-        path: 'binance',
-        data: { breadcrumb: 'Binance Wallet' },
-        children: [
-          {
-            path: '',
-            redirectTo: 'account',
-            pathMatch: 'full'
-          },
-          {
-            path: 'account',
-            loadComponent: () => import('./features/binance/components/account-info/binance-account-info.component').then(m => m.AccountInfoComponent),
-            data: { breadcrumb: 'Account History' }
-          },
-          {
-            path: 'snapshot',
-            loadComponent: () => import('./features/binance/components/account-snapshot/binance-account-snapshot.component').then(m => m.AccountSnapshotComponent),
-            data: { breadcrumb: 'Account Snapshot' }
-          },
-          {
-            path: 'market-data',
-            loadComponent: () => import('./features/binance/components/market-data/binance-market-data.component').then(m => m.MarketDataComponent),
-            data: { breadcrumb: 'Live Market Data' }
-          }
-        ]
+        path: 'binance/history',
+        loadComponent: () => import('./features/binance/components/transaction-history/binance-transaction-history.component').then(m => m.BinanceTransactionHistoryComponent),
+        title: 'Transaction History | ATK Dashboard'
       },
+
+      // Binance transaction history with symbol parameter
       {
-        path: 'ibkr',
-        data: { breadcrumb: 'IBKR Platform' },
-        children: [
-          {
-            path: '',
-            redirectTo: 'account',
-            pathMatch: 'full'
-          },
-          {
-            path: 'account',
-            loadComponent: () => import('./features/ibkr/components/account-history/ibkr-account-history.component').then(m => m.IbkrAccountHistoryComponent),
-            data: { breadcrumb: 'Account History' }
-          },
-          {
-            path: 'snapshot',
-            loadComponent: () => import('./features/ibkr/components/account-snapshot/ibkr-account-snapshot.component').then(m => m.IbkrAccountSnapshotComponent),
-            data: { breadcrumb: 'Account Snapshot' }
-          },
-          {
-            path: 'market-data',
-            loadComponent: () => import('./features/ibkr/components/market-data/ibkr-market-data.component').then(m => m.IbkrMarketDataComponent),
-            data: { breadcrumb: 'Live Market Data' }
-          }
-        ]
+        path: 'binance/history/:symbol',
+        loadComponent: () => import('./features/binance/components/transaction-history/binance-transaction-history.component').then(m => m.BinanceTransactionHistoryComponent),
+        title: 'Transaction History | ATK Dashboard'
+      },
+
+      // Binance transaction history with symbol and tab
+      {
+        path: 'binance/history/:symbol/:tab',
+        loadComponent: () => import('./features/binance/components/transaction-history/binance-transaction-history.component').then(m => m.BinanceTransactionHistoryComponent),
+        title: 'Transaction History | ATK Dashboard'
+      },
+
+      // Binance market data (placeholder)
+      {
+        path: 'binance/market-data',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'Market Data | ATK Dashboard'
+      },
+
+      // Binance snapshot (placeholder)
+      {
+        path: 'binance/snapshot',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'Account Snapshot | ATK Dashboard'
+      },
+
+      // ===============================================================================================
+      // IBKR ROUTES (Placeholders)
+      // ===============================================================================================
+
+      {
+        path: 'ibkr/account',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'IBKR Account | ATK Dashboard'
+      },
+
+      {
+        path: 'ibkr/snapshot',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'IBKR Snapshot | ATK Dashboard'
+      },
+
+      {
+        path: 'ibkr/market-data',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'IBKR Market Data | ATK Dashboard'
+      },
+
+      // ===============================================================================================
+      // CONFIGURATION ROUTES
+      // ===============================================================================================
+
+      {
+        path: 'config/display',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'Display Settings | ATK Dashboard'
+      },
+
+      {
+        path: 'config/preferences',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'User Preferences | ATK Dashboard'
+      },
+
+      {
+        path: 'config/shortcuts',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'Keyboard Shortcuts | ATK Dashboard'
+      },
+
+      {
+        path: 'config/layout',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'Component Layout | ATK Dashboard'
+      },
+
+      // ===============================================================================================
+      // TOOLS ROUTES
+      // ===============================================================================================
+
+      {
+        path: 'tools/export',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'Export Data | ATK Dashboard'
+      },
+
+      {
+        path: 'tools/import',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'Import Files | ATK Dashboard'
+      },
+
+      {
+        path: 'tools/quick-actions',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+        title: 'Quick Actions | ATK Dashboard'
       }
     ]
   },
+
+  // ===============================================================================================
+  // STANDALONE PAGES (Outside dashboard layout)
+  // ===============================================================================================
+
+  // Login page (if needed)
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
+    loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+    title: 'Login | ATK'
   },
-  // Route wildcard pour gérer les URLs non trouvées
+
+  // Settings page (if needed outside dashboard)
+  {
+    path: 'settings',
+    loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+    title: 'Settings | ATK'
+  },
+
+  // Catch-all route - redirect to dashboard
   {
     path: '**',
     redirectTo: '/dashboard'
   }
 ];
+
+/**
+ * Route Configuration Notes:
+ *
+ * BINANCE TRANSACTION HISTORY ROUTES:
+ * - /dashboard/binance/history - Main transaction history page
+ * - /dashboard/binance/history/BTCUSDT - History for specific symbol
+ * - /dashboard/binance/history/BTCUSDT/trades - History with specific tab
+ *
+ * URL EXAMPLES:
+ * - /dashboard/binance/history
+ * - /dashboard/binance/history/BTCUSDT
+ * - /dashboard/binance/history/ETHUSDT
+ * - /dashboard/binance/history/ADAUSDT/orders
+ * - /dashboard/binance/history/BNBUSDT/transfers
+ *
+ * NAVIGATION FROM SIDEBAR:
+ * The sidebar configuration in landing-data.json should be updated with:
+ * - "Transaction History" -> "/dashboard/binance/history"
+ * - Individual coins can link to specific symbols
+ *
+ * BREADCRUMBS:
+ * The breadcrumb service can show:
+ * Dashboard > Binance > Transaction History > BTCUSDT
+ */
