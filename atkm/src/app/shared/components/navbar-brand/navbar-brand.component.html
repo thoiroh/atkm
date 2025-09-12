@@ -1,13 +1,13 @@
 <div class="menu-brand" [class.config-collapsed]="configPanelCollapsed">
   <div class="menu-brand-content">
     <div class="menu-brand-header">
+      <span class="menu-brand-subtitle">{{config?.navbar.centerSubtitle || ''}}</span>
       <span>
         <h1 class="menu-brand-title">{{config?.navbar.centerTitle || ''}}</h1>
       </span>
-      <span class="menu-brand-subtitle">{{config?.navbar.centerSubtitle || ''}}</span>
+      <span class="brand-btn-action" *ngIf="config?.navbar.centerBadge">
+        {{config?.navbar.centerBadge || ''}}
+      </span>
     </div>
-    <span class="brand-btn-action" *ngIf="config?.navbar.centerBadge">
-      {{config?.navbar.centerBadge || ''}}
-    </span>
   </div>
 </div>

@@ -2,17 +2,14 @@
   <!-- Section Copilot -->
   <header class="terminal-header">
     <h1>Binance Debug Component</h1>
+    <div class="terminal-details">
+      <h2>Terminal console information and commands. Debug</h2>
+    </div>
   </header>
-  <div class="terminal-details">
-    <h2>Terminal console information and commands. Debug</h2>
-  </div>
-  <div class="terminal-content">
+  <main class="terminal-main">
     <div class="terminal-section">
-      <div class="terminal-section-wrapper">
+      <div class="terminal-content">
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
-        <div class="terminal-title">
-          <h2>Terminal</h2>
-        </div>
         <!-- Step 1: Service injection check -->
         <textarea #ta class="terminal-input" placeholder="Informations générales" [value]="getTerminalText()"
           style="height:400px; overflow:auto; scroll-behavior:smooth; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;"></textarea>
@@ -54,5 +51,5 @@
       </div>
 
     </div>
-  </div>
+  </main>
 </div>
