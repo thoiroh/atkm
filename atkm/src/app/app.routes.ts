@@ -21,16 +21,16 @@ export const routes: Routes = [
         loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
       },
 
+      {
+        path: 'debug',
+        loadComponent: () => import('./features/binance/components/binance-debug.component').then(m => m.BinanceDebugComponent),
+        title: 'Binance Account | Debug'
+      },
+
       // ===============================================================================================
       // BINANCE ROUTES
       // ===============================================================================================
 
-      // Binance account info (existing)
-      {
-        path: 'binance/account',
-        loadComponent: () => import('./features/binance/components/binance-debug.component').then(m => m.BinanceDebugComponent),
-        title: 'Binance Account | Debug'
-      },
       // Binance account info (existing)
       {
         path: 'binance/account',

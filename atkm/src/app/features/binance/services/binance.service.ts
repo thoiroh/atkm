@@ -23,11 +23,14 @@ export class BinanceService {
             throw new Error(response.error?.message || 'Failed to get account data');
           }
 
+          console.log(response);
+
           // AJOUT - Validation des données avant retour
           const accountData = response.data;
           if (!accountData) {
             throw new Error('No account data received from API');
           }
+
 
           // AJOUT - S'assurer que balances est un array
           if (!Array.isArray(accountData.balances)) {

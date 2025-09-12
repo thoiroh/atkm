@@ -15,18 +15,15 @@ export interface BinanceAccount {
   permissions: string[];
 }
 
+
+// AJOUT - Nouvelle interface pour gérer la réponse PHP
 export interface BinanceApiResponse<T = any> {
   success: boolean;
   source: string;
   endpoint: string;
-  data?: T;  // MODIFICATION - data devient optionnel
+  data: T;
   timestamp: string;
   message?: string;
-  error?: {    // AJOUT - Propriété error optionnelle
-    code: number;
-    message: string;
-    timestamp: string;
-  };
 }
 
 // AJOUT - Interface d'erreur Binance

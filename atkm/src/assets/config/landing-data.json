@@ -225,6 +225,18 @@
     "isCollapsed": true,
     "sections": [
       {
+        "title": "Dev Tools",
+        "icon": "default",
+        "items": [
+          {
+            "icon": "toggle",
+            "title": "Data Debug Terminal",
+            "description": "Terminal de gestion des api",
+            "link": "/dashboard/debug"
+          }
+        ]
+      },
+      {
         "title": "Trading Configuration",
         "icon": "settings",
         "items": [

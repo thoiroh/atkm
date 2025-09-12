@@ -23,6 +23,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
   // Computed property for significant balances
   significantBalances = computed(() => {
     const currentAccount = this.account();
+
     // AJOUT - Vérifications multiples pour éviter les erreurs
     if (!currentAccount) {
       console.warn('AccountInfo: No account data available');
@@ -53,7 +54,9 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
     });
   });
 
-  constructor(private binanceService: BinanceService) { }
+  constructor(
+    private binanceService: BinanceService
+  ) { }
 
   ngOnInit(): void {
     this.loadAccountInfo();
@@ -75,6 +78,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (account) => {
+          console.log(account)
           this.account.set(account);
           this.loading.set(false);
         },
