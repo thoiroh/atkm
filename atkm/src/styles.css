@@ -374,7 +374,9 @@ atk-content-main {
   flex-direction: column;
   align-items: flex-start;
   justify-self: flex-start;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--color-border-muted);
 }
 
 .sidebar-title {
@@ -383,8 +385,9 @@ atk-content-main {
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
-  margin: 0px 10px 12px 0px;
-  border-bottom: 2px solid var(--color-border-muted);
+  padding: 8px 0;
+  margin-left: 0px;
+  /* border-bottom: 1px solid var(--color-border-muted); */
   padding-left: 10px;
   cursor: pointer;
 }
@@ -392,7 +395,6 @@ atk-content-main {
 .sidebar-title-text {
   flex: 1;
   font-size: 1.2em;
-  padding: 12px 0 12px 0;
   color: var(--color-fg-default);
   cursor: pointer;
 }
@@ -1593,8 +1595,10 @@ li,
   margin-left: auto;
 }
 
+.config-section:hover ._hover-dot,
+.sidebar-section:hover ._hover-dot,
 .has-hover-dot:hover ._hover-dot {
-  opacity: 1;
+  opacity: 1 !important;
 }
 
 .sidebar-title ._hover-dot svg {
