@@ -27,6 +27,12 @@ export const routes: Routes = [
         title: 'Binance Account | Debug'
       },
 
+      {
+        path: 'bash',
+        loadComponent: () => import('./shared/components/atk-bash/atk-bash.component').then(m => m.AtkBashComponent),
+        title: 'atk bash | api tool'
+      },
+
       // ===============================================================================================
       // BINANCE ROUTES
       // ===============================================================================================

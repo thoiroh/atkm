@@ -27,6 +27,14 @@
             "action": false,
             "isExpanded": true,
             "subMenu": []
+          },
+          {
+            "icon": "toggle",
+            "label": "atk bash | api tools",
+            "link": "/dashboard/bash",
+            "action": false,
+            "isExpanded": true,
+            "subMenu": []
           }
         ]
       },

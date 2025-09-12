@@ -1,0 +1,168 @@
+{
+  "id": "binance-debug",
+  "title": "Binance API Debug Terminal",
+  "subtitle": "Test and debug Binance API endpoints with real-time data display",
+  "defaultEndpoint": "account",
+  "terminal": {
+    "editable": true,
+    "height": "450px",
+    "showControls": true,
+    "customCommands": [
+      {
+        "name": "clear",
+        "description": "Clear terminal logs",
+        "handler": "clearLogs"
+      },
+      {
+        "name": "status",
+        "description": "Show connection status",
+        "handler": "showStatus"
+      }
+    ]
+  },
+  "table": {
+    "showEmptyState": true,
+    "itemsPerPage": 50,
+    "searchEnabled": false
+  },
+  "endpoints": [
+    {
+      "id": "account",
+      "name": "Account Information",
+      "url": "http://localhost:8000/api/v3/account",
+      "method": "GET",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "cacheable": true,
+      "cacheDuration": 30000,
+      "dataTransformer": "transformAccountData",
+      "columns": [
+        {
+          "key": "asset",
+          "label": "Asset",
+          "width": "15%",
+          "align": "left",
+          "type": "text",
+          "sortable": true,
+          "cssClass": "asset-cell"
+        },
+        {
+          "key": "free",
+          "label": "Available",
+          "width": "25%",
+          "align": "right",
+          "type": "number",
+          "sortable": true
+        },
+        {
+          "key": "locked",
+          "label": "Locked",
+          "width": "25%",
+          "align": "right",
+          "type": "number",
+          "sortable": true
+        },
+        {
+          "key": "total",
+          "label": "Total",
+          "width": "25%",
+          "align": "right",
+          "type": "number",
+          "sortable": true,
+          "cssClass": "total-cell"
+        },
+        {
+          "key": "usdValue",
+          "label": "USD Value",
+          "width": "10%",
+          "align": "right",
+          "type": "currency",
+          "sortable": true
+        }
+      ]
+    },
+    {
+      "id": "trades",
+      "name": "Trade History",
+      "url": "http://localhost:8000/api/v3/myTrades",
+      "method": "GET",
+      "params": {
+        "symbol": "BTCUSDT",
+        "limit": 50
+      },
+      "cacheable": true,
+      "cacheDuration": 60000,
+      "columns": [
+        {
+          "key": "symbol",
+          "label": "Symbol",
+          "width": "15%",
+          "align": "left",
+          "type": "badge"
+        },
+        {
+          "key": "side",
+          "label": "Side",
+          "width": "10%",
+          "align": "center",
+          "type": "badge"
+        },
+        {
+          "key": "price",
+          "label": "Price",
+          "width": "20%",
+          "align": "right",
+          "type": "currency"
+        },
+        {
+          "key": "qty",
+          "label": "Quantity",
+          "width": "20%",
+          "align": "right",
+          "type": "number"
+        },
+        {
+          "key": "quoteQty",
+          "label": "Quote Qty",
+          "width": "20%",
+          "align": "right",
+          "type": "currency"
+        },
+        {
+          "key": "time",
+          "label": "Time",
+          "width": "15%",
+          "align": "center",
+          "type": "date"
+        }
+      ]
+    },
+    {
+      "id": "ticker",
+      "name": "Ticker Prices",
+      "url": "http://localhost:8000/api/v3/ticker/price",
+      "method": "GET",
+      "cacheable": true,
+      "cacheDuration": 10000,
+      "columns": [
+        {
+          "key": "symbol",
+          "label": "Symbol",
+          "width": "40%",
+          "align": "left",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "price",
+          "label": "Price",
+          "width": "30%",
+          "align": "right",
+          "type": "currency",
+          "sortable": true
+        }
+      ]
+    }
+  ]
+}

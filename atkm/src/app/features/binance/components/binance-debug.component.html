@@ -17,13 +17,13 @@
           <span class="input-selection"> · Sel "{{ text }}"</span>
           }
         </div>
-        <div class="terminal-content terminal-stack">
-          <div #hl class="terminal-highlights" [innerHTML]="highlightedHtml()"></div>
-          <textarea #ta class="terminal-input terminal-overlay" placeholder="Informations générales"
-            [value]="getTerminalText()" [style.--input-min-height]="inputHeight" spellcheck="false" autocorrect="off"
-            autocomplete="off" autocapitalize="off" (input)="onTAEvent()" (keyup)="onTAEvent()" (click)="onTAEvent()"
-            (select)="onTAEvent()" (scroll)="onTAScroll()"></textarea>
-        </div>
+        <!-- <div class="terminal-content terminal-stack"> -->
+        <!-- <div #hl class="terminal-highlights" [innerHTML]="highlightedHtml()"></div> -->
+        <textarea #ta class="terminal-input terminal-overlay" placeholder="Informations générales"
+          [value]="getTerminalText()" [style.--input-min-height]="inputHeight" spellcheck="false" autocorrect="off"
+          autocomplete="off" autocapitalize="off" (input)="onTAEvent()" (keyup)="onTAEvent()" (click)="onTAEvent()"
+          (select)="onTAEvent()" (scroll)="onTAScroll()"></textarea>
+        <!-- </div> -->
 
       </div>
 
