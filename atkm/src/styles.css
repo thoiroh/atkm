@@ -794,7 +794,7 @@ li,
   margin-bottom: 12px;
   color: var(--color-fg-default);
   resize: vertical;
-  min-height: 350px;
+  min-height: var(--input-min-height);
   height: 100%;
   width: 100%;
   font-size: 14px;

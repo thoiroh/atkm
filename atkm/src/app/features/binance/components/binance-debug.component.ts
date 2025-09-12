@@ -17,6 +17,7 @@ export class BinanceDebugComponent implements OnInit {
   typingActive = signal<boolean>(false);
   cursorVisible = signal<boolean>(true);
   private typingTimers: number[] = [];
+  inputHeight = "500px";
 
   @ViewChild('ta') textareaRef!: ElementRef<HTMLTextAreaElement>;
   private destroyRef = inject(DestroyRef);

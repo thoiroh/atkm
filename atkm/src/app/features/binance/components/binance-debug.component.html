@@ -12,6 +12,7 @@
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
         <!-- Step 1: Service injection check -->
         <textarea #ta class="terminal-input" placeholder="Informations générales" [value]="getTerminalText()"
+          [style.--input-min-height]="inputHeight"
           style="height:400px; overflow:auto; scroll-behavior:smooth; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;"></textarea>
 
       </div>
