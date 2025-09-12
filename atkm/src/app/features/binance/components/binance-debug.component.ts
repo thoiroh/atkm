@@ -12,124 +12,164 @@ import { BinanceService } from '../services/binance.service';
   styles: []
 })
 export class BinanceDebugComponent implements OnInit {
+  // 1) Decorated properties
+  @ViewChild('ta') private textareaRef!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('hl') private highlightRef!: ElementRef<HTMLDivElement>;
+
+  public onTAScroll(): void {
+    const ta = this.textareaRef?.nativeElement;
+    const hl = this.highlightRef?.nativeElement;
+    if (!ta || !hl) return;
+    hl.scrollTop = ta.scrollTop;
+    hl.scrollLeft = ta.scrollLeft;
+  }
+
+  private escapeHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  public highlightedHtml(): string {
+    const raw = this.getTerminalText(); // déjà construit depuis tes signaux
+    const esc = this.escapeHtml(raw);
+
+    // 1) surligner la ligne courante
+    const lines = esc.split('\n');
+    const idx = Math.max(0, Math.min(this.line() - 1, lines.length - 1));
+    lines[idx] = `<mark class="hl-line">${lines[idx]}</mark>`;
+    let html = lines.join('\n');
+
+    // 2) surligner le mot courant (dans la ligne courante)
+    const word = this.currentWord();
+    if (word) {
+      const re = new RegExp(`(${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`);
+      lines[idx] = lines[idx].replace(re, `<span class="hl-word">$1</span>`);
+      html = lines.join('\n');
+    }
+
+    // 3) surligner la sélection (première occurrence simple)
+    const sel = this.selectionText();
+    if (sel) {
+      const reSel = new RegExp(sel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      html = html.replace(reSel, `<mark class="hl-sel">${sel}</mark>`);
+    }
+
+    // Préserver retours ligne
+    return html.replace(/\n/g, '<br/>');
+  }
+
+  // 2) Public properties (used in the template)
+  public typingActive = signal<boolean>(false);
+  public cursorVisible = signal<boolean>(true);
+  public inputHeight = '500px';
+
+  public serviceInjected = signal<boolean>(false);
+  public httpClientInjected = signal<boolean>(false);
+  public directHttpLoading = signal<boolean>(false);
+  public directHttpResult = signal<string>('');
+  public serviceLoading = signal<boolean>(false);
+  public serviceResult = signal<string>('');
+  public lifecycleLog = signal<string[]>([]);
+  public currentUrl = signal<string>('');
+  public apiBaseUrl = signal<string>('');
+  public browserInfo = signal<string>('');
+
+  public caretIndex = signal<number>(0);
+  public selStart = signal<number>(0);
+  public selEnd = signal<number>(0);
+  public line = signal<number>(1);
+  public column = signal<number>(1);
+  public selectionText = signal<string>('');
+  public currentLineText = signal<string>('');
+  public currentWord = signal<string>('');
+
+  // 3) Private properties
   private http = inject(HttpClient);
   private binanceService = inject(BinanceService);
-  typingActive = signal<boolean>(false);
-  cursorVisible = signal<boolean>(true);
   private typingTimers: number[] = [];
-  inputHeight = "500px";
-
-  @ViewChild('ta') textareaRef!: ElementRef<HTMLTextAreaElement>;
   private destroyRef = inject(DestroyRef);
   private zone = inject(NgZone);
 
-  serviceInjected = signal<boolean>(false);
-  httpClientInjected = signal<boolean>(false);
-  directHttpLoading = signal<boolean>(false);
-  directHttpResult = signal<string>('');
-  serviceLoading = signal<boolean>(false);
-  serviceResult = signal<string>('');
-  lifecycleLog = signal<string[]>([]);
-  currentUrl = signal<string>('');
-  apiBaseUrl = signal<string>('');
-  browserInfo = signal<string>('');
-
+  // 4) Constructor
   constructor() {
     this.addLog('Constructor called');
     this.serviceInjected.set(!!this.binanceService);
     this.httpClientInjected.set(!!this.http);
     this.addLog(`Service injection: ${this.serviceInjected() ? 'OK' : 'FAILED'}`);
     this.addLog(`HttpClient injection: ${this.httpClientInjected() ? 'OK' : 'FAILED'}`);
+
     effect(() => {
-      // lire les signals utilisés par getTerminalText() pour re-réagir
+      // Re-run when signals used by getTerminalText() change
       void this.getTerminalText();
       this.scheduleScroll();
     }, { allowSignalWrites: true });
   }
 
-  private startCursorBlink(): void {
-    this.zone.runOutsideAngular(() => {
-      const id = window.setInterval(() => this.cursorVisible.update(v => !v), 500);
-      this.typingTimers.push(id);
-    });
-  }
-  private stopAllTimers(): void {
-    this.typingTimers.forEach(id => clearInterval(id));
-    this.typingTimers.length = 0;
-  }
-
-  // machine à écrire dans le log
-  async typeLog(message: string, flag?: number, opts?: { min?: number; max?: number }): Promise<void> {
-    const min = opts?.min ?? 25;    // ms
-    const max = opts?.max ?? 120;   // ms
-    // point d’ancrage dans lifecycleLog
-    const ts = new Date().toLocaleTimeString();
-    const prefix = (() => {
-      switch (flag) {
-        case -1: return '\n';
-        case 0: return `\n\n[${ts}] `;
-        case 1: return '';
-        case 2: return `\n`;
-        default: return `[${ts}] `;
-      }
-    })();
-
-    this.typingActive.set(true);
-    this.lifecycleLog.update(logs => [...logs, prefix]);  // crée la ligne
-    const idx = this.lifecycleLog().length - 1;
-
-    // saisie caractère par caractère, pauses humaines sur espaces/punctuations
-    for (let i = 0; i < message.length; i++) {
-      const ch = message[i];
-      this.lifecycleLog.update(logs => {
-        const copy = logs.slice();
-        copy[idx] = copy[idx] + ch;
-        return copy;
-      });
-
-      // défilement smooth après peinture
-      this.scheduleScroll();
-
-      // tempo aléatoire
-      const base = Math.random() * (max - min) + min;
-      const extra =
-        ch === ' ' ? 40 + Math.random() * 80 :
-          /[.,;:!?)]/.test(ch) ? 80 + Math.random() * 140 :
-            0;
-      await new Promise(r => setTimeout(r, base + extra));
-    }
-
-    this.typingActive.set(false);
-  }
-
-  ngOnInit(): void {
+  // 5) Angular lifecycle hooks
+  public ngOnInit(): void {
     this.startCursorBlink();
-    // this.typeLog('Démarrage de la session...', 0);
-    // this.typeLog('Connexion à l’API OK.', -1);
-    this.addLog('ngOnInit called');
+    // this.typeLog('Session start...', 0);
+    // this.typeLog('API connection OK.', -1);
+    this.log('ngOnInit called');
     this.currentUrl.set(window.location.href);
     this.apiBaseUrl.set('http://localhost:8000');
     this.browserInfo.set(navigator.userAgent.split(' ')[0]);
     this.addLog(`Environment loaded - URL: ${this.currentUrl()}`);
   }
 
-  /** Texte complet injecté dans le <textarea> */
-  getTerminalText(): string {
+  // 6) Public methods (used by template or UI)
+
+  /** Full text injected into the <textarea> */
+  public getTerminalText(): string {
     const header = `1) Service Injection Check:\n ${this.serviceInjected() ? '\n✅ BinanceService injected success' : '\n❌ BinanceService injected failed'} ${this.httpClientInjected() ? '\n✅ HttpClient injected success' : '\n❌ HttpClient injected failed'}`;
     const env = `\n\n2) Environment Check:\n\nCurrent URL: ${this.currentUrl()}\nAPI Base URL: ${this.apiBaseUrl()}\nBrowser: ${this.browserInfo()}`;
     const lifecycleBody = this.formatLifecycleLog();
-    const cursor = this.typingActive() && this.cursorVisible() ? ' ▌' : '';
+    const cursor = this.typingActive() && this.cursorVisible() ? ' ▮' : '';
     const lifecycle = `\n\n3) Component Lifecycle Trace:\n\n${lifecycleBody}${cursor}`;
     return `${header}${env}${lifecycle}`;
   }
 
-  private formatLifecycleLog(): string {
-    const logs = this.lifecycleLog();
-    if (!logs.length) return '(no logs yet)';
-    return logs.join('\n');
+  /**
+   * Unified logger.
+   * Chooses between instant append and typewriter effect based on message length or an explicit override.
+   * @param message The message to log
+   * @param options Optional parameters
+   *  - flag: formatting flag (-1 new line before, 0 timestamped on new paragraph, 1 trailing newline, 2 surrounding newlines)
+   *  - min, max: typing delay bounds in ms
+   *  - typeThreshold: min length to trigger typing effect automatically (default 60)
+   *  - force: 'type' | 'instant' to override the automatic choice
+   */
+  public async log(
+    message: string,
+    options?: { flag?: number; min?: number; max?: number; typeThreshold?: number; force?: 'type' | 'instant' }
+  ): Promise<void> {
+    const threshold = options?.typeThreshold ?? 60;
+    const shouldType = options?.force
+      ? options.force === 'type'
+      : message.length >= threshold;
+
+    if (shouldType) {
+      await this.typeLogInternal(message, options?.flag, { min: options?.min, max: options?.max });
+    } else {
+      this.addLogInternal(message, options?.flag);
+    }
   }
 
-  testDirectHttp(): void {
+  /** Backward-compat wrapper: always typewriter */
+  public async typeLog(message: string, flag?: number, opts?: { min?: number; max?: number }): Promise<void> {
+    await this.log(message, { flag, min: opts?.min, max: opts?.max, force: 'type' });
+  }
+
+  /** Backward-compat wrapper: always instant */
+  public addLog(message: string, flag?: number): void {
+    void this.log(message, { flag, force: 'instant' });
+  }
+
+  public writecode(): void {
+    const message = "Starting test d'utilisation du terminal HTTP test...";
+    void this.log(message, { flag: 0, force: 'type' });
+  }
+
+  public testDirectHttp(): void {
     this.addLog('🌐 Starting direct HTTP test...', 0);
     // this.directHttpLoading.set(true);
     // this.directHttpResult.set('');
@@ -151,8 +191,7 @@ export class BinanceDebugComponent implements OnInit {
     });
   }
 
-  testServiceCall(): void {
-
+  public testServiceCall(): void {
     this.addLog('🅰️ Starting service call test...', 0);
     // this.serviceLoading.set(true);
     // this.serviceResult.set('');
@@ -179,37 +218,143 @@ export class BinanceDebugComponent implements OnInit {
     }
   }
 
-  autoResize(textarea: HTMLTextAreaElement): void {
+  public autoResize(textarea: HTMLTextAreaElement): void {
     textarea.style.height = 'auto';
     textarea.style.height = textarea.scrollHeight + 'px';
   }
 
-  scrollToBottom(textarea: HTMLTextAreaElement): void {
-    // remet la position du curseur tout en bas
+  public scrollToBottom(textarea: HTMLTextAreaElement): void {
+    // Move the caret to the bottom
     textarea.scrollTop = textarea.scrollHeight;
   }
 
-  private addLog(message: string, flag?: number): void {
+  public onTAEvent(): void {
+    const ta = this.textareaRef?.nativeElement;
+    if (!ta) return;
+
+    const value = ta.value;
+    const start = ta.selectionStart ?? 0;
+    const end = ta.selectionEnd ?? start;
+
+    this.selStart.set(start);
+    this.selEnd.set(end);
+    this.caretIndex.set(end);
+
+    // Compute line and column (1-based)
+    const upToCaret = value.slice(0, end);
+    const lines = upToCaret.split('\n');
+    const lineNumber = lines.length;
+    const colNumber = lines[lines.length - 1].length + 1;
+    this.line.set(lineNumber);
+    this.column.set(colNumber);
+
+    // Current line text
+    const fullLines = value.split('\n');
+    const currentLineText = fullLines[lineNumber - 1] ?? '';
+    this.currentLineText.set(currentLineText);
+
+    // Current word around caret (simple word chars heuristic)
+    const left = currentLineText.slice(0, colNumber - 1);
+    const right = currentLineText.slice(colNumber - 1);
+    const leftWord = left.match(/[A-Za-z0-9_\-]+$/)?.[0] ?? '';
+    const rightWord = right.match(/^[A-Za-z0-9_\-]+/)?.[0] ?? '';
+    this.currentWord.set(leftWord + rightWord);
+
+    // Selected text
+    this.selectionText.set(start !== end ? value.slice(start, end) : '');
+  }
+
+  /** Optional: place caret explicitly at index (clamped). */
+  public setCaret(index: number): void {
+    const ta = this.textareaRef?.nativeElement;
+    if (!ta) return;
+    const len = ta.value.length;
+    const i = Math.max(0, Math.min(index, len));
+    ta.setSelectionRange(i, i);
+    ta.focus();
+    this.onTAEvent();
+  }
+
+  /** Optional: insert text at caret, keep scroll smooth. */
+  public insertAtCaret(text: string): void {
+    const ta = this.textareaRef?.nativeElement;
+    if (!ta) return;
+    const start = ta.selectionStart ?? 0;
+    const end = ta.selectionEnd ?? start;
+    const value = ta.value;
+    ta.value = value.slice(0, start) + text + value.slice(end);
+    const newPos = start + text.length;
+    ta.setSelectionRange(newPos, newPos);
+    this.onTAEvent();
+    this.scheduleScroll();
+  }
+
+  /** Instant append into lifecycleLog */
+  private addLogInternal(message: string, flag?: number): void {
     const timestamp = new Date().toLocaleTimeString();
-    let logEntry;
+    let logEntry: string;
     switch (flag) {
       case -1:
         logEntry = `\n${message}`;
-        break
+        break;
       case 0:
         logEntry = `\n\n[${timestamp}] ${message}`;
-        break
+        break;
       case 1:
         logEntry = `${message}\n`;
-        break
+        break;
       case 2:
         logEntry = `\n${message}\n`;
-        break
+        break;
       default:
         logEntry = `[${timestamp}] ${message}`;
     }
     this.lifecycleLog.update(logs => [...logs, logEntry]);
-    console.log(`>Debug: ${logEntry}`);
+    // console.log(`>Debug: ${logEntry}`);
+    this.typingActive.set(false);
+
+  }
+
+  /** Typewriter effect into lifecycleLog */
+  private async typeLogInternal(message: string, flag?: number, opts?: { min?: number; max?: number }): Promise<void> {
+    const min = opts?.min ?? 10;    // ms
+    const max = opts?.max ?? 25;   // ms
+    const ts = new Date().toLocaleTimeString();
+    const prefix = (() => {
+      switch (flag) {
+        case -1: return '\n';
+        case 0: return `\n\n[${ts}] `;
+        case 1: return '';
+        case 2: return `\n`;
+        default: return `[${ts}] `;
+      }
+    })();
+
+    this.typingActive.set(true);
+    this.lifecycleLog.update(logs => [...logs, prefix]);  // Create the line
+    const idx = this.lifecycleLog().length - 1;
+
+    for (let i = 0; i < message.length; i++) {
+      const ch = message[i];
+      this.lifecycleLog.update(logs => {
+        const copy = logs.slice();
+        copy[idx] = copy[idx] + ch;
+        return copy;
+      });
+
+      // Smooth scroll after paint
+      this.scheduleScroll();
+
+      // Random tempo
+      const base = Math.random() * (max - min) + min;
+      const extra =
+        ch === ' ' ? 40 + Math.random() * 80 :
+          /[.,;:!?)]/.test(ch) ? 80 + Math.random() * 140 :
+            0;
+      await new Promise(r => setTimeout(r, base + extra));
+    }
+
+    this.typingActive.set(false);
   }
 
   private scheduleScroll(): void {
@@ -221,11 +366,28 @@ export class BinanceDebugComponent implements OnInit {
           const end = ta.scrollHeight - ta.clientHeight;
           if (end <= 0) return;
           try { ta.scrollTo({ top: end, behavior: 'smooth' }); }
-          catch { ta.scrollTop = end; } // fallback vieux navigateurs
+          catch { ta.scrollTop = end; } // Fallback for older browsers
         });
       });
     });
   }
 
+  // 7) Private utility methods
+  private startCursorBlink(): void {
+    this.zone.runOutsideAngular(() => {
+      const id = window.setInterval(() => this.cursorVisible.update(v => !v), 250);
+      this.typingTimers.push(id);
+    });
+  }
 
+  private stopAllTimers(): void {
+    this.typingTimers.forEach(id => clearInterval(id));
+    this.typingTimers.length = 0;
+  }
+
+  private formatLifecycleLog(): string {
+    const logs = this.lifecycleLog();
+    if (!logs.length) return '(no logs yet)';
+    return logs.join('\n');
+  }
 }

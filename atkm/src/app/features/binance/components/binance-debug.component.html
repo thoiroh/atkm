@@ -1,5 +1,4 @@
 <div class="terminal-wrapper">
-  <!-- Section Copilot -->
   <header class="terminal-header">
     <h1>Binance Debug Component</h1>
     <div class="terminal-details">
@@ -11,11 +10,23 @@
       <div class="terminal-content">
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
         <!-- Step 1: Service injection check -->
-        <textarea #ta class="terminal-input" placeholder="Informations générales" [value]="getTerminalText()"
-          [style.--input-min-height]="inputHeight"
-          style="height:400px; overflow:auto; scroll-behavior:smooth; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;"></textarea>
+        <div class="terminal-status">
+          <span>Ln {{ line() }},</span>
+          <span>Col {{ column() }} · Idx {{ caretIndex() }}</span>
+          @if (selectionText(); as text) {
+          <span class="input-selection"> · Sel "{{ text }}"</span>
+          }
+        </div>
+        <div class="terminal-content terminal-stack">
+          <div #hl class="terminal-highlights" [innerHTML]="highlightedHtml()"></div>
+          <textarea #ta class="terminal-input terminal-overlay" placeholder="Informations générales"
+            [value]="getTerminalText()" [style.--input-min-height]="inputHeight" spellcheck="false" autocorrect="off"
+            autocomplete="off" autocapitalize="off" (input)="onTAEvent()" (keyup)="onTAEvent()" (click)="onTAEvent()"
+            (select)="onTAEvent()" (scroll)="onTAScroll()"></textarea>
+        </div>
 
       </div>
+
       <div class="terminal-cmd">
         <button class="cmd-btn" (click)="testServiceCall()" [disabled]="serviceLoading()">
           <div class="cmd-btn-icon" style="color: #10b981;">
@@ -39,7 +50,7 @@
           {{ directHttpLoading() ? 'Testing...' : 'Test Direct HTTP Call' }}
         </button>
 
-        <button class="cmd-btn" style="text-align: #10b981; margin-top: auto;">
+        <button class="cmd-btn" (click)="writecode()">
           <div class="cmd-btn-icon" style="color: #10b981;">
             <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
               <path
