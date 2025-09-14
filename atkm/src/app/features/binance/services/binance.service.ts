@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BinanceAccount, BinanceApiResponse } from '../models/binance.model';
-import { BinanceErrorHandlerService } from './error-handler.service';
+import { BinanceErrorHandlerService } from './binance-error-handler.service';
 
 @Injectable({
   providedIn: 'root'

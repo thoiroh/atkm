@@ -8,9 +8,9 @@ import { FormsModule } from '@angular/forms';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { finalize } from 'rxjs';
 
+import { BinanceErrorHandlerService } from '@app/features/binance/services/binance-error-handler.service';
+import { TransactionStateService } from '@app/features/binance/services/binance-transaction-state.service';
 import { BinanceService } from '@features/binance/services/binance.service';
-import { BinanceErrorHandlerService } from '@features/binance/services/error-handler.service';
-import { TransactionStateService } from '@features/binance/services/transaction-state.service';
 
 import { BalanceFormatPipe, CryptoPrecisionPipe, StatusBadgePipe, TimestampToDatePipe } from '@shared/pipes/pipes';
 import { AtkBashConfigFactory } from './atk-bash-config.factory';

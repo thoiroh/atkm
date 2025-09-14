@@ -17,7 +17,7 @@ import {
   TRADE_TABLE_COLUMNS,
   TRANSFER_TABLE_COLUMNS
 } from '../../models/transaction-history.model';
-import { TransactionStateService } from '../../services/transaction-state.service';
+import { TransactionStateService } from '../../services/binance-transaction-state.service';
 
 type TabType = 'trades' | 'orders' | 'transfers';
 
