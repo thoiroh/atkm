@@ -22,18 +22,18 @@
         "items": [
           {
             "icon": "toggle",
-            "label": "Data Debug Terminal",
+            "label": "Debug Terminal",
             "link": "/dashboard/debug",
             "action": false,
-            "isExpanded": true,
+            "isExpanded": false,
             "subMenu": []
           },
           {
             "icon": "toggle",
-            "label": "atk bash | api tools",
+            "label": "Atk.bash | api tools",
             "link": "/dashboard/bash",
             "action": false,
-            "isExpanded": true,
+            "isExpanded": false,
             "subMenu": []
           }
         ]
@@ -48,18 +48,18 @@
         "items": [
           {
             "icon": "toggle",
-            "label": "Assets Inventory",
+            "label": "Assets Inventory (user)",
             "link": "/dashboard/binance/account",
             "action": false,
-            "isExpanded": true,
+            "isExpanded": false,
             "subMenu": []
           },
           {
             "icon": "toggle",
-            "label": "Transaction History",
+            "label": "Transaction History (user)",
             "link": "",
             "action": false,
-            "isExpanded": true,
+            "isExpanded": false,
             "subMenu": [
               {
                 "icon": "trending-up",
@@ -92,7 +92,7 @@
             "label": "Popular Coins",
             "link": "",
             "action": false,
-            "isExpanded": true,
+            "isExpanded": false,
             "subMenu": [
               {
                 "icon": "currency-bitcoin",
@@ -129,7 +129,7 @@
           },
           {
             "icon": "toggle",
-            "label": "Global Watchlist",
+            "label": "Global Watchlist (user)",
             "link": "/dashboard/binance/snapshot",
             "action": false,
             "isExpanded": false

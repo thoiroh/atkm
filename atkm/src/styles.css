@@ -1,3 +1,8 @@
+/* ============================================
+   atk styles - CSS GLOBAL
+   Date: 2025.09.14.142640
+   ============================================ */
+
 /* Variables CSS extraites du HTML GitHub */
 :root {
   --fontStack-monospace: "Monaspace Neon", ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
@@ -51,6 +56,7 @@ router-outlet,
 atk-landing,
 atk-home-content,
 
+atk-bash,
 atk-binance-debug,
 atk-account-info,
 atk-account-snapshot,
@@ -253,7 +259,7 @@ atk-content-main {
 
 .search-wrapper .search-input {
   width: 100%;
-  min-width: 200px;
+  min-width: 250px;
   background: var(--color-canvas-default);
   border: 1px solid var(--color-border-default);
   border-radius: 6px;

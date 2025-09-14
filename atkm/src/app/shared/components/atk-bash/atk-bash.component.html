@@ -1,41 +1,37 @@
-<!-- atk-bash.component.html -->
-<!-- Enhanced template integrated with your existing services -->
-
-<div class="bash-wrapper">
-  <!-- Header Section -->
-  <header class="bash-header">
+<div class="terminal-wrapper">
+  <header class="terminal-header">
     @if (currentConfig(); as config) {
     <h1>{{ config.title }}</h1>
-    <div class="bash-details">
+    <div class="terminal-details">
       <h2>{{ config.subtitle }}</h2>
     </div>
     }
   </header>
 
-  <main class="bash-main">
+  <main class="terminal-main">
     <!-- Terminal Section -->
-    <div class="bash-section">
-      <div class="bash-content">
-        <atk-icon class="bash-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+    <div class="terminal-section">
+      <div class="terminal-content">
+        <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
 
         <!-- Terminal Status Bar -->
-        <div class="bash-status">
+        <div class="terminal-status">
           <span>Ln {{ line() }},</span>
           <span>Col {{ column() }} · Idx {{ caretIndex() }}</span>
           @if (selectionText(); as text) {
-          <span class="bash-selection"> · Sel "{{ text }}"</span>
+          <span class="terminal-selection"> · Sel "{{ text }}"</span>
           }
           @if (terminalState().loading) {
-          <span class="bash-loading"> · Loading...</span>
+          <span class="terminal-loading"> · Loading...</span>
           }
           <!-- Connection Status -->
-          <span class="bash-connection" [ngClass]="'status-' + terminalState().connectionStatus">
+          <span class="terminal-connection" [ngClass]="'status-' + terminalState().connectionStatus">
             · {{ terminalState().connectionStatus | titlecase }}
           </span>
         </div>
 
         <!-- Terminal Textarea -->
-        <textarea #terminalTextarea class="bash-input bash-overlay" [value]="terminalText()"
+        <textarea #terminalTextarea class="terminal-input" [value]="terminalText()"
           [readonly]="!currentConfig()?.terminal.editable"
           [style.--input-min-height]="currentConfig()?.terminal.height || '500px'" spellcheck="false" autocorrect="off"
           autocomplete="off" autocapitalize="off" placeholder="ATK Bash Terminal - Debug information and API status..."
@@ -46,7 +42,7 @@
 
       <!-- Terminal Command Panel -->
       @if (currentConfig()?.terminal.showControls !== false) {
-      <div class="bash-cmd">
+      <div class="terminal-cmd">
         <!-- Endpoint Selection -->
         @if (currentConfig(); as config) {
         @if (config.endpoints.length > 1) {

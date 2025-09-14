@@ -2,75 +2,42 @@
 // Enhanced version integrated with your existing services
 
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  ElementRef,
-  inject,
-  input,
-  NgZone,
-  OnInit,
-  output,
-  signal,
-  ViewChild
-} from '@angular/core';
+import { Component, computed, DestroyRef, effect, ElementRef, inject, input, NgZone, OnInit, output, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { finalize } from 'rxjs';
 
-// Your existing services
 import { BinanceService } from '@features/binance/services/binance.service';
 import { BinanceErrorHandlerService } from '@features/binance/services/error-handler.service';
 import { TransactionStateService } from '@features/binance/services/transaction-state.service';
 
-// ATK Bash specific imports
-import { AtkBashConfigFactory } from './atk-bash-config.factory';
-import {
-  BashData,
-  IBashConfig,
-  IBashEvent,
-  IBashLogEntry,
-  IBashTerminalState
-} from './atk-bash.interfaces';
-import { AtkBashService } from './atk-bash.service';
-
-// Pipes
 import { BalanceFormatPipe, CryptoPrecisionPipe, StatusBadgePipe, TimestampToDatePipe } from '@shared/pipes/pipes';
+import { AtkBashConfigFactory } from './atk-bash-config.factory';
+import { BashData, IBashConfig, IBashEvent, IBashLogEntry, IBashTerminalState } from './atk-bash.interfaces';
+import { AtkBashService } from './atk-bash.service';
 
 
 @Component({
   selector: 'atk-bash',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    AtkIconComponent,
-    BalanceFormatPipe,
-    CryptoPrecisionPipe,
-    StatusBadgePipe,
-    TimestampToDatePipe
-  ],
+  imports: [CommonModule, FormsModule, AtkIconComponent, BalanceFormatPipe, CryptoPrecisionPipe, StatusBadgePipe, TimestampToDatePipe],
   templateUrl: './atk-bash.component.html',
   styleUrls: ['./atk-bash.component.css'],
 })
 export class AtkBashComponent implements OnInit {
-  // Template refs for terminal functionality
+
   @ViewChild('terminalTextarea') private textareaRef!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('highlightDiv') private highlightRef!: ElementRef<HTMLDivElement>;
 
   // Component inputs
   configId = input<string>('binance-debug-v2');
   autoLoad = input<boolean>(true);
-
   // Component outputs
   dataLoaded = output<BashData[]>();
   errorOccurred = output<string>();
   eventEmitted = output<IBashEvent>();
 
-  // Injected services
   private bashService = inject(AtkBashService);
   private bashConfigFactory = inject(AtkBashConfigFactory);
   private binanceService = inject(BinanceService);
@@ -80,31 +47,17 @@ export class AtkBashComponent implements OnInit {
   private zone = inject(NgZone);
 
   // State signals
-  currentConfig = signal<IBashConfig | null>(null);
-  currentEndpoint = signal<string>('');
-  terminalState = signal<IBashTerminalState>({
-    loading: false,
-    connectionStatus: 'disconnected',
-    requestParams: {}
-  });
+  currentConfig = signal<IBashConfig | null>(null); currentEndpoint = signal<string>('');
+  terminalState = signal<IBashTerminalState>({ loading: false, connectionStatus: 'disconnected', requestParams: {} });
 
   data = signal<BashData[]>([]);
   error = signal<string | null>(null);
 
   // Terminal functionality signals
-  logs = signal<IBashLogEntry[]>([]);
-  terminalInput = signal<string>('');
-  cursorVisible = signal<boolean>(true);
-
+  logs = signal<IBashLogEntry[]>([]); terminalInput = signal<string>(''); cursorVisible = signal<boolean>(true);
   // Cursor and selection tracking
-  caretIndex = signal<number>(0);
-  selStart = signal<number>(0);
-  selEnd = signal<number>(0);
-  line = signal<number>(1);
-  column = signal<number>(1);
-  selectionText = signal<string>('');
-  currentLineText = signal<string>('');
-  currentWord = signal<string>('');
+  caretIndex = signal<number>(0); selStart = signal<number>(0); selEnd = signal<number>(0); line = signal<number>(1);
+  column = signal<number>(1); selectionText = signal<string>(''); currentLineText = signal<string>(''); currentWord = signal<string>('');
 
   // Computed properties
   terminalText = computed(() => {
@@ -113,31 +66,25 @@ export class AtkBashComponent implements OnInit {
     const endpoint = this.currentEndpoint();
 
     let output = '';
-
     // Header section
     if (config) {
       output += `1) Configuration: ${config.title}\n`;
       output += `   ${config.subtitle}\n\n`;
     }
-
     // Service injection status
     output += `2) Service Status:\n`;
     output += `   BinanceService: ${this.binanceService ? '✅ OK' : '❌ FAILED'}\n`;
     output += `   ErrorHandler: ${this.errorHandler ? '✅ OK' : '❌ FAILED'}\n`;
     output += `   TransactionState: ${this.transactionState ? '✅ OK' : '❌ FAILED'}\n\n`;
-
     // Connection status
     output += `3) Connection Status:\n`;
     output += `   Status: ${this.getStatusIcon(state.connectionStatus)} ${state.connectionStatus}\n`;
     output += `   Endpoint: ${endpoint || 'None selected'}\n`;
-
     if (state.responseMetadata) {
       output += `   Last Response: ${state.responseMetadata.statusCode} (${state.responseMetadata.responseTime}ms)\n`;
       output += `   Data Count: ${state.responseMetadata.dataCount || 0}\n`;
     }
-
     output += '\n';
-
     // Parameters section
     if (state.requestParams && Object.keys(state.requestParams).length > 0) {
       output += '4) Request Parameters:\n';
@@ -146,7 +93,6 @@ export class AtkBashComponent implements OnInit {
       });
       output += '\n';
     }
-
     // Logs section
     output += '5) Terminal Log:\n\n';
     const logEntries = this.logs();
@@ -159,11 +105,9 @@ export class AtkBashComponent implements OnInit {
         output += `[${timestamp}] ${icon} ${log.message}\n`;
       });
     }
-
     // Cursor
     const cursor = this.cursorVisible() && state.loading ? ' ▮' : '';
     output += cursor;
-
     return output;
   });
 
@@ -177,28 +121,23 @@ export class AtkBashComponent implements OnInit {
     // Initialize configuration
     effect(() => {
       const configIdValue = this.configId();
-
       // Create config using factory
       if (configIdValue === 'binance-debug-v2') {
         const config = this.bashConfigFactory.createBinanceDebugConfig();
         this.currentConfig.set(config);
         this.bashService.registerConfig(config);
       }
-
       // Set default endpoint
       const config = this.currentConfig();
       if (config && config.defaultEndpoint) {
         this.currentEndpoint.set(config.defaultEndpoint);
-
         if (this.autoLoad()) {
           this.loadData();
         }
       }
     }, { allowSignalWrites: true });
-
     // Start cursor blinking
     this.startCursorBlink();
-
     // Subscribe to bash service events
     this.bashService.events$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -206,7 +145,6 @@ export class AtkBashComponent implements OnInit {
         const relevantEvents = events.filter(event =>
           event.payload.configId === this.configId()
         );
-
         relevantEvents.forEach(event => {
           this.eventEmitted.emit(event);
           this.handleServiceEvent(event);
@@ -220,39 +158,27 @@ export class AtkBashComponent implements OnInit {
       ...state,
       connectionStatus: 'connected'
     }));
-
     // Log service integration status
     this.addLog('Service integration check completed', 'success');
   }
 
-  // Public methods for template
-
   /**
    * Load data from current endpoint using your existing services
    */
-  async loadData(params: Record<string, any> = {}): Promise<void> {
+  public async loadData(params: Record<string, any> = {}): Promise<void> {
     const config = this.currentConfig();
     const endpointId = this.currentEndpoint();
-
-    if (!config || !endpointId) {
-      this.addLog('No configuration or endpoint selected', 'error');
-      return;
-    }
-
+    if (!config || !endpointId) { this.addLog('No configuration or endpoint selected', 'error'); return; }
     this.addLog(`Loading data from ${endpointId}...`, 'info');
-
     this.terminalState.update(state => ({
       ...state,
       loading: true,
       requestParams: params,
       error: undefined
     }));
-
     const startTime = performance.now();
-
     try {
       let data: BashData[] = [];
-
       // Use your existing services based on endpoint
       switch (endpointId) {
         case 'account':
@@ -272,10 +198,8 @@ export class AtkBashComponent implements OnInit {
       }
 
       const responseTime = Math.round(performance.now() - startTime);
-
       this.data.set(data);
       this.error.set(null);
-
       this.terminalState.update(state => ({
         ...state,
         responseMetadata: {
@@ -285,18 +209,15 @@ export class AtkBashComponent implements OnInit {
         },
         loading: false
       }));
-
       this.addLog(`✅ Data loaded successfully (${data.length} items, ${responseTime}ms)`, 'success');
       this.dataLoaded.emit(data);
 
     } catch (error: any) {
       const responseTime = Math.round(performance.now() - startTime);
       const errorMessage = this.errorHandler.formatUserFriendlyError(error);
-
       this.error.set(errorMessage);
       this.addLog(`❌ Error loading data: ${errorMessage}`, 'error');
       this.errorOccurred.emit(errorMessage);
-
       this.terminalState.update(state => ({
         ...state,
         responseMetadata: {
@@ -314,35 +235,32 @@ export class AtkBashComponent implements OnInit {
   async testConnection(): Promise<void> {
     const config = this.currentConfig();
     const endpointId = this.currentEndpoint();
-
     if (!config || !endpointId) {
       this.addLog('No endpoint to test', 'warning');
       return;
     }
-
     this.addLog(`Testing connection to ${endpointId}...`, 'info');
-
     try {
       // Simple ping test using your BinanceService
       const startTime = performance.now();
-
       if (endpointId === 'account') {
         await this.binanceService.getAccount().toPromise();
       } else {
         // Default test - try to get ticker for BTCUSDT
         await this.binanceService.getTickerPrice('BTCUSDT').toPromise();
       }
-
       const responseTime = Math.round(performance.now() - startTime);
       this.addLog(`🌐 Connection test successful (${responseTime}ms)`, 'success');
-
     } catch (error: any) {
       const errorMessage = this.errorHandler.formatUserFriendlyError(error);
       this.addLog(`🌐 Connection test failed: ${errorMessage}`, 'error');
     }
   }
 
-  getCurrentEndpointName(): string {
+  /**
+ * get endpoint name
+ */
+  public getCurrentEndpointName(): string {
     const config = this.currentConfig();
     const id = this.currentEndpoint();
     const ep = config?.endpoints.find(e => e.id === id);
@@ -352,7 +270,7 @@ export class AtkBashComponent implements OnInit {
   /**
    * Change current endpoint
    */
-  changeEndpoint(endpointId: string): void {
+  public changeEndpoint(endpointId: string): void {
     this.currentEndpoint.set(endpointId);
     this.data.set([]);
     this.error.set(null);
@@ -362,7 +280,7 @@ export class AtkBashComponent implements OnInit {
   /**
    * Execute custom terminal command
    */
-  executeCommand(command: string): void {
+  public executeCommand(command: string): void {
     const config = this.currentConfig();
     const customCommands = config?.terminal.customCommands || [];
 
@@ -399,7 +317,7 @@ export class AtkBashComponent implements OnInit {
   /**
    * Format cell value based on column configuration
    */
-  formatCellValue(value: any, column: any): string {
+  public formatCellValue(value: any, column: any): string {
     if (value === null || value === undefined) return '';
 
     // Use custom formatter if available
@@ -430,7 +348,7 @@ export class AtkBashComponent implements OnInit {
   /**
    * Handle textarea events for cursor tracking
    */
-  onTextareaEvent(): void {
+  public onTextareaEvent(): void {
     const textarea = this.textareaRef?.nativeElement;
     if (!textarea) return;
 
@@ -468,7 +386,7 @@ export class AtkBashComponent implements OnInit {
   /**
    * Track by function for table rows
    */
-  trackByIndex(index: number, item: any): any {
+  public trackByIndex(index: number, item: any): any {
     return item.id || item.symbol || index;
   }
 
