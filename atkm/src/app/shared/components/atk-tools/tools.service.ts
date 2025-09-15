@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 // NOTE: enable in tsconfig.json:  "resolveJsonModule": true, "esModuleInterop": true
 import colors from '@assets/config/tools-configs/console-logger.config.colors.json';
 import symbols from '@assets/config/tools-configs/console-logger.config.symbols.json';
-import { ConsoleLogger } from './console-logger.tool';
+import { ConsoleLogger, GroupOptions } from '@shared/components/atk-tools/console-logger.tool';
 
 /**
  * ToolsService — lean, reusable utilities.
@@ -68,7 +68,7 @@ export class ToolsService {
     return new Date(timestampMs).toISOString();
   }
 
-  /** Generate contiguous 3‑month ranges between start and end (true calendar months). */
+  /** Generate contiguous 3-month ranges between start and end (true calendar months). */
   public generateThreeMonthRanges({ startTime, endTime }: { startTime: number; endTime: number }): Array<{ start: number; end: number }> {
     if (endTime < startTime) [startTime, endTime] = [endTime, startTime];
     const ranges: Array<{ start: number; end: number }> = [];
@@ -97,14 +97,10 @@ export class ToolsService {
   }
 
   // ─────────────────────────────── Logging
-  /** General-purpose console group. Safe and compact. */
-  public consoleGroup(opts: {
-    title?: string;
-    tag?: keyof typeof symbols | string;
-    data: any;
-    palette?: 'default' | 'info' | 'warn' | 'error' | 'accent';
-    collapsed?: boolean;
-  }): void {
+  /**
+   * General-purpose console group with custom header font and collapsed control.
+   */
+  public consoleGroup(opts: GroupOptions): void {
     this.logger.group(opts);
   }
 }

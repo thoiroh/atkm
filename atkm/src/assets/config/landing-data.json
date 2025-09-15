@@ -22,16 +22,24 @@
         "items": [
           {
             "icon": "toggle",
-            "label": "Debug Terminal",
-            "link": "/dashboard/debug",
+            "label": "Bash | template",
+            "link": "/dashboard/bash",
             "action": false,
             "isExpanded": false,
             "subMenu": []
           },
           {
             "icon": "toggle",
-            "label": "Atk.bash | api tools",
+            "label": "Bash | api tools",
             "link": "/dashboard/bash",
+            "action": false,
+            "isExpanded": false,
+            "subMenu": []
+          },
+          {
+            "icon": "toggle",
+            "label": "Binance Debug Terminal",
+            "link": "/dashboard/binance/debug",
             "action": false,
             "isExpanded": false,
             "subMenu": []

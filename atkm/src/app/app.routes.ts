@@ -22,11 +22,15 @@ export const routes: Routes = [
       },
 
       {
-        path: 'debug',
+        path: 'binance/debug',
         loadComponent: () => import('./features/binance/components/binance-debug.component').then(m => m.BinanceDebugComponent),
         title: 'Binance Account | Debug'
       },
-
+      {
+        path: 'debug',
+        loadComponent: () => import('./shared/components/atk-bash/atk-bash-template.component')
+          .then(m => m.AtkBashDebugTemplateComponent)
+      },
       {
         path: 'bash',
         loadComponent: () => import('./shared/components/atk-bash/atk-bash.component').then(m => m.AtkBashComponent),

@@ -13,6 +13,7 @@ import { TransactionStateService } from '@app/features/binance/services/binance-
 import { BinanceService } from '@features/binance/services/binance.service';
 
 import { BalanceFormatPipe, CryptoPrecisionPipe, StatusBadgePipe, TimestampToDatePipe } from '@shared/pipes/pipes';
+import { ToolsService } from '../atk-tools/tools.service';
 import { AtkBashConfigFactory } from './atk-bash-config.factory';
 import { BashData, IBashConfig, IBashEvent, IBashLogEntry, IBashTerminalState } from './atk-bash.interfaces';
 import { AtkBashService } from './atk-bash.service';
@@ -117,7 +118,7 @@ export class AtkBashComponent implements OnInit {
     return endpoint?.columns.filter(col => col.visible !== false) || [];
   });
 
-  constructor() {
+  constructor(private tools: ToolsService) {
     // Initialize configuration
     effect(() => {
       const configIdValue = this.configId();
@@ -127,6 +128,16 @@ export class AtkBashComponent implements OnInit {
         this.currentConfig.set(config);
         this.bashService.registerConfig(config);
       }
+      // BUG CONSOLE LOG in progress ==================================================
+      this.tools.consoleGroup({
+        title: 'HTTP Debug · /api/users',
+        tag: 'warn',           // clé du JSON ou texte libre
+        data: JSON.stringify(configIdValue, null, 2),
+        palette: 'warn',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
+        collapsed: true,       // true => console.groupCollapsed
+        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+        fontSizePx: 13
+      });
       // Set default endpoint
       const config = this.currentConfig();
       if (config && config.defaultEndpoint) {
@@ -153,6 +164,16 @@ export class AtkBashComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // BUG CONSOLE LOG in progress ==================================================
+    this.tools.consoleGroup({
+      title: 'HTTP Debug · /api/users',
+      tag: 'check',           // clé du JSON ou texte libre
+      data: this.currentConfig,
+      palette: 'accent',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
+      collapsed: true,
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      fontSizePx: 13
+    });
     this.addLog('ATK Bash Terminal initialized', 'info');
     this.terminalState.update(state => ({
       ...state,

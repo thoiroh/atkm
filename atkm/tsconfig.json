@@ -25,7 +25,8 @@
       "@pipes/*": ["src/app/shared/pipes/*"],
       "@features/*": ["src/app/features/*"],
       "@assets/*": ["src/assets/*"]
-    }
+    },
+    "resolveJsonModule": true
   },
   "angularCompilerOptions": {
     "strictInjectionParameters": true,

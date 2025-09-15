@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, effect, ElementRef, inject, NgZone, OnInit, signal, ViewChild } from '@angular/core';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { ToolsService } from '../../../shared/components/atk-tools/tools.service';
 import { BinanceService } from '../services/binance.service';
 
 @Component({
@@ -90,7 +91,8 @@ export class BinanceDebugComponent implements OnInit {
   private zone = inject(NgZone);
 
   // 4) Constructor
-  constructor() {
+  constructor(private tools: ToolsService) {
+
     this.addLog('Constructor called');
     this.serviceInjected.set(!!this.binanceService);
     this.httpClientInjected.set(!!this.http);
@@ -101,7 +103,7 @@ export class BinanceDebugComponent implements OnInit {
       // Re-run when signals used by getTerminalText() change
       void this.getTerminalText();
       this.scheduleScroll();
-    }, { allowSignalWrites: true });
+    }, {});
   }
 
   // 5) Angular lifecycle hooks
@@ -179,6 +181,16 @@ export class BinanceDebugComponent implements OnInit {
       next: (response) => {
         this.addLog('✅ Direct HTTP SUCCESS');
         this.addLog(JSON.stringify(response, null, 2), -1);
+        // BUG CONSOLE LOG in progress ==================================================
+        this.tools.consoleGroup({
+          title: 'HTTP Debug · /api/users',
+          tag: 'check',           // clé du JSON ou texte libre
+          data: JSON.stringify(response, null, 2),
+          palette: 'info',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
+          collapsed: true,
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontSizePx: 13
+        });
         // this.directHttpResult.set(JSON.stringify(response, null, 2));
         // this.directHttpLoading.set(false);
       },

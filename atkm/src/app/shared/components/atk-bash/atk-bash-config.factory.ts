@@ -104,7 +104,6 @@ export class AtkBashConfigFactory {
   }
 
   // Private endpoint creators for Binance
-
   private createAccountEndpoint(): IBashEndpointConfig {
     return {
       id: 'account',
@@ -442,7 +441,6 @@ export class AtkBashConfigFactory {
   }
 
   // Formatters - Using your existing logic
-
   private formatBalance(value: number): string {
     if (value === 0 || !value) return '0';
     if (value < 0.00001) return value.toExponential(2);

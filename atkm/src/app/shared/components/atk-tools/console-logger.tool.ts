@@ -1,33 +1,54 @@
 export type ColorConfig = Record<string, string>;
 export type SymbolsConfig = Record<string, string>;
 
-interface GroupOptions {
+export interface GroupOptions {
+  /** Title displayed in the group header. Defaults to inferred call site. */
   title?: string;
+  /** Symbol key from symbols config or a literal string to display before the title. */
   tag?: string;
+  /** Any data to dump inside the group. */
   data: any;
+  /** Predefined color palette. */
   palette?: 'default' | 'info' | 'warn' | 'error' | 'accent';
+  /** Use console.groupCollapsed when true. */
   collapsed?: boolean;
+  /** Optional CSS font-family for header text. */
+  fontFamily?: string;
+  /** Optional font size in px for header text. */
+  fontSizePx?: number;
 }
 
-/**
- * ConsoleLogger — isolated and reusable.
- * - No Angular dependency
- * - Styled groups with palettes
- * - Handles primitives, arrays, objects, Maps, Sets, and Errors
- */
 export class ConsoleLogger {
   constructor(
     private colors: ColorConfig,
     private symbols: SymbolsConfig
-  ) {}
+  ) { }
 
-  public group({ title, tag, data, palette = 'default', collapsed = false }: GroupOptions): void {
+  public group(opts: GroupOptions): void {
+    const {
+      title,
+      tag,
+      data,
+      palette = 'default',
+      collapsed = false,
+      fontFamily,
+      fontSizePx
+    } = opts;
+
     const tagChar = this.symbols[tag as keyof SymbolsConfig] ?? (typeof tag === 'string' ? tag : '✔');
     const pal = this.getPalette(palette);
     const ttl = title ?? this.inferCaller();
 
+    const headerFont = [];
+    if (fontFamily) headerFont.push(`font-family:${fontFamily}`);
+    if (fontSizePx) headerFont.push(`font-size:${fontSizePx}px`);
+    headerFont.push('font-weight:bold');
+
+    const tagStyle = [`color:${pal.tag}`, ...headerFont].join(';');
+    const titleStyle = [`color:${pal.title}`, ...headerFont].join(';');
+
     const open = collapsed ? console.groupCollapsed : console.group;
-    open(`%c${tagChar} %c${ttl}`, `color:${pal.tag};font-weight:bold`, `color:${pal.title};font-weight:bold`);
+    open(`%c${tagChar} %c${ttl}`, tagStyle, titleStyle);
     this.dump(data, pal);
     console.groupEnd();
   }
@@ -72,7 +93,6 @@ export class ConsoleLogger {
   }
 
   private getPalette(name: GroupOptions['palette']) {
-    // Fallbacks use basic web colors for wide compatibility.
     const base = {
       tag: this.hex('#FFD700'),     // gold
       title: this.hex('#FFFFFF'),   // white
@@ -82,25 +102,23 @@ export class ConsoleLogger {
     };
     const named: Record<string, typeof base> = {
       default: base,
-      info:    { ...base, tag: this.hex('#1E90FF'), value: this.hex('#00BFFF') },
-      warn:    { ...base, tag: this.hex('#FFA500'), value: this.hex('#FFD700'), meta: this.hex('#FFA07A') },
-      error:   { ...base, tag: this.hex('#E81123'), value: this.hex('#FA8072'), meta: this.hex('#FF6347') },
-      accent:  { ...base, tag: this.hex('#BA55D3'), value: this.hex('#EE82EE') }
+      info: { ...base, tag: this.hex('#1E90FF'), value: this.hex('#00BFFF') },
+      warn: { ...base, tag: this.hex('#FFA500'), value: this.hex('#FFD700'), meta: this.hex('#FFA07A') },
+      error: { ...base, tag: this.hex('#E81123'), value: this.hex('#FA8072'), meta: this.hex('#FF6347') },
+      accent: { ...base, tag: this.hex('#BA55D3'), value: this.hex('#EE82EE') }
     };
     return named[name ?? 'default'];
   }
 
   private hex(code: string) {
-    // Accepts "#rrggbb" or "rrggbb" or color name from config if exists.
     if (code in this.colors) return `#${this.colors[code]}`;
     if (/^#?[0-9A-Fa-f]{6}$/.test(code)) return code.startsWith('#') ? code : `#${code}`;
-    return code; // last resort
+    return code;
   }
 
   private inferCaller(): string {
     const e = new Error();
     const stack = (e.stack || '').split('\n');
-    // Heuristic: call site ~ third line. Clean up framework noise.
     const raw = stack[3] ?? stack[2] ?? '';
     return raw.replace(/\s*at\s*/, '').trim();
   }
