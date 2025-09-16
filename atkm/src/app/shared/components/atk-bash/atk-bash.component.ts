@@ -133,7 +133,7 @@ export class AtkBashComponent implements OnInit {
         title: 'HTTP Debug · /api/users',
         tag: 'warn',           // clé du JSON ou texte libre
         data: JSON.stringify(configIdValue, null, 2),
-        palette: 'warn',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
+        palette: 'wa',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
         collapsed: true,       // true => console.groupCollapsed
         fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
         fontSizePx: 13
@@ -169,7 +169,7 @@ export class AtkBashComponent implements OnInit {
       title: 'HTTP Debug · /api/users',
       tag: 'check',           // clé du JSON ou texte libre
       data: this.currentConfig,
-      palette: 'accent',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
+      palette: 'ac',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
       collapsed: true,
       fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
       fontSizePx: 13

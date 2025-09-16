@@ -9,13 +9,36 @@ export interface GroupOptions {
   /** Any data to dump inside the group. */
   data: any;
   /** Predefined color palette. */
-  palette?: 'default' | 'info' | 'warn' | 'error' | 'accent' | 'success';
+  palette?: 'de' | 'in' | 'wa' | 'er' | 'ac' | 'su';
   /** Use console.groupCollapsed when true. */
   collapsed?: boolean;
   /** Optional CSS font-family for header text. */
   fontFamily?: string;
   /** Optional font size in px for header text. */
   fontSizePx?: number;
+  /** Optional font weight for header text. */
+  fontWeight?: 'normal' | 'bold' | 'lighter' | 'bolder' | number;
+  /** Optional font style for header text. */
+  fontStyle?: 'normal' | 'italic' | 'oblique';
+  /** Font weight for keys/body in dump(). */
+  contentFontWeight?: 'normal' | 'bold' | 'lighter' | 'bolder' | number;
+  /** Font style for keys/body in dump(). */
+  contentFontStyle?: 'normal' | 'italic' | 'oblique';
+  /** Font weight for values in dump(). */
+  valueFontWeight?: 'normal' | 'bold' | 'lighter' | 'bolder' | number;
+  /** Font style for values in dump(). */
+  valueFontStyle?: 'normal' | 'italic' | 'oblique';
+  /** How objects are printed by dump(): 'tree' logs the real object (expandable), 'flat' walks properties. */
+  objectRender?: 'tree' | 'flat';
+  /** Render arrays as table: true | false | 'auto' (heuristic). */
+  arrayAsTable?: boolean | 'auto';
+  /** Auto-table kicks in if at least this many rows (default 3). */
+  tableMinRows?: number;
+  /** Auto-table requires at least this many common keys (default 2). */
+  tableMinCommonKeys?: number;
+  /** How many items to sample to decide common keys (default 10). */
+  tableSampleSize?: number;
+
 }
 
 export class ConsoleLogger {
@@ -29,85 +52,207 @@ export class ConsoleLogger {
       title,
       tag,
       data,
-      palette = 'default',
+      palette = 'de',
       collapsed = false,
       fontFamily,
-      fontSizePx
+      fontSizePx,
+      fontWeight,
+      fontStyle,
+      contentFontWeight,
+      contentFontStyle,
+      valueFontWeight,
+      valueFontStyle,
+      objectRender = 'tree',
+      arrayAsTable = 'auto',
+      tableMinRows = 3,
+      tableMinCommonKeys = 2,
+      tableSampleSize = 10
     } = opts;
 
     const tagChar = this.resolveTag(tag);
-    // const tagChar = this.symbols[tag as keyof SymbolsConfig] ?? (typeof tag === 'string' ? tag : '✔');
     const pal = this.getPalette(palette);
     const ttl = title ?? this.inferCaller();
-
-    const headerFont = [];
+    const headerFont: string[] = [];
     if (fontFamily) headerFont.push(`font-family:${fontFamily}`);
     if (fontSizePx) headerFont.push(`font-size:${fontSizePx}px`);
-    headerFont.push('font-weight:bold');
-
+    if (fontWeight) headerFont.push(`font-weight:${fontWeight}`);
+    else headerFont.push('font-weight:normal');
+    if (fontStyle) headerFont.push(`font-style:${fontStyle}`);
+    const keyFont: string[] = [];
+    if (contentFontWeight) keyFont.push(`font-weight:${contentFontWeight}`);
+    if (contentFontStyle) keyFont.push(`font-style:${contentFontStyle}`);
+    const valFont: string[] = [];
+    if (valueFontWeight) valFont.push(`font-weight:${valueFontWeight}`);
+    if (valueFontStyle) valFont.push(`font-style:${valueFontStyle}`);
     const tagStyle = [`color:${pal.tag}`, ...headerFont].join(';');
     const titleStyle = [`color:${pal.title}`, ...headerFont].join(';');
+    const valStyle = [`color:${pal.value}`, ...valFont].join(';');
+    const metaStyle = [`color:${pal.meta}`].join(';');
 
+    // Détection d’un scalaire (affichage inline dans le header)
+    const isInlineScalar = (v: any) =>
+      v === null || ['string', 'number', 'boolean', 'bigint', 'symbol', 'undefined'].includes(typeof v);
+    let fmt = `%c${tagChar} %c${ttl}`;
+    const args: any[] = [tagStyle, titleStyle];
+    if (isInlineScalar(data)) {
+      // valeur affichée à la suite du header : — value (type)
+      fmt += ` %c— %c${String(data)} %c(${typeof data})`;
+      args.push(metaStyle, valStyle, metaStyle);
+    }
     const open = collapsed ? console.groupCollapsed : console.group;
-    open(`%c${tagChar} %c${ttl}`, tagStyle, titleStyle);
-    this.dump(data, pal);
+    open(fmt, ...args);
+
+    // si scalaire, déjà affiché dans le header → pas de dump duplicatif
+    if (!isInlineScalar(data)) {
+      this.dump(data, pal, undefined, {
+        keyFont,
+        valFont,
+        objectRender,
+        arrayAsTable,
+        tableMinRows,
+        tableMinCommonKeys,
+        tableSampleSize
+      });
+    }
     console.groupEnd();
   }
 
-  // ─────────────────────────────── internals
-  private dump(value: any, pal: any, key?: string): void {
+  private dump(
+    value: any,
+    pal: any,
+    key?: string,
+    fmt?: {
+      keyFont?: string[];
+      valFont?: string[];
+      objectRender: 'tree' | 'flat';
+      arrayAsTable?: boolean | 'auto';
+      tableMinRows?: number;
+      tableMinCommonKeys?: number;
+      tableSampleSize?: number;
+    }
+  ): void {
+
+    const keyStyle = [`color:${pal.key};font-weight:bold`, ...(fmt?.keyFont ?? [])].join(';');
+    const valStyle = [`color:${pal.value}`, ...(fmt?.valFont ?? [])].join(';');
+    const metaStyle = [`color:${pal.meta}`].join(';');
+    const logKeyWithObject = (label: string, obj: any) => {
+      if (label !== undefined) {
+        console.log(`%c${label}:`, keyStyle, obj);
+      } else {
+        console.log(obj);
+      }
+    };
+
     switch (true) {
-      case value instanceof Error:
-        console.log(`%c${key ?? 'Error'}:`, `color:${pal.key};font-weight:bold`, value.name, value.message);
-        if (value.stack) console.log(value.stack);
+      case value instanceof Error: {
+        // keep heading styled, then dump the real Error object for stack/expand
+        console.log(`%c${key ?? 'Error'}:`, keyStyle, value);
         return;
-      case Array.isArray(value):
-        console.log(`%c${key ?? 'Array'} [${value.length}]`, `color:${pal.key};font-weight:bold`);
-        value.forEach((v, i) => this.dump(v, pal, `[${i}]`));
+      }
+
+      case Array.isArray(value): {
+        const keyLabel = `${key ?? 'Array'} [${value.length}]`;
+        // decide if we should console.table
+        const wantsTable =
+          (fmt?.arrayAsTable === true) ||
+          (
+            fmt?.arrayAsTable === 'auto' &&
+            value.length >= (fmt?.tableMinRows ?? 3) &&
+            // heuristic: array of plain objects with enough common keys
+            (() => {
+              const sampleSize = Math.min(value.length, fmt?.tableSampleSize ?? 10);
+              const objs = value
+                .slice(0, sampleSize)
+                .filter(v => v && typeof v === 'object' && !Array.isArray(v));
+              if (objs.length < (fmt?.tableMinRows ?? 3)) return false;
+              // intersection of keys across sampled objects
+              const intersect = (a: Set<string>, b: Set<string>) => new Set([...a].filter(x => b.has(x)));
+              const common = objs.reduce((acc, o, idx) => {
+                const keys = new Set(Object.keys(o));
+                return idx === 0 ? keys : intersect(acc, keys);
+              }, new Set<string>());
+              return (common.size >= (fmt?.tableMinCommonKeys ?? 2));
+            })()
+          );
+
+        if (wantsTable) {
+          // header + table for better inspection
+          console.log(`%c${keyLabel}`, keyStyle);
+          console.table(value);
+          return;
+        }
+
+        if (fmt?.objectRender === 'tree') {
+          logKeyWithObject(keyLabel, value);
+          return;
+        }
+
+        console.log(`%c${keyLabel}`, keyStyle);
+        value.forEach((v, i) => this.dump(v, pal, `[${i}]`, fmt));
         return;
-      case value instanceof Map:
-        console.log(`%c${key ?? 'Map'}(${value.size})`, `color:${pal.key};font-weight:bold`);
-        value.forEach((v, k) => this.dump(v, pal, `→ ${String(k)}`));
+      }
+
+
+      case value instanceof Map: {
+        if (fmt?.objectRender === 'tree') {
+          logKeyWithObject(`${key ?? 'Map'}(${value.size})`, value);
+          return;
+        }
+        console.log(`%c${key ?? 'Map'}(${value.size})`, keyStyle);
+        value.forEach((v, k) => this.dump(v, pal, `→ ${String(k)}`, fmt));
         return;
-      case value instanceof Set:
-        console.log(`%c${key ?? 'Set'}(${value.size})`, `color:${pal.key};font-weight:bold`);
-        Array.from(value.values()).forEach((v, i) => this.dump(v, pal, `#${i}`));
+      }
+
+      case value instanceof Set: {
+        if (fmt?.objectRender === 'tree') {
+          logKeyWithObject(`${key ?? 'Set'}(${value.size})`, value);
+          return;
+        }
+        console.log(`%c${key ?? 'Set'}(${value.size})`, keyStyle);
+        Array.from(value.values()).forEach((v, i) => this.dump(v, pal, `#${i}`, fmt));
         return;
-      case value !== null && typeof value === 'object':
-        console.log(`%c${key ?? 'Object'}`, `color:${pal.key};font-weight:bold`);
-        Object.entries(value).forEach(([k, v]) => this.dump(v, pal, k));
+      }
+
+      case value !== null && typeof value === 'object': {
+        if (fmt?.objectRender === 'tree') {
+          logKeyWithObject(`${key ?? 'Object'}`, value);
+          return;
+        }
+        console.log(`%c${key ?? 'Object'}`, keyStyle);
+        Object.entries(value).forEach(([k, v]) => this.dump(v, pal, k, fmt));
         return;
-      default:
+      }
+
+      default: {
         if (key !== undefined) {
-          console.log(`%c${key}: %c${String(value)} %c(${typeof value})`,
-            `color:${pal.key};font-weight:bold`,
-            `color:${pal.value}`,
-            `color:${pal.meta}`
+          console.log(
+            `%c${key}: %c${String(value)} %c(${typeof value})`,
+            keyStyle,
+            valStyle,
+            metaStyle
           );
         } else {
-          console.log(`%c${String(value)} %c(${typeof value})`,
-            `color:${pal.value}`,
-            `color:${pal.meta}`
-          );
+          console.log(`%c${String(value)} %c(${typeof value})`, valStyle, metaStyle);
         }
+      }
     }
   }
 
   private getPalette(name: GroupOptions['palette']) {
     const base = {
-      tag: this.hex('#FFD700'),     // gold
-      title: this.hex('#FFFFFF'),   // white
-      key: this.hex('#87CEEB'),     // skyblue
-      value: this.hex('#90EE90'),   // lightgreen
-      meta: this.hex('#FFA500')     // orange
+      tag: this.hex('#FFFF30'),
+      title: this.hex('#FFFFFF'),
+      key: this.hex('#FF00FF'),
+      value: this.hex('#00CED1'),
+      meta: this.hex('#646464ff')
     };
     const named: Record<string, typeof base> = {
-      default: base,
-      info: { ...base, tag: this.hex('#1E90FF'), value: this.hex('#ddf7ffff') },
-      warn: { ...base, tag: this.hex('#FFA500'), value: this.hex('#FFD700'), meta: this.hex('#ffffffff') },
-      error: { ...base, tag: this.hex('#E81123'), value: this.hex('#FA8072'), meta: this.hex('#ffffffff') },
-      success: { ...base, tag: this.hex('#2cf72cff'), value: this.hex('#deffdfff'), meta: this.hex('#2cf72cff') },
-      accent: { ...base, tag: this.hex('#BA55D3'), value: this.hex('#EE82EE') }
+      de: base,
+      su: { ...base, title: this.hex('#ebebebff'), key: this.hex('#2cf72cff'), tag: this.hex('#64ff64'), value: this.hex('#2cf72c'), meta: this.hex('#646464ff') },
+      in: { ...base, title: this.hex('#ebebebff'), key: this.hex('#2cf72cff'), tag: this.hex('#1E90FF'), value: this.hex('#ddf7ff'), meta: this.hex('#646464ff') },
+      wa: { ...base, title: this.hex('#ebebebff'), key: this.hex('#2cf72cff'), tag: this.hex('#FFA500'), value: this.hex('#FFD700'), meta: this.hex('#646464ff') },
+      er: { ...base, title: this.hex('#ebebebff'), key: this.hex('#2cf72cff'), tag: this.hex('#E81123'), value: this.hex('#FA8072'), meta: this.hex('#646464ff') },
+      ac: { ...base, title: this.hex('#ebebebff'), key: this.hex('#2cf72cff'), tag: this.hex('#BA55D3'), value: this.hex('#EE82EE'), meta: this.hex('#646464ff') }
     };
     return named[name ?? 'default'];
   }

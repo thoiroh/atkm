@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
+import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { BreadcrumbService } from '../../core/services/breadcrumb.service';
 import { ConfigService, ILandingConfig } from '../../core/services/config.service';
 import { NavigationStateService } from '../../core/services/navigation-state.service';
@@ -23,12 +24,13 @@ import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar
   templateUrl: './landing.component.html',
   styles: []
 })
-export class LandingComponent implements OnInit {
+export class LandingComponent implements OnInit, AfterViewInit {
   config: ILandingConfig | null = null;
 
   private configService = inject(ConfigService);
   private navigationService = inject(NavigationStateService);
   private breadcrumbService = inject(BreadcrumbService);
+  private tools = inject(ToolsService);
 
   ngOnInit(): void {
     this.configService.loadLandingConfig().subscribe({
@@ -40,6 +42,40 @@ export class LandingComponent implements OnInit {
         console.error('Erreur lors du chargement de la configuration:', error);
       }
     });
+
+  }
+
+  ngAfterViewInit(): void {
+    // setTimeout(() => {
+    //   this.tools.consoleGroup({
+    //     // ── header & identity
+    //     title: 'Account Sync · Full Options Demo',
+    //     tag: 'info',                 // symbol key or literal text
+    //     // ── content
+    //     data: this.config,
+    //     // ── palette & grouping
+    //     palette: 'in',             // 'default' | 'info' | 'warn' | 'error' | 'accent' | 'success'
+    //     collapsed: false,            // groupCollapsed when true
+    //     // ── header typography
+    //     fontFamily: 'Inter, ui-sans-serif',
+    //     fontSizePx: 14,
+    //     fontWeight: 'bold',          // 'normal' | 'bold' | 'lighter' | 'bolder' | number
+    //     fontStyle: 'normal',         // 'normal' | 'italic' | 'oblique'
+    //     // ── body (keys) typography in dump()
+    //     contentFontWeight: 500,
+    //     contentFontStyle: 'normal',
+    //     // ── values typography in dump()
+    //     valueFontWeight: 'normal',
+    //     valueFontStyle: 'italic',
+    //     // ── object rendering
+    //     objectRender: 'flat',        // 'tree' = real object (expandable), 'flat' = walk properties
+    //     // ── arrays as table (heuristic)
+    //     arrayAsTable: 'auto',        // true | false | 'auto'
+    //     tableMinRows: 3,             // min rows to consider table
+    //     tableMinCommonKeys: 2,       // min common keys across sampled objects
+    //     tableSampleSize: 10          // sampling window for key intersection
+    //   });
+    // }, 500);
   }
 
   toggleConfigPanel(): void {

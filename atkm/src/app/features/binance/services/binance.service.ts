@@ -28,7 +28,7 @@ export class BinanceService {
             title: 'BinanceService.27: Raw API response received',
             tag: 'check',           // clé du JSON ou texte libre
             data: response,
-            palette: 'success',
+            palette: 'su',
             collapsed: true,
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSizePx: 13
@@ -42,7 +42,7 @@ export class BinanceService {
               title: 'BinanceService.42: API returned error',
               tag: 'cross',
               data: response.error,
-              palette: 'error',
+              palette: 'er',
               collapsed: true,
               fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
               fontSizePx: 13
@@ -58,7 +58,7 @@ export class BinanceService {
               title: 'BinanceService.57: No account data in response',
               tag: 'cross',
               data: response,
-              palette: 'error',
+              palette: 'er',
               collapsed: true,
               fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
               fontSizePx: 13
@@ -76,7 +76,7 @@ export class BinanceService {
                 type: typeof accountData.balances,
                 keys: Object.keys(accountData.balances).length
               },
-              palette: 'success',
+              palette: 'su',
               collapsed: true,
               fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
               fontSizePx: 13
@@ -89,7 +89,7 @@ export class BinanceService {
               title: `BinanceService.88: Converted balances to array: ${accountData.balances.length}, items`,
               tag: 'check',
               data: `Converted balances to array of ${accountData.balances.length} items`,
-              palette: 'success',
+              palette: 'su',
               collapsed: true,
               fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
               fontSizePx: 13
@@ -100,7 +100,7 @@ export class BinanceService {
               title: `BinanceService: No balances property, setting empty array`,
               tag: 'cross',
               data: null,
-              palette: 'warn',
+              palette: 'wa',
               collapsed: true,
               fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
               fontSizePx: 13
@@ -130,7 +130,7 @@ export class BinanceService {
               balancesCount: processedAccount.balances.length,
               canTrade: processedAccount.canTrade
             },
-            palette: 'success',
+            palette: 'su',
             collapsed: true,
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSizePx: 13

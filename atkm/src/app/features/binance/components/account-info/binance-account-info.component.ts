@@ -29,7 +29,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
       title: `AccountInfoComponent.29: AccountInfo Computing significant balances...`,
       tag: 'rook',
       data: null,
-      palette: 'success',
+      palette: 'su',
       collapsed: true,
       fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
       fontSizePx: 13
@@ -41,7 +41,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
         title: `AccountInfoComponent.39: AccountInfo No account data available`,
         tag: 'cross',
         data: null,
-        palette: 'warn',
+        palette: 'wa',
         collapsed: true,
         fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
         fontSizePx: 13
@@ -55,7 +55,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
         title: `AccountInfoComponent.53: AccountInfo No balances property in account data`,
         tag: 'cross',
         data: null,
-        palette: 'warn',
+        palette: 'wa',
         collapsed: true,
         fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
         fontSizePx: 13
@@ -69,7 +69,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
         title: `AccountInfoComponent.67: AccountInfo balances is not an array:`,
         tag: 'cross',
         data: [(typeof currentAccount.balances), currentAccount.balances],
-        palette: 'warn',
+        palette: 'wa',
         collapsed: true,
         fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
         fontSizePx: 13
@@ -82,7 +82,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
       title: `AccountInfoComponent.80: AccountInfo Raw balances count:`,
       tag: 'check',
       data: currentAccount.balances.length,
-      palette: 'success',
+      palette: 'su',
       collapsed: true,
       fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
       fontSizePx: 13
@@ -91,11 +91,13 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
     this.tools.consoleGroup({
       title: `AccountInfoComponent.90: AccountInfo Sample balance:`,
       tag: 'check',
-      data: currentAccount.balances[0],
-      palette: 'success',
+      data: currentAccount.balances,
+      palette: 'su',
       collapsed: true,
       fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-      fontSizePx: 13
+      fontSizePx: 13,
+      arrayAsTable: true,        // true | false | 'auto'
+
     });
 
     // UPDATED - Improved filtering logic with detailed logging
@@ -106,7 +108,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
           title: `AccountInfoComponent.104: AccountInfo Invalid balance object:`,
           tag: 'cross',
           data: balance,
-          palette: 'warn',
+          palette: 'wa',
           collapsed: true,
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
           fontSizePx: 13
@@ -139,8 +141,8 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
       title: `AccountInfoComponent.139: AccountInfo Significant balances found:`,
       tag: 'cross',
       data: { significantBalances: significantBalances.length, assets: [significantBalances.map(b => b.asset)] },
-      palette: 'warn',
-      collapsed: true,
+      palette: 'wa',
+      collapsed: false,
       fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
       fontSizePx: 13
     });
@@ -165,12 +167,12 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
    * Load Binance account information
    */
   loadAccountInfo(): void {
-    // TAG: binance-account-info.component.160 ================ CONSOLE LOG IN PROGRESS
+    // TAG: binance-account-info.component.168 ================ CONSOLE LOG IN PROGRESS
     this.tools.consoleGroup({
       title: `AccountInfoComponent.160: loadAccountInfo() AccountInfo: Loading account data ...`,
-      tag: 'rook',
+      tag: 'check',
       data: null,
-      palette: 'success',
+      palette: 'de',
       collapsed: true,
       fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
       fontSizePx: 13
@@ -187,13 +189,19 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
             this.tools.consoleGroup({
               title: `AccountInfoComponent.187: loadAccountInfo() AccountInfo: Account data received:`,
               tag: 'check',
-              data: { account: account, count: account.balances?.length || 0, balances: account.balances },
-              palette: 'success',
-              collapsed: true,
+              data: [account.balances],
+              palette: 'su',
+              collapsed: false,
               fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSizePx: 13
+              fontSizePx: 13,
+              arrayAsTable: 'auto',         // 'true' pour forcer, 'false' pour désactiver
+              tableMinRows: 3,
+              tableMinCommonKeys: 2,
+              tableSampleSize: 8
             });
           }
+          // data: { account: account, count: account.balances?.length || 0, balances: account.balances },
+
           this.account.set(account);
           this.loading.set(false);
         },
@@ -203,7 +211,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
             title: `AccountInfoComponent.187: binanceService.getAccount() AccountInfo: Error loading account:`,
             tag: 'cross',
             data: error,
-            palette: 'error',
+            palette: 'er',
             collapsed: true,
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSizePx: 13

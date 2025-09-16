@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 // NOTE: enable in tsconfig.json:  "resolveJsonModule": true, "esModuleInterop": true
 import colors from '@assets/config/tools-configs/console-logger.config.colors.json';
 import symbols from '@assets/config/tools-configs/console-logger.config.symbols.json';
-import { ConsoleLogger, GroupOptions } from '@shared/components/atk-tools/console-logger.tool'
+import { ConsoleLogger, GroupOptions } from '@shared/components/atk-tools/console-logger.tool';
 
 /**
  * ToolsService — lean, reusable utilities.
@@ -23,7 +23,7 @@ export class ToolsService {
   /** Start a one-shot timer and auto-clean it on completion. */
   public startTimer(id: number, durationMs: number): void {
     const timer = setTimeout(() => {
-      this.logger.group({ title: `Timer ${id} done`, data: { id, durationMs }, palette: 'info', collapsed: true });
+      this.logger.group({ title: `Timer ${id} done`, data: { id, durationMs }, palette: 'in', collapsed: true });
       this.timers = this.timers.filter(t => t.id !== id);
     }, durationMs);
     this.timers.push({ id, timer });
@@ -83,7 +83,6 @@ export class ToolsService {
     return ranges;
   }
 
-  // ─────────────────────────────── Strings / Units
   /** Parse "<number>px" into number. Example: "16px" -> 16 */
   public convertPropertyValueToNum(property: string): number {
     const m = /^(-?\d+(\.\d+)?)px$/.exec(property);
@@ -96,7 +95,6 @@ export class ToolsService {
     return n.toString().padStart(3, '0');
   }
 
-  // ─────────────────────────────── Logging
   /**
    * General-purpose console group with custom header font and collapsed control.
    */

@@ -186,7 +186,7 @@ export class BinanceDebugComponent implements OnInit {
           title: 'HTTP Debug · /api/users',
           tag: 'check',           // clé du JSON ou texte libre
           data: JSON.stringify(response, null, 2),
-          palette: 'info',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
+          palette: 'in',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
           collapsed: true,
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
           fontSizePx: 13
