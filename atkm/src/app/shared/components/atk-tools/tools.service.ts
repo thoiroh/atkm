@@ -4,13 +4,13 @@ import { Injectable } from '@angular/core';
 // NOTE: enable in tsconfig.json:  "resolveJsonModule": true, "esModuleInterop": true
 import colors from '@assets/config/tools-configs/console-logger.config.colors.json';
 import symbols from '@assets/config/tools-configs/console-logger.config.symbols.json';
-import { ConsoleLogger, GroupOptions } from '@shared/components/atk-tools/console-logger.tool';
+import { ConsoleLogger, GroupOptions } from '@shared/components/atk-tools/console-logger.tool'
 
 /**
  * ToolsService — lean, reusable utilities.
  * All comments are in English as requested.
  */
-interface Timer { id: number; timer: any; }
+interface Timer { id: number; timer: any; };
 
 @Injectable({ providedIn: 'root' })
 export class ToolsService {

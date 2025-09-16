@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { Subject, takeUntil } from 'rxjs';
 import { BinanceAccount, BinanceBalance } from '../../models/binance.model';
 import { BinanceService } from '../../services/binance.service';
@@ -13,41 +14,103 @@ import { BinanceService } from '../../services/binance.service';
   styleUrls: ['./../binance.component.css']
 })
 export class AccountInfoComponent implements OnInit, OnDestroy {
-  // Using Angular signals
   account = signal<BinanceAccount | null>(null);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
 
   private destroy$ = new Subject<void>();
+  private tools = inject(ToolsService);
 
   // Computed property for significant balances - UPDATED with better filtering
   significantBalances = computed(() => {
     const currentAccount = this.account();
-
-    console.log('🔍 AccountInfo: Computing significant balances...');
+    // TAG: binance-account-info.component.27 ================ CONSOLE LOG IN PROGRESS
+    this.tools.consoleGroup({
+      title: `AccountInfoComponent.29: AccountInfo Computing significant balances...`,
+      tag: 'rook',
+      data: null,
+      palette: 'success',
+      collapsed: true,
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      fontSizePx: 13
+    });
 
     if (!currentAccount) {
-      console.warn('❌ AccountInfo: No account data available');
+      // TAG: binance-account-info.component.39 ================ CONSOLE LOG IN PROGRESS
+      this.tools.consoleGroup({
+        title: `AccountInfoComponent.39: AccountInfo No account data available`,
+        tag: 'cross',
+        data: null,
+        palette: 'warn',
+        collapsed: true,
+        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+        fontSizePx: 13
+      });
       return [];
     }
 
     if (!currentAccount.balances) {
-      console.warn('❌ AccountInfo: No balances property in account data');
+      // TAG: binance-account-info.component.53 ================ CONSOLE LOG IN PROGRESS
+      this.tools.consoleGroup({
+        title: `AccountInfoComponent.53: AccountInfo No balances property in account data`,
+        tag: 'cross',
+        data: null,
+        palette: 'warn',
+        collapsed: true,
+        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+        fontSizePx: 13
+      });
       return [];
     }
 
     if (!Array.isArray(currentAccount.balances)) {
-      console.error('❌ AccountInfo: balances is not an array:', typeof currentAccount.balances, currentAccount.balances);
+      // TAG: binance-account-info.component.67 ================ CONSOLE LOG IN PROGRESS
+      this.tools.consoleGroup({
+        title: `AccountInfoComponent.67: AccountInfo balances is not an array:`,
+        tag: 'cross',
+        data: [(typeof currentAccount.balances), currentAccount.balances],
+        palette: 'warn',
+        collapsed: true,
+        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+        fontSizePx: 13
+      });
       return [];
     }
 
-    console.log('📊 AccountInfo: Raw balances count:', currentAccount.balances.length);
-    console.log('📊 AccountInfo: Sample balance:', currentAccount.balances[0]);
+    // TAG: binance-account-info.component.80 ================ CONSOLE LOG IN PROGRESS
+    this.tools.consoleGroup({
+      title: `AccountInfoComponent.80: AccountInfo Raw balances count:`,
+      tag: 'check',
+      data: currentAccount.balances.length,
+      palette: 'success',
+      collapsed: true,
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      fontSizePx: 13
+    });
+    // TAG: binance-account-info.component.90 ================ CONSOLE LOG IN PROGRESS
+    this.tools.consoleGroup({
+      title: `AccountInfoComponent.90: AccountInfo Sample balance:`,
+      tag: 'check',
+      data: currentAccount.balances[0],
+      palette: 'success',
+      collapsed: true,
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      fontSizePx: 13
+    });
 
     // UPDATED - Improved filtering logic with detailed logging
     const significantBalances = currentAccount.balances.filter(balance => {
       if (!balance || typeof balance !== 'object') {
-        console.warn('⚠️ AccountInfo: Invalid balance object:', balance);
+        // TAG: binance-account-info.component.104 ================ CONSOLE LOG IN PROGRESS
+        this.tools.consoleGroup({
+          title: `AccountInfoComponent.104: AccountInfo Invalid balance object:`,
+          tag: 'cross',
+          data: balance,
+          palette: 'warn',
+          collapsed: true,
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontSizePx: 13
+        });
         return false;
       }
 
@@ -64,14 +127,23 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
 
       // Log detailed info for each asset with balance
       if (hasBalance) {
-        console.log(`✅ ${balance.asset}: free=${free}, locked=${locked}, total=${total}`);
+
+        // console.log(`✅ ${balance.asset}: free=${free}, locked=${locked}, total=${total}`);
       }
 
       return hasBalance;
     });
 
-    console.log('🎯 AccountInfo: Significant balances found:', significantBalances.length);
-    console.log('🎯 AccountInfo: Assets with balances:', significantBalances.map(b => b.asset));
+    // TAG: binance-account-info.component.137 ================ CONSOLE LOG IN PROGRESS
+    this.tools.consoleGroup({
+      title: `AccountInfoComponent.139: AccountInfo Significant balances found:`,
+      tag: 'cross',
+      data: { significantBalances: significantBalances.length, assets: [significantBalances.map(b => b.asset)] },
+      palette: 'warn',
+      collapsed: true,
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      fontSizePx: 13
+    });
 
     return significantBalances;
   });
@@ -93,7 +165,16 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
    * Load Binance account information
    */
   loadAccountInfo(): void {
-    console.log('🔄 AccountInfo: Loading account data...');
+    // TAG: binance-account-info.component.160 ================ CONSOLE LOG IN PROGRESS
+    this.tools.consoleGroup({
+      title: `AccountInfoComponent.160: loadAccountInfo() AccountInfo: Loading account data ...`,
+      tag: 'rook',
+      data: null,
+      palette: 'success',
+      collapsed: true,
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      fontSizePx: 13
+    });
     this.loading.set(true);
     this.error.set(null);
 
@@ -101,19 +182,32 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (account) => {
-          console.log('✅ AccountInfo: Account data received:', account);
-          console.log('📊 AccountInfo: Balances in account:', account.balances?.length || 0);
-
-          // Log first few balances for debugging
           if (account.balances && account.balances.length > 0) {
-            console.log('📊 AccountInfo: First 3 balances:', account.balances.slice(0, 3));
+            // TAG: binance-account-info.component.187 ================ CONSOLE LOG IN PROGRESS
+            this.tools.consoleGroup({
+              title: `AccountInfoComponent.187: loadAccountInfo() AccountInfo: Account data received:`,
+              tag: 'check',
+              data: { account: account, count: account.balances?.length || 0, balances: account.balances },
+              palette: 'success',
+              collapsed: true,
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+              fontSizePx: 13
+            });
           }
-
           this.account.set(account);
           this.loading.set(false);
         },
         error: (error) => {
-          console.error('❌ AccountInfo: Error loading account:', error);
+          // TAG: binance-account-info.component.187 ================ CONSOLE LOG IN PROGRESS
+          this.tools.consoleGroup({
+            title: `AccountInfoComponent.187: binanceService.getAccount() AccountInfo: Error loading account:`,
+            tag: 'cross',
+            data: error,
+            palette: 'error',
+            collapsed: true,
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontSizePx: 13
+          });
           this.error.set(error.message);
           this.loading.set(false);
         }

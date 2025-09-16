@@ -128,7 +128,7 @@ export class AtkBashComponent implements OnInit {
         this.currentConfig.set(config);
         this.bashService.registerConfig(config);
       }
-      // BUG CONSOLE LOG in progress ==================================================
+      // TAG: atk-bash.component ================ CONSOLE LOG IN PROGRESS
       this.tools.consoleGroup({
         title: 'HTTP Debug · /api/users',
         tag: 'warn',           // clé du JSON ou texte libre
@@ -164,7 +164,7 @@ export class AtkBashComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // BUG CONSOLE LOG in progress ==================================================
+    // TAG: atk-bash.component ================ CONSOLE LOG IN PROGRESS
     this.tools.consoleGroup({
       title: 'HTTP Debug · /api/users',
       tag: 'check',           // clé du JSON ou texte libre

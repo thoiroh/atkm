@@ -1,5 +1,5 @@
-export type ColorConfig = Record<string, string>;
-export type SymbolsConfig = Record<string, string>;
+export type ColorConfig = Record<string, { hex: string; description: string; }>;
+export type SymbolsConfig = Record<string, { char: string; description: string; }>;
 
 export interface GroupOptions {
   /** Title displayed in the group header. Defaults to inferred call site. */
@@ -9,7 +9,7 @@ export interface GroupOptions {
   /** Any data to dump inside the group. */
   data: any;
   /** Predefined color palette. */
-  palette?: 'default' | 'info' | 'warn' | 'error' | 'accent';
+  palette?: 'default' | 'info' | 'warn' | 'error' | 'accent' | 'success';
   /** Use console.groupCollapsed when true. */
   collapsed?: boolean;
   /** Optional CSS font-family for header text. */
@@ -35,7 +35,8 @@ export class ConsoleLogger {
       fontSizePx
     } = opts;
 
-    const tagChar = this.symbols[tag as keyof SymbolsConfig] ?? (typeof tag === 'string' ? tag : '✔');
+    const tagChar = this.resolveTag(tag);
+    // const tagChar = this.symbols[tag as keyof SymbolsConfig] ?? (typeof tag === 'string' ? tag : '✔');
     const pal = this.getPalette(palette);
     const ttl = title ?? this.inferCaller();
 
@@ -102,17 +103,23 @@ export class ConsoleLogger {
     };
     const named: Record<string, typeof base> = {
       default: base,
-      info: { ...base, tag: this.hex('#1E90FF'), value: this.hex('#00BFFF') },
-      warn: { ...base, tag: this.hex('#FFA500'), value: this.hex('#FFD700'), meta: this.hex('#FFA07A') },
-      error: { ...base, tag: this.hex('#E81123'), value: this.hex('#FA8072'), meta: this.hex('#FF6347') },
+      info: { ...base, tag: this.hex('#1E90FF'), value: this.hex('#ddf7ffff') },
+      warn: { ...base, tag: this.hex('#FFA500'), value: this.hex('#FFD700'), meta: this.hex('#ffffffff') },
+      error: { ...base, tag: this.hex('#E81123'), value: this.hex('#FA8072'), meta: this.hex('#ffffffff') },
+      success: { ...base, tag: this.hex('#2cf72cff'), value: this.hex('#deffdfff'), meta: this.hex('#2cf72cff') },
       accent: { ...base, tag: this.hex('#BA55D3'), value: this.hex('#EE82EE') }
     };
     return named[name ?? 'default'];
   }
 
-  private hex(code: string) {
-    if (code in this.colors) return `#${this.colors[code]}`;
-    if (/^#?[0-9A-Fa-f]{6}$/.test(code)) return code.startsWith('#') ? code : `#${code}`;
+  private hex(code: string): string {
+    if (code in this.colors) {
+      const raw = this.colors[code].hex;
+      return raw.startsWith('#') ? raw : `#${raw}`;
+    }
+    if (/^#?[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/.test(code)) {
+      return code.startsWith('#') ? code : `#${code}`;
+    }
     return code;
   }
 
@@ -122,4 +129,11 @@ export class ConsoleLogger {
     const raw = stack[3] ?? stack[2] ?? '';
     return raw.replace(/\s*at\s*/, '').trim();
   }
+
+  private resolveTag(tag?: string): string {
+    if (!tag) return this.symbols['check']?.char ?? '✔';
+    const entry = this.symbols[tag];
+    return entry?.char ?? tag;
+  }
+
 }

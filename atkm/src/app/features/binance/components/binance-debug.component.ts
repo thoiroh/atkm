@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, effect, ElementRef, inject, NgZone, OnInit, signal, ViewChild } from '@angular/core';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { ToolsService } from '../../../shared/components/atk-tools/tools.service';
+import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { BinanceService } from '../services/binance.service';
 
 @Component({
@@ -181,7 +181,7 @@ export class BinanceDebugComponent implements OnInit {
       next: (response) => {
         this.addLog('✅ Direct HTTP SUCCESS');
         this.addLog(JSON.stringify(response, null, 2), -1);
-        // BUG CONSOLE LOG in progress ==================================================
+        // TAG: atk-binance-debug ================ CONSOLE LOG IN PROGRESS
         this.tools.consoleGroup({
           title: 'HTTP Debug · /api/users',
           tag: 'check',           // clé du JSON ou texte libre
