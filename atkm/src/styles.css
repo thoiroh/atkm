@@ -11,7 +11,7 @@
   --color-border-default: #30363d;
   --color-border-muted: #21262d;
   --color-fg-default: #e6edf3;
-  --color-fg-muted: #7d8590;
+  --color-fg-muted: #343e4b;
   --color-fg-subtle: #656d76;
   --color-accent-emphasis: #1f6feb;
   --color-accent-fg: #58a6ff;
@@ -53,10 +53,11 @@ body {
 router-outlet,
 
 /* atk-icon, */
+atk-bash,
 atk-landing,
 atk-home-content,
+atk-bash-debug-template,
 
-atk-bash,
 atk-binance-debug,
 atk-account-info,
 atk-account-snapshot,
@@ -200,15 +201,15 @@ atk-content-main {
 .menu-brand-subtitle {
   font-size: .7em;
   font-weight: 600;
-  color: var(--color-fg-subtle);
+  color: var(--color-fg-muted);
   margin-top: 1px;
 }
 
 /* Badge ou indicateur de statut */
 .brand-btn-action,
 .menu-brand-badge {
-  color: white;
-  background: var(--color-btn-bg-emphasis);
+  color: #9d9d9d;
+  background: var(--color-btn-bg);
   font-size: .5em;
   font-weight: 600;
   padding: 2px 8px 3px 8px;
@@ -397,7 +398,6 @@ atk-content-main {
   gap: 10px;
   padding: 8px 0;
   margin-left: 0px;
-  /* border-bottom: 1px solid var(--color-border-muted); */
   padding-left: 10px;
   cursor: pointer;
 }
@@ -412,7 +412,6 @@ atk-content-main {
 
 .sidebar-title:hover {
   color: var(--color-fg-default);
-  background-color: var(--color-canvas-subtle);
   border-radius: 6px;
 }
 
@@ -464,35 +463,24 @@ atk-content-main {
   list-style: none;
 }
 
-.feature-list a:hover,
-.submenu-item:hover {
-  color: var(--color-fg-default);
-  background-color: var(--color-canvas-subtle);
-  border-radius: 6px;
-}
-
 .feature-item {
   display: flex;
   flex-direction: column;
   width: 100%;
-  /* align-items: center; */
-  /* justify-content: space-between; */
 }
 
 .feature-title {
   flex: 1;
   padding: 3px 8px;
   color: var(--color-accent-fg);
-  font-size: 1em;
+  font-size: .9em;
   text-decoration: none;
   cursor: pointer;
   user-select: none;
 }
 
 .feature-title:hover {
-  background-color: var(--color-canvas-subtle);
-  border-radius: 6px;
-  color: var(--color-fg-default);
+  text-decoration: underline;
 }
 
 .feature-icon {
@@ -513,7 +501,7 @@ atk-content-main {
   cursor: pointer;
 }
 
-/* Sous-menus styling */
+/* sub-menus styling */
 .submenu-list {
   display: flex;
   flex: 1;
@@ -622,7 +610,7 @@ atk-content-main {
   font-size: 1em;
   font-weight: 600;
   margin: 10px 0 5px -10px;
-  color: var(--color-fg-default);
+  color: var(--color-fg-muted);
   transition: all 0.3s ease-in-out;
 }
 
@@ -990,7 +978,7 @@ li,
   gap: 8px;
   width: 100%;
   min-height: 30px;
-  padding: 8px 16px;
+  padding: 10px 16px;
   border: 1px solid var(--color-border-default);
   border-radius: 6px;
   background: var(--color-canvas-default);
@@ -1009,7 +997,11 @@ li,
 }
 
 .cmd-btn-icon {
-  padding-top: 2px;
+  /* padding-top: 2px; */
+}
+
+.cmd-btn-text {
+  padding-top: 1px;
 }
 
 .cmd-text {
@@ -1415,7 +1407,7 @@ li,
 @container (max-width: 700px) {
 
   .terminal-input {
-    min-height: 50px;
+    min-height: 150px;
   }
 
   .terminal-cmd {
@@ -1435,19 +1427,19 @@ li,
 }
 
 
-/* Tablette - La zone centrale commence à se réduire */
+/* Tablet - The central area begins to shrink */
 @media (max-width: 1200px) {
   .landing-wrapper {
     grid-template-columns: minmax(200px, 30%) 1fr minmax(200px, 30%);
   }
 
-  /* La zone centrale devient plus petite */
+  /* The central area becomes smaller */
   .menu-brand-content {
     font-size: 0.9em;
   }
 }
 
-/* Écrans moyens - La zone centrale peut disparaître */
+/* Medium screens - The central area may disappear */
 @media (max-width: 1100px) {
   .landing-wrapper {
     grid-template-areas:

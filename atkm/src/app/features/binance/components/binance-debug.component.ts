@@ -13,52 +13,10 @@ import { BinanceService } from '../services/binance.service';
   styles: []
 })
 export class BinanceDebugComponent implements OnInit {
-  // 1) Decorated properties
+
   @ViewChild('ta') private textareaRef!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('hl') private highlightRef!: ElementRef<HTMLDivElement>;
 
-  public onTAScroll(): void {
-    const ta = this.textareaRef?.nativeElement;
-    const hl = this.highlightRef?.nativeElement;
-    if (!ta || !hl) return;
-    hl.scrollTop = ta.scrollTop;
-    hl.scrollLeft = ta.scrollLeft;
-  }
-
-  private escapeHtml(s: string): string {
-    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-
-  public highlightedHtml(): string {
-    const raw = this.getTerminalText(); // déjà construit depuis tes signaux
-    const esc = this.escapeHtml(raw);
-
-    // 1) surligner la ligne courante
-    const lines = esc.split('\n');
-    const idx = Math.max(0, Math.min(this.line() - 1, lines.length - 1));
-    lines[idx] = `<mark class="hl-line">${lines[idx]}</mark>`;
-    let html = lines.join('\n');
-
-    // 2) surligner le mot courant (dans la ligne courante)
-    const word = this.currentWord();
-    if (word) {
-      const re = new RegExp(`(${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`);
-      lines[idx] = lines[idx].replace(re, `<span class="hl-word">$1</span>`);
-      html = lines.join('\n');
-    }
-
-    // 3) surligner la sélection (première occurrence simple)
-    const sel = this.selectionText();
-    if (sel) {
-      const reSel = new RegExp(sel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-      html = html.replace(reSel, `<mark class="hl-sel">${sel}</mark>`);
-    }
-
-    // Préserver retours ligne
-    return html.replace(/\n/g, '<br/>');
-  }
-
-  // 2) Public properties (used in the template)
   public typingActive = signal<boolean>(false);
   public cursorVisible = signal<boolean>(true);
   public inputHeight = '500px';
@@ -83,15 +41,14 @@ export class BinanceDebugComponent implements OnInit {
   public currentLineText = signal<string>('');
   public currentWord = signal<string>('');
 
-  // 3) Private properties
   private http = inject(HttpClient);
   private binanceService = inject(BinanceService);
   private typingTimers: number[] = [];
   private destroyRef = inject(DestroyRef);
   private zone = inject(NgZone);
+  private tools = inject(ToolsService);
 
-  // 4) Constructor
-  constructor(private tools: ToolsService) {
+  constructor() {
 
     this.addLog('Constructor called');
     this.serviceInjected.set(!!this.binanceService);
@@ -106,7 +63,43 @@ export class BinanceDebugComponent implements OnInit {
     }, {});
   }
 
-  // 5) Angular lifecycle hooks
+  public onTAScroll(): void {
+    const ta = this.textareaRef?.nativeElement;
+    const hl = this.highlightRef?.nativeElement;
+    if (!ta || !hl) return;
+    hl.scrollTop = ta.scrollTop;
+    hl.scrollLeft = ta.scrollLeft;
+  }
+
+  private escapeHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  public highlightedHtml(): string {
+    const raw = this.getTerminalText(); // déjà construit depuis tes signaux
+    const esc = this.escapeHtml(raw);
+    // 1) surligner la ligne courante
+    const lines = esc.split('\n');
+    const idx = Math.max(0, Math.min(this.line() - 1, lines.length - 1));
+    lines[idx] = `<mark class="hl-line">${lines[idx]}</mark>`;
+    let html = lines.join('\n');
+    // 2) surligner le mot courant (dans la ligne courante)
+    const word = this.currentWord();
+    if (word) {
+      const re = new RegExp(`(${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`);
+      lines[idx] = lines[idx].replace(re, `<span class="hl-word">$1</span>`);
+      html = lines.join('\n');
+    }
+    // 3) surligner la sélection (première occurrence simple)
+    const sel = this.selectionText();
+    if (sel) {
+      const reSel = new RegExp(sel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      html = html.replace(reSel, `<mark class="hl-sel">${sel}</mark>`);
+    }
+    // Préserver retours ligne
+    return html.replace(/\n/g, '<br/>');
+  }
+
   public ngOnInit(): void {
     this.startCursorBlink();
     // this.typeLog('Session start...', 0);
@@ -117,8 +110,6 @@ export class BinanceDebugComponent implements OnInit {
     this.browserInfo.set(navigator.userAgent.split(' ')[0]);
     this.addLog(`Environment loaded - URL: ${this.currentUrl()}`);
   }
-
-  // 6) Public methods (used by template or UI)
 
   /** Full text injected into the <textarea> */
   public getTerminalText(): string {
@@ -142,8 +133,7 @@ export class BinanceDebugComponent implements OnInit {
    */
   public async log(
     message: string,
-    options?: { flag?: number; min?: number; max?: number; typeThreshold?: number; force?: 'type' | 'instant' }
-  ): Promise<void> {
+    options?: { flag?: number; min?: number; max?: number; typeThreshold?: number; force?: 'type' | 'instant' }): Promise<void> {
     const threshold = options?.typeThreshold ?? 60;
     const shouldType = options?.force
       ? options.force === 'type'

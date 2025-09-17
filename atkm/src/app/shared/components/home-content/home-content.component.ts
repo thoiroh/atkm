@@ -1,33 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { IconPipe } from '@pipes/icon.pipe';
 import { AtkIconComponent } from '../atk-icon/atk-icon.component';
 
 @Component({
   selector: 'atk-home-content',
   standalone: true,
-  imports: [CommonModule, AtkIconComponent],
+  imports: [CommonModule, AtkIconComponent, IconPipe],
   templateUrl: './home-content.component.html',
   styles: []
 })
 export class HomeContentComponent implements OnInit {
-  @Input() feeds: any[] = [];
+
+  public inputHeight = '200px';
 
   ngOnInit(): void {
     console.log('Home content component initialized');
   }
 
-  handleCopilotInput(event: any): void {
-    console.log('Copilot input:', event.target.value);
-    const textarea = event.target;
-    textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 'px';
-  }
 
-  handleSuggestion(type: string): void {
-    console.log('Suggestion clicked:', type);
-  }
-
-  handleFilter(feedId: string): void {
-    console.log('Filter feed:', feedId);
-  }
 }

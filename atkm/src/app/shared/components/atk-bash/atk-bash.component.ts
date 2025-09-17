@@ -46,20 +46,19 @@ export class AtkBashComponent implements OnInit {
   private transactionState = inject(TransactionStateService);
   private destroyRef = inject(DestroyRef);
   private zone = inject(NgZone);
+  private tools = inject(ToolsService);
 
   // State signals
-  currentConfig = signal<IBashConfig | null>(null); currentEndpoint = signal<string>('');
+  currentConfig = signal<IBashConfig | null>(null);
+  currentEndpoint = signal<string>('');
   terminalState = signal<IBashTerminalState>({ loading: false, connectionStatus: 'disconnected', requestParams: {} });
-
   data = signal<BashData[]>([]);
   error = signal<string | null>(null);
-
   // Terminal functionality signals
   logs = signal<IBashLogEntry[]>([]); terminalInput = signal<string>(''); cursorVisible = signal<boolean>(true);
   // Cursor and selection tracking
   caretIndex = signal<number>(0); selStart = signal<number>(0); selEnd = signal<number>(0); line = signal<number>(1);
   column = signal<number>(1); selectionText = signal<string>(''); currentLineText = signal<string>(''); currentWord = signal<string>('');
-
   // Computed properties
   terminalText = computed(() => {
     const config = this.currentConfig();
@@ -118,7 +117,7 @@ export class AtkBashComponent implements OnInit {
     return endpoint?.columns.filter(col => col.visible !== false) || [];
   });
 
-  constructor(private tools: ToolsService) {
+  constructor() {
     // Initialize configuration
     effect(() => {
       const configIdValue = this.configId();
@@ -128,16 +127,6 @@ export class AtkBashComponent implements OnInit {
         this.currentConfig.set(config);
         this.bashService.registerConfig(config);
       }
-      // TAG: atk-bash.component ================ CONSOLE LOG IN PROGRESS
-      this.tools.consoleGroup({
-        title: 'HTTP Debug · /api/users',
-        tag: 'warn',           // clé du JSON ou texte libre
-        data: JSON.stringify(configIdValue, null, 2),
-        palette: 'wa',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
-        collapsed: true,       // true => console.groupCollapsed
-        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-        fontSizePx: 13
-      });
       // Set default endpoint
       const config = this.currentConfig();
       if (config && config.defaultEndpoint) {
@@ -146,9 +135,9 @@ export class AtkBashComponent implements OnInit {
           this.loadData();
         }
       }
-    }, { allowSignalWrites: true });
+    }, {});
+
     // Start cursor blinking
-    this.startCursorBlink();
     // Subscribe to bash service events
     this.bashService.events$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -169,10 +158,8 @@ export class AtkBashComponent implements OnInit {
       title: 'HTTP Debug · /api/users',
       tag: 'check',           // clé du JSON ou texte libre
       data: this.currentConfig,
-      palette: 'ac',        // 'default' | 'info' | 'warn' | 'error' | 'accent'
+      palette: 'ac',
       collapsed: true,
-      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-      fontSizePx: 13
     });
     this.addLog('ATK Bash Terminal initialized', 'info');
     this.terminalState.update(state => ({
@@ -364,44 +351,6 @@ export class AtkBashComponent implements OnInit {
       default:
         return value.toString();
     }
-  }
-
-  /**
-   * Handle textarea events for cursor tracking
-   */
-  public onTextareaEvent(): void {
-    const textarea = this.textareaRef?.nativeElement;
-    if (!textarea) return;
-
-    const value = textarea.value;
-    const start = textarea.selectionStart ?? 0;
-    const end = textarea.selectionEnd ?? start;
-
-    this.selStart.set(start);
-    this.selEnd.set(end);
-    this.caretIndex.set(end);
-
-    // Calculate line and column
-    const upToCaret = value.slice(0, end);
-    const lines = upToCaret.split('\n');
-    this.line.set(lines.length);
-    this.column.set(lines[lines.length - 1].length + 1);
-
-    // Get current line text
-    const fullLines = value.split('\n');
-    const currentLine = fullLines[lines.length - 1] ?? '';
-    this.currentLineText.set(currentLine);
-
-    // Get current word
-    const colPos = this.column() - 1;
-    const left = currentLine.slice(0, colPos);
-    const right = currentLine.slice(colPos);
-    const leftWord = left.match(/[A-Za-z0-9_-]+$/)?.[0] ?? '';
-    const rightWord = right.match(/^[A-Za-z0-9_-]+/)?.[0] ?? '';
-    this.currentWord.set(leftWord + rightWord);
-
-    // Get selection
-    this.selectionText.set(start !== end ? value.slice(start, end) : '');
   }
 
   /**

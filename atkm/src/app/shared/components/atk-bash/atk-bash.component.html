@@ -19,24 +19,13 @@
           <span>Ln {{ line() }},</span>
           <span>Col {{ column() }} · Idx {{ caretIndex() }}</span>
           @if (selectionText(); as text) {
-          <span class="terminal-selection"> · Sel "{{ text }}"</span>
+          <span class="input-selection"> · Sel "{{ text }}"</span>
           }
-          @if (terminalState().loading) {
-          <span class="terminal-loading"> · Loading...</span>
-          }
-          <!-- Connection Status -->
-          <span class="terminal-connection" [ngClass]="'status-' + terminalState().connectionStatus">
-            · {{ terminalState().connectionStatus | titlecase }}
-          </span>
         </div>
 
-        <!-- Terminal Textarea -->
         <textarea #terminalTextarea class="terminal-input" [value]="terminalText()"
-          [readonly]="!currentConfig()?.terminal.editable"
           [style.--input-min-height]="currentConfig()?.terminal.height || '500px'" spellcheck="false" autocorrect="off"
-          autocomplete="off" autocapitalize="off" placeholder="ATK Bash Terminal - Debug information and API status..."
-          (input)="onTextareaEvent()" (keyup)="onTextareaEvent()" (click)="onTextareaEvent()"
-          (select)="onTextareaEvent()">
+          autocomplete="off" autocapitalize="off" placeholder="ATK Bash Terminal - Debug information and API status...">
         </textarea>
       </div>
 

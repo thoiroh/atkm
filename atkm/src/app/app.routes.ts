@@ -20,12 +20,6 @@ export const routes: Routes = [
         path: '',
         loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
       },
-
-      {
-        path: 'binance/debug',
-        loadComponent: () => import('./features/binance/components/binance-debug.component').then(m => m.BinanceDebugComponent),
-        title: 'Binance Account | Debug'
-      },
       {
         path: 'debug',
         loadComponent: () => import('./shared/components/atk-bash/atk-bash-template.component')
@@ -35,6 +29,11 @@ export const routes: Routes = [
         path: 'bash',
         loadComponent: () => import('./shared/components/atk-bash/atk-bash.component').then(m => m.AtkBashComponent),
         title: 'atk bash | api tool'
+      },
+      {
+        path: 'binance/debug',
+        loadComponent: () => import('./features/binance/components/binance-debug.component').then(m => m.BinanceDebugComponent),
+        title: 'Binance Account | Debug'
       },
 
       // ===============================================================================================

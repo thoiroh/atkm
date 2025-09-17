@@ -7,9 +7,7 @@ import { AtkBashComponent } from '@shared/components/atk-bash';
   standalone: true,
   imports: [AtkBashComponent],
   template: `
-    <div class="debug-wrapper">
       <atk-bash configId="binance-debug-v2" [autoLoad]="true" />
-    </div>
   `
 })
 export class AtkBashDebugTemplateComponent { }
