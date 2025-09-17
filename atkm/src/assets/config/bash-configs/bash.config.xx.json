@@ -1,6 +1,6 @@
 {
   "id": "binance-debug",
-  "title": "Binance API Debug Terminal",
+  "title": "xxx Binance API Debug Terminal",
   "subtitle": "Test and debug Binance API endpoints with real-time data display",
   "defaultEndpoint": "account",
   "terminal": {

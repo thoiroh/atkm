@@ -1,6 +1,6 @@
 {
   "id": "binance-debug-json",
-  "title": "Binance API Debug Terminal - JSON Config",
+  "title": "bbb Binance API Debug Terminal - JSON Config",
   "subtitle": "Configuration JSON pour tests et développements futurs",
   "defaultEndpoint": "account",
   "terminal": {

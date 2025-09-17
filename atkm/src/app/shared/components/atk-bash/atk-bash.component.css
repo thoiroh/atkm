@@ -62,7 +62,6 @@
   flex-direction: column;
   flex: 1;
   gap: 12px;
-  padding: 20px;
   position: relative;
 }
 
@@ -86,7 +85,6 @@
   font-size: 12px;
   font-family: var(--fontStack-monospace);
   color: var(--color-fg-muted);
-  margin-left: 40px;
   margin-bottom: 8px;
   flex-wrap: wrap;
 }
@@ -193,9 +191,13 @@
 .cmd-item label {
   font-size: 11px;
   font-weight: 600;
-  color: var(--color-fg-muted);
+  color: var(--color-fg-default);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.cmd-select {
+  background: var(--color-canvas-default);
 }
 
 .cmd-select,
@@ -208,6 +210,10 @@
   font-size: 13px;
   color: var(--color-fg-default);
   transition: all 0.2s ease;
+}
+
+.cmd-select {
+  background: var(--color-btn-bg-emphasis);
 }
 
 .cmd-select:focus,
@@ -251,7 +257,7 @@
 .cmd-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
   min-height: 36px;
   gap: 8px;
@@ -346,7 +352,6 @@
    ======================================== */
 
 .bash-table-header {
-  margin-left: 40px;
   margin-bottom: 16px;
 }
 
@@ -394,7 +399,6 @@
 .bash-table {
   display: flex;
   flex-direction: column;
-  margin-left: 40px;
   border: 1px solid var(--color-border-default);
   border-radius: 6px;
   overflow: hidden;

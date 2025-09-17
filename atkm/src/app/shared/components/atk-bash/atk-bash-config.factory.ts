@@ -15,12 +15,12 @@ export class AtkBashConfigFactory {
   createBinanceDebugConfig(): IBashConfig {
     return {
       id: 'binance-debug-v2',
-      title: 'Binance API Debug Terminal',
+      title: 'Binance API Enhanced Debug Terminal',
       subtitle: 'Enhanced debugging with ATK Bash component architecture',
       defaultEndpoint: 'account',
       terminal: {
         editable: true,
-        height: '500px',
+        height: '200px',
         showControls: true,
         customCommands: [
           {
@@ -52,27 +52,27 @@ export class AtkBashConfigFactory {
         this.createTickerEndpoint()
       ],
       actions: [
-        {
-          id: 'refresh-all',
-          label: 'Refresh All',
-          icon: 'refresh-cw',
-          variant: 'primary',
-          handler: async () => console.log('Refreshing all data...')
-        },
-        {
-          id: 'export-csv',
-          label: 'Export CSV',
-          icon: 'download',
-          variant: 'secondary',
-          handler: async () => console.log('Exporting to CSV...')
-        },
-        {
-          id: 'clear-cache',
-          label: 'Clear Cache',
-          icon: 'trash-2',
-          variant: 'warning',
-          handler: async () => console.log('Clearing cache...')
-        }
+        // {
+        //   id: 'refresh-all',
+        //   label: 'Refresh All',
+        //   icon: 'refresh-cw',
+        //   variant: 'secondary',
+        //   handler: async () => console.log('Refreshing all data...')
+        // },
+        // {
+        //   id: 'export-csv',
+        //   label: 'Export CSV',
+        //   icon: 'download',
+        //   variant: 'secondary',
+        //   handler: async () => console.log('Exporting to CSV...')
+        // },
+        // {
+        //   id: 'clear-cache',
+        //   label: 'Clear Cache',
+        //   icon: 'trash-2',
+        //   variant: 'warning',
+        //   handler: async () => console.log('Clearing cache...')
+        // }
       ]
     };
   }

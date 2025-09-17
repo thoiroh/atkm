@@ -43,8 +43,7 @@
             }
           </select>
         </div>
-        }
-        }
+        }}
 
         <!-- Current Parameters Display -->
         @if (terminalState().requestParams; as params) {
@@ -64,12 +63,10 @@
         }
 
         <!-- Action Buttons -->
-        <button class="cmd-btn" (click)="testConnection()" [disabled]="terminalState().loading">
-          <div class="cmd-btn-icon" style="color: #10b981;">
-            <atk-icon name="wifi" />
-          </div>
+        <!-- <button class="cmd-btn" (click)="testConnection()" [disabled]="terminalState().loading">
+          <atk-icon name="wifi" />
           {{ terminalState().loading ? 'Testing...' : 'Test Connection' }}
-        </button>
+        </button> -->
 
         <button class="cmd-btn" (click)="loadData()" [disabled]="terminalState().loading || !currentEndpoint()">
           <div class="cmd-btn-icon" style="color: #8b5cf6;">
@@ -107,23 +104,23 @@
         }
 
         <!-- Terminal Command Input -->
-        <div class="cmd-item">
+        <!-- <div class="cmd-item">
           <label>Terminal Commands</label>
           <input type="text" class="cmd-input" placeholder="Type 'help' for commands..." #commandInput
             (keyup.enter)="executeCommand(commandInput.value); commandInput.value = ''">
-          <button class="cmd-btn-small" (click)="executeCommand(commandInput.value); commandInput.value = ''">
+          <button class="cmd-btn" (click)="executeCommand(commandInput.value); commandInput.value = ''">
             Run
           </button>
-        </div>
+        </div> -->
       </div>
       }
     </div>
 
     <!-- Data Table Section -->
     @if (data().length > 0 && visibleColumns().length > 0) {
-    <div class="bash-section">
+    <div class="terminal-section">
       <div class="bash-content">
-        <atk-icon class="bash-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+        <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
 
         <div class="bash-table-header">
           <div class="bash-table-title">

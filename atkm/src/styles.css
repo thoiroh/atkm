@@ -718,7 +718,7 @@ li,
 .terminal-main {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 12px;
 }
 
 .terminal-header {
@@ -993,7 +993,7 @@ li,
 }
 
 .cmd-btn:last-child {
-  margin-top: auto;
+  /* margin-top: auto; */
 }
 
 .cmd-btn-icon {
@@ -1412,16 +1412,19 @@ li,
 
   .terminal-cmd {
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
+    align-items: flex-end;
     flex-wrap: nowrap;
-    align-items: flex-start;
     width: 100%;
+    max-width: 700px;
   }
 
+  .cmd-input,
+  .cmd-select,
   .cmd-btn {
-    text-wrap: nowrap;
     font-size: 13px;
     color: var(--color-fg-default);
+    max-width: 200px;
     cursor: pointer;
   }
 }

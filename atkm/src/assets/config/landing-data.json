@@ -22,16 +22,8 @@
         "items": [
           {
             "icon": "toggle",
-            "label": "Debug Terminal (atk-bash-template.component)",
+            "label": "Debug Terminal",
             "link": "/dashboard/debug",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": []
-          },
-          {
-            "icon": "toggle",
-            "label": "Bash (atk-bash.component)",
-            "link": "/dashboard/bash",
             "action": false,
             "isExpanded": false,
             "subMenu": []
