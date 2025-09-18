@@ -225,6 +225,60 @@
   cursor: pointer;
 }
 
+
+/* ========================================
+   debug du select
+   ======================================== */
+
+.cmd-select {
+  background: var(--color-btn-bg-emphasis);
+  /* Amélioration de la visibilité */
+  border: 2px solid var(--color-border-default) !important;
+  min-height: 36px;
+  font-weight: 500;
+}
+
+.cmd-select:focus {
+  outline: none;
+  border-color: var(--color-accent-emphasis) !important;
+  box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
+}
+
+.cmd-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--color-canvas-subtle);
+}
+
+/* Option styling pour meilleure visibilité */
+.cmd-select option {
+  background: var(--color-canvas-default);
+  color: var(--color-fg-default);
+  padding: 8px;
+}
+
+.cmd-select option:checked {
+  background: var(--color-accent-emphasis);
+  color: white;
+}
+
+/* Debug info styling */
+.debug-info {
+  display: block;
+  font-size: 10px;
+  color: var(--color-fg-muted);
+  margin-top: 4px;
+  font-family: var(--fontStack-monospace);
+}
+
+/* Highlight du select actif pour debug */
+.cmd-select:not([value=""]) {
+  border-left: 3px solid var(--color-success-emphasis);
+}
+
+/* ======================================== */
+
+
 .cmd-params {
   background: var(--color-canvas-inset);
   border: 1px solid var(--color-border-muted);

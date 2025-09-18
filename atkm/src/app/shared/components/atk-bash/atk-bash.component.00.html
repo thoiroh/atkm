@@ -12,6 +12,8 @@
     <!-- Terminal Section -->
     <div class="terminal-section">
       <div class="terminal-content">
+        <!-- <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" /> -->
+
         <!-- Terminal Status Bar -->
         <div class="terminal-status">
           <span>Ln {{ line() }},</span>
@@ -21,12 +23,9 @@
           }
         </div>
 
-        <!-- Terminal textarea with directive -->
-        <textarea class="terminal-input" [value]="terminalText()"
-          [style.--terminal-min-height]="currentConfig()?.terminal.height || '500px'" spellcheck="false"
-          autocorrect="off" autocomplete="off" autocapitalize="off" placeholder="" atkTerminalInput [autoResize]="false"
-          [smoothScroll]="true" [maxHeight]="currentConfig()?.terminal.height || '500px'"
-          (stateChange)="onTerminalStateChange($event)">
+        <textarea #terminalTextarea class="terminal-input" [value]="terminalText()"
+          [style.--input-min-height]="currentConfig()?.terminal.height || '500px'" spellcheck="false" autocorrect="off"
+          autocomplete="off" autocapitalize="off" placeholder="">
         </textarea>
       </div>
 
@@ -34,34 +33,17 @@
       @if (currentConfig()?.terminal.showControls !== false) {
       <div class="terminal-cmd">
         <!-- Endpoint Selection -->
-        <!-- Endpoint Selection - Version corrigée -->
         @if (currentConfig(); as config) {
         @if (config.endpoints.length > 1) {
         <div class="cmd-item">
-          <label for="endpoint-select">API Endpoint</label>
-          <!-- Ajout d'un ID et amélioration du binding -->
-          <select id="endpoint-select" class="cmd-select" [value]="currentEndpoint()"
-            (change)="onEndpointChange($event)" [disabled]="terminalState().loading">
-
-            <!-- Option par défaut pour éviter les problèmes -->
-            @if (!currentEndpoint()) {
-            <option value="" disabled>Select an endpoint...</option>
-            }
-
+          <label>API Endpoint</label>
+          <select class="cmd-select" [value]="currentEndpoint()" (change)="onEndpointChange($event)">
             @for (endpoint of config.endpoints; track endpoint.id) {
-            <option [value]="endpoint.id" [selected]="endpoint.id === currentEndpoint()">
-              {{ endpoint.name }}
-            </option>
+            <option [value]="endpoint.id">{{ endpoint.name }}</option>
             }
           </select>
-
-          <!-- Debug info (à retirer en production) -->
-          @if (currentEndpoint()) {
-          <small class="debug-info">Current: {{ currentEndpoint() }}</small>
-          }
         </div>
-        }
-        }
+        }}
 
         <!-- Current Parameters Display -->
         @if (terminalState().requestParams; as params) {
@@ -81,6 +63,11 @@
         }
 
         <!-- Action Buttons -->
+        <!-- <button class="cmd-btn" (click)="testConnection()" [disabled]="terminalState().loading">
+          <atk-icon name="wifi" />
+          {{ terminalState().loading ? 'Testing...' : 'Test Connection' }}
+        </button> -->
+
         <button class="cmd-btn" (click)="loadData()" [disabled]="terminalState().loading || !currentEndpoint()">
           <div class="cmd-btn-icon" style="color: #8b5cf6;">
             <atk-icon name="database" />
@@ -115,6 +102,16 @@
         </button>
         }
         }
+
+        <!-- Terminal Command Input -->
+        <!-- <div class="cmd-item">
+          <label>Terminal Commands</label>
+          <input type="text" class="cmd-input" placeholder="Type 'help' for commands..." #commandInput
+            (keyup.enter)="executeCommand(commandInput.value); commandInput.value = ''">
+          <button class="cmd-btn" (click)="executeCommand(commandInput.value); commandInput.value = ''">
+            Run
+          </button>
+        </div> -->
       </div>
       }
     </div>

@@ -10,8 +10,7 @@
     <div class="terminal-section">
       <div class="terminal-content">
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
-
-        <!-- Status bar now handled by directive -->
+        <!-- Step 1: Service injection check -->
         <div class="terminal-status">
           <span>Ln {{ line() }},</span>
           <span>Col {{ column() }} · Idx {{ caretIndex() }}</span>
@@ -19,13 +18,14 @@
           <span class="input-selection"> · Sel "{{ text }}"</span>
           }
         </div>
-
-        <!-- Textarea with terminal input directive -->
-        <textarea class="terminal-input terminal-overlay" placeholder="Informations générales"
+        <!-- <div class="terminal-content terminal-stack"> -->
+        <!-- <div #hl class="terminal-highlights" [innerHTML]="highlightedHtml()"></div> -->
+        <textarea #ta class="terminal-input terminal-overlay" placeholder="Informations générales"
           [value]="getTerminalText()" [style.--input-min-height]="inputHeight" spellcheck="false" autocorrect="off"
-          autocomplete="off" autocapitalize="off" atkTerminalInput [autoResize]="false" [smoothScroll]="true"
-          [maxHeight]="inputHeight" (stateChange)="onTerminalStateChange($event)">
-        </textarea>
+          autocomplete="off" autocapitalize="off" (input)="onTAEvent()" (keyup)="onTAEvent()" (click)="onTAEvent()"
+          (select)="onTAEvent()" (scroll)="onTAScroll()"></textarea>
+        <!-- </div> -->
+
       </div>
 
       <div class="terminal-cmd">
@@ -62,6 +62,7 @@
           Write code
         </button>
       </div>
+
     </div>
   </main>
 </div>
