@@ -67,12 +67,10 @@
 
 .bash-toggle {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  opacity: 0.6;
-  transition: opacity 0.2s ease;
-  z-index: 10;
+  top: 10px;
+  left: -30px;
 }
+
 
 .bash-toggle:hover {
   opacity: 1;

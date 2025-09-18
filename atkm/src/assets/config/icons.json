@@ -16,6 +16,10 @@
     "toggle": {
       "paths": [{ "d": "M4 3 L12 8 L4 13 Z", "fill": "currentColor", "stroke": "var(--color-canvas-default)", "strokeWidth": 1 }]
     },
+    "dot": {
+      "viewBox": "0 0 16 16",
+      "circles": [{ "cx": 8, "cy": 8, "r": 6, "fill": "var(--color-btn-bg-action)", "stroke": "var(--color-canvas-default)", "strokeWidth": 6 }]
+    },
     "triangle-right": {
       "paths": [{ "d": "M4 3 L12 8 L4 13 Z", "fill": "currentColor", "stroke": "var(--color-canvas-default)", "strokeWidth": 1 }]
     },

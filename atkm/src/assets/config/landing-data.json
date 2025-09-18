@@ -21,17 +21,9 @@
         "icon": "default",
         "items": [
           {
-            "icon": "toggle",
-            "label": "Debug Terminal",
+            "icon": "dot",
+            "label": "[dev] Debug Bash",
             "link": "/dashboard/debug",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": []
-          },
-          {
-            "icon": "toggle",
-            "label": "Binance Debug Terminal",
-            "link": "/dashboard/binance/debug",
             "action": false,
             "isExpanded": false,
             "subMenu": []
@@ -47,7 +39,15 @@
         },
         "items": [
           {
-            "icon": "toggle",
+            "icon": "dot",
+            "label": "Binance Debug Bash",
+            "link": "/dashboard/binance/debug",
+            "action": false,
+            "isExpanded": false,
+            "subMenu": []
+          },
+          {
+            "icon": "dot",
             "label": "Assets Inventory (user)",
             "link": "/dashboard/binance/account",
             "action": false,
@@ -128,14 +128,14 @@
             ]
           },
           {
-            "icon": "toggle",
+            "icon": "dot",
             "label": "Global Watchlist (user)",
             "link": "/dashboard/binance/snapshot",
             "action": false,
             "isExpanded": false
           },
           {
-            "icon": "toggle",
+            "icon": "dot",
             "label": "Streaming Market Data",
             "link": "/dashboard/binance/market-data",
             "action": {

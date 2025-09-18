@@ -59,9 +59,9 @@ atk-home-content,
 atk-bash-debug-template,
 
 atk-binance-debug,
-atk-account-info,
-atk-account-snapshot,
-atk-market-data,
+atk-binance-account-info,
+atk-binance-account-snapshot,
+atk-binance-market-data,
 
 atk-ibkr-account-history,
 atk-ibkr-account-snapshot,
@@ -122,7 +122,7 @@ atk-content-main {
   align-items: center;
   justify-content: flex-start;
   padding: 0 16px;
-  gap: 12px;
+  gap: 8px;
   background-color: var(--color-canvas-subtle);
   z-index: 10;
 }
@@ -131,6 +131,7 @@ atk-content-main {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 5px;
   background-color: var(--color-canvas-subtle);
   color: var(--color-fg-default);
 }
@@ -402,9 +403,17 @@ atk-content-main {
   cursor: pointer;
 }
 
+/* .config-title-text {
+  flex: 1;
+  font-size: 1em;
+  padding: 12px 0 12px 0;
+  color: var(--color-fg-default);
+  cursor: pointer;
+} */
+
 .sidebar-title-text {
   flex: 1;
-  font-size: 1.2em;
+  font-size: 1em;
   color: var(--color-fg-default);
   cursor: pointer;
 }
@@ -747,7 +756,7 @@ li,
 
 .terminal-toggle {
   position: absolute;
-  top: 0;
+  top: -40px;
   left: -30px;
 }
 
@@ -836,7 +845,6 @@ li,
   white-space: nowrap;
 }
 
-
 .infos-items {
   display: flex;
   flex-direction: row;
@@ -898,6 +906,17 @@ li,
 .infos-item.enabled .status {
   background: var(--color-success-emphasis);
   color: white;
+}
+
+.infos-tile {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 8px;
+  gap: 6px;
+  background: var(--color-canvas-subtle);
+  font-size: .8em;
+  width: 100%;
 }
 
 .terminal-features {
@@ -1392,7 +1411,7 @@ li,
 }
 
 .config-item-desc {
-  color: var(--color-fg-muted);
+  color: var(--color-fg-subtle);
   font-size: 12px;
   line-height: 1.2;
   text-overflow: ellipsis;

@@ -41,9 +41,9 @@
       "cacheDuration": 30000,
       "columns": [
         {
-          "key": "asset",
+          "key": "assets",
           "label": "Asset",
-          "width": "20%",
+          "width": "10%",
           "align": "left",
           "type": "text",
           "sortable": true,
@@ -52,7 +52,7 @@
         {
           "key": "free",
           "label": "Available",
-          "width": "25%",
+          "width": "40%",
           "align": "right",
           "type": "custom",
           "sortable": true
@@ -60,7 +60,7 @@
         {
           "key": "locked",
           "label": "Locked",
-          "width": "25%",
+          "width": "10%",
           "align": "right",
           "type": "custom",
           "sortable": true,
@@ -69,7 +69,7 @@
         {
           "key": "total",
           "label": "Total Balance",
-          "width": "25%",
+          "width": "10%",
           "align": "right",
           "type": "custom",
           "sortable": true,

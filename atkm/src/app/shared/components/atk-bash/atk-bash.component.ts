@@ -6,14 +6,13 @@ import { Component, computed, DestroyRef, effect, ElementRef, inject, input, NgZ
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { finalize } from 'rxjs';
+import { finalize, firstValueFrom } from 'rxjs';
 
 import { BinanceErrorHandlerService } from '@app/features/binance/services/binance-error-handler.service';
 import { TransactionStateService } from '@app/features/binance/services/binance-transaction-state.service';
 import { BinanceService } from '@features/binance/services/binance.service';
 
 import { BalanceFormatPipe, CryptoPrecisionPipe, StatusBadgePipe, TimestampToDatePipe } from '@shared/pipes/pipes';
-import { ToolsService } from '../atk-tools/tools.service';
 import { AtkBashConfigFactory } from './atk-bash-config.factory';
 import { BashData, IBashConfig, IBashEvent, IBashLogEntry, IBashTerminalState } from './atk-bash.interfaces';
 import { AtkBashService } from './atk-bash.service';
@@ -29,7 +28,7 @@ import { AtkBashService } from './atk-bash.service';
 export class AtkBashComponent implements OnInit {
 
   @ViewChild('terminalTextarea') private textareaRef!: ElementRef<HTMLTextAreaElement>;
-  @ViewChild('highlightDiv') private highlightRef!: ElementRef<HTMLDivElement>;
+  // @ViewChild('highlightDiv') private highlightRef!: ElementRef<HTMLDivElement>;
 
   // Component inputs
   configId = input<string>('binance-debug-v2');
@@ -46,7 +45,7 @@ export class AtkBashComponent implements OnInit {
   private transactionState = inject(TransactionStateService);
   private destroyRef = inject(DestroyRef);
   private zone = inject(NgZone);
-  private tools = inject(ToolsService);
+  // private tools = inject(ToolsService);
 
   // State signals
   currentConfig = signal<IBashConfig | null>(null);
@@ -153,14 +152,14 @@ export class AtkBashComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // TAG: atk-bash.component ================ CONSOLE LOG IN PROGRESS
-    this.tools.consoleGroup({
-      title: 'HTTP Debug · /api/users',
-      tag: 'check',           // clé du JSON ou texte libre
-      data: this.currentConfig,
-      palette: 'ac',
-      collapsed: true,
-    });
+    // // TAG: atk-bash.component ================ CONSOLE LOG IN PROGRESS
+    // this.tools.consoleGroup({
+    //   title: 'HTTP Debug · /api/users',
+    //   tag: 'check',           // clé du JSON ou texte libre
+    //   data: this.currentConfig,
+    //   palette: 'ac',
+    //   collapsed: true,
+    // });
     this.addLog('ATK Bash Terminal initialized', 'info');
     this.terminalState.update(state => ({
       ...state,
@@ -252,10 +251,10 @@ export class AtkBashComponent implements OnInit {
       // Simple ping test using your BinanceService
       const startTime = performance.now();
       if (endpointId === 'account') {
-        await this.binanceService.getAccount().toPromise();
+        await firstValueFrom(this.binanceService.getAccount());
       } else {
         // Default test - try to get ticker for BTCUSDT
-        await this.binanceService.getTickerPrice('BTCUSDT').toPromise();
+        await firstValueFrom(this.binanceService.getTickerPrice('BTCUSDT'));
       }
       const responseTime = Math.round(performance.now() - startTime);
       this.addLog(`🌐 Connection test successful (${responseTime}ms)`, 'success');
@@ -274,7 +273,15 @@ export class AtkBashComponent implements OnInit {
     const ep = config?.endpoints.find(e => e.id === id);
     return ep?.name ?? '';
   }
-
+  /**
+   * Handle endpoint selection change
+   */
+  public onEndpointChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    if (target && target.value) {
+      this.changeEndpoint(target.value);
+    }
+  }
   /**
    * Change current endpoint
    */
@@ -363,9 +370,10 @@ export class AtkBashComponent implements OnInit {
   // Private data loading methods using your existing services
 
   private async loadAccountData(): Promise<BashData[]> {
-    const account = await this.binanceService.getAccount()
-      .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
-      .toPromise();
+    const account = await firstValueFrom(
+      this.binanceService.getAccount()
+        .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
+    );
 
     if (!account?.balances) return [];
 
@@ -388,9 +396,10 @@ export class AtkBashComponent implements OnInit {
     const symbol = params.symbol || 'BTCUSDT';
     const limit = params.limit || 100;
 
-    const trades = await this.binanceService.getMyTrades(symbol, undefined, undefined, limit)
-      .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
-      .toPromise();
+    const trades = await firstValueFrom(
+      this.binanceService.getMyTrades(symbol, undefined, undefined, limit)
+        .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
+    );
 
     if (!Array.isArray(trades)) return [];
 
@@ -413,9 +422,10 @@ export class AtkBashComponent implements OnInit {
     const symbol = params.symbol || 'BTCUSDT';
     const limit = params.limit || 100;
 
-    const orders = await this.binanceService.getAllOrders(symbol, undefined, undefined, limit)
-      .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
-      .toPromise();
+    const orders = await firstValueFrom(
+      this.binanceService.getAllOrders(symbol, undefined, undefined, limit)
+        .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
+    );
 
     if (!Array.isArray(orders)) return [];
 
@@ -438,9 +448,10 @@ export class AtkBashComponent implements OnInit {
   private async loadTickerData(params: Record<string, any>): Promise<BashData[]> {
     const symbol = params.symbol;
 
-    const ticker = await this.binanceService.getTickerPrice(symbol)
-      .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
-      .toPromise();
+    const ticker = await firstValueFrom(
+      this.binanceService.getTickerPrice(symbol)
+        .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
+    );
 
     if (!ticker) return [];
 

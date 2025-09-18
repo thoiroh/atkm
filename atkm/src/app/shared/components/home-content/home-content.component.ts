@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { IconPipe } from '@pipes/icon.pipe';
 import { AtkIconComponent } from '../atk-icon/atk-icon.component';
 
 @Component({
   selector: 'atk-home-content',
   standalone: true,
-  imports: [CommonModule, AtkIconComponent, IconPipe],
+  imports: [CommonModule, AtkIconComponent],
   templateUrl: './home-content.component.html',
   styles: []
 })

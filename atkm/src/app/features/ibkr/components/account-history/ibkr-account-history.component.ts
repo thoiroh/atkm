@@ -6,6 +6,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './ibkr-account-history.component.html',
-  styleUrls: ['./../ibkr.component.css']
+  styleUrls: ['@features/ibkr/components/ibkr.component.css']
 })
 export class IbkrAccountHistoryComponent { }

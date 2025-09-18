@@ -12,7 +12,7 @@
     <!-- Terminal Section -->
     <div class="terminal-section">
       <div class="terminal-content">
-        <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+        <!-- <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" /> -->
 
         <!-- Terminal Status Bar -->
         <div class="terminal-status">
@@ -25,7 +25,7 @@
 
         <textarea #terminalTextarea class="terminal-input" [value]="terminalText()"
           [style.--input-min-height]="currentConfig()?.terminal.height || '500px'" spellcheck="false" autocorrect="off"
-          autocomplete="off" autocapitalize="off" placeholder="ATK Bash Terminal - Debug information and API status...">
+          autocomplete="off" autocapitalize="off" placeholder="">
         </textarea>
       </div>
 
@@ -37,7 +37,7 @@
         @if (config.endpoints.length > 1) {
         <div class="cmd-item">
           <label>API Endpoint</label>
-          <select class="cmd-select" [value]="currentEndpoint()" (change)="changeEndpoint($any($event.target).value)">
+          <select class="cmd-select" [value]="currentEndpoint()" (change)="onEndpointChange($event)">
             @for (endpoint of config.endpoints; track endpoint.id) {
             <option [value]="endpoint.id">{{ endpoint.name }}</option>
             }
@@ -120,7 +120,7 @@
     @if (data().length > 0 && visibleColumns().length > 0) {
     <div class="terminal-section">
       <div class="bash-content">
-        <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+        <atk-icon class="bash-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
 
         <div class="bash-table-header">
           <div class="bash-table-title">

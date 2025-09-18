@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
+import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { Subject, takeUntil } from 'rxjs';
-import { BinanceAccount, BinanceBalance } from '../../models/binance.model';
-import { BinanceService } from '../../services/binance.service';
 
 @Component({
-  selector: 'atk-account-info',
+  selector: 'atk-binance-account-info',
   standalone: true,
   imports: [CommonModule, AtkIconComponent],
   templateUrl: './binance-account-info.component.html',

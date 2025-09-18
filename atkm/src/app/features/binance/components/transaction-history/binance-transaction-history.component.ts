@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
-import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import {
   BinanceOrderHistory,
   BinanceTradeHistory,
@@ -16,13 +15,14 @@ import {
   ORDER_TABLE_COLUMNS,
   TRADE_TABLE_COLUMNS,
   TRANSFER_TABLE_COLUMNS
-} from '../../models/transaction-history.model';
-import { TransactionStateService } from '../../services/binance-transaction-state.service';
+} from '@features/binance/models/transaction-history.model';
+import { TransactionStateService } from '@features/binance/services/binance-transaction-state.service';
+import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
 type TabType = 'trades' | 'orders' | 'transfers';
 
 @Component({
-  selector: 'atk-transaction-history',
+  selector: 'atk-binance-transaction-history',
   standalone: true,
   imports: [CommonModule, FormsModule, AtkIconComponent],
   templateUrl: './binance-transaction-history.component.html',

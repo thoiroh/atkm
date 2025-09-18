@@ -20,6 +20,9 @@ export class HoverDotDirective implements OnInit, OnDestroy {
   private appRef = inject(ApplicationRef);
   private iconRegistry = inject(IconRegistryService);
 
+  private r = inject(Renderer2);
+  private el = inject(ElementRef);
+
   @Input() hoverDot: '' | 'right' | boolean = '';
 
   private containerElements: {
@@ -28,10 +31,8 @@ export class HoverDotDirective implements OnInit, OnDestroy {
     dotWrap: HTMLElement;
   } | null = null;
 
-  constructor(
-    private r: Renderer2,
-    el: ElementRef<HTMLElement>) {
-    this.hostEl = el.nativeElement;
+  constructor() {
+    this.hostEl = this.el.nativeElement;
     // Effect dans le constructor (contexte d'injection valide)
     effect(() => {
       const isLoaded = this.iconRegistry.isLoaded();
