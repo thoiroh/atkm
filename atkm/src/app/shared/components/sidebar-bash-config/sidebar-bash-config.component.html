@@ -1,0 +1,209 @@
+<!-- sidebar-bash-config.component.html -->
+<!-- Bash Terminal Configuration Sidebar -->
+
+<aside class="bash-config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
+  <!-- Toggle Button -->
+  <button class="config-toggle" (click)="onToggle()"
+    [attr.aria-label]="isCollapsed() ? 'Open bash configuration' : 'Close bash configuration'">
+    @if (!isCollapsed()) {
+    <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76"></atk-icon>
+    } @else {
+    <atk-icon class="toggle-arrow left" name="triangle-left" [size]="16" color="#656d76"></atk-icon>
+    }
+  </button>
+
+  <div class="config-wrapper">
+    <div class="config-content">
+
+      <!-- Configuration Header -->
+      @if (currentConfig(); as config) {
+      <div class="config-section">
+        <div class="config-title has-hover-dot" data-hover-color="blue" hoverDot icon="radio-dot">
+          <div class="config-title-text">{{ config.title }}</div>
+        </div>
+        <div class="config-subtitle">{{ config.subtitle }}</div>
+      </div>
+      }
+
+      <!-- Connection Status Section -->
+      <div class="config-section">
+        <div class="config-title has-hover-dot" data-hover-color="green" hoverDot icon="radio-dot">
+          <div class="config-title-text">Connection Status</div>
+        </div>
+
+        <div class="bash-status-item">
+          <atk-icon class="config-item-icon" [name]="getConnectionStatusIcon()" [color]="getConnectionStatusColor()"
+            [size]="16">
+          </atk-icon>
+          <div class="config-item-content">
+            <div class="config-item-title">{{ connectionStatus() | titlecase }}</div>
+            <div class="config-item-desc">API endpoint connection status</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Endpoint Selection Section -->
+      @if (availableEndpoints().length > 1) {
+      <div class="config-section">
+        <div class="config-title has-hover-dot" data-hover-color="purple" hoverDot icon="radio-dot">
+          <div class="config-title-text">API Endpoint</div>
+        </div>
+
+        <div class="cmd-item">
+          <label for="endpoint-select">Select Endpoint</label>
+          <select id="endpoint-select" class="cmd-select" [value]="currentEndpoint()"
+            (change)="onEndpointChange($event)" [disabled]="loading()">
+
+            @if (!currentEndpoint()) {
+            <option value="" disabled>Select an endpoint...</option>
+            }
+
+            @for (endpoint of availableEndpoints(); track trackByEndpointId($index, endpoint)) {
+            <option [value]="endpoint.id" [selected]="endpoint.id === currentEndpoint()">
+              {{ endpoint.name }}
+            </option>
+            }
+          </select>
+
+          @if (currentEndpointConfig(); as endpointConfig) {
+          <small class="endpoint-info">{{ endpointConfig.method }} {{ endpointConfig.url }}</small>
+          }
+        </div>
+      </div>
+      }
+
+      <!-- Parameters Section -->
+      @if (showSymbolInput()) {
+      <div class="config-section">
+        <div class="config-title has-hover-dot" data-hover-color="yellow" hoverDot icon="radio-dot">
+          <div class="config-title-text">Request Parameters</div>
+        </div>
+
+        <div class="cmd-item">
+          <label for="symbol-input">Trading Symbol</label>
+          <input type="text" id="symbol-input" class="cmd-input" placeholder="BTCUSDT" [value]="symbolInput()"
+            (input)="onSymbolChange($any($event.target).value)" (keyup)="onSymbolKeyup($event)" [disabled]="loading()">
+
+          <button class="cmd-btn-small" (click)="onLoadWithSymbol()" [disabled]="loading() || !symbolInput()">
+            @if (loading()) {
+            <atk-icon name="loader" [size]="12" />
+            } @else {
+            <atk-icon name="play" [size]="12" />
+            }
+            Load
+          </button>
+        </div>
+
+        @if (parameters() | keyvalue; as paramEntries) {
+        @if (paramEntries.length > 0) {
+        <div class="cmd-params">
+          @for (param of paramEntries; track param.key) {
+          <div class="param-item">
+            <span class="param-key">{{ param.key }}:</span>
+            <span class="param-value">{{ param.value }}</span>
+          </div>
+          }
+        </div>
+        }
+        }
+      </div>
+      }
+
+      <!-- Action Buttons Section -->
+      <div class="config-section">
+        <div class="config-title has-hover-dot" data-hover-color="orange" hoverDot icon="radio-dot">
+          <div class="config-title-text">Actions</div>
+        </div>
+
+        <!-- Primary Load Data Button -->
+        <button class="cmd-btn cmd-btn-primary" (click)="onLoadData()" [disabled]="loading() || !currentEndpoint()">
+          <div class="cmd-btn-icon">
+            @if (loading()) {
+            <atk-icon name="loader" [size]="16" />
+            } @else {
+            <atk-icon name="database" [size]="16" />
+            }
+          </div>
+          <div class="cmd-btn-text">
+            {{ loading() ? 'Loading...' : 'Load Data' }}
+          </div>
+        </button>
+
+        <!-- Test Connection Button -->
+        <button class="cmd-btn" (click)="onTestConnection()" [disabled]="loading()">
+          <div class="cmd-btn-icon" [style.color]="'#10b981'">
+            <atk-icon name="wifi" [size]="16" />
+          </div>
+          <div class="cmd-btn-text">Test Connection</div>
+        </button>
+
+        <!-- Test Service Call Button -->
+        <button class="cmd-btn" (click)="onTestServiceCall()" [disabled]="loading()">
+          <div class="cmd-btn-icon" [style.color]="'#8b5cf6'">
+            <atk-icon name="settings" [size]="16" />
+          </div>
+          <div class="cmd-btn-text">Test Service Call</div>
+        </button>
+
+        <!-- Test Direct HTTP Button -->
+        <button class="cmd-btn" (click)="onTestDirectHttp()" [disabled]="loading()">
+          <div class="cmd-btn-icon" [style.color]="'#f59e0b'">
+            <atk-icon name="zap" [size]="16" />
+          </div>
+          <div class="cmd-btn-text">Test Direct HTTP</div>
+        </button>
+      </div>
+
+      <!-- Utility Actions Section -->
+      <div class="config-section">
+        <div class="config-title has-hover-dot" data-hover-color="gray" hoverDot icon="radio-dot">
+          <div class="config-title-text">Utilities</div>
+        </div>
+
+        <!-- Clear Cache Button -->
+        <button class="cmd-btn cmd-btn-warning" (click)="onClearCache()" [disabled]="loading()">
+          <div class="cmd-btn-icon">
+            <atk-icon name="trash-2" [size]="16" />
+          </div>
+          <div class="cmd-btn-text">Clear Cache</div>
+        </button>
+
+        <!-- Export Data Button -->
+        <button class="cmd-btn" (click)="onExportData()" [disabled]="loading()">
+          <div class="cmd-btn-icon">
+            <atk-icon name="download" [size]="16" />
+          </div>
+          <div class="cmd-btn-text">Export Data</div>
+        </button>
+      </div>
+
+      <!-- Debug Information -->
+      @if (!isCollapsed()) {
+      <div class="config-section">
+        <div class="config-title has-hover-dot" data-hover-color="gray" hoverDot icon="radio-dot">
+          <div class="config-title-text">Debug Info</div>
+        </div>
+
+        <div class="debug-info">
+          <div class="debug-item">
+            <span class="debug-label">Config ID:</span>
+            <span class="debug-value">{{ configId() }}</span>
+          </div>
+          <div class="debug-item">
+            <span class="debug-label">Endpoint:</span>
+            <span class="debug-value">{{ currentEndpoint() }}</span>
+          </div>
+          <div class="debug-item">
+            <span class="debug-label">Loading:</span>
+            <span class="debug-value">{{ loading() ? 'Yes' : 'No' }}</span>
+          </div>
+          <div class="debug-item">
+            <span class="debug-label">Parameters:</span>
+            <span class="debug-value">{{ parameters() | json }}</span>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</aside>

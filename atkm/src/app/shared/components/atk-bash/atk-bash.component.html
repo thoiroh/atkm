@@ -1,133 +1,63 @@
-<div class="terminal-wrapper">
-  <header class="terminal-header">
+<!-- atk-bash.component.html (Updated) -->
+<!-- Simplified terminal component focused on display only -->
+
+<div class="bash-wrapper">
+  @let sidebarState = sidebarConfigService.state();
+  <!-- Terminal Header -->
+  <header class="bash-header">
     @if (currentConfig(); as config) {
     <h1>{{ config.title }}</h1>
-    <div class="terminal-details">
+    <div class="bash-details">
       <h2>{{ config.subtitle }}</h2>
     </div>
     }
   </header>
 
-  <main class="terminal-main">
-    <!-- Terminal Section -->
-    <div class="terminal-section">
-      <div class="terminal-content">
+  <main class="bash-main">
+    <!-- Terminal Display Section -->
+    <div class="bash-section">
+      <div class="bash-content">
+        <atk-icon class="bash-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+
         <!-- Terminal Status Bar -->
-        <div class="terminal-status">
+        <div class="bash-status">
           <span>Ln {{ line() }},</span>
           <span>Col {{ column() }} · Idx {{ caretIndex() }}</span>
           @if (selectionText(); as text) {
-          <span class="input-selection"> · Sel "{{ text }}"</span>
+          <span class="bash-selection"> · Sel "{{ text }}"</span>
+          }
+
+          <!-- Connection Status -->
+          <span class="bash-connection" [class]="'status-' + sidebarState.connectionStatus">
+            {{ sidebarState.connectionStatus | titlecase }}
+          </span>
+
+          <!-- Loading Indicator -->
+          @if (sidebarState.loading) {
+          <span class="bash-loading">Loading...</span>
           }
         </div>
 
-        <!-- Terminal textarea with directive -->
-        <textarea class="terminal-input" [value]="terminalText()"
-          [style.--terminal-min-height]="currentConfig()?.terminal.height || '500px'" spellcheck="false"
-          autocorrect="off" autocomplete="off" autocapitalize="off" placeholder="" atkTerminalInput [autoResize]="false"
-          [smoothScroll]="true" [maxHeight]="currentConfig()?.terminal.height || '500px'"
-          (stateChange)="onTerminalStateChange($event)">
+        <!-- Terminal Textarea with directive -->
+        <textarea class="bash-input" [value]="terminalText()"
+          [style.--input-min-height]="currentConfig()?.terminal.height || '500px'" spellcheck="false" autocorrect="off"
+          autocomplete="off" autocapitalize="off" placeholder="Terminal output display" atkTerminalInput
+          [autoResize]="false" [smoothScroll]="true" [maxHeight]="currentConfig()?.terminal.height || '500px'"
+          (stateChange)="onTerminalStateChange($event)" readonly>
         </textarea>
       </div>
-
-      <!-- Terminal Command Panel -->
-      @if (currentConfig()?.terminal.showControls !== false) {
-      <div class="terminal-cmd">
-        <!-- Endpoint Selection -->
-        <!-- Endpoint Selection - Version corrigée -->
-        @if (currentConfig(); as config) {
-        @if (config.endpoints.length > 1) {
-        <div class="cmd-item">
-          <label for="endpoint-select">API Endpoint</label>
-          <!-- Ajout d'un ID et amélioration du binding -->
-          <select id="endpoint-select" class="cmd-select" [value]="currentEndpoint()"
-            (change)="onEndpointChange($event)" [disabled]="terminalState().loading">
-
-            <!-- Option par défaut pour éviter les problèmes -->
-            @if (!currentEndpoint()) {
-            <option value="" disabled>Select an endpoint...</option>
-            }
-
-            @for (endpoint of config.endpoints; track endpoint.id) {
-            <option [value]="endpoint.id" [selected]="endpoint.id === currentEndpoint()">
-              {{ endpoint.name }}
-            </option>
-            }
-          </select>
-
-          <!-- Debug info (à retirer en production) -->
-          @if (currentEndpoint()) {
-          <small class="debug-info">Current: {{ currentEndpoint() }}</small>
-          }
-        </div>
-        }
-        }
-
-        <!-- Current Parameters Display -->
-        @if (terminalState().requestParams; as params) {
-        @if ((params | keyvalue).length > 0) {
-        <div class="cmd-item">
-          <label>Parameters</label>
-          <div class="cmd-params">
-            @for (param of params | keyvalue; track param.key) {
-            <div class="param-item">
-              <span class="param-key">{{ param.key }}:</span>
-              <span class="param-value">{{ param.value }}</span>
-            </div>
-            }
-          </div>
-        </div>
-        }
-        }
-
-        <!-- Action Buttons -->
-        <button class="cmd-btn" (click)="loadData()" [disabled]="terminalState().loading || !currentEndpoint()">
-          <div class="cmd-btn-icon" style="color: #8b5cf6;">
-            <atk-icon name="database" />
-          </div>
-          {{ terminalState().loading ? 'Loading...' : 'Load Data' }}
-        </button>
-
-        <!-- Quick Symbol Input for Trades/Orders -->
-        @if (currentEndpoint() === 'trades' || currentEndpoint() === 'orders') {
-        <div class="cmd-item">
-          <label>Trading Symbol</label>
-          <input type="text" class="cmd-input" placeholder="BTCUSDT" #symbolInput
-            (keyup.enter)="loadData({ symbol: symbolInput.value.toUpperCase() })" value="BTCUSDT">
-          <button class="cmd-btn-small" (click)="loadData({ symbol: symbolInput.value.toUpperCase() })"
-            [disabled]="terminalState().loading">
-            Load
-          </button>
-        </div>
-        }
-
-        <!-- Custom Actions from Config -->
-        @if (currentConfig()?.actions; as actions) {
-        @for (action of actions; track action.id) {
-        <button class="cmd-btn" [class]="'cmd-btn-' + (action.variant || 'secondary')" (click)="action.handler()"
-          [disabled]="action.disabled || action.loading">
-          @if (action.icon) {
-          <div class="cmd-btn-icon">
-            <atk-icon [name]="action.icon" />
-          </div>
-          }
-          {{ action.loading ? 'Processing...' : action.label }}
-        </button>
-        }
-        }
-      </div>
-      }
     </div>
 
     <!-- Data Table Section -->
     @if (data().length > 0 && visibleColumns().length > 0) {
-    <div class="terminal-section">
+    <div class="bash-section">
       <div class="bash-content">
         <atk-icon class="bash-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
 
+        <!-- Table Header -->
         <div class="bash-table-header">
           <div class="bash-table-title">
-            <h2>{{ getCurrentEndpointName() || 'Data Results' }}</h2>
+            <h2>{{ getCurrentEndpointName(sidebarState.currentEndpoint) || 'Data Results' }}</h2>
             <div class="table-meta">
               <span class="data-count">{{ data().length }} items</span>
               @if (terminalState().responseMetadata?.responseTime) {
@@ -139,7 +69,7 @@
 
         <!-- Enhanced Data Table -->
         <div class="bash-table">
-          <!-- Table Header -->
+          <!-- Table Header Row -->
           <div class="table-header-row">
             @for (column of visibleColumns(); track column.key) {
             <div class="table-header-cell" [style.width]="column.width" [class]="'align-' + (column.align || 'left')">
@@ -151,7 +81,7 @@
             }
           </div>
 
-          <!-- Table Rows -->
+          <!-- Table Data Rows -->
           @for (row of data(); track trackByIndex($index, row)) {
           <div class="table-row">
             @for (column of visibleColumns(); track column.key) {
@@ -238,10 +168,10 @@
       <div class="empty-state">
         <atk-icon name="database" color="var(--color-fg-muted)" [size]="48" />
         <h3>No Data Available</h3>
-        <p>Click "Load Data" to fetch information from the {{ currentEndpoint() }} endpoint.</p>
-        @if (currentEndpoint() === 'trades' || currentEndpoint() === 'orders') {
+        <p>Use the sidebar configuration panel to select an endpoint and load data.</p>
+        @if (sidebarState.currentEndpoint === 'trades' || sidebarState.currentEndpoint === 'orders') {
         <p class="empty-hint">
-          <strong>Tip:</strong> Enter a trading symbol (e.g., BTCUSDT) in the symbol field above.
+          <strong>Tip:</strong> Enter a trading symbol (e.g., BTCUSDT) in the sidebar configuration panel.
         </p>
         }
       </div>
@@ -271,13 +201,13 @@
     }
 
     <!-- Loading State -->
-    @if (terminalState().loading) {
+    @if (sidebarState.loading) {
     <div class="bash-section">
       <div class="loading-state">
         <div class="spinner"></div>
-        <p>Loading data from <strong>{{ currentEndpoint() }}</strong> endpoint...</p>
-        @if (terminalState().requestParams?.symbol) {
-        <p class="loading-detail">Symbol: {{ terminalState().requestParams.symbol }}</p>
+        <p>Loading data from <strong>{{ sidebarState.currentEndpoint }}</strong> endpoint...</p>
+        @if (sidebarState.parameters?.symbol) {
+        <p class="loading-detail">Symbol: {{ sidebarState.parameters.symbol }}</p>
         }
       </div>
     </div>

@@ -1,0 +1,491 @@
+/* sidebar-bash-config.component.css */
+/* Hybrid styles: base sidebar-config + atk-bash controls */
+
+/* ========================================
+   Base Panel Structure (from sidebar-config)
+   ======================================== */
+
+.bash-config-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 30%;
+  min-width: 0;
+  background-color: var(--color-canvas-default);
+  border-left: 2px solid var(--color-border-default);
+  transition: all 0.3s ease-in-out;
+  overflow: visible;
+  z-index: 20;
+}
+
+.bash-config-panel.collapsed {
+  flex-basis: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.config-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 20px;
+  white-space: nowrap;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
+}
+
+.config-content {
+  flex: 0 0 auto;
+  min-height: max-content;
+  overflow-y: visible;
+}
+
+/* Toggle button (from sidebar-config) */
+.config-toggle {
+  position: absolute;
+  top: 78px;
+  left: -30px;
+  width: 30px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-canvas-default);
+  border: 2px solid var(--color-border-default);
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  color: var(--color-fg-muted);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  z-index: 21;
+}
+
+.toggle-arrow {
+  color: var(--color-fg-muted);
+  padding: 10px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.toggle-arrow.right:hover {
+  display: inline-block;
+  animation: move-right 1s linear infinite;
+  transition-delay: 1s;
+}
+
+.toggle-arrow.left:hover {
+  display: inline-block;
+  animation: move-left 1s linear infinite;
+  transition-delay: 1s;
+}
+
+/* ========================================
+   Section Structure (from sidebar-config)
+   ======================================== */
+
+.config-section {
+  margin-bottom: 32px;
+}
+
+.config-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--color-border-muted);
+  color: var(--color-fg-default);
+  font-size: 1em;
+}
+
+.config-title-text {
+  flex: 1;
+  font-size: 1em;
+  padding: 12px 0 12px 0;
+  color: var(--color-fg-default);
+  cursor: pointer;
+}
+
+.config-subtitle {
+  color: var(--color-fg-subtle);
+  font-size: 12px;
+  line-height: 1.3;
+  margin-left: 16px;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
+
+/* ========================================
+   Bash Status Items (custom)
+   ======================================== */
+
+.bash-status-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  margin-left: 16px;
+}
+
+.config-item-icon {
+  fill: var(--color-fg-muted);
+  margin-top: 2px;
+}
+
+.config-item-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.config-item-title {
+  color: var(--color-fg-default);
+  font-size: 14px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 2px;
+  text-overflow: ellipsis;
+}
+
+.config-item-desc {
+  color: var(--color-fg-subtle);
+  font-size: 12px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+}
+
+/* ========================================
+   Command Controls (from atk-bash)
+   ======================================== */
+
+.cmd-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-left: 16px;
+}
+
+.cmd-item label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cmd-select,
+.cmd-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  background: var(--color-canvas-default);
+  font-size: 13px;
+  color: var(--color-fg-default);
+  transition: all 0.2s ease;
+}
+
+.cmd-select {
+  background: var(--color-btn-bg-emphasis);
+  border: 2px solid var(--color-border-default) !important;
+  min-height: 36px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cmd-select:focus,
+.cmd-input:focus {
+  outline: none;
+  border-color: var(--color-accent-emphasis);
+  box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
+}
+
+.cmd-select:disabled,
+.cmd-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--color-canvas-subtle);
+}
+
+.endpoint-info {
+  display: block;
+  font-size: 10px;
+  color: var(--color-fg-muted);
+  margin-top: 4px;
+  font-family: var(--fontStack-monospace);
+}
+
+/* Small action button */
+.cmd-btn-small {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  background: var(--color-canvas-default);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-fg-default);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.cmd-btn-small:hover:not(:disabled) {
+  background: var(--color-btn-hover-bg);
+  border-color: var(--color-btn-hover-border);
+}
+
+.cmd-btn-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Parameters display */
+.cmd-params {
+  background: var(--color-canvas-inset);
+  border: 1px solid var(--color-border-muted);
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 11px;
+  max-height: 100px;
+  overflow-y: auto;
+  margin-left: 16px;
+}
+
+.param-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.param-key {
+  font-weight: 500;
+  color: var(--color-fg-muted);
+}
+
+.param-value {
+  font-family: var(--fontStack-monospace);
+  color: var(--color-fg-default);
+  font-size: 10px;
+}
+
+/* ========================================
+   Action Buttons (from atk-bash)
+   ======================================== */
+
+.cmd-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 36px;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  background: var(--color-canvas-default);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-fg-default);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 16px;
+  margin-bottom: 8px;
+}
+
+.cmd-btn:hover:not(:disabled) {
+  background: var(--color-btn-hover-bg);
+  border-color: var(--color-btn-hover-border);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cmd-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cmd-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cmd-btn-text {
+  flex: 1;
+  text-align: left;
+}
+
+/* Button Variants */
+.cmd-btn-primary {
+  background: var(--color-accent-emphasis);
+  border-color: var(--color-accent-emphasis);
+  color: white;
+  font-weight: 600;
+}
+
+.cmd-btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-muted);
+  border-color: var(--color-accent-muted);
+}
+
+.cmd-btn-success {
+  background: var(--color-success-emphasis);
+  border-color: var(--color-success-emphasis);
+  color: white;
+}
+
+.cmd-btn-warning {
+  background: var(--color-attention-emphasis);
+  border-color: var(--color-attention-emphasis);
+  color: white;
+}
+
+.cmd-btn-warning:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.cmd-btn-danger {
+  background: var(--color-danger-emphasis);
+  border-color: var(--color-danger-emphasis);
+  color: white;
+}
+
+/* ========================================
+   Debug Information Section
+   ======================================== */
+
+.debug-info {
+  background: var(--color-canvas-inset);
+  border: 1px solid var(--color-border-muted);
+  border-radius: 6px;
+  padding: 12px;
+  margin-left: 16px;
+  font-family: var(--fontStack-monospace);
+}
+
+.debug-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-border-muted);
+}
+
+.debug-item:last-child {
+  border-bottom: none;
+}
+
+.debug-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.debug-value {
+  font-size: 11px;
+  color: var(--color-fg-default);
+  font-family: var(--fontStack-monospace);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .bash-config-panel {
+    min-width: 280px;
+    max-width: 280px;
+  }
+
+  .cmd-btn {
+    min-height: 32px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bash-config-panel {
+    border-left: none;
+    border-top: 1px solid var(--color-border-default);
+    min-width: auto;
+    max-width: none;
+  }
+
+  .config-toggle {
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 30px;
+    border-radius: 8px 8px 0 0;
+    border-bottom: none;
+  }
+
+  .config-wrapper {
+    padding: 16px;
+  }
+
+  .cmd-item {
+    margin-left: 8px;
+  }
+
+  .cmd-btn {
+    margin-left: 8px;
+  }
+
+  .cmd-params,
+  .debug-info {
+    margin-left: 8px;
+  }
+}
+
+/* ========================================
+   Animations (inherited)
+   ======================================== */
+
+@keyframes move-right {
+  0% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(5px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes move-left {
+  0% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-5px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
