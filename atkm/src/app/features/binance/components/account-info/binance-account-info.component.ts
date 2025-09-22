@@ -1,24 +1,42 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
 import { BinanceService } from '@features/binance/services/binance.service';
-import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { Subject, takeUntil } from 'rxjs';
+
+import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
+import { IBashConfig, IBashTerminalState } from '@shared/components/atk-bash';
+import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
+import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
+
+import { BreadcrumbService } from '@core/services/breadcrumb.service';
+import { ConfigService, ILandingConfig } from '@core/services/config.service';
+import { NavigationStateService } from '@core/services/navigation-state.service';
 
 @Component({
   selector: 'atk-binance-account-info',
   standalone: true,
-  imports: [CommonModule, AtkIconComponent],
+  imports: [CommonModule, AtkIconComponent, AtkBashComponent, SidebarBashConfigComponent],
   templateUrl: './binance-account-info.component.html',
   styleUrls: ['./../binance.component.css']
 })
 export class AccountInfoComponent implements OnInit, OnDestroy {
+  config: ILandingConfig | null = null;
   account = signal<BinanceAccount | null>(null);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
 
+  bashConfig = signal<IBashConfig | null>(null);
+  bashTerminalState = signal<IBashTerminalState | null>(null);
+  bashCurrentEndpoint = signal<string>('');
+  bashConfigPanelCollapsed = signal<boolean>(false);
+
   private destroy$ = new Subject<void>();
+  private binanceService = inject(BinanceService);
+  private configService = inject(ConfigService);
+  private navigationService = inject(NavigationStateService);
+  private breadcrumbService = inject(BreadcrumbService);
   private tools = inject(ToolsService);
 
   // Computed property for significant balances - UPDATED with better filtering
@@ -150,10 +168,6 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
     return significantBalances;
   });
 
-  constructor(
-    private binanceService: BinanceService
-  ) { }
-
   ngOnInit(): void {
     this.loadAccountInfo();
   }
@@ -161,6 +175,61 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Handle traditional config panel toggle (if still needed)
+   */
+  toggleConfigPanel(): void {
+    if (this.config) {
+      this.config.configPanel.isCollapsed = !this.config.configPanel.isCollapsed;
+    }
+  }
+
+  /**
+   * Handle bash config panel toggle
+   */
+  toggleBashConfigPanel(): void {
+    this.bashConfigPanelCollapsed.update(collapsed => !collapsed);
+  }
+
+  /**
+    * Handle bash configuration requests from AtkBashComponent
+    */
+  onBashConfigRequest(configData: {
+    config: IBashConfig | null;
+    terminalState: IBashTerminalState;
+    currentEndpoint: string
+  }): void {
+    this.bashConfig.set(configData.config);
+    this.bashTerminalState.set(configData.terminalState);
+    this.bashCurrentEndpoint.set(configData.currentEndpoint);
+  }
+
+  /**
+   * Handle configuration changes from SidebarBashConfigComponent
+   */
+  onBashConfigChange(event: any): void {
+    // Forward the configuration change to the AtkBashComponent
+    // This will be handled by the component reference or service communication
+    console.log('Bash config change received:', event);
+
+    // Here you could emit events to child components or use a service
+    // For now, we'll just log the event
+  }
+
+  /**
+ * Handle bash data loaded events
+ */
+  onBashDataLoaded(data: any[]): void {
+    console.log('Bash data loaded:', data.length, 'records');
+  }
+
+  /**
+ * Handle bash error events
+ */
+  onBashError(error: string): void {
+    console.error('Bash error occurred:', error);
   }
 
   /**

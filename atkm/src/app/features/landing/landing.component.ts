@@ -3,20 +3,20 @@
 
 import { AfterViewInit, Component, OnInit, inject, signal } from '@angular/core';
 import { ToolsService } from '@shared/components/atk-tools/tools.service';
-import { BreadcrumbService } from '../../core/services/breadcrumb.service';
-import { ConfigService, ILandingConfig } from '../../core/services/config.service';
-import { NavigationStateService } from '../../core/services/navigation-state.service';
-import { ContentMainComponent } from '../../shared/components/content-main/content-main.component';
-import { NavbarBrandComponent } from '../../shared/components/navbar-brand/navbar-brand.component';
-import { NavbarMainComponent } from '../../shared/components/navbar-main/navbar-main.component';
-import { NavbarToolsComponent } from '../../shared/components/navbar-tools/navbar-tools.component';
-import { SidebarNavComponent } from '../../shared/components/sidebar-nav/sidebar-nav.component';
+import { BreadcrumbService } from '@core/services/breadcrumb.service';
+import { ConfigService, ILandingConfig } from '@core/services/config.service';
+import { NavigationStateService } from '@core/services/navigation-state.service';
+import { ContentMainComponent } from '@shared/components/content-main/content-main.component';
+import { NavbarBrandComponent } from '@shared/components/navbar-brand/navbar-brand.component';
+import { NavbarMainComponent } from '@shared/components/navbar-main/navbar-main.component';
+import { NavbarToolsComponent } from '@shared/components/navbar-tools/navbar-tools.component';
+import { SidebarNavComponent } from '@shared/components/sidebar-nav/sidebar-nav.component';
 // NEW: Import the new SidebarBashConfigComponent
-import { AtkBashComponent } from '../../shared/components/atk-bash/atk-bash.component';
-import { SidebarBashConfigComponent } from '../../shared/components/sidebar-bash-config/sidebar-bash-config.component';
-import { SidebarConfigComponent } from '../../shared/components/sidebar-config/sidebar-config.component';
+import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
+import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
+import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 // Import bash interfaces for typing
-import { IBashConfig, IBashTerminalState } from '../../shared/components/atk-bash/atk-bash.interfaces';
+import { IBashConfig, IBashTerminalState } from '@shared/components/atk-bash/atk-bash.interfaces';
 
 @Component({
   selector: 'atk-landing',
@@ -120,6 +120,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
   onBashError(error: string): void {
     console.error('Bash error occurred:', error);
   }
+
+
   private updateConfigForNavigation(): void {
     if (!this.config) return;
 

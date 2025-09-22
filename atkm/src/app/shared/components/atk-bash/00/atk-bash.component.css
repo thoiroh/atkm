@@ -1,0 +1,796 @@
+/* atk-bash.component.css */
+/* Enhanced styles for ATK Bash component with crypto-specific features */
+
+.bash-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100%;
+  background: var(--color-canvas-default);
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: var(--fontStack-system);
+}
+
+.bash-header {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px 16px;
+  background: var(--color-canvas-subtle);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.bash-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  margin: 0 0 8px 0;
+}
+
+.bash-details h2 {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-fg-muted);
+  margin: 0;
+}
+
+.bash-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 24px;
+  padding: 24px;
+}
+
+/* ========================================
+   Terminal Section
+   ======================================== */
+
+.bash-section {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.bash-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+  position: relative;
+}
+
+.bash-toggle {
+  position: absolute;
+  top: 10px;
+  left: -30px;
+}
+
+
+.bash-toggle:hover {
+  opacity: 1;
+}
+
+.bash-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  font-family: var(--fontStack-monospace);
+  color: var(--color-fg-muted);
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.bash-selection {
+  color: var(--color-accent-fg);
+  font-weight: 500;
+}
+
+.bash-loading {
+  color: var(--color-attention-fg);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.bash-connection {
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.bash-connection.status-connected {
+  color: var(--color-success-fg);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.bash-connection.status-connecting {
+  color: var(--color-attention-fg);
+  background: rgba(255, 166, 0, 0.1);
+}
+
+.bash-connection.status-disconnected {
+  color: var(--color-danger-fg);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.bash-input {
+  width: 100%;
+  min-height: var(--input-min-height, 500px);
+  padding: 16px;
+  margin-left: 24px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  background: var(--color-canvas-inset);
+  font-family: var(--fontStack-monospace);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-fg-default);
+  resize: vertical;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+  transition: all 0.2s ease;
+}
+
+.bash-input:focus {
+  outline: none;
+  border-color: var(--color-accent-emphasis);
+  box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
+}
+
+.bash-input[readonly] {
+  background: var(--color-canvas-subtle);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* ========================================
+   Command Panel
+   ======================================== */
+
+.bash-cmd {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 12px;
+  min-width: 220px;
+  max-width: 280px;
+  padding: 20px;
+  background: var(--color-canvas-subtle);
+  border-left: 1px solid var(--color-border-default);
+}
+
+.cmd-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.cmd-item label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cmd-select {
+  background: var(--color-canvas-default);
+}
+
+.cmd-select,
+.cmd-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  background: var(--color-canvas-default);
+  font-size: 13px;
+  color: var(--color-fg-default);
+  transition: all 0.2s ease;
+}
+
+.cmd-select {
+  background: var(--color-btn-bg-emphasis);
+}
+
+.cmd-select:focus,
+.cmd-input:focus {
+  outline: none;
+  border-color: var(--color-accent-emphasis);
+  box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
+}
+
+.cmd-select {
+  cursor: pointer;
+}
+
+
+/* ========================================
+   debug du select
+   ======================================== */
+
+.cmd-select {
+  background: var(--color-btn-bg-emphasis);
+  /* Amélioration de la visibilité */
+  border: 2px solid var(--color-border-default) !important;
+  min-height: 36px;
+  font-weight: 500;
+}
+
+.cmd-select:focus {
+  outline: none;
+  border-color: var(--color-accent-emphasis) !important;
+  box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
+}
+
+.cmd-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--color-canvas-subtle);
+}
+
+/* Option styling pour meilleure visibilité */
+.cmd-select option {
+  background: var(--color-canvas-default);
+  color: var(--color-fg-default);
+  padding: 8px;
+}
+
+.cmd-select option:checked {
+  background: var(--color-accent-emphasis);
+  color: white;
+}
+
+/* Debug info styling */
+.debug-info {
+  display: block;
+  font-size: 10px;
+  color: var(--color-fg-muted);
+  margin-top: 4px;
+  font-family: var(--fontStack-monospace);
+}
+
+/* Highlight du select actif pour debug */
+.cmd-select:not([value=""]) {
+  border-left: 3px solid var(--color-success-emphasis);
+}
+
+/* ======================================== */
+
+
+.cmd-params {
+  background: var(--color-canvas-inset);
+  border: 1px solid var(--color-border-muted);
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 11px;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.param-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.param-key {
+  font-weight: 500;
+  color: var(--color-fg-muted);
+}
+
+.param-value {
+  font-family: var(--fontStack-monospace);
+  color: var(--color-fg-default);
+  font-size: 10px;
+}
+
+.cmd-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 36px;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  background: var(--color-canvas-default);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-fg-default);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cmd-btn:hover:not(:disabled) {
+  background: var(--color-btn-hover-bg);
+  border-color: var(--color-btn-hover-border);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cmd-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cmd-btn-small {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  background: var(--color-canvas-default);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-fg-default);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.cmd-btn-small:hover:not(:disabled) {
+  background: var(--color-btn-hover-bg);
+}
+
+.cmd-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Command Button Variants */
+.cmd-btn-primary {
+  background: var(--color-accent-emphasis);
+  border-color: var(--color-accent-emphasis);
+  color: white;
+}
+
+.cmd-btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-muted);
+  border-color: var(--color-accent-muted);
+}
+
+.cmd-btn-success {
+  background: var(--color-success-emphasis);
+  border-color: var(--color-success-emphasis);
+  color: white;
+}
+
+.cmd-btn-warning {
+  background: var(--color-attention-emphasis);
+  border-color: var(--color-attention-emphasis);
+  color: white;
+}
+
+.cmd-btn-danger {
+  background: var(--color-danger-emphasis);
+  border-color: var(--color-danger-emphasis);
+  color: white;
+}
+
+.retry-btn {
+  background: var(--color-accent-emphasis);
+  color: white;
+}
+
+/* ========================================
+   Table Styles
+   ======================================== */
+
+.bash-table-header {
+  margin-bottom: 16px;
+}
+
+.bash-table-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border-muted);
+}
+
+.bash-table-title h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  margin: 0;
+}
+
+.table-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.data-count {
+  font-size: 12px;
+  color: var(--color-fg-muted);
+  background: var(--color-canvas-subtle);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+}
+
+.response-time {
+  font-size: 12px;
+  color: var(--color-success-fg);
+  background: rgba(34, 197, 94, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: var(--fontStack-monospace);
+  font-weight: 500;
+}
+
+.bash-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--color-canvas-default);
+}
+
+.table-header-row {
+  display: flex;
+  background: var(--color-canvas-subtle);
+  border-bottom: 1px solid var(--color-border-default);
+  font-weight: 600;
+}
+
+.table-header-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--color-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-right: 1px solid var(--color-border-muted);
+  flex: 1;
+  min-width: 80px;
+}
+
+.table-header-cell:last-child {
+  border-right: none;
+}
+
+.table-row {
+  display: flex;
+  border-bottom: 1px solid var(--color-border-muted);
+  transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+  background: rgba(79, 172, 254, 0.02);
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-cell {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  font-size: 14px;
+  border-right: 1px solid var(--color-border-muted);
+  flex: 1;
+  min-width: 80px;
+}
+
+.table-cell:last-child {
+  border-right: none;
+}
+
+.cell-content {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ========================================
+   Crypto-specific Cell Styles
+   ======================================== */
+
+.asset-cell .cell-content {
+  font-family: var(--fontStack-monospace);
+  font-weight: 600;
+  color: var(--color-accent-fg);
+}
+
+.currency-cell .cell-content,
+.date-cell .cell-content {
+  font-family: var(--fontStack-monospace);
+}
+
+.percentage-cell.text-success {
+  color: var(--color-success-fg);
+  font-weight: 500;
+}
+
+.percentage-cell.text-danger {
+  color: var(--color-danger-fg);
+  font-weight: 500;
+}
+
+.locked-balance {
+  color: var(--color-attention-fg);
+}
+
+.total-balance {
+  font-weight: 600;
+}
+
+/* ========================================
+   Badge Styles
+   ======================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+}
+
+.badge-success,
+.side-buy {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-success-fg);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.badge-danger,
+.side-sell {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-danger-fg);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.badge-warning {
+  background: rgba(255, 166, 0, 0.15);
+  color: var(--color-attention-fg);
+  border-color: rgba(255, 166, 0, 0.3);
+}
+
+.badge-info {
+  background: rgba(79, 172, 254, 0.15);
+  color: var(--color-accent-fg);
+  border-color: rgba(79, 172, 254, 0.3);
+}
+
+.badge-secondary {
+  background: var(--color-canvas-subtle);
+  color: var(--color-fg-muted);
+  border-color: var(--color-border-default);
+}
+
+.badge-default {
+  background: var(--color-canvas-inset);
+  color: var(--color-fg-default);
+  border-color: var(--color-border-muted);
+}
+
+/* ========================================
+   Alignment Classes
+   ======================================== */
+
+.align-left {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.align-center {
+  justify-content: center;
+  text-align: center;
+}
+
+.align-right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* ========================================
+   State Components
+   ======================================== */
+
+.empty-state,
+.error-state,
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.empty-state h3,
+.error-state h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  margin: 16px 0 8px 0;
+}
+
+.empty-state p,
+.error-state p,
+.loading-state p {
+  font-size: 14px;
+  color: var(--color-fg-muted);
+  margin: 0 0 16px 0;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.empty-hint {
+  background: var(--color-canvas-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 13px;
+  color: var(--color-fg-default);
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  padding: 12px;
+  color: var(--color-danger-fg);
+  font-family: var(--fontStack-monospace);
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.error-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.loading-detail {
+  font-family: var(--fontStack-monospace);
+  font-size: 12px;
+  color: var(--color-accent-fg);
+  background: rgba(79, 172, 254, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border-muted);
+  border-top: 3px solid var(--color-accent-emphasis);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .bash-cmd {
+    min-width: 200px;
+    max-width: 200px;
+  }
+
+  .table-header-cell,
+  .table-cell {
+    min-width: 70px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bash-section {
+    flex-direction: column;
+  }
+
+  .bash-cmd {
+    border-left: none;
+    border-top: 1px solid var(--color-border-default);
+    min-width: auto;
+    max-width: none;
+  }
+
+  .bash-status {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-left: 20px;
+  }
+
+  .bash-input {
+    margin-left: 0;
+  }
+
+  .bash-table-header,
+  .bash-table {
+    margin-left: 20px;
+  }
+
+  .table-header-cell,
+  .table-cell {
+    min-width: 60px;
+    padding: 8px 8px;
+    font-size: 12px;
+  }
+
+  .bash-table-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bash-main {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .bash-content {
+    padding: 16px;
+  }
+
+  .bash-cmd {
+    padding: 16px;
+  }
+
+  .empty-state,
+  .error-state,
+  .loading-state {
+    padding: 40px 20px;
+  }
+}

@@ -20,11 +20,16 @@
   <div class="landing-main">
 
     <!-- Traditional Content -->
+    <atk-content-main [feeds]="config.feeds" [configPanelCollapsed]="bashConfigPanelCollapsed()" />
     <!-- <atk-content-main [feeds]="config.feeds" [configPanelCollapsed]="bashConfigPanelCollapsed()" /> -->
 
+    <!-- <atk-content-main [feeds]="config.feeds" [configPanelCollapsed]="bashConfigPanelCollapsed()"
+      (configRequest)="onBashConfigRequest($event)" (dataLoaded)="onBashDataLoaded($event)"
+      (errorOccurred)="onBashError($event)" /> -->
+
     <!-- NEW: Bash Terminal Component -->
-    <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
-      (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" />
+    <!-- <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
+      (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" /> -->
 
     <!-- GRILLE 6: SIDEBAR CONFIGURATION (droite) -->
     <!-- <atk-sidebar-config [sections]="config.configPanel.sections" [isCollapsed]="config.configPanel.isCollapsed"

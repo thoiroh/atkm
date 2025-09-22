@@ -1,6 +1,6 @@
 <div class="terminal-wrapper">
   <header class="terminal-header">
-    <h1>Binance Account NEW Assets Inventory</h1>
+    <h1>Binance Account Assets Inventory</h1>
     <div class="terminal-details">
       <h2>Binance account information & assets inventory.</h2>
     </div>
@@ -31,11 +31,10 @@
     <div class="terminal-section">
       <div class="terminal-content">
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
-        <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
-          (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" />
-      </div>
-
-      <div class="terminal-section">
+        <textarea class="terminal-input" placeholder="" rows="1"></textarea>
+        <div class="infos-title">
+          <h2>Permissions</h2>
+        </div>
         <div class="infos-items">
           <div class="infos-item" [class.enabled]="currentAccount.canTrade">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -62,28 +61,29 @@
             <span class="status">{{ currentAccount.canDeposit ? 'Activé' : 'Désactivé' }}</span>
           </div>
         </div>
-        <div class="terminal-cmd">
-          <div class="cmd-item">
-            <label>Type de compte</label>
-            <span class="cmd-text">{{ currentAccount.accountType }}</span>
-          </div>
-          <div class="cmd-item">
-            <label>Dernière mise à jour</label>
-            <span class="cmd-text">{{ formatUpdateTime(currentAccount.updateTime) }}</span>
-          </div>
-          @if (currentAccount.permissions.length > 0) {
-          <div class="cmd-item">
-            <label>Permissions supplémentaires</label>
-            <div class="cmd-tags">
-              @for (permission of currentAccount.permissions; track permission) {
-              <span class="cmd-tag" [ngClass]="getPermissionClass(permission)">
-                {{ permission }}
-              </span>
-              }
-            </div>
-          </div>
-          }
+      </div>
+
+      <div class="terminal-cmd">
+        <div class="cmd-item">
+          <label>Type de compte</label>
+          <span class="cmd-text">{{ currentAccount.accountType }}</span>
         </div>
+        <div class="cmd-item">
+          <label>Dernière mise à jour</label>
+          <span class="cmd-text">{{ formatUpdateTime(currentAccount.updateTime) }}</span>
+        </div>
+        @if (currentAccount.permissions.length > 0) {
+        <div class="cmd-item">
+          <label>Permissions supplémentaires</label>
+          <div class="cmd-tags">
+            @for (permission of currentAccount.permissions; track permission) {
+            <span class="cmd-tag" [ngClass]="getPermissionClass(permission)">
+              {{ permission }}
+            </span>
+            }
+          </div>
+        </div>
+        }
       </div>
     </div>
 
