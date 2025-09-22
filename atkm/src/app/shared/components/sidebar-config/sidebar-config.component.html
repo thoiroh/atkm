@@ -1,6 +1,6 @@
 <aside class="config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
   <button class="config-toggle" (click)="onToggle()"
-    [attr.aria-label]="isCollapsed() ? 'Ouvrir configuration' : 'Fermer configuration'">
+    [attr.aria-label]="isCollapsed() ? 'Open configuration' : 'Close configuration'">
     @if (!isCollapsed()) {
     <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76"></atk-icon>
     } @else {

@@ -1,5 +1,9 @@
+<!-- src/app/features/landing/landing.component.html -->
+<!-- Updated template with SidebarBashConfigComponent integration -->
+
 @if (config) {
 <div class="landing-wrapper" [class.config-collapsed]="config?.configPanel?.isCollapsed">
+
   <!-- GRILLE 1: MENU PRINCIPAL (gauche) -->
   <atk-navbar-main [config]="config" />
 
@@ -7,190 +11,36 @@
   <atk-navbar-brand [config]="config" />
 
   <!-- GRILLE 3: OUTILS UTILISATEUR (droite) -->
-  <atk-navbar-tools [configPanelCollapsed]="config?.configPanel?.isCollapsed" />
-
+  <atk-navbar-tools [configPanelCollapsed]="bashConfigPanelCollapsed()" />
 
   <!-- GRILLE 4: NAVIGATION SIDEBAR (gauche) -->
   <atk-sidebar-nav [config]="config.sidebar" />
 
-  <!-- GRILLE 5 & 6: CONTENU PRINCIPAL + CONFIGURATION -->
+  <!-- GRILLE 5: CONTENU PRINCIPAL avec BASH COMPONENT -->
   <div class="landing-main">
-    <!-- Regular Content Mode -->
-    @if (!showBashTerminal) {
-    <atk-content-main [feeds]="config.feeds" [configPanelCollapsed]="config?.configPanel?.isCollapsed" />
+
+    <!-- Traditional Content -->
+    <!-- <atk-content-main [feeds]="config.feeds" [configPanelCollapsed]="bashConfigPanelCollapsed()" /> -->
+
+    <!-- NEW: Bash Terminal Component -->
+    <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
+      (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" />
+
+    <!-- GRILLE 6: SIDEBAR CONFIGURATION (droite) -->
     <!-- <atk-sidebar-config [sections]="config.configPanel.sections" [isCollapsed]="config.configPanel.isCollapsed"
       (togglePanel)="toggleConfigPanel()" /> -->
-    }
-    <!-- Bash Terminal Mode -->
-    @if (showBashTerminal) {
-    <!-- Terminal Content Area -->
-    <div class="bash-content-area" [class.config-collapsed]="bashConfigCollapsed">
-      <atk-bash configId="binance-debug-v2" [autoLoad]="true" (dataLoaded)="onBashDataLoaded($event)"
-        (errorOccurred)="onBashErrorOccurred($event)" />
-    </div>
-    <!-- Bash Configuration Sidebar -->
-    <atk-sidebar-bash-config configId="binance-debug-v2" [isCollapsed]="bashConfigCollapsed"
-      (togglePanel)="toggleBashConfigPanel()" (endpointChanged)="onBashEndpointChange($event)"
-      (parameterChanged)="onBashParameterChange($event)" />
-    }
-  </div>
 
-  <!-- Floating Terminal Toggle Button -->
-  <div class="terminal-toggle-fab">
-    <button class="fab-button" (click)="toggleBashTerminal()" [class.active]="showBashTerminal"
-      [attr.aria-label]="showBashTerminal ? 'Close terminal' : 'Open terminal'">
-      @if (showBashTerminal) {
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-      } @else {
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="4,17 10,11 4,5"></polyline>
-        <line x1="12" y1="19" x2="20" y2="19"></line>
-      </svg>
-      }
-    </button>
-    <div class="fab-tooltip">
-      {{ showBashTerminal ? 'Close Terminal' : 'Debug Terminal' }}
-    </div>
-  </div>
+    <!-- GRILLE 6: NEW BASH CONFIGURATION (droite) -->
+    <atk-sidebar-bash-config [bashConfig]="bashConfig()" [terminalState]="bashTerminalState()"
+      [isCollapsed]="bashConfigPanelCollapsed()" [currentEndpoint]="bashCurrentEndpoint()"
+      (configChange)="onBashConfigChange($event)" (togglePanel)="toggleBashConfigPanel()" />
 
+  </div>
 </div>
+
 } @else {
 <!-- Loading state -->
 <div class="loading-wrapper">
-  <div class="loading-spinner">Loading configuration...</div>
+  <div class="loading-spinner">Chargement...</div>
 </div>
 }
-
-<!-- Additional Styles for Bash Mode -->
-<style>
-  /* Bash Terminal Mode Styles */
-  .landing-wrapper.bash-mode {
-    --bash-config-width: 350px;
-  }
-
-  .bash-content-area {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    flex: 1 0 70%;
-    min-width: 0;
-    background-color: var(--color-canvas-default);
-    overflow: hidden;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .bash-content-area.config-collapsed {
-    flex: 1 0 100%;
-    padding-right: 40px;
-  }
-
-  /* Floating Action Button */
-  .terminal-toggle-fab {
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .fab-button {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-accent-emphasis), #58a6ff);
-    border: none;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(31, 111, 235, 0.4);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 24px;
-  }
-
-  .fab-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(31, 111, 235, 0.5);
-  }
-
-  .fab-button.active {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-  }
-
-  .fab-button.active:hover {
-    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5);
-  }
-
-  .fab-tooltip {
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.2s ease;
-    pointer-events: none;
-  }
-
-  .terminal-toggle-fab:hover .fab-tooltip {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Responsive adjustments for bash mode */
-  @media (max-width: 1024px) {
-    .bash-content-area {
-      flex: 1 0 100%;
-    }
-
-    .terminal-toggle-fab {
-      bottom: 20px;
-      right: 20px;
-    }
-
-    .fab-button {
-      width: 48px;
-      height: 48px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .landing-wrapper.bash-mode {
-      grid-template-areas:
-        "menu-main menu-tools"
-        "bash-content bash-content";
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .bash-content-area {
-      grid-area: bash-content;
-      grid-column: 1 / -1;
-    }
-
-    /* Hide sidebar nav in bash mode on mobile */
-    .landing-wrapper.bash-mode .sidebar-nav {
-      display: none;
-    }
-
-    .terminal-toggle-fab {
-      bottom: 16px;
-      right: 16px;
-    }
-
-    .fab-button {
-      width: 44px;
-      height: 44px;
-    }
-  }
-</style>

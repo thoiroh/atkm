@@ -73,6 +73,7 @@ atk-navbar-brand,
 atk-navbar-tools,
 atk-sidebar-nav,
 atk-sidebar-config,
+atk-sidebar-bash-config,
 atk-content-main {
   display: contents;
 }
@@ -1011,13 +1012,13 @@ li,
   border-color: var(--color-btn-hover-border);
 }
 
-.cmd-btn:last-child {
-  /* margin-top: auto; */
-}
+/* .cmd-btn:last-child { */
+/* margin-top: auto; */
+/* } */
 
-.cmd-btn-icon {
-  /* padding-top: 2px; */
-}
+/* .cmd-btn-icon { */
+/* padding-top: 2px; */
+/* } */
 
 .cmd-btn-text {
   padding-top: 1px;

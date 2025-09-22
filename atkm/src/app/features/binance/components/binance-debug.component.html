@@ -12,20 +12,21 @@
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
 
         <!-- Status bar now handled by directive -->
-        <div class="terminal-status">
+        <!-- <div class="terminal-status">
           <span>Ln {{ line() }},</span>
           <span>Col {{ column() }} · Idx {{ caretIndex() }}</span>
           @if (selectionText(); as text) {
           <span class="input-selection"> · Sel "{{ text }}"</span>
           }
-        </div>
+        </div> -->
 
         <!-- Textarea with terminal input directive -->
-        <textarea class="terminal-input terminal-overlay" placeholder="Informations générales"
-          [value]="getTerminalText()" [style.--input-min-height]="inputHeight" spellcheck="false" autocorrect="off"
-          autocomplete="off" autocapitalize="off" atkTerminalInput [autoResize]="false" [smoothScroll]="true"
-          [maxHeight]="inputHeight" (stateChange)="onTerminalStateChange($event)">
-        </textarea>
+        <!-- <textarea class="terminal-input" [style.--terminal-min-height]="currentConfig()?.terminal.height || '500px'"
+          spellcheck="false" autocorrect="off" autocomplete="off" autocapitalize="off"
+          placeholder="Terminal ready... Type /help for commands" atkTerminalInput [autoResize]="false"
+          [maxHeight]="currentConfig()?.terminal.height || '500px'" (contentChange)="onTerminalContentChange($event)"
+          (scrollChange)="onTerminalScrollChange($event)">
+        </textarea> -->
       </div>
 
       <div class="terminal-cmd">

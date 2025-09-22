@@ -1,4 +1,28 @@
-// app.routes.ts - Extended routes for transaction history
+/**
+ * Route Configuration Notes:
+ *
+ * BINANCE TRANSACTION HISTORY ROUTES:
+ * - /dashboard/binance/history - Main transaction history page
+ * - /dashboard/binance/history/BTCUSDT - History for specific symbol
+ * - /dashboard/binance/history/BTCUSDT/trades - History with specific tab
+ *
+ * URL EXAMPLES:
+ * - /dashboard/binance/history
+ * - /dashboard/binance/history/BTCUSDT
+ * - /dashboard/binance/history/ETHUSDT
+ * - /dashboard/binance/history/ADAUSDT/orders
+ * - /dashboard/binance/history/BNBUSDT/transfers
+ *
+ * NAVIGATION FROM SIDEBAR:
+ * The sidebar configuration in landing-data.json should be updated with:
+ * - "Transaction History" -> "/dashboard/binance/history"
+ * - Individual coins can link to specific symbols
+ *
+ * BREADCRUMBS:
+ * The breadcrumb service can show:
+ * Dashboard > Binance > Transaction History > BTCUSDT
+ */
+
 
 import { Routes } from '@angular/router';
 
@@ -19,11 +43,6 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
-      },
-      {
-        path: 'debug',
-        loadComponent: () => import('./shared/components/atk-bash/atk-bash-template.component')
-          .then(m => m.AtkBashDebugTemplateComponent)
       },
       {
         path: 'bash',
@@ -181,27 +200,4 @@ export const routes: Routes = [
   }
 ];
 
-/**
- * Route Configuration Notes:
- *
- * BINANCE TRANSACTION HISTORY ROUTES:
- * - /dashboard/binance/history - Main transaction history page
- * - /dashboard/binance/history/BTCUSDT - History for specific symbol
- * - /dashboard/binance/history/BTCUSDT/trades - History with specific tab
- *
- * URL EXAMPLES:
- * - /dashboard/binance/history
- * - /dashboard/binance/history/BTCUSDT
- * - /dashboard/binance/history/ETHUSDT
- * - /dashboard/binance/history/ADAUSDT/orders
- * - /dashboard/binance/history/BNBUSDT/transfers
- *
- * NAVIGATION FROM SIDEBAR:
- * The sidebar configuration in landing-data.json should be updated with:
- * - "Transaction History" -> "/dashboard/binance/history"
- * - Individual coins can link to specific symbols
- *
- * BREADCRUMBS:
- * The breadcrumb service can show:
- * Dashboard > Binance > Transaction History > BTCUSDT
- */
+

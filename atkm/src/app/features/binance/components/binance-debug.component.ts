@@ -3,10 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, effect, inject, NgZone, OnInit, signal, viewChild } from '@angular/core';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { ToolsService } from '@shared/components/atk-tools/tools.service';
-import {
-  TerminalInputDirective,
-  TerminalInputState
-} from '@shared/directives/terminal-input.directive';
+import { TerminalInputDirective } from '@shared/directives/terminal-input.directive';
 import { BinanceService } from '../services/binance.service';
 
 @Component({
@@ -22,17 +19,6 @@ export class BinanceDebugComponent implements OnInit {
   private terminalDirective = viewChild(TerminalInputDirective);
 
   // Terminal state management (now managed by directive)
-  public terminalState = signal<TerminalInputState>({
-    caretIndex: 0,
-    selectionStart: 0,
-    selectionEnd: 0,
-    line: 1,
-    column: 1,
-    selectionText: '',
-    currentLineText: '',
-    currentWord: '',
-    textValue: ''
-  });
 
   // Component-specific signals
   public typingActive = signal<boolean>(false);
@@ -79,13 +65,6 @@ export class BinanceDebugComponent implements OnInit {
   }
 
   /**
-   * Handle terminal state changes from directive
-   */
-  public onTerminalStateChange(state: TerminalInputState): void {
-    this.terminalState.set(state);
-  }
-
-  /**
    * Get formatted terminal text for display
    */
   public getTerminalText(): string {
@@ -110,7 +89,6 @@ export class BinanceDebugComponent implements OnInit {
     const newContent = this.getTerminalText();
     // Use directive's insertAtCaret to update content
     directive.clearContent();
-    directive.insertAtCaret(newContent);
   }
 
   /**
@@ -273,20 +251,4 @@ export class BinanceDebugComponent implements OnInit {
     return logs.join('\n');
   }
 
-  // Convenient accessors for template (delegation to directive state)
-  public line(): number {
-    return this.terminalState().line;
-  }
-
-  public column(): number {
-    return this.terminalState().column;
-  }
-
-  public caretIndex(): number {
-    return this.terminalState().caretIndex;
-  }
-
-  public selectionText(): string {
-    return this.terminalState().selectionText;
-  }
 }

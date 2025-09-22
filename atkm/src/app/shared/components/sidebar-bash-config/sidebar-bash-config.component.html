@@ -1,10 +1,6 @@
-<!-- sidebar-bash-config.component.html -->
-<!-- Bash Terminal Configuration Sidebar -->
-
 <aside class="bash-config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
-  <!-- Toggle Button -->
-  <button class="config-toggle" (click)="onToggle()"
-    [attr.aria-label]="isCollapsed() ? 'Open bash configuration' : 'Close bash configuration'">
+  <button class="bash-config-toggle" (click)="onToggle()"
+    [attr.aria-label]="isCollapsed() ? 'Open configuration' : 'Close configuration'">
     @if (!isCollapsed()) {
     <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76"></atk-icon>
     } @else {
@@ -12,198 +8,363 @@
     }
   </button>
 
-  <div class="config-wrapper">
+  <div class="bash-config-wrapper">
     <div class="config-content">
-
-      <!-- Configuration Header -->
-      @if (currentConfig(); as config) {
       <div class="config-section">
-        <div class="config-title has-hover-dot" data-hover-color="blue" hoverDot icon="radio-dot">
-          <div class="config-title-text">{{ config.title }}</div>
-        </div>
-        <div class="config-subtitle">{{ config.subtitle }}</div>
-      </div>
-      }
+        <header class="config-header">
+          <h3 class="panel-title">
+            <atk-icon name="terminal" [size]="18" color="var(--color-accent-fg)"></atk-icon>
+            Terminal Control
+          </h3>
 
-      <!-- Connection Status Section -->
-      <div class="config-section">
-        <div class="config-title has-hover-dot" data-hover-color="green" hoverDot icon="radio-dot">
-          <div class="config-title-text">Connection Status</div>
-        </div>
+          <!-- Connection Status -->
+          <div class="connection-status" [class]="connectionStatus()">
+            <span class="status-indicator" [class]="connectionStatus()">
+              @switch (connectionStatus()) {
+              @case ('connected') {
+              <atk-icon name="wifi" [size]="14" color="var(--color-success-emphasis)"></atk-icon>
+              }
+              @case ('connecting') {
+              <atk-icon name="loader" [size]="14" color="var(--color-accent-fg)"></atk-icon>
+              }
+              @default {
+              <atk-icon name="wifi-off" [size]="14" color="var(--color-fg-muted)"></atk-icon>
+              }
+              }
+            </span>
+            <span class="status-text">{{ connectionStatus() | titlecase }}</span>
+            @if (isLoading()) {
+            <span class="loading-spinner"></span>
+            }
+          </div>
+        </header>
+        <!-- Tab Navigation -->
+        <nav class="bash-config-tabs">
+          <button class="tab-button" [class.active]="activeTab() === 'endpoints'" (click)="setActiveTab('endpoints')">
+            <atk-icon name="server" [size]="14" color="currentColor"></atk-icon>
+            Endpoints
+          </button>
+          <button class="tab-button" [class.active]="activeTab() === 'parameters'" (click)="setActiveTab('parameters')">
+            <atk-icon name="settings" [size]="14" color="currentColor"></atk-icon>
+            Params
+          </button>
+          <button class="tab-button" [class.active]="activeTab() === 'terminal'" (click)="setActiveTab('terminal')">
+            <atk-icon name="monitor" [size]="14" color="currentColor"></atk-icon>
+            Terminal
+          </button>
+          <button class="tab-button" [class.active]="activeTab() === 'actions'" (click)="setActiveTab('actions')">
+            <atk-icon name="zap" [size]="14" color="currentColor"></atk-icon>
+            Actions
+          </button>
+        </nav>
 
-        <div class="bash-status-item">
-          <atk-icon class="config-item-icon" [name]="getConnectionStatusIcon()" [color]="getConnectionStatusColor()"
-            [size]="16">
-          </atk-icon>
-          <div class="config-item-content">
-            <div class="config-item-title">{{ connectionStatus() | titlecase }}</div>
-            <div class="config-item-desc">API endpoint connection status</div>
+        <!-- Search Bar -->
+        <div class="bash-config-search">
+          <div class="search-input-wrapper">
+            <atk-icon name="search" [size]="14" color="var(--color-fg-muted)"></atk-icon>
+            <input type="text" class="search-input" placeholder="Search configuration..." [value]="searchQuery()"
+              (input)="onSearchChange($any($event.target).value)">
+            @if (searchQuery()) {
+            <button class="search-clear" (click)="onSearchChange('')">
+              <atk-icon name="x" [size]="12" color="var(--color-fg-muted)"></atk-icon>
+            </button>
+            }
           </div>
         </div>
-      </div>
 
-      <!-- Endpoint Selection Section -->
-      @if (availableEndpoints().length > 1) {
-      <div class="config-section">
-        <div class="config-title has-hover-dot" data-hover-color="purple" hoverDot icon="radio-dot">
-          <div class="config-title-text">API Endpoint</div>
-        </div>
+        <!-- Configuration Content -->
+        <div class="bash-config-content">
 
-        <div class="cmd-item">
-          <label for="endpoint-select">Select Endpoint</label>
-          <select id="endpoint-select" class="cmd-select" [value]="currentEndpoint()"
-            (change)="onEndpointChange($event)" [disabled]="loading()">
+          <!-- Endpoints Tab -->
+          @if (activeTab() === 'endpoints') {
+          <div class="config-tab-content">
+            @for (section of filteredSections(); track section.id) {
+            @if (section.id === 'endpoints') {
+            <div class="bash-config-section">
+              <button class="section-header" (click)="toggleSection(section.id)">
+                <atk-icon [name]="section.icon" [size]="16" color="var(--color-fg-default)"></atk-icon>
+                <span class="section-title">{{ section.title }}</span>
+                <atk-icon name="chevron-down" [size]="14" color="var(--color-fg-muted)"
+                  [class.rotated]="!section.isExpanded">
+                </atk-icon>
+              </button>
 
-            @if (!currentEndpoint()) {
-            <option value="" disabled>Select an endpoint...</option>
+              @if (section.isExpanded) {
+              <div class="section-content">
+                @for (item of section.items; track item.id) {
+                <div class="config-item">
+
+                  <!-- Select Input -->
+                  @if (item.type === 'select') {
+                  <label class="item-label">{{ item.label }}</label>
+                  <select class="item-select" [value]="item.id === 'current-endpoint' ? currentEndpoint() : item.value"
+                    [disabled]="item.disabled || isLoading()"
+                    (change)="item.id === 'current-endpoint' ? onEndpointChange($any($event.target).value) : onConfigItemChange(section.id, item.id, $any($event.target).value)">
+                    @for (option of item.options; track option.value) {
+                    <option [value]="option.value" [disabled]="option.disabled">
+                      {{ option.label }}
+                    </option>
+                    }
+                  </select>
+                  @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                  }
+                  }
+
+                  <!-- Toggle Input -->
+                  @if (item.type === 'toggle') {
+                  <div class="item-toggle-wrapper">
+                    <label class="item-label">{{ item.label }}</label>
+                    <label class="toggle-switch">
+                      <input type="checkbox" [checked]="item.value" [disabled]="item.disabled || isLoading()"
+                        (change)="onConfigItemChange(section.id, item.id, $any($event.target).checked)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                  @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                  }
+                  }
+
+                  <!-- Range Input -->
+                  @if (item.type === 'range') {
+                  <label class="item-label">{{ item.label }} <span class="range-value">({{ item.value }})</span></label>
+                  <input type="range" class="item-range" [min]="item.min" [max]="item.max" [step]="item.step"
+                    [value]="item.value" [disabled]="item.disabled || isLoading()"
+                    (input)="onConfigItemChange(section.id, item.id, +$any($event.target).value)">
+                  @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                  }
+                  }
+
+                </div>
+                }
+              </div>
+              }
+            </div>
             }
-
-            @for (endpoint of availableEndpoints(); track trackByEndpointId($index, endpoint)) {
-            <option [value]="endpoint.id" [selected]="endpoint.id === currentEndpoint()">
-              {{ endpoint.name }}
-            </option>
             }
-          </select>
-
-          @if (currentEndpointConfig(); as endpointConfig) {
-          <small class="endpoint-info">{{ endpointConfig.method }} {{ endpointConfig.url }}</small>
+          </div>
           }
-        </div>
-      </div>
-      }
 
-      <!-- Parameters Section -->
-      @if (showSymbolInput()) {
-      <div class="config-section">
-        <div class="config-title has-hover-dot" data-hover-color="yellow" hoverDot icon="radio-dot">
-          <div class="config-title-text">Request Parameters</div>
-        </div>
+          <!-- Parameters Tab -->
+          @if (activeTab() === 'parameters') {
+          <div class="config-tab-content">
+            @for (section of filteredSections(); track section.id) {
+            @if (section.id === 'parameters') {
+            <div class="config-section">
+              <button class="section-header" (click)="toggleSection(section.id)">
+                <atk-icon [name]="section.icon" [size]="16" color="var(--color-fg-default)"></atk-icon>
+                <span class="section-title">{{ section.title }}</span>
+                <atk-icon name="chevron-down" [size]="14" color="var(--color-fg-muted)"
+                  [class.rotated]="!section.isExpanded">
+                </atk-icon>
+              </button>
 
-        <div class="cmd-item">
-          <label for="symbol-input">Trading Symbol</label>
-          <input type="text" id="symbol-input" class="cmd-input" placeholder="BTCUSDT" [value]="symbolInput()"
-            (input)="onSymbolChange($any($event.target).value)" (keyup)="onSymbolKeyup($event)" [disabled]="loading()">
+              @if (section.isExpanded) {
+              <div class="section-content">
+                @for (item of section.items; track item.id) {
+                <div class="config-item">
 
-          <button class="cmd-btn-small" (click)="onLoadWithSymbol()" [disabled]="loading() || !symbolInput()">
-            @if (loading()) {
-            <atk-icon name="loader" [size]="12" />
-            } @else {
-            <atk-icon name="play" [size]="12" />
+                  @if (item.type === 'input') {
+                  <label class="item-label">{{ item.label }}</label>
+                  <input type="text" class="item-input" [value]="item.value" [placeholder]="item.placeholder"
+                    [disabled]="item.disabled || isLoading()"
+                    (input)="onParameterChange(item.id.replace('param-', ''), $any($event.target).value)">
+                  @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                  }
+                  }
+
+                  @if (item.type === 'button') {
+                  <button class="item-button" [class]="'btn-' + (item.variant || 'secondary')"
+                    [disabled]="item.disabled || isLoading()" (click)="executeAction(item.id)">
+                    {{ item.label }}
+                  </button>
+                  @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                  }
+                  }
+
+                </div>
+                }
+              </div>
+              }
+            </div>
             }
-            Load
+            }
+          </div>
+          }
+
+          <!-- Terminal Tab -->
+          @if (activeTab() === 'terminal') {
+          <div class="config-tab-content">
+            @for (section of filteredSections(); track section.id) {
+            @if (section.id === 'terminal') {
+            <div class="config-section">
+              <button class="section-header" (click)="toggleSection(section.id)">
+                <atk-icon [name]="section.icon" [size]="16" color="var(--color-fg-default)"></atk-icon>
+                <span class="section-title">{{ section.title }}</span>
+                <atk-icon name="chevron-down" [size]="14" color="var(--color-fg-muted)"
+                  [class.rotated]="!section.isExpanded">
+                </atk-icon>
+              </button>
+
+              @if (section.isExpanded) {
+              <div class="section-content">
+                @for (item of section.items; track item.id) {
+                <div class="config-item">
+
+                  @if (item.type === 'range') {
+                  <label class="item-label">{{ item.label }} <span class="range-value">({{ item.value }})</span></label>
+                  <input type="range" class="item-range" [min]="item.min" [max]="item.max" [step]="item.step"
+                    [value]="item.value" [disabled]="item.disabled || isLoading()"
+                    (input)="onConfigItemChange(section.id, item.id, +$any($event.target).value)">
+                  @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                  }
+                  }
+
+                  @if (item.type === 'toggle') {
+                  <div class="item-toggle-wrapper">
+                    <label class="item-label">{{ item.label }}</label>
+                    <label class="toggle-switch">
+                      <input type="checkbox" [checked]="item.value" [disabled]="item.disabled || isLoading()"
+                        (change)="onConfigItemChange(section.id, item.id, $any($event.target).checked)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                  @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                  }
+                  }
+
+                  @if (item.type === 'select') {
+                  <label class="item-label">{{ item.label }}</label>
+                  <select class="item-select" [value]="item.value" [disabled]="item.disabled || isLoading()"
+                    (change)="onConfigItemChange(section.id, item.id, $any($event.target).value)">
+                    @for (option of item.options; track option.value) {
+                    <option [value]="option.value" [disabled]="option.disabled">
+                      {{ option.label }}
+                    </option>
+                    }
+                  </select>
+                  @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                  }
+                  }
+
+                </div>
+                }
+              </div>
+              }
+            </div>
+            }
+            }
+          </div>
+          }
+
+          <!-- Actions Tab -->
+          @if (activeTab() === 'actions') {
+          <div class="config-tab-content">
+            @for (section of filteredSections(); track section.id) {
+            @if (section.id === 'actions') {
+            <div class="config-section">
+              <button class="section-header" (click)="toggleSection(section.id)">
+                <atk-icon [name]="section.icon" [size]="16" color="var(--color-fg-default)"></atk-icon>
+                <span class="section-title">{{ section.title }}</span>
+                <atk-icon name="chevron-down" [size]="14" color="var(--color-fg-muted)"
+                  [class.rotated]="!section.isExpanded">
+                </atk-icon>
+              </button>
+
+              @if (section.isExpanded) {
+              <div class="section-content">
+                @for (item of section.items; track item.id) {
+                <div class="config-item">
+
+                  @if (item.type === 'button') {
+                  <button class="item-button action-button" [class]="'btn-' + (item.variant || 'secondary')"
+                    [disabled]="item.disabled || isLoading()" (click)="executeAction(item.id)">
+                    @switch (item.id) {
+                    @case ('clear-terminal') {
+                    <atk-icon name="trash-2" [size]="14" color="currentColor"></atk-icon>
+                    }
+                    @case ('export-logs') {
+                    <atk-icon name="download" [size]="14" color="currentColor"></atk-icon>
+                    }
+                    @case ('export-data') {
+                    <atk-icon name="file-down" [size]="14" color="currentColor"></atk-icon>
+                    }
+                    @case ('test-connection') {
+                    <atk-icon name="wifi" [size]="14" color="currentColor"></atk-icon>
+                    }
+                    @case ('reload-config') {
+                    <atk-icon name="refresh-cw" [size]="14" color="currentColor"></atk-icon>
+                    }
+                    @default {
+                    <atk-icon name="play" [size]="14" color="currentColor"></atk-icon>
+                    }
+                    }
+                    {{ item.label }}
+                  </button>
+                  @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                  }
+                  }
+
+                </div>
+                }
+              </div>
+              }
+            </div>
+            }
+            }
+          </div>
+          }
+
+        </div>
+
+        <!-- Error Display -->
+        @if (hasError() && terminalState()?.error; as error) {
+        <div class="bash-config-error">
+          <atk-icon name="alert-circle" [size]="16" color="var(--color-danger-fg)"></atk-icon>
+          <span class="error-message">{{ error }}</span>
+          <button class="error-dismiss" (click)="executeAction('clear-error')">
+            <atk-icon name="x" [size]="12" color="var(--color-fg-muted)"></atk-icon>
           </button>
         </div>
+        }
 
-        @if (parameters() | keyvalue; as paramEntries) {
-        @if (paramEntries.length > 0) {
-        <div class="cmd-params">
-          @for (param of paramEntries; track param.key) {
-          <div class="param-item">
-            <span class="param-key">{{ param.key }}:</span>
-            <span class="param-value">{{ param.value }}</span>
+        <!-- Footer Actions -->
+        <footer class="bash-config-footer">
+          <div class="footer-actions">
+            <button class="footer-btn secondary" (click)="exportConfig()" [disabled]="isLoading()">
+              <atk-icon name="download" [size]="14" color="currentColor"></atk-icon>
+              Export
+            </button>
+            <button class="footer-btn warning" (click)="resetToDefaults()" [disabled]="isLoading()">
+              <atk-icon name="rotate-ccw" [size]="14" color="currentColor"></atk-icon>
+              Reset
+            </button>
+          </div>
+
+          <!-- Quick Stats -->
+          @if (terminalState()?.responseMetadata; as meta) {
+          <div class="quick-stats">
+            <div class="stat-item">
+              <span class="stat-label">Records:</span>
+              <span class="stat-value">{{ meta.dataCount || 0 }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Response:</span>
+              <span class="stat-value">{{ meta.responseTime || 0 }}ms</span>
+            </div>
           </div>
           }
-        </div>
-        }
-        }
+        </footer>
+
       </div>
-      }
-
-      <!-- Action Buttons Section -->
-      <div class="config-section">
-        <div class="config-title has-hover-dot" data-hover-color="orange" hoverDot icon="radio-dot">
-          <div class="config-title-text">Actions</div>
-        </div>
-
-        <!-- Primary Load Data Button -->
-        <button class="cmd-btn cmd-btn-primary" (click)="onLoadData()" [disabled]="loading() || !currentEndpoint()">
-          <div class="cmd-btn-icon">
-            @if (loading()) {
-            <atk-icon name="loader" [size]="16" />
-            } @else {
-            <atk-icon name="database" [size]="16" />
-            }
-          </div>
-          <div class="cmd-btn-text">
-            {{ loading() ? 'Loading...' : 'Load Data' }}
-          </div>
-        </button>
-
-        <!-- Test Connection Button -->
-        <button class="cmd-btn" (click)="onTestConnection()" [disabled]="loading()">
-          <div class="cmd-btn-icon" [style.color]="'#10b981'">
-            <atk-icon name="wifi" [size]="16" />
-          </div>
-          <div class="cmd-btn-text">Test Connection</div>
-        </button>
-
-        <!-- Test Service Call Button -->
-        <button class="cmd-btn" (click)="onTestServiceCall()" [disabled]="loading()">
-          <div class="cmd-btn-icon" [style.color]="'#8b5cf6'">
-            <atk-icon name="settings" [size]="16" />
-          </div>
-          <div class="cmd-btn-text">Test Service Call</div>
-        </button>
-
-        <!-- Test Direct HTTP Button -->
-        <button class="cmd-btn" (click)="onTestDirectHttp()" [disabled]="loading()">
-          <div class="cmd-btn-icon" [style.color]="'#f59e0b'">
-            <atk-icon name="zap" [size]="16" />
-          </div>
-          <div class="cmd-btn-text">Test Direct HTTP</div>
-        </button>
-      </div>
-
-      <!-- Utility Actions Section -->
-      <div class="config-section">
-        <div class="config-title has-hover-dot" data-hover-color="gray" hoverDot icon="radio-dot">
-          <div class="config-title-text">Utilities</div>
-        </div>
-
-        <!-- Clear Cache Button -->
-        <button class="cmd-btn cmd-btn-warning" (click)="onClearCache()" [disabled]="loading()">
-          <div class="cmd-btn-icon">
-            <atk-icon name="trash-2" [size]="16" />
-          </div>
-          <div class="cmd-btn-text">Clear Cache</div>
-        </button>
-
-        <!-- Export Data Button -->
-        <button class="cmd-btn" (click)="onExportData()" [disabled]="loading()">
-          <div class="cmd-btn-icon">
-            <atk-icon name="download" [size]="16" />
-          </div>
-          <div class="cmd-btn-text">Export Data</div>
-        </button>
-      </div>
-
-      <!-- Debug Information -->
-      @if (!isCollapsed()) {
-      <div class="config-section">
-        <div class="config-title has-hover-dot" data-hover-color="gray" hoverDot icon="radio-dot">
-          <div class="config-title-text">Debug Info</div>
-        </div>
-
-        <div class="debug-info">
-          <div class="debug-item">
-            <span class="debug-label">Config ID:</span>
-            <span class="debug-value">{{ configId() }}</span>
-          </div>
-          <div class="debug-item">
-            <span class="debug-label">Endpoint:</span>
-            <span class="debug-value">{{ currentEndpoint() }}</span>
-          </div>
-          <div class="debug-item">
-            <span class="debug-label">Loading:</span>
-            <span class="debug-value">{{ loading() ? 'Yes' : 'No' }}</span>
-          </div>
-          <div class="debug-item">
-            <span class="debug-label">Parameters:</span>
-            <span class="debug-value">{{ parameters() | json }}</span>
-          </div>
-        </div>
-      </div>
-      }
     </div>
   </div>
 </aside>

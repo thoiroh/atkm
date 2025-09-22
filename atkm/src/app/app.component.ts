@@ -6,21 +6,6 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, CommonModule],
-  template: `
-      <main class="">
-        <router-outlet></router-outlet>
-      </main>
-  `,
-  styles: [`
-    main {
-      min-height: 10vh;
-      background-color: #f8f9fa;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-
-  `]
+  template: `<router-outlet></router-outlet>`,
 })
-export class AppComponent {
-  title = 'atomeek-datamatrix';
-}
+export class AppComponent { }

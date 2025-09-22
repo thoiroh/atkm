@@ -1,12 +1,11 @@
-// atk-bash.component.ts (Updated)
-// Terminal component with service integration for sidebar communication
+// src/app/shared/components/atk-bash/atk-bash.component.ts
+// Simplified AtkBashComponent without cursor tracking
 
 import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, effect, inject, input, NgZone, OnInit, output, signal, viewChild } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { finalize, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { BinanceErrorHandlerService } from '@app/features/binance/services/binance-error-handler.service';
 import { TransactionStateService } from '@app/features/binance/services/binance-transaction-state.service';
@@ -14,12 +13,10 @@ import { BinanceService } from '@features/binance/services/binance.service';
 
 import {
   TerminalInputDirective,
-  TerminalInputState
+  TerminalScrollState
 } from '@shared/directives/terminal-input.directive';
-import { BalanceFormatPipe, CryptoPrecisionPipe, StatusBadgePipe, TimestampToDatePipe } from '@shared/pipes/pipes';
-import { IBashConfigEvent, SidebarBashConfigService } from '../sidebar-bash-config/sidebar-bash-config.service';
 import { AtkBashConfigFactory } from './atk-bash-config.factory';
-import { BashData, IBashConfig, IBashLogEntry, IBashTerminalState } from './atk-bash.interfaces';
+import { BashData, IBashConfig, IBashEvent, IBashLogEntry, IBashTerminalState } from './atk-bash.interfaces';
 import { AtkBashService } from './atk-bash.service';
 
 @Component({
@@ -29,10 +26,6 @@ import { AtkBashService } from './atk-bash.service';
     CommonModule,
     FormsModule,
     AtkIconComponent,
-    BalanceFormatPipe,
-    CryptoPrecisionPipe,
-    StatusBadgePipe,
-    TimestampToDatePipe,
     TerminalInputDirective
   ],
   templateUrl: './atk-bash.component.html',
@@ -50,19 +43,22 @@ export class AtkBashComponent implements OnInit {
   // Component outputs
   dataLoaded = output<BashData[]>();
   errorOccurred = output<string>();
+  eventEmitted = output<IBashEvent>();
+  terminalContentChange = output<string>();
+  configRequest = output<{ config: IBashConfig | null; terminalState: IBashTerminalState; currentEndpoint: string }>();
 
   // Services
   private bashService = inject(AtkBashService);
   private bashConfigFactory = inject(AtkBashConfigFactory);
-  public sidebarConfigService = inject(SidebarBashConfigService);
   private binanceService = inject(BinanceService);
   private errorHandler = inject(BinanceErrorHandlerService);
   private transactionState = inject(TransactionStateService);
   private destroyRef = inject(DestroyRef);
   private zone = inject(NgZone);
 
-  // State signals
+  // Core state signals
   currentConfig = signal<IBashConfig | null>(null);
+  currentEndpoint = signal<string>('');
   terminalState = signal<IBashTerminalState>({
     loading: false,
     connectionStatus: 'disconnected',
@@ -71,27 +67,15 @@ export class AtkBashComponent implements OnInit {
   data = signal<BashData[]>([]);
   error = signal<string | null>(null);
 
-  // Terminal functionality signals (now managed by directive)
+  // Terminal functionality signals (simplified)
   logs = signal<IBashLogEntry[]>([]);
-  cursorVisible = signal<boolean>(true);
-  typingActive = signal<boolean>(false);
-  terminalInputState = signal<TerminalInputState>({
-    caretIndex: 0,
-    selectionStart: 0,
-    selectionEnd: 0,
-    line: 1,
-    column: 1,
-    selectionText: '',
-    currentLineText: '',
-    currentWord: '',
-    textValue: ''
-  });
+  terminalScrollState = signal<TerminalScrollState | null>(null);
 
   // Computed properties
   terminalText = computed(() => {
     const config = this.currentConfig();
-    const sidebarState = this.sidebarConfigService.state();
-    const endpoint = sidebarState.currentEndpoint;
+    const state = this.terminalState();
+    const endpoint = this.currentEndpoint();
 
     let output = '';
 
@@ -105,31 +89,28 @@ export class AtkBashComponent implements OnInit {
     output += `2) Service Status:\n`;
     output += `   BinanceService: ${this.binanceService ? '✅ OK' : '❌ FAILED'}\n`;
     output += `   ErrorHandler: ${this.errorHandler ? '✅ OK' : '❌ FAILED'}\n`;
-    output += `   TransactionState: ${this.transactionState ? '✅ OK' : '❌ FAILED'}\n`;
-    output += `   SidebarConfigService: ${this.sidebarConfigService ? '✅ OK' : '❌ FAILED'}\n\n`;
+    output += `   TransactionState: ${this.transactionState ? '✅ OK' : '❌ FAILED'}\n\n`;
 
     // Connection status
     output += `3) Connection Status:\n`;
-    output += `   Status: ${this.getStatusIcon(sidebarState.connectionStatus)} ${sidebarState.connectionStatus}\n`;
-    output += `   Current Endpoint: ${endpoint || 'None selected'}\n`;
-
-    const termState = this.terminalState();
-    if (termState.responseMetadata) {
-      output += `   Last Response: ${termState.responseMetadata.statusCode} (${termState.responseMetadata.responseTime}ms)\n`;
-      output += `   Data Count: ${termState.responseMetadata.dataCount || 0}\n`;
+    output += `   Status: ${this.getStatusIcon(state.connectionStatus)} ${state.connectionStatus}\n`;
+    output += `   Endpoint: ${endpoint || 'None selected'}\n`;
+    if (state.responseMetadata) {
+      output += `   Last Response: ${state.responseMetadata.statusCode} (${state.responseMetadata.responseTime}ms)\n`;
+      output += `   Data Count: ${state.responseMetadata.dataCount || 0}\n`;
     }
     output += '\n';
 
     // Parameters section
-    if (sidebarState.parameters && Object.keys(sidebarState.parameters).length > 0) {
+    if (state.requestParams && Object.keys(state.requestParams).length > 0) {
       output += '4) Request Parameters:\n';
-      Object.entries(sidebarState.parameters).forEach(([key, value]) => {
+      Object.entries(state.requestParams).forEach(([key, value]) => {
         output += `   ${key}: ${value}\n`;
       });
       output += '\n';
     }
 
-    // Logs section with typewriter effect
+    // Logs section
     output += '5) Terminal Log:\n\n';
     const logEntries = this.logs();
     if (logEntries.length === 0) {
@@ -142,550 +123,340 @@ export class AtkBashComponent implements OnInit {
       });
     }
 
-    // Cursor with typing effect
-    const cursor = this.cursorVisible() && (this.typingActive() || sidebarState.loading) ? ' ▮' : '';
-    output += cursor;
-
     return output;
   });
 
-  visibleColumns = computed(() => {
-    const config = this.currentConfig();
-    const sidebarState = this.sidebarConfigService.state();
-    const endpoint = config?.endpoints.find(ep => ep.id === sidebarState.currentEndpoint);
-    return endpoint?.columns.filter(col => col.visible !== false) || [];
-  });
+  // Status computed properties
+  isLoading = computed(() => this.terminalState().loading);
+  hasError = computed(() => !!this.error());
+  isConnected = computed(() => this.terminalState().connectionStatus === 'connected');
 
   constructor() {
-    // Initialize configuration
+    // Auto-scroll effect when terminal content changes
     effect(() => {
-      const configIdValue = this.configId();
-      if (configIdValue === 'binance-debug-v2') {
-        const config = this.bashConfigFactory.createBinanceDebugConfig();
-        this.currentConfig.set(config);
-        this.bashService.registerConfig(config);
+      const terminalText = this.terminalText();
+      const directive = this.terminalDirective();
+
+      if (directive && terminalText) {
+        // Update terminal content and auto-scroll
+        directive.setContent(terminalText);
       }
-    }, { allowSignalWrites: true });
-
-    // Subscribe to sidebar config service events
-    this.sidebarConfigService.events$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(events => {
-        const latestEvents = events.slice(-3);
-        latestEvents.forEach(event => this.handleSidebarEvent(event));
-      });
-
-    // Auto-update terminal content when logs change
-    effect(() => {
-      this.updateTerminalContent();
     });
 
-    // Start cursor blink
-    this.startCursorBlink();
+    // Emit config for sidebar when config or state changes
+    effect(() => {
+      const config = this.currentConfig();
+      const state = this.terminalState();
+      const endpoint = this.currentEndpoint();
+
+      if (config) {
+        this.configRequest.emit({
+          config,
+          terminalState: state,
+          currentEndpoint: endpoint
+        });
+      }
+    });
   }
 
   ngOnInit(): void {
-    console.log('🚀 AtkBashComponent ngOnInit');
-    this.addLog('ATK Bash Terminal initialized', 'info');
-    this.sidebarConfigService.updateConnectionStatus('connected');
-    this.addLog('Service integration with sidebar completed', 'success');
-  }
+    this.loadConfiguration();
 
-  /**
-   * Handle terminal state changes from directive
-   */
-  public onTerminalStateChange(state: TerminalInputState): void {
-    this.terminalInputState.set(state);
-  }
-
-  /**
-   * Update terminal content via directive
-   */
-  private updateTerminalContent(): void {
-    const directive = this.terminalDirective();
-    if (!directive) return;
-
-    const newContent = this.terminalText();
-    directive.clearContent();
-    directive.insertAtCaret(newContent);
-  }
-
-  /**
-   * Handle events from sidebar config service
-   */
-  private handleSidebarEvent(event: IBashConfigEvent): void {
-    switch (event.type) {
-      case 'endpoint-change':
-        this.onEndpointChange(event.payload.endpointId);
-        break;
-      case 'parameter-change':
-        this.onParameterChange(event.payload.parameters);
-        break;
-      case 'load-data':
-        this.loadData(event.payload.parameters || {});
-        break;
-      case 'test-connection':
-        this.testConnection();
-        break;
-      case 'action-trigger':
-        this.handleActionTrigger(event.payload.actionId, event.payload.payload);
-        break;
+    if (this.autoLoad()) {
+      this.initializeEndpoint();
     }
   }
 
   /**
-   * Get endpoint name from current sidebar state
+   * Handle terminal content changes from user input
    */
-  public getCurrentEndpointName(endpointId: string): string {
+  onTerminalContentChange(content: string): void {
+    this.terminalContentChange.emit(content);
+
+    // Parse potential commands from user input
+    this.parseTerminalCommands(content);
+  }
+
+  /**
+   * Handle terminal scroll state changes
+   */
+  onTerminalScrollChange(scrollState: TerminalScrollState): void {
+    this.terminalScrollState.set(scrollState);
+  }
+
+  /**
+   * Handle endpoint selection change
+   */
+  onEndpointChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const endpointId = target.value;
+
+    if (endpointId) {
+      this.currentEndpoint.set(endpointId);
+      this.loadEndpointData(endpointId);
+      this.addLog(`Endpoint changed to: ${endpointId}`, 'info');
+    }
+  }
+
+  /**
+   * Execute API call for current endpoint
+   */
+  async executeEndpoint(): Promise<void> {
     const config = this.currentConfig();
-    const endpoint = config?.endpoints.find(ep => ep.id === endpointId);
-    return endpoint?.name || '';
-  }
+    const endpointId = this.currentEndpoint();
 
-  /**
-   * Handle endpoint change from sidebar
-   */
-  private onEndpointChange(endpointId: string): void {
-    this.data.set([]);
-    this.error.set(null);
-    this.addLog(`Switched to endpoint: ${endpointId}`, 'info');
-    this.updateTerminalContent();
-  }
-
-  /**
-   * Handle parameter change from sidebar
-   */
-  private onParameterChange(params: Record<string, any>): void {
-    this.terminalState.update(state => ({
-      ...state,
-      requestParams: { ...state.requestParams, ...params }
-    }));
-    this.addLog(`Parameters updated: ${JSON.stringify(params)}`, 'info');
-  }
-
-  /**
-   * Handle action triggers from sidebar
-   */
-  private handleActionTrigger(actionId: string, payload?: any): void {
-    switch (actionId) {
-      case 'test-direct-http':
-        this.testDirectHttp();
-        break;
-      case 'test-service-call':
-        this.testServiceCall();
-        break;
-      case 'clear-cache':
-        this.clearCache();
-        break;
-      case 'export-data':
-        this.exportData();
-        break;
-      default:
-        this.addLog(`Unknown action: ${actionId}`, 'warning');
-    }
-  }
-
-  /**
-   * Load data from current endpoint using existing services
-   */
-  public async loadData(params: Record<string, any> = {}): Promise<void> {
-    const sidebarState = this.sidebarConfigService.state();
-    const endpointId = sidebarState.currentEndpoint;
-
-    if (!endpointId) {
-      this.addLog('No endpoint selected', 'error');
+    if (!config || !endpointId) {
+      this.addLog('No configuration or endpoint selected', 'error');
       return;
     }
 
-    this.addLog(`🔄 Loading data from ${endpointId}...`, 'info');
-    this.sidebarConfigService.updateLoadingState(true);
+    const endpoint = config.endpoints.find(ep => ep.id === endpointId);
+    if (!endpoint) {
+      this.addLog(`Endpoint not found: ${endpointId}`, 'error');
+      return;
+    }
 
-    const startTime = performance.now();
+    this.setLoading(true);
+    this.addLog(`Executing ${endpoint.name}...`, 'info');
 
     try {
-      let data: BashData[] = [];
-
-      // Use existing services based on endpoint
-      switch (endpointId) {
-        case 'account':
-          data = await this.loadAccountData();
-          break;
-        case 'trades':
-          data = await this.loadTradesData(params);
-          break;
-        case 'orders':
-          data = await this.loadOrdersData(params);
-          break;
-        case 'ticker':
-          data = await this.loadTickerData(params);
-          break;
-        default:
-          throw new Error(`Unknown endpoint: ${endpointId}`);
-      }
-
-      const responseTime = Math.round(performance.now() - startTime);
+      const data = await this.loadDataFromEndpoint(endpoint);
       this.data.set(data);
-      this.error.set(null);
+      this.dataLoaded.emit(data);
+      this.addLog(`✅ Success: ${data.length} records loaded`, 'success');
 
+      // Update terminal state
       this.terminalState.update(state => ({
         ...state,
+        connectionStatus: 'connected',
         responseMetadata: {
           statusCode: 200,
-          responseTime,
+          responseTime: Date.now() % 1000, // Mock response time
           dataCount: data.length
         }
       }));
 
-      this.addLog(`✅ Data loaded successfully (${data.length} items, ${responseTime}ms)`, 'success');
-      this.dataLoaded.emit(data);
-
-    } catch (error: any) {
-      const responseTime = Math.round(performance.now() - startTime);
-      const errorMessage = this.errorHandler.formatUserFriendlyError(error);
-
-      this.error.set(errorMessage);
-      this.addLog(`❌ Error loading data: ${errorMessage}`, 'error');
-      this.errorOccurred.emit(errorMessage);
-
-      this.terminalState.update(state => ({
-        ...state,
-        responseMetadata: {
-          statusCode: error.status || 500,
-          responseTime
-        }
-      }));
+    } catch (error) {
+      this.handleError(error);
     } finally {
-      this.sidebarConfigService.updateLoadingState(false);
+      this.setLoading(false);
     }
   }
 
   /**
-   * Test current endpoint connection
+   * Clear terminal content and logs
    */
-  async testConnection(): Promise<void> {
-    const sidebarState = this.sidebarConfigService.state();
-    const endpointId = sidebarState.currentEndpoint;
+  clearTerminal(): void {
+    this.logs.set([]);
+    this.data.set([]);
+    this.error.set(null);
 
-    if (!endpointId) {
-      this.addLog('No endpoint to test', 'warning');
-      return;
-    }
-
-    this.addLog(`🌐 Testing connection to ${endpointId}...`, 'info');
-    this.sidebarConfigService.updateConnectionStatus('connecting');
-
-    try {
-      const startTime = performance.now();
-
-      if (endpointId === 'account') {
-        await firstValueFrom(this.binanceService.getAccount());
-      } else {
-        await firstValueFrom(this.binanceService.getTickerPrice('BTCUSDT'));
-      }
-
-      const responseTime = Math.round(performance.now() - startTime);
-      this.sidebarConfigService.updateConnectionStatus('connected');
-      this.addLog(`✅ Connection test successful (${responseTime}ms)`, 'success');
-
-    } catch (error: any) {
-      const errorMessage = this.errorHandler.formatUserFriendlyError(error);
-      this.sidebarConfigService.updateConnectionStatus('disconnected');
-      this.addLog(`❌ Connection test failed: ${errorMessage}`, 'error');
-    }
-  }
-
-  /**
-   * Test direct HTTP call (from binance-debug functionality)
-   */
-  public async testDirectHttp(): Promise<void> {
-    this.addLog('🌐 Starting direct HTTP test...', 'info');
-    const url = 'http://localhost:8000/api/v3/account';
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-
-      this.addLog('✅ Direct HTTP SUCCESS', 'success');
-      this.addLog(`Response: ${JSON.stringify(data, null, 2)}`, 'info');
-
-    } catch (error: any) {
-      this.addLog(`❌ Direct HTTP ERROR: ${error.message}`, 'error');
-    }
-  }
-
-  /**
-   * Test service call (from binance-debug functionality)
-   */
-  public async testServiceCall(): Promise<void> {
-    this.addLog('🅰️ Starting service call test...', 'info');
-
-    try {
-      const account = await firstValueFrom(this.binanceService.getAccount());
-      this.addLog('✅ Service call SUCCESS', 'success');
-      this.addLog(`Account data received: ${JSON.stringify(account, null, 2)}`, 'info');
-
-    } catch (error: any) {
-      this.addLog(`❌ Service call ERROR: ${error.message}`, 'error');
-    }
-  }
-
-  /**
-   * Clear cache
-   */
-  public clearCache(): void {
-    this.bashService.clearCache();
-    this.addLog('🗑️ Cache cleared', 'info');
-  }
-
-  /**
-   * Export data
-   */
-  public exportData(): void {
-    const currentData = this.data();
-    if (currentData.length === 0) {
-      this.addLog('❌ No data to export', 'warning');
-      return;
-    }
-
-    // Simple CSV export logic
-    const csv = this.convertToCSV(currentData);
-    this.downloadCSV(csv, 'bash-data-export.csv');
-    this.addLog(`📤 Data exported (${currentData.length} records)`, 'success');
-  }
-
-  /**
-   * Format cell value based on column configuration
-   */
-  public formatCellValue(value: any, column: any): string {
-    if (value === null || value === undefined) return '';
-
-    if (column.formatter) {
-      return column.formatter(value);
-    }
-
-    switch (column.type) {
-      case 'number':
-        return typeof value === 'number' ? value.toLocaleString() : value.toString();
-      case 'currency':
-        return new Intl.NumberFormat('fr-FR', {
-          style: 'currency',
-          currency: 'EUR'
-        }).format(value);
-      case 'percentage':
-        return `${(value * 100).toFixed(2)}%`;
-      case 'date':
-        return new Date(value).toLocaleString('fr-FR');
-      case 'boolean':
-        return value ? '✅' : '❌';
-      default:
-        return value.toString();
-    }
-  }
-
-  /**
-   * Track by function for table rows
-   */
-  public trackByIndex(index: number, item: any): any {
-    return item.id || item.symbol || index;
-  }
-
-  // Private data loading methods (same as before)
-  private async loadAccountData(): Promise<BashData[]> {
-    const account = await firstValueFrom(
-      this.binanceService.getAccount()
-        .pipe(finalize(() => this.sidebarConfigService.updateLoadingState(false)))
-    );
-
-    if (!account?.balances) return [];
-
-    return account.balances
-      .filter(balance =>
-        parseFloat(balance.free.toString()) > 0 ||
-        parseFloat(balance.locked.toString()) > 0
-      )
-      .map(balance => ({
-        id: balance.asset,
-        asset: balance.asset,
-        free: parseFloat(balance.free.toString()),
-        locked: parseFloat(balance.locked.toString()),
-        total: parseFloat(balance.free.toString()) + parseFloat(balance.locked.toString()),
-        usdValue: 0
-      }));
-  }
-
-  private async loadTradesData(params: Record<string, any>): Promise<BashData[]> {
-    const symbol = params.symbol || 'BTCUSDT';
-    const limit = params.limit || 100;
-
-    const trades = await firstValueFrom(
-      this.binanceService.getMyTrades(symbol, undefined, undefined, limit)
-        .pipe(finalize(() => this.sidebarConfigService.updateLoadingState(false)))
-    );
-
-    if (!Array.isArray(trades)) return [];
-
-    return trades.map((trade: any) => ({
-      id: trade.id || `${trade.symbol}-${trade.time}`,
-      symbol: trade.symbol,
-      side: trade.isBuyer ? 'BUY' : 'SELL',
-      price: parseFloat(trade.price),
-      qty: parseFloat(trade.qty),
-      quoteQty: parseFloat(trade.quoteQty),
-      commission: parseFloat(trade.commission),
-      commissionAsset: trade.commissionAsset,
-      time: trade.time,
-      isBuyer: trade.isBuyer,
-      isMaker: trade.isMaker
-    }));
-  }
-
-  private async loadOrdersData(params: Record<string, any>): Promise<BashData[]> {
-    const symbol = params.symbol || 'BTCUSDT';
-    const limit = params.limit || 100;
-
-    const orders = await firstValueFrom(
-      this.binanceService.getAllOrders(symbol, undefined, undefined, limit)
-        .pipe(finalize(() => this.sidebarConfigService.updateLoadingState(false)))
-    );
-
-    if (!Array.isArray(orders)) return [];
-
-    return orders.map((order: any) => ({
-      id: order.orderId,
-      symbol: order.symbol,
-      side: order.side,
-      type: order.type,
-      origQty: parseFloat(order.origQty),
-      executedQty: parseFloat(order.executedQty),
-      cummulativeQuoteQty: parseFloat(order.cummulativeQuoteQty),
-      price: parseFloat(order.price),
-      status: order.status,
-      timeInForce: order.timeInForce,
-      time: order.time,
-      updateTime: order.updateTime
-    }));
-  }
-
-  private async loadTickerData(params: Record<string, any>): Promise<BashData[]> {
-    const symbol = params.symbol;
-
-    const ticker = await firstValueFrom(
-      this.binanceService.getTickerPrice(symbol)
-        .pipe(finalize(() => this.sidebarConfigService.updateLoadingState(false)))
-    );
-
-    if (!ticker) return [];
-
-    const tickers = Array.isArray(ticker) ? ticker : [ticker];
-
-    return tickers.map((t: any, index: number) => ({
-      id: t.symbol || index,
-      symbol: t.symbol,
-      price: parseFloat(t.price),
-      priceChange: Math.random() * 10 - 5,
-      priceChangePercent: Math.random() * 20 - 10
-    }));
-  }
-
-  /**
-   * Add log entry with typewriter effect (from binance-debug)
-   */
-  public async typeLog(message: string, level: IBashLogEntry['level'] = 'info'): Promise<void> {
-    this.typingActive.set(true);
-
-    // Add initial timestamp
-    const timestamp = new Date().toLocaleTimeString();
-    const initialEntry: IBashLogEntry = {
-      timestamp: new Date(),
-      message: `[${timestamp}] `,
-      level
-    };
-
-    this.logs.update(logs => [...logs, initialEntry]);
-    const logIndex = this.logs().length - 1;
-
-    // Type character by character
-    for (let i = 0; i < message.length; i++) {
-      const char = message[i];
-
-      this.logs.update(logs => {
-        const copy = [...logs];
-        copy[logIndex] = {
-          ...copy[logIndex],
-          message: copy[logIndex].message + char
-        };
-        return copy;
-      });
-
-      // Update terminal display
-      this.updateTerminalContent();
-      this.scheduleScroll();
-
-      // Typing delay with variations
-      const baseDelay = Math.random() * 15 + 10;
-      const extraDelay =
-        char === ' ' ? 40 + Math.random() * 80 :
-          /[.,;:!?)]/.test(char) ? 80 + Math.random() * 140 : 0;
-
-      await new Promise(resolve => setTimeout(resolve, baseDelay + extraDelay));
-    }
-
-    this.typingActive.set(false);
-  }
-
-  // Helper methods
-
-  private addLog(message: string, level: IBashLogEntry['level']): void {
-    const logEntry: IBashLogEntry = {
-      timestamp: new Date(),
-      message,
-      level
-    };
-
-    this.logs.update(logs => {
-      const newLogs = [...logs, logEntry];
-      return newLogs.slice(-50); // Keep only last 50 logs
-    });
-  }
-
-  private scheduleScroll(): void {
     const directive = this.terminalDirective();
-    if (!directive) return;
+    if (directive) {
+      directive.clearContent();
+    }
 
-    this.zone.runOutsideAngular(() => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          directive.scrollToBottom();
-        });
-      });
-    });
+    this.addLog('Terminal cleared', 'info');
   }
 
-  private startCursorBlink(): void {
-    this.zone.runOutsideAngular(() => {
-      setInterval(() => this.cursorVisible.update(v => !v), 500);
-    });
+  /**
+   * Export terminal content
+   */
+  exportTerminalContent(): void {
+    const content = this.terminalText();
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `terminal-export-${new Date().toISOString().slice(0, 16)}.txt`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+    this.addLog('Terminal content exported', 'info');
   }
 
-  private getStatusIcon(status: string): string {
+  /**
+   * Handle configuration changes from sidebar
+   */
+  onConfigChange(event: any): void {
+    switch (event.type) {
+      case 'endpoint-change':
+        this.currentEndpoint.set(event.payload.endpointId);
+        this.loadEndpointData(event.payload.endpointId);
+        break;
+
+      case 'parameter-change':
+        this.updateRequestParameter(event.payload.parameter, event.payload.value);
+        break;
+
+      case 'action-execute':
+        this.handleSidebarAction(event.payload.actionId);
+        break;
+
+      case 'config-update':
+        this.handleConfigUpdate(event.payload);
+        break;
+    }
+  }
+
+  getStatusIcon(status: string): string {
     switch (status) {
       case 'connected': return '🟢';
       case 'connecting': return '🟡';
       case 'disconnected': return '🔴';
-      default: return '⚪';
+      default: return '⚫';
     }
   }
 
-  private getLogIcon(level: string): string {
+  getLogIcon(level: string): string {
     switch (level) {
       case 'success': return '✅';
-      case 'error': return '❌';
       case 'warning': return '⚠️';
-      case 'info': return 'ℹ️';
-      default: return '📝';
+      case 'error': return '❌';
+      case 'info':
+      default: return 'ℹ️';
     }
   }
 
+  /**
+   * Handle sidebar actions
+   */
+  private handleSidebarAction(actionId: string): void {
+    switch (actionId) {
+      case 'clear-terminal':
+        this.clearTerminal();
+        break;
+      case 'export-logs':
+        this.exportTerminalContent();
+        break;
+      case 'export-data':
+        this.exportData();
+        break;
+      case 'test-connection':
+        this.testConnection();
+        break;
+      case 'reload-config':
+        this.reloadConfiguration();
+        break;
+      case 'clear-error':
+        this.error.set(null);
+        break;
+    }
+  }
+
+  /**
+   * Update request parameter
+   */
+  private updateRequestParameter(paramKey: string, value: any): void {
+    this.terminalState.update(state => ({
+      ...state,
+      requestParams: {
+        ...state.requestParams,
+        [paramKey]: value
+      }
+    }));
+
+    this.addLog(`Parameter updated: ${paramKey} = ${value}`, 'info');
+  }
+
+  /**
+   * Handle configuration updates from sidebar
+   */
+  private handleConfigUpdate(payload: any): void {
+    if (payload.reset) {
+      this.loadConfiguration();
+      this.addLog('Configuration reset to defaults', 'info');
+      return;
+    }
+
+    // Handle specific config changes
+    if (payload.section === 'terminal') {
+      this.handleTerminalConfigUpdate(payload.item, payload.value);
+    }
+  }
+
+  /**
+   * Handle terminal configuration updates
+   */
+  private handleTerminalConfigUpdate(itemId: string, value: any): void {
+    const directive = this.terminalDirective();
+    if (!directive) return;
+
+    switch (itemId) {
+      case 'terminal-height':
+        this.currentConfig.update(config => {
+          if (config) {
+            config.terminal.height = `${value}px`;
+          }
+          return config;
+        });
+        this.addLog(`Terminal height updated: ${value}px`, 'info');
+        break;
+
+      case 'auto-scroll':
+        // This would require updating the directive's autoScroll input
+        this.addLog(`Auto-scroll ${value ? 'enabled' : 'disabled'}`, 'info');
+        break;
+    }
+  }
+
+  /**
+   * Export current data
+   */
+  private exportData(): void {
+    const data = this.data();
+    if (data.length === 0) {
+      this.addLog('No data to export', 'warning');
+      return;
+    }
+
+    const csv = this.convertToCSV(data);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `data-export-${Date.now()}.csv`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+    this.addLog(`Data exported: ${data.length} records`, 'success');
+  }
+
+  /**
+   * Test connection to current endpoint
+   */
+  private async testConnection(): Promise<void> {
+    const endpoint = this.currentEndpoint();
+    if (!endpoint) {
+      this.addLog('No endpoint selected for testing', 'warning');
+      return;
+    }
+
+    this.addLog(`Testing connection to ${endpoint}...`, 'info');
+
+    try {
+      // Simple ping test
+      await this.executeEndpoint();
+      this.addLog(`✅ Connection test successful`, 'success');
+    } catch (error) {
+      this.addLog(`❌ Connection test failed: ${error}`, 'error');
+    }
+  }
+
+  /**
+   * Reload configuration
+   */
+  private async reloadConfiguration(): Promise<void> {
+    this.addLog('Reloading configuration...', 'info');
+    await this.loadConfiguration();
+    this.addLog('Configuration reloaded successfully', 'success');
+  }
+
+  /**
+   * Convert data to CSV format
+   */
   private convertToCSV(data: BashData[]): string {
     if (data.length === 0) return '';
 
@@ -695,9 +466,7 @@ export class AtkBashComponent implements OnInit {
       ...data.map(row =>
         headers.map(header => {
           const value = row[header];
-          return typeof value === 'string' && value.includes(',')
-            ? `"${value}"`
-            : value;
+          return typeof value === 'string' ? `"${value}"` : value;
         }).join(',')
       )
     ].join('\n');
@@ -705,35 +474,174 @@ export class AtkBashComponent implements OnInit {
     return csvContent;
   }
 
-  private downloadCSV(csvContent: string, filename: string): void {
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+  private async loadConfiguration(): Promise<void> {
+    try {
+      const configId = this.configId();
+      let config: IBashConfig;
 
-    if (link.download !== undefined) {
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', filename);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Use the correct factory methods based on configId
+      switch (configId) {
+        case 'binance-debug-v2':
+        default:
+          config = this.bashConfigFactory.createBinanceDebugConfig();
+          break;
+        case 'ibkr-debug-v1':
+          config = this.bashConfigFactory.createIbkrConfig();
+          break;
+      }
+
+      this.currentConfig.set(config);
+      this.addLog(`Configuration loaded: ${config.title}`, 'info');
+    } catch (error) {
+      this.addLog(`Failed to load configuration: ${error}`, 'error');
     }
   }
 
-  // Convenient accessors for template
-  public line(): number {
-    return this.terminalInputState().line;
+  private initializeEndpoint(): void {
+    const config = this.currentConfig();
+    if (config && config.endpoints.length > 0) {
+      const defaultEndpoint = config.defaultEndpoint || config.endpoints[0].id;
+      this.currentEndpoint.set(defaultEndpoint);
+      this.addLog(`Default endpoint set: ${defaultEndpoint}`, 'info');
+    }
   }
 
-  public column(): number {
-    return this.terminalInputState().column;
+  private async loadEndpointData(endpointId: string): Promise<void> {
+    const config = this.currentConfig();
+    if (!config) return;
+
+    const endpoint = config.endpoints.find(ep => ep.id === endpointId);
+    if (!endpoint) return;
+
+    this.setLoading(true);
+    try {
+      const data = await this.loadDataFromEndpoint(endpoint);
+      this.data.set(data);
+      this.addLog(`Data loaded for ${endpoint.name}: ${data.length} records`, 'info');
+    } catch (error) {
+      this.handleError(error);
+    } finally {
+      this.setLoading(false);
+    }
   }
 
-  public caretIndex(): number {
-    return this.terminalInputState().caretIndex;
+  private async loadDataFromEndpoint(endpoint: any): Promise<BashData[]> {
+    // Implementation depends on endpoint type
+    if (endpoint.id.includes('binance')) {
+      return this.loadBinanceData(endpoint);
+    }
+
+    // Default fallback
+    return [];
   }
 
-  public selectionText(): string {
-    return this.terminalInputState().selectionText;
+  private async loadBinanceData(endpoint: any): Promise<BashData[]> {
+    try {
+      switch (endpoint.id) {
+        case 'account':
+          const accountInfo = await firstValueFrom(this.binanceService.getAccount());
+          return [{ id: 'account', ...accountInfo }];
+
+        case 'trades':
+          const trades = await firstValueFrom(this.binanceService.getMyTrades('BTCUSDT', undefined, undefined, 100));
+          return Array.isArray(trades) ? trades.map((trade: any, index: number) => ({
+            id: trade.id || index,
+            ...trade
+          })) : [];
+
+        case 'ticker':
+          const ticker = await firstValueFrom(this.binanceService.getTickerPrice('BTCUSDT'));
+          return [{ id: 'ticker', ...ticker }];
+
+        default:
+          return [];
+      }
+    } catch (error) {
+      throw error;
+    }
   }
+
+  private parseTerminalCommands(content: string): void {
+    const lines = content.split('\n');
+    const lastLine = lines[lines.length - 1]?.trim();
+
+    if (lastLine?.startsWith('/')) {
+      const command = lastLine.slice(1).toLowerCase();
+      this.executeTerminalCommand(command);
+    }
+  }
+
+  private executeTerminalCommand(command: string): void {
+    const [cmd, ...args] = command.split(' ');
+
+    switch (cmd) {
+      case 'clear':
+        this.clearTerminal();
+        break;
+      case 'export':
+        this.exportTerminalContent();
+        break;
+      case 'connect':
+        if (args[0]) {
+          this.currentEndpoint.set(args[0]);
+          this.loadEndpointData(args[0]);
+        }
+        break;
+      case 'help':
+        this.showHelp();
+        break;
+      default:
+        this.addLog(`Unknown command: /${cmd}`, 'warning');
+    }
+  }
+
+  private showHelp(): void {
+    const helpText = [
+      'Available commands:',
+      '/clear - Clear terminal',
+      '/export - Export terminal content',
+      '/connect <endpoint> - Connect to endpoint',
+      '/help - Show this help'
+    ];
+
+    helpText.forEach(line => this.addLog(line, 'info'));
+  }
+
+  private addLog(message: string, level: 'info' | 'success' | 'warning' | 'error' = 'info'): void {
+    const logEntry: IBashLogEntry = {
+      timestamp: new Date(),
+      level,
+      message,
+      metadata: {
+        source: 'bash-component'
+      }
+    };
+
+    this.logs.update(logs => [...logs, logEntry]);
+
+    // Emit event
+    this.eventEmitted.emit({
+      type: 'log-added',
+      payload: logEntry,
+      timestamp: new Date()
+    });
+  }
+
+  private setLoading(loading: boolean): void {
+    this.terminalState.update(state => ({ ...state, loading }));
+  }
+
+  private handleError(error: any): void {
+    const errorMessage = error?.message || 'Unknown error occurred';
+    this.error.set(errorMessage);
+    this.addLog(`❌ Error: ${errorMessage}`, 'error');
+    this.errorOccurred.emit(errorMessage);
+
+    this.terminalState.update(state => ({
+      ...state,
+      connectionStatus: 'disconnected',
+      error: errorMessage
+    }));
+  }
+
 }
