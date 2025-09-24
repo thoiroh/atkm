@@ -1,0 +1,151 @@
+<div class="datatable-wrapper">
+      <!-- Table Header -->
+      <header class="datatable-header">
+        <div class="header-info">
+          <h3 class="table-title">{{ currentEndpoint()?.name || 'Data Table' }}</h3>
+          <span class="record-count">{{ data().length }} records</span>
+        </div>
+
+        <div class="header-actions">
+          @if (searchEnabled()) {
+          <div class="search-wrapper">
+            <atk-icon name="search" [size]="14" color="var(--color-fg-muted)"></atk-icon>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search..."
+              [value]="searchQuery()"
+              (input)="onSearchChange($any($event.target).value)"
+            >
+          </div>
+          }
+
+          <button class="export-btn" (click)="exportData()" [disabled]="data().length === 0">
+            <atk-icon name="download" [size]="14" color="currentColor"></atk-icon>
+            Export
+          </button>
+        </div>
+      </header>
+
+      <!-- Loading State -->
+      @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading data...</p>
+      </div>
+      }
+
+      <!-- Error State -->
+      @if (error()) {
+      <div class="error-state">
+        <atk-icon name="alert-circle" [size]="16" color="var(--color-danger-fg)"></atk-icon>
+        <p>{{ error() }}</p>
+        <button class="retry-btn" (click)="retryLoad.emit()">Retry</button>
+      </div>
+      }
+
+      <!-- Empty State -->
+      @if (!loading() && !error() && filteredData().length === 0 && data().length === 0) {
+      <div class="empty-state">
+        <atk-icon name="database" [size]="32" color="var(--color-fg-muted)"></atk-icon>
+        <p>No data available</p>
+        <p class="empty-description">Select an endpoint to load data</p>
+      </div>
+      }
+
+      <!-- No Results State -->
+      @if (!loading() && !error() && filteredData().length === 0 && data().length > 0) {
+      <div class="no-results-state">
+        <atk-icon name="search" [size]="24" color="var(--color-fg-muted)"></atk-icon>
+        <p>No results found for "{{ searchQuery() }}"</p>
+        <button class="clear-search-btn" (click)="clearSearch()">Clear search</button>
+      </div>
+      }
+
+      <!-- Data Table -->
+      @if (!loading() && !error() && filteredData().length > 0) {
+      <div class="datatable-container">
+        <table class="datatable">
+          <thead class="table-header">
+            <tr>
+              @for (column of visibleColumns(); track column.key) {
+              <th
+                class="header-cell"
+                [class]="'align-' + (column.align || 'left')"
+                [style.width]="column.width"
+                [class.sortable]="column.sortable"
+                (click)="column.sortable ? toggleSort(column.key) : null"
+              >
+                <div class="header-content">
+                  <span>{{ column.label }}</span>
+                  @if (column.sortable && sortColumn() === column.key) {
+                  <atk-icon
+                    [name]="sortDirection() === 'asc' ? 'chevron-up' : 'chevron-down'"
+                    [size]="12"
+                    color="var(--color-accent-fg)"
+                  ></atk-icon>
+                  }
+                </div>
+              </th>
+              }
+            </tr>
+          </thead>
+
+          <tbody class="table-body">
+            @for (row of paginatedData(); track trackByFn($index, row)) {
+            <tr
+              class="data-row"
+              [class.clickable]="rowClickable()"
+              (click)="onRowClick(row)"
+            >
+              @for (column of visibleColumns(); track column.key) {
+              <td
+                class="data-cell"
+                [class]="'align-' + (column.align || 'left') + ' ' + (column.cssClass || '')"
+                [class.has-value]="getCellValue(row, column) !== null && getCellValue(row, column) !== ''"
+              >
+                <div class="cell-content">
+                  {{ formatCellValue(row, column) }}
+                </div>
+              </td>
+              }
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (showPagination()) {
+      <footer class="datatable-footer">
+        <div class="pagination-info">
+          Showing {{ paginationStart() }}-{{ paginationEnd() }} of {{ filteredData().length }}
+        </div>
+
+        <div class="pagination-controls">
+          <button
+            class="pagination-btn"
+            [disabled]="currentPage() === 0"
+            (click)="goToPage(currentPage() - 1)"
+          >
+            <atk-icon name="chevron-left" [size]="14" color="currentColor"></atk-icon>
+            Previous
+          </button>
+
+          <span class="page-indicator">
+            Page {{ currentPage() + 1 }} of {{ totalPages() }}
+          </span>
+
+          <button
+            class="pagination-btn"
+            [disabled]="currentPage() >= totalPages() - 1"
+            (click)="goToPage(currentPage() + 1)"
+          >
+            Next
+            <atk-icon name="chevron-right" [size]="14" color="currentColor"></atk-icon>
+          </button>
+        </div>
+      </footer>
+      }
+      }
+    </div>

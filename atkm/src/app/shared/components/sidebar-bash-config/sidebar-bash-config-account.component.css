@@ -1,0 +1,420 @@
+/* Additional CSS for Account tab in SidebarBashConfigComponent */
+/* Add this to sidebar-bash-config.component.css */
+
+/* Account Tab Specific Styles */
+.account-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0;
+}
+
+/* Account Status Card */
+.account-status-card {
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.account-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.account-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.account-title h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+}
+
+.account-status-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.account-info-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border-muted);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 11px;
+  color: var(--color-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 12px;
+  color: var(--color-fg-default);
+  font-weight: 500;
+  text-align: right;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Account Capabilities Card */
+.account-capabilities-card {
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+}
+
+.capabilities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.capability-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--color-canvas-subtle);
+  border-radius: 4px;
+  border: 1px solid var(--color-border-muted);
+  transition: all 0.2s ease;
+}
+
+.capability-item.enabled {
+  background: var(--color-success-subtle);
+  border-color: var(--color-success-muted);
+}
+
+.capability-item:not(.enabled) {
+  background: var(--color-danger-subtle);
+  border-color: var(--color-danger-muted);
+}
+
+.capability-item span:nth-child(2) {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-fg-default);
+}
+
+.capability-status {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.capability-item.enabled .capability-status {
+  color: var(--color-success-emphasis);
+}
+
+.capability-item:not(.enabled) .capability-status {
+  color: var(--color-danger-emphasis);
+}
+
+/* Account Balance Card */
+.account-balance-card {
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.balance-summary {
+  display: flex;
+  gap: 16px;
+}
+
+.summary-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  background: var(--color-canvas-subtle);
+  border-radius: 4px;
+  border: 1px solid var(--color-border-muted);
+}
+
+.summary-label {
+  font-size: 10px;
+  color: var(--color-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.summary-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-accent-emphasis);
+}
+
+/* Account Actions Card */
+.account-actions-card {
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  background: var(--color-btn-bg);
+  color: var(--color-btn-text);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.action-btn:hover {
+  background: var(--color-btn-hover-bg);
+  border-color: var(--color-btn-hover-border);
+}
+
+.action-btn.refresh {
+  background: var(--color-accent-subtle);
+  border-color: var(--color-accent-muted);
+  color: var(--color-accent-emphasis);
+}
+
+.action-btn.refresh:hover {
+  background: var(--color-accent-muted);
+  border-color: var(--color-accent-emphasis);
+}
+
+.action-btn.export {
+  background: var(--color-neutral-subtle);
+  border-color: var(--color-neutral-muted);
+  color: var(--color-fg-default);
+}
+
+.action-btn.export:hover {
+  background: var(--color-neutral-muted);
+  border-color: var(--color-border-default);
+}
+
+/* Account Empty State */
+.account-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--color-fg-muted);
+}
+
+.account-empty-state h4 {
+  margin: 12px 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+}
+
+.account-empty-state p {
+  margin: 0 0 16px 0;
+  font-size: 12px;
+  line-height: 1.4;
+  max-width: 200px;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--color-accent-muted);
+  border-radius: 4px;
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-emphasis);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  background: var(--color-accent-muted);
+  border-color: var(--color-accent-emphasis);
+}
+
+/* Tab button for account */
+.bash-config-tabs .tab-button:has(atk-icon[name="user"]) {
+  position: relative;
+}
+
+.bash-config-tabs .tab-button:has(atk-icon[name="user"]):after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  background: var(--color-success-emphasis);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.bash-config-tabs .tab-button:has(atk-icon[name="user"]).active:after {
+  opacity: 1;
+}
+
+/* Responsive adjustments for account tab */
+@media (max-width: 320px) {
+  .balance-summary {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .account-info-grid .info-value {
+    max-width: 100px;
+    font-size: 11px;
+  }
+  
+  .action-buttons {
+    gap: 6px;
+  }
+  
+  .action-btn {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+}
+
+/* Dark mode specific adjustments */
+@media (prefers-color-scheme: dark) {
+  .account-status-card,
+  .account-capabilities-card,
+  .account-balance-card,
+  .account-actions-card {
+    background: var(--color-canvas-inset);
+    border-color: var(--color-border-muted);
+  }
+  
+  .capability-item {
+    background: var(--color-canvas-default);
+  }
+  
+  .summary-item {
+    background: var(--color-canvas-default);
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .capability-item,
+  .summary-item,
+  .action-btn {
+    border-width: 2px;
+  }
+  
+  .account-status-card,
+  .account-capabilities-card,
+  .account-balance-card,
+  .account-actions-card {
+    border-width: 2px;
+  }
+}
+
+/* Animation for account data loading */
+@keyframes account-data-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.account-section {
+  animation: account-data-fade-in 0.3s ease-out;
+}
+
+/* Loading state for account cards */
+.account-status-card.loading,
+.account-capabilities-card.loading,
+.account-balance-card.loading,
+.account-actions-card.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.account-status-card.loading::after,
+.account-capabilities-card.loading::after,
+.account-balance-card.loading::after,
+.account-actions-card.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}

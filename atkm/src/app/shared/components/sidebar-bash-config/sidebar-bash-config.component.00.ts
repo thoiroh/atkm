@@ -1,10 +1,9 @@
 // src/app/shared/components/sidebar-bash-config/sidebar-bash-config.component.ts
-// Updated component with Account tab integration
+// Complete control component for ATK Bash terminal configuration
 
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BinanceAccount } from '@features/binance/models/binance.model';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { AtkBashConfigFactory } from '../atk-bash/atk-bash-config.factory';
 import { IBashConfig, IBashEndpointConfig, IBashTerminalState } from '../atk-bash/atk-bash.interfaces';
@@ -39,7 +38,7 @@ interface IBashConfigItem {
  * Events emitted by the sidebar config
  */
 interface IBashConfigEvent {
-  type: 'endpoint-change' | 'parameter-change' | 'action-execute' | 'config-update' | 'account-refresh';
+  type: 'endpoint-change' | 'parameter-change' | 'action-execute' | 'config-update';
   payload: any;
   timestamp: Date;
 }
@@ -62,7 +61,6 @@ export class SidebarBashConfigComponent {
   terminalState = input<IBashTerminalState | null>(null);
   isCollapsed = input<boolean>(true);
   currentEndpoint = input<string>('');
-  accountData = input<BinanceAccount | null>(null); // NEW: Account data input
 
   // Component outputs
   configChange = output<IBashConfigEvent>();
@@ -74,7 +72,7 @@ export class SidebarBashConfigComponent {
   // Internal state signals (made public for template access)
   internalConfig = signal<IBashConfigSection[]>([]);
   searchQuery = signal<string>('');
-  activeTab = signal<'endpoints' | 'parameters' | 'terminal' | 'actions' | 'account'>('endpoints'); // NEW: Added account tab
+  activeTab = signal<'endpoints' | 'parameters' | 'terminal' | 'actions'>('endpoints');
 
   // Computed properties
   availableEndpoints = computed(() => {
@@ -101,26 +99,6 @@ export class SidebarBashConfigComponent {
   hasError = computed(() => !!this.terminalState()?.error);
   connectionStatus = computed(() => this.terminalState()?.connectionStatus || 'disconnected');
 
-  // NEW: Account computed properties
-  accountInfo = computed(() => {
-    const account = this.accountData();
-    if (!account) return null;
-
-    return {
-      accountType: account.accountType || 'Unknown',
-      updateTime: account.updateTime ? new Date(account.updateTime).toLocaleString('fr-FR') : 'Not available',
-      permissions: account.permissions || [],
-      canTrade: account.canTrade || false,
-      canWithdraw: account.canWithdraw || false,
-      canDeposit: account.canDeposit || false,
-      balanceCount: account.balances?.length || 0,
-      significantBalances: account.balances?.filter(b => 
-        parseFloat(b.free?.toString() || '0') > 0 || 
-        parseFloat(b.locked?.toString() || '0') > 0
-      ).length || 0
-    };
-  });
-
   constructor() {
     // Watch for bash config changes and rebuild internal config
     effect(() => {
@@ -141,7 +119,7 @@ export class SidebarBashConfigComponent {
   /**
    * Handle tab change
    */
-  setActiveTab(tab: 'endpoints' | 'parameters' | 'terminal' | 'actions' | 'account'): void {
+  setActiveTab(tab: 'endpoints' | 'parameters' | 'terminal' | 'actions'): void {
     this.activeTab.set(tab);
   }
 
@@ -215,13 +193,6 @@ export class SidebarBashConfigComponent {
   }
 
   /**
-   * NEW: Execute account actions
-   */
-  executeAccountAction(actionId: string): void {
-    this.emitConfigEvent('account-refresh', { actionId });
-  }
-
-  /**
    * Get current endpoint configuration
    */
   getCurrentEndpointConfig(): IBashEndpointConfig | null {
@@ -238,7 +209,6 @@ export class SidebarBashConfigComponent {
       bashConfig: this.bashConfig(),
       terminalState: this.terminalState(),
       internalConfig: this.internalConfig(),
-      accountData: this.accountData(),
       timestamp: new Date().toISOString()
     };
 
@@ -264,34 +234,6 @@ export class SidebarBashConfigComponent {
       this.buildConfigSections(config);
       this.emitConfigEvent('config-update', { reset: true });
     }
-  }
-
-  /**
-   * NEW: Format account permissions for display
-   */
-  formatAccountPermissions(permissions: string[]): string {
-    if (!permissions || permissions.length === 0) {
-      return 'None';
-    }
-    return permissions.join(', ');
-  }
-
-  /**
-   * NEW: Get account status icon
-   */
-  getAccountStatusIcon(canTrade: boolean, canWithdraw: boolean, canDeposit: boolean): string {
-    if (canTrade && canWithdraw && canDeposit) return 'check-circle';
-    if (canTrade || canWithdraw || canDeposit) return 'alert-circle';
-    return 'x-circle';
-  }
-
-  /**
-   * NEW: Get account status color
-   */
-  getAccountStatusColor(canTrade: boolean, canWithdraw: boolean, canDeposit: boolean): string {
-    if (canTrade && canWithdraw && canDeposit) return 'var(--color-success-emphasis)';
-    if (canTrade || canWithdraw || canDeposit) return 'var(--color-attention-emphasis)';
-    return 'var(--color-danger-emphasis)';
   }
 
   // Private methods

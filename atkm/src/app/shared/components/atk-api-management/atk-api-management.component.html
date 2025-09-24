@@ -1,0 +1,24 @@
+<!-- Terminal Section -->
+<div class="terminal-section">
+  <div class="terminal-content">
+    <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+    <atk-bash [configId]="configId()" [autoLoad]="autoLoad()" (configRequest)="onBashConfigRequest($event)"
+      (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)"
+      (eventEmitted)="onBashEvent($event)" />
+  </div>
+</div>
+
+<!-- Data Display Section -->
+<div class="data-section">
+  <atk-datatable [data]="currentData()" [currentEndpoint]="currentEndpointConfig()" [loading]="dataLoading()"
+    [error]="dataError()" [searchEnabled]="true" [itemsPerPage]="50" [rowClickable]="true"
+    (rowClick)="onDataRowClick($event)" (retryLoad)="onRetryDataLoad()" (exportRequest)="onDataExport($event)" />
+</div>
+
+
+<!-- Configuration Sidebar -->
+<!-- <div class="sidebar-section">
+    <atk-sidebar-bash-config [bashConfig]="bashConfig()" [terminalState]="terminalState()"
+      [isCollapsed]="sidebarCollapsed()" [currentEndpoint]="currentEndpoint()" [accountData]="accountData()"
+      (configChange)="onSidebarConfigChange($event)" (togglePanel)="onSidebarToggle()" />
+  </div> -->

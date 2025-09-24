@@ -40,6 +40,14 @@
         "items": [
           {
             "icon": "dot",
+            "label": "Binance Unified Component",
+            "link": "/dashboard/binance/apim",
+            "action": false,
+            "isExpanded": false,
+            "subMenu": []
+          },
+          {
+            "icon": "dot",
             "label": "Binance Debug Bash",
             "link": "/dashboard/binance/debug",
             "action": false,

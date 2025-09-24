@@ -1,0 +1,13 @@
+<div class="terminal-wrapper">
+  <header class="terminal-header">
+    <h1>Binance API Management</h1>
+    <div class="terminal-details">
+      <h2>Unified terminal, data display, and configuration interface</h2>
+    </div>
+  </header>
+
+  <main class="terminal-main">
+    <atk-api-management configId="binance-debug-v2" [autoLoad]="true" (dataRowSelected)="onDataRowSelected($event)"
+      (endpointChanged)="onEndpointChanged($event)" (errorOccurred)="onErrorOccurred($event)" />
+  </main>
+</div>
