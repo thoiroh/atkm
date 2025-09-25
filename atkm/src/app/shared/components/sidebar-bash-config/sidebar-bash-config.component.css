@@ -1,5 +1,5 @@
 /* src/app/shared/components/sidebar-bash-config/sidebar-bash-config.component.css */
-/* Complete styling for ATK Bash configuration panel */
+/* Complete styling for ATK Bash configuration panel with Account tab */
 
 /* ========================================
    Main Panel Structure
@@ -523,6 +523,151 @@ input:checked+.toggle-slider:before {
 }
 
 /* ========================================
+   Account Tab Specific Styles
+   ======================================== */
+
+.account-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.account-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.account-info-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.account-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.account-value {
+  font-size: 13px;
+  color: var(--color-fg-default);
+  padding: 6px 8px;
+  background: var(--color-canvas-inset);
+  border-radius: 4px;
+  border: 1px solid var(--color-border-muted);
+}
+
+/* Account Status Grid */
+.account-status-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-canvas-inset);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+}
+
+.status-enabled {
+  color: var(--color-success-fg);
+  font-weight: 500;
+}
+
+.status-disabled {
+  color: var(--color-danger-fg);
+  font-weight: 500;
+}
+
+/* Balance Statistics */
+.balance-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.balance-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: var(--color-canvas-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--color-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-accent-fg);
+}
+
+/* Account Actions */
+.account-actions {
+  margin-top: 16px;
+}
+
+.account-action-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--color-btn-bg-action);
+  border: 1px solid var(--color-btn-bg-action);
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.account-action-btn:hover:not(:disabled) {
+  background: var(--color-btn-hover-bg);
+  border-color: var(--color-btn-hover-border);
+}
+
+.account-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* No Account Data State */
+.no-account-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--color-fg-muted);
+}
+
+.no-account-data p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ========================================
    Error Display
    ======================================== */
 
@@ -654,6 +799,14 @@ input:checked+.toggle-slider:before {
 
   .section-content {
     padding: 12px;
+  }
+
+  .account-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .balance-stats {
+    flex-direction: column;
   }
 }
 

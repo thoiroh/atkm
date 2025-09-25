@@ -1,31 +1,104 @@
-.binance-unified-wrapper {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: var(--color-canvas-default);
-}
+ .binance-api-management-wrapper {
+   height: 100vh;
+   display: flex;
+   flex-direction: column;
+   background: var(--color-canvas-default);
+ }
 
-.page-header {
-  flex: 0 0 auto;
-  padding: 16px 24px;
-  background: var(--color-canvas-subtle);
-  border-bottom: 1px solid var(--color-border-default);
-}
+ .page-header {
+   flex: 0 0 auto;
+   padding: 16px 24px;
+   background: var(--color-canvas-subtle);
+   border-bottom: 1px solid var(--color-border-default);
+ }
 
-.page-header h1 {
-  margin: 0 0 4px 0;
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--color-fg-default);
-}
+ .page-header h1 {
+   margin: 0 0 4px 0;
+   font-size: 24px;
+   font-weight: 600;
+   color: var(--color-fg-default);
+ }
 
-.page-header p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--color-fg-muted);
-}
+ .page-header p {
+   margin: 0 0 12px 0;
+   font-size: 14px;
+   color: var(--color-fg-muted);
+ }
 
-.main-content {
-  flex: 1;
-  overflow: hidden;
-}
+ .connection-indicator {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   font-size: 12px;
+   color: var(--color-fg-muted);
+ }
+
+ .indicator-dot {
+   width: 8px;
+   height: 8px;
+   border-radius: 50%;
+   background: var(--color-danger-emphasis);
+   transition: background-color 0.3s ease;
+ }
+
+ .indicator-dot.connected {
+   background: var(--color-success-emphasis);
+ }
+
+ .indicator-text {
+   font-weight: 500;
+ }
+
+ .main-content {
+   flex: 1;
+   overflow: hidden;
+ }
+
+ /* Loading state */
+ .binance-api-management-wrapper.loading::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: rgba(0, 0, 0, 0.1);
+   backdrop-filter: blur(2px);
+   z-index: 1000;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+ }
+
+ .binance-api-management-wrapper.loading::after {
+   content: 'Loading...';
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   z-index: 1001;
+   font-size: 16px;
+   font-weight: 500;
+   color: var(--color-fg-default);
+ }
+
+ /* Error state */
+ .binance-api-management-wrapper.error .page-header {
+   background: rgba(239, 68, 68, 0.1);
+   border-bottom-color: var(--color-danger-emphasis);
+ }
+
+ /* Responsive design */
+ @media (max-width: 768px) {
+   .page-header {
+     padding: 12px 16px;
+   }
+
+   .page-header h1 {
+     font-size: 20px;
+   }
+
+   .connection-indicator {
+     font-size: 11px;
+   }
+ }

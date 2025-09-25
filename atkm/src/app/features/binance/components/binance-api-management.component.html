@@ -2,7 +2,14 @@
   <header class="terminal-header">
     <h1>Binance API Management</h1>
     <div class="terminal-details">
-      <h2>Unified terminal, data display, and configuration interface</h2>
+      <h2>Unified terminal, data display, and configuration interface.</h2>
+      <div class="connection-indicator">
+        <span class="indicator-dot" [class]="stateService.isConnected() ? 'connected' : 'disconnected'"></span>
+        <span class="indicator-text">
+          {{ stateService.isConnected() ? 'Connected to' : 'Disconnected from' }}
+          {{ stateService.currentEndpoint() || 'No endpoint' }}
+        </span>
+      </div>
     </div>
   </header>
 

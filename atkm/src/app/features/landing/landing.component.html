@@ -36,9 +36,12 @@
       (togglePanel)="toggleConfigPanel()" /> -->
 
     <!-- GRILLE 6: NEW BASH CONFIGURATION (droite) -->
-    <atk-sidebar-bash-config [bashConfig]="bashConfig()" [terminalState]="bashTerminalState()"
+    <!-- <atk-sidebar-bash-config [bashConfig]="bashConfig()" [terminalState]="bashTerminalState()"
       [isCollapsed]="bashConfigPanelCollapsed()" [currentEndpoint]="bashCurrentEndpoint()"
-      (configChange)="onBashConfigChange($event)" (togglePanel)="toggleBashConfigPanel()" />
+      [accountData]="bashAccountData()" (configChange)="onBashConfigChange($event)"
+      (togglePanel)="toggleBashConfigPanel()" /> -->
+
+    <atk-sidebar-bash-config (configChange)="onBashConfigChange($event)" (togglePanel)="toggleBashConfigPanel()" />
 
   </div>
 </div>

@@ -1,15 +1,17 @@
+// src/app/shared/components/atk-api-management/atk-api-management.component.ts
+// Refactored component without sidebar, using ApiManagementStateService
+
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
-import { BinanceAccount } from '@features/binance/models/binance.model';
+import { Component, effect, inject, input, OnInit, output } from '@angular/core';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { ToolsService } from '@shared/components/atk-tools/tools.service';
+import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { firstValueFrom } from 'rxjs';
-import { AtkBashConfigFactory } from '../atk-bash/atk-bash-config.factory';
 import { AtkBashComponent } from '../atk-bash/atk-bash.component';
 import { BashData, IBashConfig, IBashEndpointConfig, IBashEvent, IBashTerminalState } from '../atk-bash/atk-bash.interfaces';
 import { AtkDatatableComponent } from '../atk-datatable/atk-datatable.component';
-import { SidebarBashConfigComponent } from '../sidebar-bash-config/sidebar-bash-config.component';
+import { AtkApiManagementConfigFactory } from './atk-api-management-config.factory';
 
 /**
  * Configuration event from sidebar
@@ -27,10 +29,45 @@ interface IApiManagementEvent {
     CommonModule,
     AtkIconComponent,
     AtkBashComponent,
-    AtkDatatableComponent,
-    SidebarBashConfigComponent
+    AtkDatatableComponent
   ],
-  templateUrl: './atk-api-management.component.html',
+  template: `
+    <div class="api-management-wrapper">
+      <!-- Main Content Area -->
+      <div class="api-content-area">
+
+        <!-- Terminal Section -->
+        <div class="terminal-section">
+          <div class="terminal-content">
+            <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+            <atk-bash
+              [configId]="configId()"
+              [autoLoad]="autoLoad()"
+              (configRequest)="onBashConfigRequest($event)"
+              (dataLoaded)="onBashDataLoaded($event)"
+              (errorOccurred)="onBashError($event)"
+              (eventEmitted)="onBashEvent($event)" />
+          </div>
+        </div>
+
+        <!-- Data Display Section -->
+        <div class="data-section">
+          <atk-datatable
+            [data]="stateService.currentData()"
+            [currentEndpoint]="stateService.currentEndpointConfig()"
+            [loading]="stateService.dataLoading()"
+            [error]="stateService.dataError()"
+            [searchEnabled]="true"
+            [itemsPerPage]="50"
+            [rowClickable]="true"
+            (rowClick)="onDataRowClick($event)"
+            (retryLoad)="onRetryDataLoad()"
+            (exportRequest)="onDataExport($event)" />
+        </div>
+
+      </div>
+    </div>
+  `,
   styleUrls: ['./atk-api-management.component.css']
 })
 export class AtkApiManagementComponent implements OnInit {
@@ -45,50 +82,29 @@ export class AtkApiManagementComponent implements OnInit {
   errorOccurred = output<string>();
 
   // Services
-  private bashConfigFactory = inject(AtkBashConfigFactory);
+  private configFactory = inject(AtkApiManagementConfigFactory);
   private binanceService = inject(BinanceService);
   private tools = inject(ToolsService);
 
-  // Core state management
-  bashConfig = signal<IBashConfig | null>(null);
-  terminalState = signal<IBashTerminalState>({
-    loading: false,
-    connectionStatus: 'disconnected',
-    requestParams: {}
-  });
-  currentEndpoint = signal<string>('');
-  currentData = signal<BashData[]>([]);
-  accountData = signal<BinanceAccount | null>(null);
-
-  // UI state
-  sidebarCollapsed = signal<boolean>(false);
-  dataLoading = signal<boolean>(false);
-  dataError = signal<string | null>(null);
-
-  // Computed properties
-  currentEndpointConfig = computed(() => {
-    const config = this.bashConfig();
-    const endpointId = this.currentEndpoint();
-
-    if (!config || !endpointId) return null;
-
-    return config.endpoints.find(ep => ep.id === endpointId) || null;
-  });
+  // NEW: State service injection
+  public stateService = inject(ApiManagementStateService);
 
   constructor() {
-    // Load account data when component initializes
-    effect(() => {
-      const endpoint = this.currentEndpoint();
-      if (endpoint === 'account') {
-        this.loadAccountData();
-      }
+    // Subscribe to state service events to handle sidebar actions
+    this.stateService.events$.subscribe(event => {
+      this.handleStateServiceEvent(event);
+    });
+
+    // Subscribe to state service commands for terminal actions
+    this.stateService.commands$.subscribe(command => {
+      this.handleStateServiceCommand(command);
     });
 
     // Log state changes for debugging
     effect(() => {
-      const config = this.bashConfig();
-      const endpoint = this.currentEndpoint();
-      const data = this.currentData();
+      const config = this.stateService.currentConfig();
+      const endpoint = this.stateService.currentEndpoint();
+      const data = this.stateService.currentData();
 
       this.tools.consoleGroup({
         title: `ApiManagement state change`,
@@ -96,7 +112,9 @@ export class AtkApiManagementComponent implements OnInit {
         data: {
           hasConfig: !!config,
           endpoint,
-          dataCount: data.length
+          dataCount: data.length,
+          loading: this.stateService.dataLoading(),
+          error: this.stateService.dataError()
         },
         palette: 'de',
         collapsed: true,
@@ -118,12 +136,15 @@ export class AtkApiManagementComponent implements OnInit {
     terminalState: IBashTerminalState;
     currentEndpoint: string
   }): void {
-    this.bashConfig.set(configData.config);
-    this.terminalState.set(configData.terminalState);
+    // Update state service with bash configuration
+    if (configData.config) {
+      this.stateService.setConfiguration(configData.config);
+    }
 
-    // Update current endpoint if it changed
-    if (configData.currentEndpoint !== this.currentEndpoint()) {
-      this.currentEndpoint.set(configData.currentEndpoint);
+    this.stateService.updateTerminalState(configData.terminalState);
+
+    if (configData.currentEndpoint !== this.stateService.currentEndpoint()) {
+      this.stateService.setCurrentEndpoint(configData.currentEndpoint);
       this.endpointChanged.emit(configData.currentEndpoint);
     }
   }
@@ -132,14 +153,12 @@ export class AtkApiManagementComponent implements OnInit {
    * Handle data loaded from bash component
    */
   onBashDataLoaded(data: BashData[]): void {
-    this.currentData.set(data);
-    this.dataLoading.set(false);
-    this.dataError.set(null);
+    this.stateService.setCurrentData(data);
 
     this.tools.consoleGroup({
       title: `ApiManagement data loaded from bash`,
       tag: 'check',
-      data: { count: data.length, endpoint: this.currentEndpoint() },
+      data: { count: data.length, endpoint: this.stateService.currentEndpoint() },
       palette: 'su',
       collapsed: true,
       fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
@@ -151,8 +170,7 @@ export class AtkApiManagementComponent implements OnInit {
    * Handle bash errors
    */
   onBashError(error: string): void {
-    this.dataError.set(error);
-    this.dataLoading.set(false);
+    this.stateService.setDataError(error);
     this.errorOccurred.emit(error);
 
     this.tools.consoleGroup({
@@ -170,46 +188,10 @@ export class AtkApiManagementComponent implements OnInit {
    * Handle bash events
    */
   onBashEvent(event: IBashEvent): void {
-    // Forward relevant events or handle specific ones
+    // Forward relevant events to state service
     if (event.type === 'data-loaded') {
       this.onBashDataLoaded(event.payload);
     }
-  }
-
-  /**
-   * Handle sidebar configuration changes
-   */
-  onSidebarConfigChange(event: any): void {
-    const managementEvent: IApiManagementEvent = {
-      type: event.type,
-      payload: event.payload,
-      timestamp: new Date()
-    };
-
-    switch (event.type) {
-      case 'endpoint-change':
-        this.handleEndpointChange(event.payload.endpointId);
-        break;
-
-      case 'parameter-change':
-        this.handleParameterChange(event.payload.parameter, event.payload.value);
-        break;
-
-      case 'action-execute':
-        this.handleSidebarAction(event.payload.actionId);
-        break;
-
-      case 'account-refresh':
-        this.loadAccountData();
-        break;
-    }
-  }
-
-  /**
-   * Handle sidebar toggle
-   */
-  onSidebarToggle(): void {
-    this.sidebarCollapsed.update(collapsed => !collapsed);
   }
 
   /**
@@ -233,7 +215,7 @@ export class AtkApiManagementComponent implements OnInit {
    * Handle data retry requests
    */
   onRetryDataLoad(): void {
-    const endpoint = this.currentEndpoint();
+    const endpoint = this.stateService.currentEndpoint();
     if (endpoint) {
       this.loadEndpointData(endpoint);
     }
@@ -266,27 +248,24 @@ export class AtkApiManagementComponent implements OnInit {
 
       switch (configId) {
         case 'binance-debug-v1':
-          config = this.bashConfigFactory.createBinanceAccountConfig();
+          config = this.configFactory.createBinanceAccountConfig();
           break;
         case 'binance-debug-v2':
         default:
-          config = this.bashConfigFactory.createBinanceDebugConfig();
+          config = this.configFactory.createBinanceDebugConfig();
           break;
         case 'ibkr-debug-v1':
-          config = this.bashConfigFactory.createIbkrConfig();
+          config = this.configFactory.createIbkrConfig();
           break;
       }
 
-      this.bashConfig.set(config);
+      // Set configuration in state service
+      this.stateService.setConfiguration(config);
 
-      // Set default endpoint
-      if (config.endpoints.length > 0) {
+      // Auto-load data if enabled
+      if (this.autoLoad() && config.endpoints.length > 0) {
         const defaultEndpoint = config.defaultEndpoint || config.endpoints[0].id;
-        this.currentEndpoint.set(defaultEndpoint);
-
-        if (this.autoLoad()) {
-          this.loadEndpointData(defaultEndpoint);
-        }
+        this.loadEndpointData(defaultEndpoint);
       }
 
     } catch (error) {
@@ -303,54 +282,88 @@ export class AtkApiManagementComponent implements OnInit {
   }
 
   /**
-   * Handle endpoint changes from sidebar
+   * Handle events from state service (from sidebar)
    */
-  private handleEndpointChange(endpointId: string): void {
-    if (endpointId !== this.currentEndpoint()) {
-      this.currentEndpoint.set(endpointId);
-      this.loadEndpointData(endpointId);
-      this.endpointChanged.emit(endpointId);
+  private handleStateServiceEvent(event: any): void {
+    switch (event.type) {
+      case 'endpoint-change':
+        this.loadEndpointData(event.payload.endpointId);
+        break;
+
+      case 'parameter-change':
+        // Reload data with new parameters
+        const endpoint = this.stateService.currentEndpoint();
+        if (endpoint) {
+          this.loadEndpointData(endpoint);
+        }
+        break;
+
+      case 'action-execute':
+        this.handleSidebarAction(event.payload.actionId);
+        break;
     }
   }
 
   /**
-   * Handle parameter changes from sidebar
+   * Handle commands from state service (terminal commands)
    */
-  private handleParameterChange(paramKey: string, value: any): void {
-    this.terminalState.update(state => ({
-      ...state,
-      requestParams: {
-        ...state.requestParams,
-        [paramKey]: value
-      }
-    }));
-
-    // Reload data with new parameters
-    const endpoint = this.currentEndpoint();
-    if (endpoint) {
-      this.loadEndpointData(endpoint);
+  private handleStateServiceCommand(command: any): void {
+    if (command.type === 'action-execute') {
+      const { command: cmd, args } = command.payload;
+      this.executeTerminalCommand(cmd, args);
     }
   }
 
   /**
-   * Handle sidebar actions
+   * Handle sidebar actions via state service
    */
   private handleSidebarAction(actionId: string): void {
     switch (actionId) {
       case 'refresh-data':
-        const endpoint = this.currentEndpoint();
+        const endpoint = this.stateService.currentEndpoint();
         if (endpoint) {
           this.loadEndpointData(endpoint);
         }
         break;
 
       case 'clear-data':
-        this.currentData.set([]);
-        this.dataError.set(null);
+        this.stateService.clearData();
         break;
 
       case 'refresh-account':
         this.loadAccountData();
+        break;
+
+      case 'test-connection':
+        this.testConnection();
+        break;
+
+      case 'export-data':
+        const data = this.stateService.currentData();
+        this.onDataExport(data);
+        break;
+    }
+  }
+
+  /**
+   * Execute terminal commands
+   */
+  private executeTerminalCommand(cmd: string, args: string[] = []): void {
+    switch (cmd) {
+      case 'refresh':
+        const endpoint = this.stateService.currentEndpoint();
+        if (endpoint) {
+          this.loadEndpointData(endpoint);
+        }
+        break;
+
+      case 'clear':
+        this.stateService.clearData();
+        break;
+
+      case 'export':
+        const data = this.stateService.currentData();
+        this.onDataExport(data);
         break;
     }
   }
@@ -359,41 +372,25 @@ export class AtkApiManagementComponent implements OnInit {
    * Load data for specific endpoint
    */
   private async loadEndpointData(endpointId: string): Promise<void> {
-    const config = this.bashConfig();
+    const config = this.stateService.currentConfig();
     if (!config) return;
 
     const endpoint = config.endpoints.find(ep => ep.id === endpointId);
     if (!endpoint) return;
 
-    this.dataLoading.set(true);
-    this.dataError.set(null);
+    this.stateService.setLoading(true);
+    this.stateService.setConnectionStatus('connecting');
 
     try {
       const data = await this.loadDataFromEndpoint(endpoint);
-      this.currentData.set(data);
-
-      this.terminalState.update(state => ({
-        ...state,
-        connectionStatus: 'connected',
-        responseMetadata: {
-          statusCode: 200,
-          responseTime: Date.now() % 1000,
-          dataCount: data.length
-        }
-      }));
+      this.stateService.setCurrentData(data);
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.dataError.set(errorMessage);
-
-      this.terminalState.update(state => ({
-        ...state,
-        connectionStatus: 'disconnected',
-        error: errorMessage
-      }));
+      this.stateService.setDataError(errorMessage);
 
     } finally {
-      this.dataLoading.set(false);
+      this.stateService.setLoading(false);
     }
   }
 
@@ -405,21 +402,33 @@ export class AtkApiManagementComponent implements OnInit {
       switch (endpoint.id) {
         case 'account':
           const accountInfo = await firstValueFrom(this.binanceService.getAccount());
+          // Also update account data in state service
+          this.stateService.setAccountData(accountInfo);
           return [{ id: 'account', ...accountInfo }];
 
         case 'trades':
-          const trades = await firstValueFrom(this.binanceService.getMyTrades('BTCUSDT', undefined, undefined, 100));
+          const params = this.stateService.terminalState().requestParams || {};
+          const symbol = params.symbol || 'BTCUSDT';
+          const trades = await firstValueFrom(
+            this.binanceService.getMyTrades(symbol, undefined, undefined, 100)
+          );
           return Array.isArray(trades) ? trades.map((trade: any, index: number) => ({
             id: trade.id || index,
             ...trade
           })) : [];
 
         case 'ticker':
-          const ticker = await firstValueFrom(this.binanceService.getTickerPrice('BTCUSDT'));
+          const tickerParams = this.stateService.terminalState().requestParams || {};
+          const tickerSymbol = tickerParams.symbol || 'BTCUSDT';
+          const ticker = await firstValueFrom(this.binanceService.getTickerPrice(tickerSymbol));
           return [{ id: 'ticker', ...ticker }];
 
         case 'orders':
-          const orders = await firstValueFrom(this.binanceService.getAllOrders('BTCUSDT', undefined, undefined, 100));
+          const orderParams = this.stateService.terminalState().requestParams || {};
+          const orderSymbol = orderParams.symbol || 'BTCUSDT';
+          const orders = await firstValueFrom(
+            this.binanceService.getAllOrders(orderSymbol, undefined, undefined, 100)
+          );
           return Array.isArray(orders) ? orders.map((order: any) => ({
             id: order.orderId || order.id,
             ...order
@@ -434,12 +443,12 @@ export class AtkApiManagementComponent implements OnInit {
   }
 
   /**
-   * Load account data for sidebar display
+   * Load account data for state service
    */
   private async loadAccountData(): Promise<void> {
     try {
       const account = await firstValueFrom(this.binanceService.getAccount());
-      this.accountData.set(account);
+      this.stateService.setAccountData(account);
 
       this.tools.consoleGroup({
         title: `ApiManagement account data loaded`,
@@ -461,6 +470,23 @@ export class AtkApiManagementComponent implements OnInit {
         fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
         fontSizePx: 13
       });
+    }
+  }
+
+  /**
+   * Test connection to current endpoint
+   */
+  private async testConnection(): Promise<void> {
+    const endpoint = this.stateService.currentEndpoint();
+    if (!endpoint) return;
+
+    this.stateService.setConnectionStatus('connecting');
+
+    try {
+      await this.loadEndpointData(endpoint);
+      // Success state is set in loadEndpointData
+    } catch (error) {
+      this.stateService.setConnectionStatus('disconnected');
     }
   }
 }

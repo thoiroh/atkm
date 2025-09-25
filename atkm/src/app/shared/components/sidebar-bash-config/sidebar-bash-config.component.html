@@ -1,5 +1,5 @@
-<aside class="bash-config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
-  <button class="bash-config-toggle" (click)="onToggle()"
+<aside class="config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
+  <button class="config-toggle" (click)="onToggle()"
     [attr.aria-label]="isCollapsed() ? 'Open configuration' : 'Close configuration'">
     @if (!isCollapsed()) {
     <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76"></atk-icon>
@@ -8,13 +8,13 @@
     }
   </button>
 
-  <div class="bash-config-wrapper">
+  <div class="config-wrapper">
     <div class="config-content">
       <div class="config-section">
         <header class="config-header">
           <h3 class="panel-title">
             <atk-icon name="terminal" [size]="18" color="var(--color-accent-fg)"></atk-icon>
-            Terminal Control
+            API Management Control
           </h3>
 
           <!-- Connection Status -->
@@ -38,6 +38,7 @@
             }
           </div>
         </header>
+
         <!-- Tab Navigation -->
         <nav class="bash-config-tabs">
           <button class="tab-button" [class.active]="activeTab() === 'endpoints'" (click)="setActiveTab('endpoints')">
@@ -55,6 +56,10 @@
           <button class="tab-button" [class.active]="activeTab() === 'actions'" (click)="setActiveTab('actions')">
             <atk-icon name="zap" [size]="14" color="currentColor"></atk-icon>
             Actions
+          </button>
+          <button class="tab-button" [class.active]="activeTab() === 'account'" (click)="setActiveTab('account')">
+            <atk-icon name="user" [size]="14" color="currentColor"></atk-icon>
+            Account
           </button>
         </nav>
 
@@ -97,7 +102,8 @@
                   <!-- Select Input -->
                   @if (item.type === 'select') {
                   <label class="item-label">{{ item.label }}</label>
-                  <select class="item-select" [value]="item.id === 'current-endpoint' ? currentEndpoint() : item.value"
+                  <select class="item-select"
+                    [value]="item.id === 'current-endpoint' ? stateService.currentEndpoint() : item.value"
                     [disabled]="item.disabled || isLoading()"
                     (change)="item.id === 'current-endpoint' ? onEndpointChange($any($event.target).value) : onConfigItemChange(section.id, item.id, $any($event.target).value)">
                     @for (option of item.options; track option.value) {
@@ -171,6 +177,20 @@
                   <input type="text" class="item-input" [value]="item.value" [placeholder]="item.placeholder"
                     [disabled]="item.disabled || isLoading()"
                     (input)="onParameterChange(item.id.replace('param-', ''), $any($event.target).value)">
+                  @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                  }
+                  }
+
+                  @if (item.type === 'toggle') {
+                  <div class="item-toggle-wrapper">
+                    <label class="item-label">{{ item.label }}</label>
+                    <label class="toggle-switch">
+                      <input type="checkbox" [checked]="item.value" [disabled]="item.disabled || isLoading()"
+                        (change)="onParameterChange(item.id.replace('param-', ''), $any($event.target).checked)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
                   @if (item.description) {
                   <p class="item-description">{{ item.description }}</p>
                   }
@@ -302,6 +322,9 @@
                     @case ('reload-config') {
                     <atk-icon name="refresh-cw" [size]="14" color="currentColor"></atk-icon>
                     }
+                    @case ('refresh-account') {
+                    <atk-icon name="user-check" [size]="14" color="currentColor"></atk-icon>
+                    }
                     @default {
                     <atk-icon name="play" [size]="14" color="currentColor"></atk-icon>
                     }
@@ -323,10 +346,112 @@
           </div>
           }
 
+          <!-- Account Tab -->
+          @if (activeTab() === 'account') {
+          <div class="config-tab-content">
+            @if (accountInfo(); as account) {
+            <div class="config-section">
+              <div class="section-header">
+                <atk-icon name="user" [size]="16" color="var(--color-fg-default)"></atk-icon>
+                <span class="section-title">Account Information</span>
+              </div>
+
+              <div class="section-content">
+                <div class="account-info-grid">
+
+                  <!-- Account Type -->
+                  <div class="account-info-item">
+                    <label class="account-label">Account Type</label>
+                    <span class="account-value">{{ account.accountType }}</span>
+                  </div>
+
+                  <!-- Last Update -->
+                  <div class="account-info-item">
+                    <label class="account-label">Last Update</label>
+                    <span class="account-value">{{ account.updateTime }}</span>
+                  </div>
+
+                  <!-- Permissions -->
+                  <div class="account-info-item full-width">
+                    <label class="account-label">Permissions</label>
+                    <span class="account-value">{{ formatAccountPermissions(account.permissions) }}</span>
+                  </div>
+
+                  <!-- Trading Status -->
+                  <div class="account-status-grid">
+                    <div class="status-item">
+                      <atk-icon [name]="getAccountStatusIcon(account.canTrade, false, false)" [size]="16"
+                        [color]="getAccountStatusColor(account.canTrade, false, false)"></atk-icon>
+                      <span [class]="account.canTrade ? 'status-enabled' : 'status-disabled'">
+                        Trade: {{ account.canTrade ? 'Enabled' : 'Disabled' }}
+                      </span>
+                    </div>
+
+                    <div class="status-item">
+                      <atk-icon [name]="getAccountStatusIcon(false, account.canWithdraw, false)" [size]="16"
+                        [color]="getAccountStatusColor(false, account.canWithdraw, false)"></atk-icon>
+                      <span [class]="account.canWithdraw ? 'status-enabled' : 'status-disabled'">
+                        Withdraw: {{ account.canWithdraw ? 'Enabled' : 'Disabled' }}
+                      </span>
+                    </div>
+
+                    <div class="status-item">
+                      <atk-icon [name]="getAccountStatusIcon(false, false, account.canDeposit)" [size]="16"
+                        [color]="getAccountStatusColor(false, false, account.canDeposit)"></atk-icon>
+                      <span [class]="account.canDeposit ? 'status-enabled' : 'status-disabled'">
+                        Deposit: {{ account.canDeposit ? 'Enabled' : 'Disabled' }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Balance Statistics -->
+                  <div class="balance-stats">
+                    <div class="balance-stat">
+                      <span class="stat-label">Total Balances</span>
+                      <span class="stat-value">{{ account.balanceCount }}</span>
+                    </div>
+                    <div class="balance-stat">
+                      <span class="stat-label">Active Balances</span>
+                      <span class="stat-value">{{ account.significantBalances }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Account Actions -->
+                  <div class="account-actions">
+                    <button class="account-action-btn" (click)="executeAccountAction('refresh-account')"
+                      [disabled]="isLoading()">
+                      <atk-icon name="refresh-cw" [size]="14" color="currentColor"></atk-icon>
+                      Refresh Account
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            } @else {
+            <!-- No Account Data -->
+            <div class="config-section">
+              <div class="section-content">
+                <div class="no-account-data">
+                  <atk-icon name="user-x" [size]="32" color="var(--color-fg-muted)"></atk-icon>
+                  <p>No account data available</p>
+                  <button class="account-action-btn" (click)="executeAccountAction('refresh-account')"
+                    [disabled]="isLoading()">
+                    <atk-icon name="refresh-cw" [size]="14" color="currentColor"></atk-icon>
+                    Load Account Data
+                  </button>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+          }
+
         </div>
 
         <!-- Error Display -->
-        @if (hasError() && terminalState()?.error; as error) {
+        @if (hasError() && stateService.terminalState().error; as error) {
         <div class="bash-config-error">
           <atk-icon name="alert-circle" [size]="16" color="var(--color-danger-fg)"></atk-icon>
           <span class="error-message">{{ error }}</span>
@@ -350,7 +475,7 @@
           </div>
 
           <!-- Quick Stats -->
-          @if (terminalState()?.responseMetadata; as meta) {
+          @if (stateService.terminalState().responseMetadata; as meta) {
           <div class="quick-stats">
             <div class="stat-item">
               <span class="stat-label">Records:</span>

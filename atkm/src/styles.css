@@ -8,6 +8,7 @@
   --fontStack-monospace: "Monaspace Neon", ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
   --color-canvas-default: #0d1117;
   --color-canvas-subtle: #161b22;
+  --color-canvas-inset: #30363d;
   --color-border-default: #30363d;
   --color-border-muted: #21262d;
   --color-fg-default: #e6edf3;
@@ -58,7 +59,7 @@ atk-landing,
 atk-home-content,
 atk-bash-debug-template,
 
-atk-binance-unified,
+atk-binance-api-management,
 atk-binance-debug,
 atk-binance-account-info,
 atk-binance-account-snapshot,
@@ -736,7 +737,7 @@ li,
   position: relative;
   display: flex;
   flex-direction: column;
-  margin: 0 3px 12px 3px;
+  margin: 0 3px 22px 3px;
 }
 
 .terminal-header h1 {

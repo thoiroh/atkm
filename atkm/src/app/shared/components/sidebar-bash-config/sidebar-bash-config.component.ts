@@ -1,13 +1,13 @@
 // src/app/shared/components/sidebar-bash-config/sidebar-bash-config.component.ts
-// Updated component with Account tab integration
+// Updated component with direct ApiManagementStateService integration
 
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BinanceAccount } from '@features/binance/models/binance.model';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { AtkBashConfigFactory } from '../atk-bash/atk-bash-config.factory';
-import { IBashConfig, IBashEndpointConfig, IBashTerminalState } from '../atk-bash/atk-bash.interfaces';
+import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
+import { AtkApiManagementConfigFactory } from '../atk-api-management/atk-api-management-config.factory';
+import { IBashConfig, IBashEndpointConfig } from '../atk-bash/atk-bash.interfaces';
 
 /**
  * Configuration sections for bash terminal control
@@ -57,37 +57,30 @@ interface IBashConfigEvent {
 })
 export class SidebarBashConfigComponent {
 
-  // Component inputs
-  bashConfig = input<IBashConfig | null>(null);
-  terminalState = input<IBashTerminalState | null>(null);
-  isCollapsed = input<boolean>(true);
-  currentEndpoint = input<string>('');
-  accountData = input<BinanceAccount | null>(null); // NEW: Account data input
-
-  // Component outputs
+  bashConfig = input<any>();          // IBashConfig | null
+  terminalState = input<any>();       // état du terminal
+  currentEndpoint = input<string>();  // id endpoint courant
+  accountData = input<any>();         // infos compte
+  // Component outputs (kept for backward compatibility if needed)
   configChange = output<IBashConfigEvent>();
   togglePanel = output<void>();
-
   // Services
-  private bashConfigFactory = inject(AtkBashConfigFactory);
-
-  // Internal state signals (made public for template access)
+  private configFactory = inject(AtkApiManagementConfigFactory);
+  public stateService = inject(ApiManagementStateService);
+  // Internal state signals
   internalConfig = signal<IBashConfigSection[]>([]);
   searchQuery = signal<string>('');
-  activeTab = signal<'endpoints' | 'parameters' | 'terminal' | 'actions' | 'account'>('endpoints'); // NEW: Added account tab
-
-  // Computed properties
+  activeTab = signal<'endpoints' | 'parameters' | 'terminal' | 'actions' | 'account'>('endpoints');
+  // Computed properties using state service
   availableEndpoints = computed(() => {
-    const config = this.bashConfig();
+    const config = this.stateService.currentConfig();
     return config?.endpoints || [];
   });
 
   filteredSections = computed(() => {
     const sections = this.internalConfig();
     const query = this.searchQuery().toLowerCase();
-
     if (!query) return sections;
-
     return sections.map(section => ({
       ...section,
       items: section.items.filter(item =>
@@ -97,13 +90,15 @@ export class SidebarBashConfigComponent {
     })).filter(section => section.items.length > 0);
   });
 
-  isLoading = computed(() => this.terminalState()?.loading || false);
-  hasError = computed(() => !!this.terminalState()?.error);
-  connectionStatus = computed(() => this.terminalState()?.connectionStatus || 'disconnected');
+  // State service computed properties
+  isLoading = computed(() => this.stateService.isLoading());
+  hasError = computed(() => this.stateService.hasError());
+  connectionStatus = computed(() => this.stateService.terminalState().connectionStatus || 'disconnected');
+  isCollapsed = computed(() => this.stateService.sidebarCollapsed());
 
-  // NEW: Account computed properties
+  // Account computed properties
   accountInfo = computed(() => {
-    const account = this.accountData();
+    const account = this.stateService.accountData();
     if (!account) return null;
 
     return {
@@ -114,28 +109,34 @@ export class SidebarBashConfigComponent {
       canWithdraw: account.canWithdraw || false,
       canDeposit: account.canDeposit || false,
       balanceCount: account.balances?.length || 0,
-      significantBalances: account.balances?.filter(b => 
-        parseFloat(b.free?.toString() || '0') > 0 || 
+      significantBalances: account.balances?.filter(b =>
+        parseFloat(b.free?.toString() || '0') > 0 ||
         parseFloat(b.locked?.toString() || '0') > 0
       ).length || 0
     };
   });
 
   constructor() {
-    // Watch for bash config changes and rebuild internal config
+    // Watch for config changes from state service and rebuild internal config
     effect(() => {
-      const config = this.bashConfig();
+      const config = this.stateService.currentConfig();
       if (config) {
         this.buildConfigSections(config);
       }
     });
+
+    // Subscribe to state service events for logging
+    this.stateService.events$.subscribe(event => {
+      console.log(`🎛️ Sidebar received state event:`, event.type, event.payload);
+    });
   }
 
   /**
-   * Handle panel toggle
+   * Handle panel toggle via state service
    */
   onToggle(): void {
-    this.togglePanel.emit();
+    // this.togglePanel.emit();
+    this.stateService.toggleSidebar();
   }
 
   /**
@@ -166,20 +167,22 @@ export class SidebarBashConfigComponent {
   }
 
   /**
-   * Handle endpoint selection
+   * Handle endpoint selection - direct state service integration
    */
   onEndpointChange(endpointId: string): void {
+    this.stateService.setCurrentEndpoint(endpointId);
     this.emitConfigEvent('endpoint-change', { endpointId });
   }
 
   /**
-   * Handle parameter changes
+   * Handle parameter changes - direct state service integration
    */
   onParameterChange(paramKey: string, value: any): void {
+    this.stateService.updateRequestParameter(paramKey, value);
     this.emitConfigEvent('parameter-change', {
       parameter: paramKey,
       value,
-      endpoint: this.currentEndpoint()
+      endpoint: this.stateService.currentEndpoint()
     });
   }
 
@@ -208,26 +211,26 @@ export class SidebarBashConfigComponent {
   }
 
   /**
-   * Execute terminal actions
+   * Execute terminal actions - direct state service integration
    */
   executeAction(actionId: string): void {
+    this.stateService.executeAction(actionId);
     this.emitConfigEvent('action-execute', { actionId });
   }
 
   /**
-   * NEW: Execute account actions
+   * Execute account actions - direct state service integration
    */
   executeAccountAction(actionId: string): void {
+    this.stateService.executeAction(actionId);
     this.emitConfigEvent('account-refresh', { actionId });
   }
 
   /**
-   * Get current endpoint configuration
+   * Get current endpoint configuration from state service
    */
   getCurrentEndpointConfig(): IBashEndpointConfig | null {
-    const endpoints = this.availableEndpoints();
-    const currentId = this.currentEndpoint();
-    return endpoints.find(ep => ep.id === currentId) || null;
+    return this.stateService.currentEndpointConfig();
   }
 
   /**
@@ -235,10 +238,11 @@ export class SidebarBashConfigComponent {
    */
   exportConfig(): void {
     const config = {
-      bashConfig: this.bashConfig(),
-      terminalState: this.terminalState(),
+      bashConfig: this.stateService.currentConfig(),
+      terminalState: this.stateService.terminalState(),
       internalConfig: this.internalConfig(),
-      accountData: this.accountData(),
+      accountData: this.stateService.accountData(),
+      completeState: this.stateService.getCompleteState(),
       timestamp: new Date().toISOString()
     };
 
@@ -249,25 +253,29 @@ export class SidebarBashConfigComponent {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = `bash-config-${Date.now()}.json`;
+    a.download = `api-management-config-${Date.now()}.json`;
     a.click();
 
     URL.revokeObjectURL(url);
   }
 
   /**
-   * Reset configuration to defaults
+   * Reset configuration to defaults - direct state service integration
    */
   resetToDefaults(): void {
-    const config = this.bashConfig();
+    this.stateService.resetState();
+
+    // Rebuild internal config
+    const config = this.stateService.currentConfig();
     if (config) {
       this.buildConfigSections(config);
-      this.emitConfigEvent('config-update', { reset: true });
     }
+
+    this.emitConfigEvent('config-update', { reset: true });
   }
 
   /**
-   * NEW: Format account permissions for display
+   * Format account permissions for display
    */
   formatAccountPermissions(permissions: string[]): string {
     if (!permissions || permissions.length === 0) {
@@ -277,7 +285,7 @@ export class SidebarBashConfigComponent {
   }
 
   /**
-   * NEW: Get account status icon
+   * Get account status icon
    */
   getAccountStatusIcon(canTrade: boolean, canWithdraw: boolean, canDeposit: boolean): string {
     if (canTrade && canWithdraw && canDeposit) return 'check-circle';
@@ -286,7 +294,7 @@ export class SidebarBashConfigComponent {
   }
 
   /**
-   * NEW: Get account status color
+   * Get account status color
    */
   getAccountStatusColor(canTrade: boolean, canWithdraw: boolean, canDeposit: boolean): string {
     if (canTrade && canWithdraw && canDeposit) return 'var(--color-success-emphasis)';
@@ -308,12 +316,14 @@ export class SidebarBashConfigComponent {
   }
 
   private buildEndpointsSection(config: IBashConfig): IBashConfigSection {
+    const currentEndpoint = this.stateService.currentEndpoint();
+
     const endpointItems: IBashConfigItem[] = [
       {
         id: 'current-endpoint',
         type: 'select' as const,
         label: 'Active Endpoint',
-        value: this.currentEndpoint(),
+        value: currentEndpoint,
         options: config.endpoints.map(ep => ({
           value: ep.id,
           label: ep.name,
@@ -351,9 +361,12 @@ export class SidebarBashConfigComponent {
 
   private buildParametersSection(config: IBashConfig): IBashConfigSection {
     const currentEndpoint = this.getCurrentEndpointConfig();
-    const params = currentEndpoint?.params || {};
+    const requestParams = this.stateService.terminalState().requestParams || {};
 
-    const paramItems: IBashConfigItem[] = Object.entries(params).map(([key, value]) => ({
+    // Combine endpoint default params with current request params
+    const allParams = { ...currentEndpoint?.params, ...requestParams };
+
+    const paramItems: IBashConfigItem[] = Object.entries(allParams).map(([key, value]) => ({
       id: `param-${key}`,
       type: typeof value === 'boolean' ? 'toggle' as const : 'input' as const,
       label: this.formatParameterLabel(key),
@@ -479,7 +492,15 @@ export class SidebarBashConfigComponent {
         label: 'Reload Config',
         value: null,
         variant: 'warning' as const,
-        description: 'Reload bash configuration from factory'
+        description: 'Reload configuration from factory'
+      },
+      {
+        id: 'refresh-account',
+        type: 'button' as const,
+        label: 'Refresh Account',
+        value: null,
+        variant: 'success' as const,
+        description: 'Refresh account data'
       }
     ];
 
@@ -500,10 +521,12 @@ export class SidebarBashConfigComponent {
   }
 
   private emitConfigEvent(type: IBashConfigEvent['type'], payload: any): void {
-    this.configChange.emit({
+    const event: IBashConfigEvent = {
       type,
       payload,
       timestamp: new Date()
-    });
+    };
+
+    this.configChange.emit(event);
   }
 }

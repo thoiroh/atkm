@@ -1,24 +1,27 @@
-<!-- Terminal Section -->
-<div class="terminal-section">
-  <div class="terminal-content">
-    <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
-    <atk-bash [configId]="configId()" [autoLoad]="autoLoad()" (configRequest)="onBashConfigRequest($event)"
-      (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)"
-      (eventEmitted)="onBashEvent($event)" />
+<!-- src/app/shared/components/atk-api-management/atk-api-management.component.html -->
+<!-- Updated template without sidebar integration -->
+
+<div class="api-management-wrapper">
+  <!-- Main Content Area -->
+  <div class="api-content-area">
+
+    <!-- Terminal Section -->
+    <div class="terminal-section">
+      <div class="terminal-content">
+        <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+        <atk-bash [configId]="configId()" [autoLoad]="autoLoad()" (configRequest)="onBashConfigRequest($event)"
+          (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)"
+          (eventEmitted)="onBashEvent($event)" />
+      </div>
+    </div>
+
+    <!-- Data Display Section -->
+    <div class="data-section">
+      <atk-datatable [data]="stateService.currentData()" [currentEndpoint]="stateService.currentEndpointConfig()"
+        [loading]="stateService.dataLoading()" [error]="stateService.dataError()" [searchEnabled]="true"
+        [itemsPerPage]="50" [rowClickable]="true" (rowClick)="onDataRowClick($event)" (retryLoad)="onRetryDataLoad()"
+        (exportRequest)="onDataExport($event)" />
+    </div>
+
   </div>
 </div>
-
-<!-- Data Display Section -->
-<div class="data-section">
-  <atk-datatable [data]="currentData()" [currentEndpoint]="currentEndpointConfig()" [loading]="dataLoading()"
-    [error]="dataError()" [searchEnabled]="true" [itemsPerPage]="50" [rowClickable]="true"
-    (rowClick)="onDataRowClick($event)" (retryLoad)="onRetryDataLoad()" (exportRequest)="onDataExport($event)" />
-</div>
-
-
-<!-- Configuration Sidebar -->
-<!-- <div class="sidebar-section">
-    <atk-sidebar-bash-config [bashConfig]="bashConfig()" [terminalState]="terminalState()"
-      [isCollapsed]="sidebarCollapsed()" [currentEndpoint]="currentEndpoint()" [accountData]="accountData()"
-      (configChange)="onSidebarConfigChange($event)" (togglePanel)="onSidebarToggle()" />
-  </div> -->

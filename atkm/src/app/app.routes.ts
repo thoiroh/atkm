@@ -56,7 +56,7 @@ export const routes: Routes = [
       },
       {
         path: 'binance/apim',
-        loadComponent: () => import('./features/binance/components/binance-api-management.component').then(m => m.BinanceUnifiedComponent),
+        loadComponent: () => import('./features/binance/components/binance-api-management.component').then(m => m.BinanceApiManagementComponent),
         title: 'Binance Account | Debug'
       },
 
