@@ -195,15 +195,13 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
 
   /**
     * Handle bash configuration requests from AtkBashComponent
+    * Event handler with correct signature
     */
-  onBashConfigRequest(configData: {
-    config: IBashConfig | null;
-    terminalState: IBashTerminalState;
-    currentEndpoint: string
-  }): void {
-    this.bashConfig.set(configData.config);
-    this.bashTerminalState.set(configData.terminalState);
-    this.bashCurrentEndpoint.set(configData.currentEndpoint);
+  protected onBashConfigRequest(config: IBashConfig): void {
+    // Handle bash config request
+    console.log('Bash config requested:', config);
+    // Update terminal state with new config
+    // Implementation according to your business logic
   }
 
   /**

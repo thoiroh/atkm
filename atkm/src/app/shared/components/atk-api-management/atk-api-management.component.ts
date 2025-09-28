@@ -8,10 +8,10 @@ import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component
 import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { firstValueFrom } from 'rxjs';
-import { AtkBashComponent } from '../atk-bash/atk-bash.component';
+import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
 import { BashData, IBashConfig, IBashEndpointConfig, IBashEvent, IBashTerminalState } from '../atk-bash/atk-bash.interfaces';
-import { AtkDatatableComponent } from '../atk-datatable/atk-datatable.component';
-import { AtkBashConfigFactory } from '../atk-bash/atk-bash-config.factory';
+import { AtkBashConfigFactory } from '@shared/components/atk-bash/atk-bash-config.factory';
+import { AtkDatatableComponent } from '@shared/components/atk-datatable/atk-datatable.component';
 
 /**
  * Configuration event from sidebar

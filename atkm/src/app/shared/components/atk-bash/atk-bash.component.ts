@@ -65,15 +65,30 @@ export class AtkBashComponent implements OnInit {
   // SIGNALS - Angular 20 Style
   // =========================================
 
-  private currentConfig = signal<IBashConfig | null>(null);
   private currentEndpoint = signal<string>('');
   private data = signal<BashData[]>([]);
   private error = signal<string | null>(null);
   private logs = signal<IBashLogEntry[]>([]);
 
-  private terminalState = signal<IBashTerminalState>({
+  // State signals - accessible in template
+  protected terminalState = signal<IBashTerminalState>({
     loading: false,
-    connectionStatus: 'disconnected'
+    connectionStatus: 'disconnected',
+    // ✅ No history property needed - use logs signal instead
+    requestParams: undefined,
+    error: undefined,
+    currentEndpoint: undefined,
+    responseMetadata: undefined
+  });
+
+  protected currentConfig = signal<IBashConfig | null>(null);
+  protected loading = signal<boolean>(false);
+  protected scrollState = signal<{
+    contentHeight: number;
+    visibleHeight: number;
+  }>({
+    contentHeight: 0,
+    visibleHeight: 0
   });
 
   // =========================================
@@ -611,7 +626,8 @@ export class AtkBashComponent implements OnInit {
     }));
   }
 
-  private getStatusIcon(status: string): string {
+  // Status icon helper - accessible in template
+  protected getStatusIcon(status: string): string {
     switch (status) {
       case 'connected': return '🟢';
       case 'connecting': return '🟡';
@@ -648,5 +664,19 @@ export class AtkBashComponent implements OnInit {
       console.log('Current endpoint signal:', this.currentEndpoint());
     }
     console.groupEnd();
+  }
+
+  // Terminal event handlers
+  protected onTerminalContentChange(event: any): void {
+    // Handle terminal content changes
+    console.log('Terminal content changed:', event);
+  }
+
+  protected onTerminalScroll(event: any): void {
+    // Handle terminal scroll events
+    this.scrollState.set({
+      contentHeight: event.target.scrollHeight,
+      visibleHeight: event.target.clientHeight
+    });
   }
 }

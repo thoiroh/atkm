@@ -1,20 +1,67 @@
-<div class="terminal-wrapper">
-  <header class="terminal-header">
-    <h1>Binance API Management</h1>
-    <div class="terminal-details">
-      <h2>Unified terminal, data display, and configuration interface.</h2>
-      <div class="connection-indicator">
-        <span class="indicator-dot" [class]="stateService.isConnected() ? 'connected' : 'disconnected'"></span>
-        <span class="indicator-text">
-          {{ stateService.isConnected() ? 'Connected to' : 'Disconnected from' }}
-          {{ stateService.currentEndpoint() || 'No endpoint' }}
-        </span>
-      </div>
-    </div>
-  </header>
+<div class="binance-api-management">
 
-  <main class="terminal-main">
-    <atk-api-management configId="binance-debug-v2" [autoLoad]="true" (dataRowSelected)="onDataRowSelected($event)"
-      (endpointChanged)="onEndpointChanged($event)" (errorOccurred)="onErrorOccurred($event)" />
-  </main>
+  <!-- Header Section -->
+  <div class="binance-header">
+    <div class="header-title">
+      <atk-icon name="trending-up" [size]="24" color="var(--color-accent-fg)" />
+      <h1>{{ title() }}</h1>
+    </div>
+    <div class="header-meta">
+      <div class="connection-status" [ngClass]="connectionStatusClass()">
+        <atk-icon [name]="connectionStatusIcon()" [size]="16" />
+        <span>{{ connectionStatusText() }}</span>
+      </div>
+      @if (summary(); as summaryData) {
+      <div class="data-summary">
+        <span class="summary-item">
+          <atk-icon name="database" [size]="14" color="var(--color-fg-muted)" />
+          {{ summaryData.tableRows }} items
+        </span>
+        @if (summaryData.lastUpdate) {
+        <span class="summary-item">
+          <atk-icon name="clock" [size]="14" color="var(--color-fg-muted)" />
+          {{ formatLastUpdate(summaryData.lastUpdate) }}
+        </span>
+        }
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Main Content Layout -->
+  <div class="binance-layout">
+
+    <!-- Sidebar Configuration Panel -->
+    @if (showSidebar()) {
+    <div class="binance-sidebar">
+      <atk-sidebar-bash-config [configId]="configId()" [showDebugInfo]="debugMode()" />
+    </div>
+    }
+
+    <!-- Main API Management Component -->
+    <div class="binance-main" [class.full-width]="!showSidebar()">
+      <atk-api-management [configId]="configId()" [autoLoad]="autoLoad()" (dataRowSelected)="onDataRowSelected($event)"
+        (endpointChanged)="onEndpointChanged($event)" (errorOccurred)="onErrorOccurred($event)" />
+    </div>
+
+  </div>
+
+  <!-- Debug Panel (Development Only) -->
+  @if (debugMode()) {
+  <div class="debug-panel">
+    <div class="debug-header">
+      <atk-icon name="bug" [size]="16" color="var(--color-warning)" />
+      <span>Debug Information</span>
+      <button class="debug-toggle" (click)="toggleDebugExpanded()">
+        <atk-icon [name]="debugExpanded() ? 'chevron-up' : 'chevron-down'" [size]="14" />
+      </button>
+    </div>
+    @if (debugExpanded()) {
+    <div class="debug-content">
+      <pre>{{ getDebugInfo() }}</pre>
+    </div>
+    }
+  </div>
+  }
+
 </div>

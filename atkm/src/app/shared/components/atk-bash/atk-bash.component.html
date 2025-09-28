@@ -19,8 +19,7 @@
 </div>
 
 <!-- Terminal textarea with simplified directive -->
-<textarea class="terminal-input" [style.--terminal-min-height]="currentConfig()?.terminal.height || '500px'"
-  spellcheck="false" autocorrect="off" autocomplete="off" autocapitalize="off"
-  placeholder="Terminal ready... Type /help for commands" atkTerminalInput [autoResize]="false"
-  [newHeight]="currentConfig()?.terminal?.height || '500px'" [maxHeight]="currentConfig()?.terminal.height || '500px'"
-  (contentChange)="onTerminalContentChange($event)" (scrollChange)="onTerminalScroll($event)"></textarea>
+<textarea [style.--terminal-min-height]="currentConfig()?.terminal.height || '500px'"
+  [style.max-height]="currentConfig()?.terminal.height || '500px'" (input)="onTerminalContentChange($event)"
+  (scroll)="onTerminalScroll($event)">
+</textarea>
