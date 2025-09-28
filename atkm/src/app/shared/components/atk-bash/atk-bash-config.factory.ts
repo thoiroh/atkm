@@ -1,8 +1,8 @@
 // atk-bash-config.factory.ts
-// Factory for creating bash configurations with TypeScript objects
+// EXTENDED - Factory for creating bash configurations with sidebar/table separation
 
 import { Injectable } from '@angular/core';
-import { IBashConfig, IBashEndpointConfig } from './atk-bash.interfaces';
+import { IBashConfig, IBashEndpointConfig, IBashSidebarField, IBashDataTransformResult } from './atk-bash.interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -10,75 +10,7 @@ import { IBashConfig, IBashEndpointConfig } from './atk-bash.interfaces';
 export class AtkBashConfigFactory {
 
   /**
-   * Create Binance debug configuration
-   */
-  createBinanceAccountConfig(): IBashConfig {
-    return {
-      id: 'binance-debug-v1',
-      title: 'Binance API Account Debug Terminal',
-      subtitle: 'Enhanced debugging for Account EndPoints',
-      defaultEndpoint: 'account',
-      terminal: {
-        editable: true,
-        height: '200px',
-        showControls: true,
-        customCommands: [
-          {
-            name: 'clear',
-            description: 'Clear all terminal logs',
-            handler: () => console.log('Clearing logs...')
-          },
-          {
-            name: 'test',
-            description: 'Test specific endpoint',
-            handler: (args: string[]) => console.log(`Testing endpoint: ${args[0]}`)
-          },
-          {
-            name: 'symbol',
-            description: 'Set trading symbol for queries',
-            handler: (args: string[]) => console.log(`Setting symbol: ${args[0]}`)
-          }
-        ]
-      },
-      table: {
-        showEmptyState: true,
-        itemsPerPage: 100,
-        searchEnabled: true
-      },
-      endpoints: [
-        this.createAccountEndpoint(),
-        this.createTradesEndpoint(),
-        this.createOrdersEndpoint(),
-        this.createTickerEndpoint()
-      ],
-      actions: [
-        // {
-        //   id: 'refresh-all',
-        //   label: 'Refresh All',
-        //   icon: 'refresh-cw',
-        //   variant: 'secondary',
-        //   handler: async () => console.log('Refreshing all data...')
-        // },
-        // {
-        //   id: 'export-csv',
-        //   label: 'Export CSV',
-        //   icon: 'download',
-        //   variant: 'secondary',
-        //   handler: async () => console.log('Exporting to CSV...')
-        // },
-        // {
-        //   id: 'clear-cache',
-        //   label: 'Clear Cache',
-        //   icon: 'trash-2',
-        //   variant: 'warning',
-        //   handler: async () => console.log('Clearing cache...')
-        // }
-      ]
-    };
-  }
-
-  /**
-   * Create Binance debug configuration
+   * Create Binance debug configuration - EXTENDED
    */
   createBinanceDebugConfig(): IBashConfig {
     return {
@@ -119,59 +51,14 @@ export class AtkBashConfigFactory {
         this.createOrdersEndpoint(),
         this.createTickerEndpoint()
       ],
-      actions: [
-        // {
-        //   id: 'refresh-all',
-        //   label: 'Refresh All',
-        //   icon: 'refresh-cw',
-        //   variant: 'secondary',
-        //   handler: async () => console.log('Refreshing all data...')
-        // },
-        // {
-        //   id: 'export-csv',
-        //   label: 'Export CSV',
-        //   icon: 'download',
-        //   variant: 'secondary',
-        //   handler: async () => console.log('Exporting to CSV...')
-        // },
-        // {
-        //   id: 'clear-cache',
-        //   label: 'Clear Cache',
-        //   icon: 'trash-2',
-        //   variant: 'warning',
-        //   handler: async () => console.log('Clearing cache...')
-        // }
-      ]
-    };
-  }
-
-  /**
-   * Create IBKR configuration (future use)
-   */
-  createIbkrConfig(): IBashConfig {
-    return {
-      id: 'ibkr-debug-v1',
-      title: 'Interactive Brokers Debug Terminal',
-      subtitle: 'IBKR API debugging and data analysis',
-      defaultEndpoint: 'account',
-      terminal: {
-        editable: true,
-        height: '450px',
-        showControls: true
-      },
-      table: {
-        showEmptyState: true,
-        itemsPerPage: 50,
-        searchEnabled: true
-      },
-      endpoints: [
-        // Will be implemented later
-      ],
       actions: []
     };
   }
 
-  // Private endpoint creators for Binance
+  // =========================================
+  // PRIVATE ENDPOINT CREATORS - EXTENDED
+  // =========================================
+
   private createAccountEndpoint(): IBashEndpointConfig {
     return {
       id: 'account',
@@ -184,22 +71,70 @@ export class AtkBashConfigFactory {
       },
       cacheable: true,
       cacheDuration: 30000,
-      dataTransformer: (apiResponse: any) => {
-        if (!apiResponse?.data?.balances) return [];
 
-        return apiResponse.data.balances
-          .filter((balance: any) =>
-            parseFloat(balance.free) > 0 || parseFloat(balance.locked) > 0
-          )
-          .map((balance: any) => ({
-            id: balance.asset,
-            asset: balance.asset,
-            free: parseFloat(balance.free),
-            locked: parseFloat(balance.locked),
-            total: parseFloat(balance.free) + parseFloat(balance.locked),
-            usdValue: 0 // Would need price conversion
-          }));
-      },
+      // SIDEBAR FIELDS CONFIGURATION
+      sidebarFields: [
+        {
+          key: 'canTrade',
+          label: 'Can Trade',
+          type: 'boolean',
+          group: 'permissions',
+          icon: 'trending-up'
+        },
+        {
+          key: 'canWithdraw',
+          label: 'Can Withdraw',
+          type: 'boolean',
+          group: 'permissions',
+          icon: 'arrow-up-circle'
+        },
+        {
+          key: 'canDeposit',
+          label: 'Can Deposit',
+          type: 'boolean',
+          group: 'permissions',
+          icon: 'arrow-down-circle'
+        },
+        {
+          key: 'brokered',
+          label: 'Brokered',
+          type: 'boolean',
+          group: 'account',
+          icon: 'briefcase'
+        },
+        {
+          key: 'requireSelfTradePrevention',
+          label: 'Self Trade Prevention',
+          type: 'boolean',
+          group: 'settings',
+          icon: 'shield-check'
+        },
+        {
+          key: 'preventSor',
+          label: 'Prevent SOR',
+          type: 'boolean',
+          group: 'settings',
+          icon: 'shield-x'
+        },
+        {
+          key: 'updateTime',
+          label: 'Last Update',
+          type: 'date',
+          group: 'info',
+          icon: 'clock',
+          formatter: (value: number) => new Date(value).toLocaleString('fr-FR')
+        },
+        {
+          key: 'accountType',
+          label: 'Account Type',
+          type: 'status',
+          group: 'info',
+          icon: 'user',
+          cssClass: 'account-type-badge'
+        }
+      ],
+
+      // TABLE COLUMNS CONFIGURATION (balances)
       columns: [
         {
           key: 'asset',
@@ -248,7 +183,45 @@ export class AtkBashConfigFactory {
           sortable: true,
           visible: false // Hidden for now
         }
-      ]
+      ],
+
+      // DATA TRANSFORMER - EXTENDED
+      dataTransformer: (apiResponse: any): IBashDataTransformResult => {
+        if (!apiResponse?.data) {
+          return { sidebarData: {}, tableData: [] };
+        }
+
+        const accountData = apiResponse.data;
+
+        // SIDEBAR DATA - Account info fields
+        const sidebarData = {
+          canTrade: accountData.canTrade || false,
+          canWithdraw: accountData.canWithdraw || false,
+          canDeposit: accountData.canDeposit || false,
+          brokered: accountData.brokered || false,
+          requireSelfTradePrevention: accountData.requireSelfTradePrevention || false,
+          preventSor: accountData.preventSor || false,
+          updateTime: accountData.updateTime || Date.now(),
+          accountType: accountData.accountType || 'UNKNOWN'
+        };
+
+        // TABLE DATA - Balances with significant amounts only
+        const tableData = (accountData.balances || [])
+          .filter((balance: any) =>
+            parseFloat(balance.free || '0') > 0 ||
+            parseFloat(balance.locked || '0') > 0
+          )
+          .map((balance: any) => ({
+            id: balance.asset,
+            asset: balance.asset,
+            free: parseFloat(balance.free || '0'),
+            locked: parseFloat(balance.locked || '0'),
+            total: parseFloat(balance.free || '0') + parseFloat(balance.locked || '0'),
+            usdValue: 0 // Would need price conversion
+          }));
+
+        return { sidebarData, tableData };
+      }
     };
   }
 
@@ -264,64 +237,50 @@ export class AtkBashConfigFactory {
       },
       cacheable: true,
       cacheDuration: 60000,
-      dataTransformer: (apiResponse: any) => {
-        if (!Array.isArray(apiResponse?.data?.trades)) return [];
 
-        return apiResponse.data.trades.map((trade: any) => ({
-          id: trade.id || `${trade.symbol}-${trade.time}`,
-          symbol: trade.symbol,
-          side: trade.isBuyer ? 'BUY' : 'SELL',
-          price: parseFloat(trade.price),
-          qty: parseFloat(trade.qty),
-          quoteQty: parseFloat(trade.quoteQty),
-          commission: parseFloat(trade.commission),
-          commissionAsset: trade.commissionAsset,
-          time: trade.time,
-          isBuyer: trade.isBuyer,
-          isMaker: trade.isMaker
-        }));
-      },
+      // NO SIDEBAR DATA FOR TRADES
+      sidebarFields: [],
+
+      // TABLE COLUMNS FOR TRADES
       columns: [
         {
           key: 'symbol',
           label: 'Symbol',
-          width: '12%',
+          width: '15%',
           align: 'left',
-          type: 'badge',
-          sortable: true,
-          formatter: (value: string) => value?.toUpperCase()
+          type: 'text',
+          sortable: true
         },
         {
           key: 'side',
           label: 'Side',
-          width: '8%',
+          width: '10%',
           align: 'center',
           type: 'badge',
-          formatter: (value: string) => value?.toUpperCase(),
-          cssClass: 'trade-side'
+          sortable: true
         },
         {
-          key: 'price',
-          label: 'Price',
-          width: '16%',
-          align: 'right',
-          type: 'custom',
-          sortable: true,
-          formatter: (value: number) => this.formatPrice(value)
-        },
-        {
-          key: 'qty',
+          key: 'quantity',
           label: 'Quantity',
-          width: '16%',
+          width: '20%',
           align: 'right',
           type: 'custom',
           sortable: true,
           formatter: (value: number) => this.formatQuantity(value)
         },
         {
-          key: 'quoteQty',
-          label: 'Quote Qty',
-          width: '16%',
+          key: 'price',
+          label: 'Price',
+          width: '20%',
+          align: 'right',
+          type: 'custom',
+          sortable: true,
+          formatter: (value: number) => this.formatPrice(value)
+        },
+        {
+          key: 'quoteQuantity',
+          label: 'Total',
+          width: '20%',
           align: 'right',
           type: 'custom',
           sortable: true,
@@ -330,28 +289,32 @@ export class AtkBashConfigFactory {
         {
           key: 'commission',
           label: 'Fee',
-          width: '10%',
+          width: '15%',
           align: 'right',
           type: 'custom',
+          sortable: true,
           formatter: (value: number) => this.formatFee(value)
-        },
-        {
-          key: 'time',
-          label: 'Date',
-          width: '16%',
-          align: 'center',
-          type: 'date',
-          sortable: true
-        },
-        {
-          key: 'isMaker',
-          label: 'Maker',
-          width: '6%',
-          align: 'center',
-          type: 'boolean',
-          visible: false
         }
-      ]
+      ],
+
+      dataTransformer: (apiResponse: any): IBashDataTransformResult => {
+        if (!Array.isArray(apiResponse?.data?.trades)) {
+          return { sidebarData: {}, tableData: [] };
+        }
+
+        const tableData = apiResponse.data.trades.map((trade: any) => ({
+          id: trade.id || `${trade.symbol}-${trade.time}`,
+          symbol: trade.symbol,
+          side: trade.isBuyer ? 'BUY' : 'SELL',
+          quantity: parseFloat(trade.qty || '0'),
+          price: parseFloat(trade.price || '0'),
+          quoteQuantity: parseFloat(trade.quoteQty || '0'),
+          commission: parseFloat(trade.commission || '0'),
+          time: trade.time
+        }));
+
+        return { sidebarData: {}, tableData };
+      }
     };
   }
 
@@ -366,30 +329,16 @@ export class AtkBashConfigFactory {
         limit: 100
       },
       cacheable: true,
-      cacheDuration: 45000,
-      dataTransformer: (apiResponse: any) => {
-        if (!Array.isArray(apiResponse?.data?.orders)) return [];
+      cacheDuration: 60000,
 
-        return apiResponse.data.orders.map((order: any) => ({
-          id: order.orderId,
-          symbol: order.symbol,
-          side: order.side,
-          type: order.type,
-          origQty: parseFloat(order.origQty),
-          executedQty: parseFloat(order.executedQty),
-          cummulativeQuoteQty: parseFloat(order.cummulativeQuoteQty),
-          price: parseFloat(order.price),
-          status: order.status,
-          timeInForce: order.timeInForce,
-          time: order.time,
-          updateTime: order.updateTime
-        }));
-      },
+      // NO SIDEBAR DATA FOR ORDERS
+      sidebarFields: [],
+
       columns: [
         {
           key: 'symbol',
           label: 'Symbol',
-          width: '12%',
+          width: '15%',
           align: 'left',
           type: 'text',
           sortable: true
@@ -397,86 +346,93 @@ export class AtkBashConfigFactory {
         {
           key: 'side',
           label: 'Side',
-          width: '8%',
+          width: '10%',
           align: 'center',
           type: 'badge',
-          cssClass: 'order-side'
+          sortable: true
         },
         {
           key: 'type',
           label: 'Type',
           width: '10%',
           align: 'center',
-          type: 'text'
+          type: 'text',
+          sortable: true
         },
         {
-          key: 'origQty',
+          key: 'quantity',
           label: 'Quantity',
-          width: '14%',
+          width: '20%',
           align: 'right',
           type: 'custom',
-          formatter: (value: number) => this.formatQuantity(value)
-        },
-        {
-          key: 'executedQty',
-          label: 'Executed',
-          width: '14%',
-          align: 'right',
-          type: 'custom',
+          sortable: true,
           formatter: (value: number) => this.formatQuantity(value)
         },
         {
           key: 'price',
           label: 'Price',
-          width: '14%',
+          width: '20%',
           align: 'right',
           type: 'custom',
+          sortable: true,
           formatter: (value: number) => this.formatPrice(value)
         },
         {
           key: 'status',
           label: 'Status',
-          width: '10%',
+          width: '15%',
           align: 'center',
           type: 'badge',
-          cssClass: 'order-status'
+          sortable: true
         },
         {
-          key: 'time',
-          label: 'Created',
-          width: '18%',
-          align: 'center',
-          type: 'date',
-          sortable: true
+          key: 'executedQty',
+          label: 'Filled',
+          width: '10%',
+          align: 'right',
+          type: 'custom',
+          sortable: true,
+          formatter: (value: number) => this.formatQuantity(value)
         }
-      ]
+      ],
+
+      dataTransformer: (apiResponse: any): IBashDataTransformResult => {
+        if (!Array.isArray(apiResponse?.data?.orders)) {
+          return { sidebarData: {}, tableData: [] };
+        }
+
+        const tableData = apiResponse.data.orders.map((order: any) => ({
+          id: order.orderId || `${order.symbol}-${order.time}`,
+          symbol: order.symbol,
+          side: order.side,
+          type: order.type,
+          quantity: parseFloat(order.origQty || '0'),
+          price: parseFloat(order.price || '0'),
+          status: order.status,
+          executedQty: parseFloat(order.executedQty || '0'),
+          time: order.time
+        }));
+
+        return { sidebarData: {}, tableData };
+      }
     };
   }
 
   private createTickerEndpoint(): IBashEndpointConfig {
     return {
       id: 'ticker',
-      name: 'Ticker Prices',
+      name: 'Price Ticker',
       url: 'http://localhost:8000/api/v3/ticker/price',
       method: 'GET',
+      params: {
+        symbol: 'BTCUSDT'
+      },
       cacheable: true,
       cacheDuration: 10000,
-      dataTransformer: (apiResponse: any) => {
-        const data = apiResponse?.data;
-        if (!data) return [];
 
-        // Handle both single ticker and array of tickers
-        const tickers = Array.isArray(data) ? data : [data];
+      // NO SIDEBAR DATA FOR TICKER
+      sidebarFields: [],
 
-        return tickers.map((ticker: any, index: number) => ({
-          id: ticker.symbol || index,
-          symbol: ticker.symbol,
-          price: parseFloat(ticker.price),
-          // Add fake change data (would come from 24hr ticker in real implementation)
-          priceChange: Math.random() * 10 - 5,
-          priceChangePercent: Math.random() * 20 - 10
-        }));
-      },
       columns: [
         {
           key: 'symbol',
@@ -504,11 +460,31 @@ export class AtkBashConfigFactory {
           sortable: true,
           cssClass: 'price-change-cell'
         }
-      ]
+      ],
+
+      dataTransformer: (apiResponse: any): IBashDataTransformResult => {
+        // Handle both single ticker and array of tickers
+        const data = apiResponse?.data;
+        const tickers = Array.isArray(data) ? data : [data];
+
+        const tableData = tickers.map((ticker: any, index: number) => ({
+          id: ticker.symbol || index,
+          symbol: ticker.symbol,
+          price: parseFloat(ticker.price || '0'),
+          // Add fake change data (would come from 24hr ticker in real implementation)
+          priceChange: Math.random() * 10 - 5,
+          priceChangePercent: Math.random() * 20 - 10
+        }));
+
+        return { sidebarData: {}, tableData };
+      }
     };
   }
 
-  // Formatters - Using your existing logic
+  // =========================================
+  // FORMATTERS - Existing logic maintained
+  // =========================================
+
   private formatBalance(value: number): string {
     if (value === 0 || !value) return '0';
     if (value < 0.00001) return value.toExponential(2);
@@ -542,5 +518,98 @@ export class AtkBashConfigFactory {
   private formatFee(value: number): string {
     if (!value) return '0';
     return value.toFixed(8);
+  }
+
+  // =========================================
+  // FUTURE CONFIGURATIONS
+  // =========================================
+
+  /**
+   * Create IBKR configuration (future use)
+   */
+  createIbkrConfig(): IBashConfig {
+    return {
+      id: 'ibkr-debug-v1',
+      title: 'Interactive Brokers Debug Terminal',
+      subtitle: 'IBKR API debugging and data analysis',
+      defaultEndpoint: 'account',
+      terminal: {
+        editable: true,
+        height: '450px',
+        showControls: true
+      },
+      table: {
+        showEmptyState: true,
+        itemsPerPage: 50,
+        searchEnabled: true
+      },
+      endpoints: [
+        // Will be implemented later with same structure
+      ],
+      actions: []
+    };
+  }
+
+  /**
+   * Generic API configuration creator
+   */
+  createGenericApiConfig(
+    id: string,
+    title: string,
+    baseUrl: string
+  ): IBashConfig {
+    return {
+      id,
+      title,
+      subtitle: `${title} API debugging terminal`,
+      defaultEndpoint: 'default',
+      terminal: {
+        editable: true,
+        height: '400px',
+        showControls: true
+      },
+      table: {
+        showEmptyState: true,
+        itemsPerPage: 100,
+        searchEnabled: true
+      },
+      endpoints: [
+        {
+          id: 'default',
+          name: 'Default Endpoint',
+          url: `${baseUrl}/api/default`,
+          method: 'GET',
+          columns: [
+            {
+              key: 'id',
+              label: 'ID',
+              width: '20%',
+              type: 'text',
+              sortable: true
+            },
+            {
+              key: 'name',
+              label: 'Name',
+              width: '40%',
+              type: 'text',
+              sortable: true
+            },
+            {
+              key: 'value',
+              label: 'Value',
+              width: '40%',
+              type: 'text',
+              sortable: true
+            }
+          ],
+          sidebarFields: [],
+          dataTransformer: (data: any): IBashDataTransformResult => ({
+            sidebarData: {},
+            tableData: Array.isArray(data) ? data : [data]
+          })
+        }
+      ],
+      actions: []
+    };
   }
 }

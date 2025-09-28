@@ -27,6 +27,14 @@
             "action": false,
             "isExpanded": false,
             "subMenu": []
+          },
+          {
+            "icon": "dot",
+            "label": "Binance Unified Component (apim)",
+            "link": "/dashboard/binance/apim",
+            "action": false,
+            "isExpanded": false,
+            "subMenu": []
           }
         ]
       },
@@ -38,14 +46,6 @@
           "action": "createRepo"
         },
         "items": [
-          {
-            "icon": "dot",
-            "label": "Binance Unified Component",
-            "link": "/dashboard/binance/apim",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": []
-          },
           {
             "icon": "dot",
             "label": "Binance Debug Bash",

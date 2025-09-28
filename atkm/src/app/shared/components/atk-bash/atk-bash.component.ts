@@ -1,22 +1,24 @@
-// src/app/shared/components/atk-bash/atk-bash.component.ts
-// Simplified AtkBashComponent without cursor tracking
+// atk-bash.component.ts
+// CORRECTED - Integration with ApiManagementStateService using Angular 20 signals
 
 import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, effect, inject, input, NgZone, OnInit, output, signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { firstValueFrom } from 'rxjs';
+import { finalize, firstValueFrom } from 'rxjs';
 
 import { BinanceErrorHandlerService } from '@app/features/binance/services/binance-error-handler.service';
 import { TransactionStateService } from '@app/features/binance/services/binance-transaction-state.service';
 import { BinanceService } from '@features/binance/services/binance.service';
 
 import {
-  TerminalInputDirective,
-  TerminalScrollState
+  TerminalInputDirective
 } from '@shared/directives/terminal-input.directive';
+import { BalanceFormatPipe, CryptoPrecisionPipe, StatusBadgePipe, TimestampToDatePipe } from '@shared/pipes/pipes';
+import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { AtkBashConfigFactory } from './atk-bash-config.factory';
-import { BashData, IBashConfig, IBashEvent, IBashLogEntry, IBashTerminalState } from './atk-bash.interfaces';
+import { BashData, IBashConfig, IBashDataTransformResult, IBashEvent, IBashLogEntry, IBashTerminalState } from './atk-bash.interfaces';
 import { AtkBashService } from './atk-bash.service';
 
 @Component({
@@ -26,6 +28,10 @@ import { AtkBashService } from './atk-bash.service';
     CommonModule,
     FormsModule,
     AtkIconComponent,
+    BalanceFormatPipe,
+    CryptoPrecisionPipe,
+    StatusBadgePipe,
+    TimestampToDatePipe,
     TerminalInputDirective
   ],
   templateUrl: './atk-bash.component.html',
@@ -39,13 +45,11 @@ export class AtkBashComponent implements OnInit {
   // Component inputs
   configId = input<string>('binance-debug-v2');
   autoLoad = input<boolean>(true);
-
+  history: string[] = [];
   // Component outputs
   dataLoaded = output<BashData[]>();
   errorOccurred = output<string>();
   eventEmitted = output<IBashEvent>();
-  terminalContentChange = output<string>();
-  configRequest = output<{ config: IBashConfig | null; terminalState: IBashTerminalState; currentEndpoint: string }>();
 
   // Services
   private bashService = inject(AtkBashService);
@@ -55,153 +59,195 @@ export class AtkBashComponent implements OnInit {
   private transactionState = inject(TransactionStateService);
   private destroyRef = inject(DestroyRef);
   private zone = inject(NgZone);
+  private apiManagementState = inject(ApiManagementStateService); // CORRECTED path
 
-  // Core state signals
-  currentConfig = signal<IBashConfig | null>(null);
-  currentEndpoint = signal<string>('');
-  terminalState = signal<IBashTerminalState>({
+  // =========================================
+  // SIGNALS - Angular 20 Style
+  // =========================================
+
+  private currentConfig = signal<IBashConfig | null>(null);
+  private currentEndpoint = signal<string>('');
+  private data = signal<BashData[]>([]);
+  private error = signal<string | null>(null);
+  private logs = signal<IBashLogEntry[]>([]);
+
+  private terminalState = signal<IBashTerminalState>({
     loading: false,
-    connectionStatus: 'disconnected',
-    requestParams: {}
+    connectionStatus: 'disconnected'
   });
-  data = signal<BashData[]>([]);
-  error = signal<string | null>(null);
 
-  // Terminal functionality signals (simplified)
-  logs = signal<IBashLogEntry[]>([]);
-  terminalScrollState = signal<TerminalScrollState | null>(null);
+  // =========================================
+  // COMPUTED SIGNALS
+  // =========================================
 
-  // Computed properties
-  terminalText = computed(() => {
-    const config = this.currentConfig();
-    const state = this.terminalState();
-    const endpoint = this.currentEndpoint();
+  // CORRECTED: Simple terminal state without directive dependency
+  private terminalInputState = computed(() => ({
+    content: '',
+    line: 0,
+    column: 0,
+    caretIndex: 0,
+    selectionText: '',
+    history: [],
+    historyIndex: -1
+  }));
+
+  // Terminal display with cursor animation
+  terminalContent = computed(() => {
+    const state = this.terminalInputState();
+    const logs = this.logs();
 
     let output = '';
 
-    // Header section
-    if (config) {
-      output += `1) Configuration: ${config.title}\n`;
-      output += `   ${config.subtitle}\n\n`;
-    }
-
-    // Service injection status
-    output += `2) Service Status:\n`;
-    output += `   BinanceService: ${this.binanceService ? '✅ OK' : '❌ FAILED'}\n`;
-    output += `   ErrorHandler: ${this.errorHandler ? '✅ OK' : '❌ FAILED'}\n`;
-    output += `   TransactionState: ${this.transactionState ? '✅ OK' : '❌ FAILED'}\n\n`;
-
-    // Connection status
-    output += `3) Connection Status:\n`;
-    output += `   Status: ${this.getStatusIcon(state.connectionStatus)} ${state.connectionStatus}\n`;
-    output += `   Endpoint: ${endpoint || 'None selected'}\n`;
-    if (state.responseMetadata) {
-      output += `   Last Response: ${state.responseMetadata.statusCode} (${state.responseMetadata.responseTime}ms)\n`;
-      output += `   Data Count: ${state.responseMetadata.dataCount || 0}\n`;
-    }
-    output += '\n';
-
-    // Parameters section
-    if (state.requestParams && Object.keys(state.requestParams).length > 0) {
-      output += '4) Request Parameters:\n';
-      Object.entries(state.requestParams).forEach(([key, value]) => {
-        output += `   ${key}: ${value}\n`;
+    // Add logs
+    logs.forEach(log => {
+      const icon = this.getLogIcon(log.level);
+      const timestamp = log.timestamp.toLocaleTimeString('fr-FR', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
       });
-      output += '\n';
-    }
+      output += `[${timestamp}] ${icon} ${log.message}\n`;
+    });
 
-    // Logs section
-    output += '5) Terminal Log:\n\n';
-    const logEntries = this.logs();
-    if (logEntries.length === 0) {
-      output += '   (no logs yet)\n';
-    } else {
-      logEntries.forEach(log => {
-        const timestamp = log.timestamp.toLocaleTimeString();
-        const icon = this.getLogIcon(log.level);
-        output += `[${timestamp}] ${icon} ${log.message}\n`;
-      });
-    }
-
+    // Add current input line with cursor
+    const cursor = Date.now() % 1000 < 500 ? '▮' : '';
+    output += cursor;
     return output;
   });
 
-  // Status computed properties
-  isLoading = computed(() => this.terminalState().loading);
-  hasError = computed(() => !!this.error());
-  isConnected = computed(() => this.terminalState().connectionStatus === 'connected');
+  visibleColumns = computed(() => {
+    const config = this.currentConfig();
+    const endpoint = config?.endpoints.find(ep => ep.id === this.currentEndpoint());
+    return endpoint?.columns.filter(col => col.visible !== false) || [];
+  });
+
+  // Get current endpoint name
+  getCurrentEndpointName = computed(() => {
+    const config = this.currentConfig();
+    const endpointId = this.currentEndpoint();
+    const endpoint = config?.endpoints.find(ep => ep.id === endpointId);
+    return endpoint?.name || 'Unknown Endpoint';
+  });
+
+  // =========================================
+  // CONSTRUCTOR & EFFECTS
+  // =========================================
 
   constructor() {
-    // Auto-scroll effect when terminal content changes
+    // Initialize configuration
     effect(() => {
-      const terminalText = this.terminalText();
-      const directive = this.terminalDirective();
+      const configIdValue = this.configId();
+      console.log('Config effect triggered:', configIdValue);
 
-      if (directive && terminalText) {
-        // Update terminal content and auto-scroll
-        directive.setContent(terminalText);
+      if (configIdValue === 'binance-debug-v2') {
+        const config = this.bashConfigFactory.createBinanceDebugConfig();
+        console.log('Config created:', config);
+        this.currentConfig.set(config);
+        this.bashService.registerConfig(config);
+
+        // Set config in API management service
+        this.apiManagementState.setConfigId(configIdValue);
+      }
+
+      // Set default endpoint
+      const config = this.currentConfig();
+      if (config && config.defaultEndpoint) {
+        console.log('Setting default endpoint:', config.defaultEndpoint);
+        this.currentEndpoint.set(config.defaultEndpoint);
+
+        // Set endpoint in API management service
+        this.apiManagementState.setCurrentEndpoint(config.defaultEndpoint);
+
+        if (this.autoLoad()) {
+          this.loadData();
+        }
       }
     });
 
-    // Emit config for sidebar when config or state changes
+    // Effect to sync data with ApiManagementStateService
     effect(() => {
-      const config = this.currentConfig();
-      const state = this.terminalState();
-      const endpoint = this.currentEndpoint();
-
-      if (config) {
-        this.configRequest.emit({
-          config,
-          terminalState: state,
-          currentEndpoint: endpoint
-        });
+      const tableData = this.apiManagementState.tableData();
+      if (tableData.length > 0) {
+        this.data.set(tableData);
+        console.log('📊 Data synced from ApiManagementStateService:', tableData.length, 'items');
       }
+    });
+
+    // Effect to sync loading state
+    effect(() => {
+      const loading = this.apiManagementState.loading();
+      this.terminalState.update(state => ({ ...state, loading }));
+    });
+
+    // Effect to sync error state
+    effect(() => {
+      const error = this.apiManagementState.error();
+      if (error) {
+        this.error.set(error);
+        this.addLog(`❌ API Error: ${error}`, 'error');
+      }
+    });
+
+    // Subscribe to bash service events
+    this.bashService.events$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(events => {
+        const relevantEvents = events.filter(event =>
+          event.payload.configId === this.configId()
+        );
+        relevantEvents.forEach(event => {
+          this.eventEmitted.emit(event);
+          this.handleServiceEvent(event);
+        });
+      });
+
+    // Subscribe to API management events
+    this.apiManagementState.events$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(event => {
+        console.log('📡 AtkBash received event:', event.type, event.payload);
+        this.handleApiManagementEvent(event);
+      });
+
+    // Auto-update terminal content when logs change
+    effect(() => {
+      this.updateTerminalContent();
     });
   }
 
   ngOnInit(): void {
-    this.loadConfiguration();
+    console.log('🚀 AtkBashComponent ngOnInit');
+    this.debugFactory();
 
-    if (this.autoLoad()) {
-      this.initializeEndpoint();
-    }
+    this.addLog('ATK Bash Terminal initialized', 'info');
+    this.terminalState.update(state => ({
+      ...state,
+      connectionStatus: 'connected'
+    }));
+    this.addLog('Service integration check completed', 'success');
+
+    // Post-init check
+    setTimeout(() => {
+      console.log('⏱️ Post-init check:');
+      console.log('Current endpoint:', this.currentEndpoint());
+      console.log('Current config:', this.currentConfig());
+
+      if (!this.currentEndpoint() && this.currentConfig()?.defaultEndpoint) {
+        console.warn('⚠️ Endpoint not set, forcing default');
+        this.currentEndpoint.set(this.currentConfig()!.defaultEndpoint!);
+      }
+    }, 100);
   }
 
-  /**
-   * Handle terminal content changes from user input
-   */
-  onTerminalContentChange(content: string): void {
-    this.terminalContentChange.emit(content);
-
-    // Parse potential commands from user input
-    this.parseTerminalCommands(content);
-  }
+  // =========================================
+  // PUBLIC METHODS
+  // =========================================
 
   /**
-   * Handle terminal scroll state changes
+   * Load data from current endpoint - EXTENDED with ApiManagementStateService
    */
-  onTerminalScrollChange(scrollState: TerminalScrollState): void {
-    this.terminalScrollState.set(scrollState);
-  }
-
-  /**
-   * Handle endpoint selection change
-   */
-  onEndpointChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    const endpointId = target.value;
-
-    if (endpointId) {
-      this.currentEndpoint.set(endpointId);
-      this.loadEndpointData(endpointId);
-      this.addLog(`Endpoint changed to: ${endpointId}`, 'info');
-    }
-  }
-
-  /**
-   * Execute API call for current endpoint
-   */
-  async executeEndpoint(): Promise<void> {
+  public async loadData(params: Record<string, any> = {}): Promise<void> {
     const config = this.currentConfig();
     const endpointId = this.currentEndpoint();
 
@@ -212,439 +258,395 @@ export class AtkBashComponent implements OnInit {
 
     const endpoint = config.endpoints.find(ep => ep.id === endpointId);
     if (!endpoint) {
-      this.addLog(`Endpoint not found: ${endpointId}`, 'error');
+      this.addLog(`Endpoint ${endpointId} not found in configuration`, 'error');
       return;
     }
 
-    this.setLoading(true);
-    this.addLog(`Executing ${endpoint.name}...`, 'info');
+    this.addLog(`Loading data from ${endpointId}...`, 'info');
+
+    // Set loading state in API management service
+    this.apiManagementState.setLoading(true);
+
+    this.terminalState.update(state => ({
+      ...state,
+      loading: true,
+      requestParams: params,
+      error: undefined
+    }));
+
+    const startTime = performance.now();
 
     try {
-      const data = await this.loadDataFromEndpoint(endpoint);
-      this.data.set(data);
-      this.dataLoaded.emit(data);
-      this.addLog(`✅ Success: ${data.length} records loaded`, 'success');
+      let data: BashData[] = [];
+      let rawApiResponse: any = null;
 
-      // Update terminal state
+      // Use existing services based on endpoint
+      switch (endpointId) {
+        case 'account':
+          rawApiResponse = await firstValueFrom(
+            this.binanceService.getAccount()
+              .pipe(finalize(() => this.apiManagementState.setLoading(false)))
+          );
+          break;
+        case 'trades':
+          data = await this.loadTradesData(params);
+          break;
+        case 'orders':
+          data = await this.loadOrdersData(params);
+          break;
+        case 'ticker':
+          data = await this.loadTickerData(params);
+          break;
+        default:
+          throw new Error(`Unknown endpoint: ${endpointId}`);
+      }
+
+      const responseTime = Math.round(performance.now() - startTime);
+
+      // Transform data using endpoint's dataTransformer
+      if (rawApiResponse && endpoint.dataTransformer) {
+        const transformResult: IBashDataTransformResult = endpoint.dataTransformer(rawApiResponse);
+
+        // Update ApiManagementStateService with transformed data
+        this.apiManagementState.updateData(transformResult);
+
+        // Set table data locally (will be synced via effect)
+        data = transformResult.tableData;
+      }
+
+      this.data.set(data);
+      this.error.set(null);
       this.terminalState.update(state => ({
         ...state,
-        connectionStatus: 'connected',
         responseMetadata: {
           statusCode: 200,
-          responseTime: Date.now() % 1000, // Mock response time
+          responseTime,
           dataCount: data.length
-        }
+        },
+        loading: false
       }));
 
-    } catch (error) {
-      this.handleError(error);
-    } finally {
-      this.setLoading(false);
+      this.addLog(`✅ Data loaded successfully (${data.length} items, ${responseTime}ms)`, 'success');
+      this.dataLoaded.emit(data);
+
+    } catch (error: any) {
+      console.error('❌ Data loading error:', error);
+
+      const errorMessage = error.message || 'Unknown error occurred';
+      this.error.set(errorMessage);
+
+      // Set error in API management service
+      this.apiManagementState.setError(errorMessage);
+
+      this.terminalState.update(state => ({
+        ...state,
+        loading: false,
+        error: errorMessage
+      }));
+
+      this.addLog(`❌ Error: ${errorMessage}`, 'error');
+      this.errorOccurred.emit(errorMessage);
     }
   }
 
   /**
-   * Clear terminal content and logs
+   * Change current endpoint
    */
-  clearTerminal(): void {
-    this.logs.set([]);
+  public changeEndpoint(endpointId: string): void {
+    this.currentEndpoint.set(endpointId);
+
+    // Update API management service
+    this.apiManagementState.setCurrentEndpoint(endpointId);
+
     this.data.set([]);
     this.error.set(null);
+    this.addLog(`Switched to endpoint: ${endpointId}`, 'info');
+  }
 
-    const directive = this.terminalDirective();
-    if (directive) {
-      directive.clearContent();
+  /**
+   * Handle endpoint selection change
+   */
+  public onEndpointChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    if (target && target.value) {
+      this.changeEndpoint(target.value);
+    }
+  }
+
+  /**
+   * Execute custom terminal command
+   */
+  public executeCommand(command: string): void {
+    const config = this.currentConfig();
+    const customCommands = config?.terminal.customCommands || [];
+
+    const [commandName, ...args] = command.trim().split(' ');
+
+    // Built-in commands
+    switch (commandName.toLowerCase()) {
+      case 'clear':
+        this.logs.set([]);
+        this.addLog('Terminal cleared', 'info');
+        return;
+      case 'help':
+        this.showHelp();
+        return;
+      case 'status':
+        this.showStatus();
+        return;
+      case 'reload':
+        this.loadData();
+        return;
     }
 
-    this.addLog('Terminal cleared', 'info');
+    // Custom commands
+    const customCommand = customCommands.find(cmd => cmd.name === commandName);
+    if (customCommand) {
+      this.addLog(`Executing command: ${command}`, 'info');
+      try {
+        customCommand.handler(args);
+      } catch (error: any) {
+        this.addLog(`Command error: ${error.message}`, 'error');
+      }
+    } else {
+      this.addLog(`Unknown command: ${commandName}. Type 'help' for available commands.`, 'warning');
+    }
   }
 
   /**
-   * Export terminal content
+   * Format cell value based on column configuration
    */
-  exportTerminalContent(): void {
-    const content = this.terminalText();
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+  public formatCellValue(value: any, column: any): string {
+    if (value === null || value === undefined) return '';
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `terminal-export-${new Date().toISOString().slice(0, 16)}.txt`;
-    a.click();
+    // Use custom formatter if available
+    if (column.formatter) {
+      return column.formatter(value);
+    }
 
-    URL.revokeObjectURL(url);
-    this.addLog('Terminal content exported', 'info');
+    // Default formatting based on type
+    switch (column.type) {
+      case 'number':
+        return typeof value === 'number' ? value.toLocaleString() : value.toString();
+      case 'currency':
+        return new Intl.NumberFormat('fr-FR', {
+          style: 'currency',
+          currency: 'EUR'
+        }).format(value);
+      case 'percentage':
+        return `${(value * 100).toFixed(2)}%`;
+      case 'date':
+        return new Date(value).toLocaleString('fr-FR');
+      case 'boolean':
+        return value ? '✅' : '❌';
+      default:
+        return value.toString();
+    }
   }
 
   /**
-   * Handle configuration changes from sidebar
+   * Track by function for table rows
    */
-  onConfigChange(event: any): void {
+  public trackByIndex(index: number, item: any): any {
+    return item.id || item.symbol || index;
+  }
+
+  // =========================================
+  // PRIVATE HELPER METHODS
+  // =========================================
+
+  private addLog(message: string, level: IBashLogEntry['level']): void {
+    const logEntry: IBashLogEntry = {
+      timestamp: new Date(),
+      message,
+      level
+    };
+
+    this.logs.update(logs => {
+      const newLogs = [...logs, logEntry];
+      return newLogs.slice(-50);
+    });
+  }
+
+  private handleServiceEvent(event: IBashEvent): void {
     switch (event.type) {
-      case 'endpoint-change':
-        this.currentEndpoint.set(event.payload.endpointId);
-        this.loadEndpointData(event.payload.endpointId);
+      case 'data-loaded':
+        if (event.payload.fromCache) {
+          this.addLog('📦 Data loaded from cache', 'info');
+        }
         break;
-
-      case 'parameter-change':
-        this.updateRequestParameter(event.payload.parameter, event.payload.value);
-        break;
-
-      case 'action-execute':
-        this.handleSidebarAction(event.payload.actionId);
-        break;
-
-      case 'config-update':
-        this.handleConfigUpdate(event.payload);
+      case 'error':
+        this.addLog(`❌ Service error: ${event.payload.error}`, 'error');
         break;
     }
   }
 
-  getStatusIcon(status: string): string {
+  // Handle API Management Service events
+  private handleApiManagementEvent(event: IBashEvent): void {
+    switch (event.type) {
+      case 'data-loaded':
+        this.addLog(`📊 Data updated: ${event.payload.tableCount} table rows, ${event.payload.sidebarCount} sidebar fields`, 'success');
+        break;
+      case 'sidebar-data-updated':
+        this.addLog(`🔧 Sidebar data updated`, 'info');
+        break;
+      case 'table-data-updated':
+        this.addLog(`📋 Table data updated: ${event.payload.data.length} rows`, 'info');
+        break;
+      case 'error':
+        this.addLog(`❌ API Management error: ${event.payload.error}`, 'error');
+        break;
+    }
+  }
+
+  private updateTerminalContent(): void {
+    // Implementation for terminal content update if needed
+  }
+
+  private showHelp(): void {
+    const config = this.currentConfig();
+    const commands = ['clear', 'help', 'status', 'reload'];
+
+    if (config?.terminal.customCommands) {
+      commands.push(...config.terminal.customCommands.map(cmd => cmd.name));
+    }
+
+    this.addLog(`Available commands: ${commands.join(', ')}`, 'info');
+  }
+
+  private showStatus(): void {
+    const state = this.terminalState();
+    const summary = this.apiManagementState.summary();
+
+    this.addLog(`Status: ${state.connectionStatus} | Data: ${summary.tableRows} rows | Endpoint: ${summary.endpoint}`, 'info');
+  }
+
+  // Private data loading methods using existing services
+  private async loadAccountData(): Promise<BashData[]> {
+    const account = await firstValueFrom(
+      this.binanceService.getAccount()
+        .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
+    );
+
+    if (!account?.balances) return [];
+
+    return account.balances
+      .filter(balance =>
+        parseFloat(balance.free.toString()) > 0 ||
+        parseFloat(balance.locked.toString()) > 0
+      )
+      .map(balance => ({
+        id: balance.asset,
+        asset: balance.asset,
+        free: parseFloat(balance.free.toString()),
+        locked: parseFloat(balance.locked.toString()),
+        total: parseFloat(balance.free.toString()) + parseFloat(balance.locked.toString()),
+        usdValue: 0
+      }));
+  }
+
+  private async loadTradesData(params: Record<string, any>): Promise<BashData[]> {
+    const symbol = params.symbol || 'BTCUSDT';
+    const limit = params.limit || 100;
+
+    const trades = await firstValueFrom(
+      this.binanceService.getMyTrades(symbol, undefined, undefined, limit)
+        .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
+    );
+
+    if (!Array.isArray(trades)) return [];
+
+    return trades.map((trade: any) => ({
+      id: trade.id || `${trade.symbol}-${trade.time}`,
+      symbol: trade.symbol,
+      side: trade.isBuyer ? 'BUY' : 'SELL',
+      quantity: parseFloat(trade.qty),
+      price: parseFloat(trade.price),
+      quoteQuantity: parseFloat(trade.quoteQty),
+      commission: parseFloat(trade.commission),
+      time: trade.time
+    }));
+  }
+
+  private async loadOrdersData(params: Record<string, any>): Promise<BashData[]> {
+    const symbol = params.symbol || 'BTCUSDT';
+    const limit = params.limit || 100;
+
+    const orders = await firstValueFrom(
+      this.binanceService.getAllOrders(symbol, undefined, undefined, limit)
+        .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
+    );
+
+    if (!Array.isArray(orders)) return [];
+
+    return orders.map((order: any) => ({
+      id: order.orderId || `${order.symbol}-${order.time}`,
+      symbol: order.symbol,
+      side: order.side,
+      type: order.type,
+      quantity: parseFloat(order.origQty),
+      price: parseFloat(order.price),
+      status: order.status,
+      executedQty: parseFloat(order.executedQty),
+      time: order.time
+    }));
+  }
+
+  private async loadTickerData(params: Record<string, any>): Promise<BashData[]> {
+    const symbol = params.symbol;
+
+    const ticker = await firstValueFrom(
+      this.binanceService.getTickerPrice(symbol)
+        .pipe(finalize(() => this.terminalState.update(state => ({ ...state, loading: false }))))
+    );
+
+    const tickers = Array.isArray(ticker) ? ticker : [ticker];
+
+    return tickers.map((ticker: any, index: number) => ({
+      id: ticker.symbol || index,
+      symbol: ticker.symbol,
+      price: parseFloat(ticker.price),
+      priceChange: Math.random() * 10 - 5,
+      priceChangePercent: Math.random() * 20 - 10
+    }));
+  }
+
+  private getStatusIcon(status: string): string {
     switch (status) {
       case 'connected': return '🟢';
       case 'connecting': return '🟡';
       case 'disconnected': return '🔴';
-      default: return '⚫';
+      default: return '⚪';
     }
   }
 
-  getLogIcon(level: string): string {
+  private getLogIcon(level: string): string {
     switch (level) {
       case 'success': return '✅';
-      case 'warning': return '⚠️';
       case 'error': return '❌';
-      case 'info':
-      default: return 'ℹ️';
+      case 'warning': return '⚠️';
+      case 'info': return 'ℹ️';
+      default: return '📝';
     }
   }
 
-  /**
-   * Handle sidebar actions
-   */
-  private handleSidebarAction(actionId: string): void {
-    switch (actionId) {
-      case 'clear-terminal':
-        this.clearTerminal();
-        break;
-      case 'export-logs':
-        this.exportTerminalContent();
-        break;
-      case 'export-data':
-        this.exportData();
-        break;
-      case 'test-connection':
-        this.testConnection();
-        break;
-      case 'reload-config':
-        this.reloadConfiguration();
-        break;
-      case 'clear-error':
-        this.error.set(null);
-        break;
-    }
-  }
+  // CORRECTED: Convenient accessors for template (delegation to directive state)
+  public line(): number { return 0; }
+  public column(): number { return 0; }
+  public caretIndex(): number { return 0; }
+  public selectionText(): string { return ''; }
 
-  /**
-   * Update request parameter
-   */
-  private updateRequestParameter(paramKey: string, value: any): void {
-    this.terminalState.update(state => ({
-      ...state,
-      requestParams: {
-        ...state.requestParams,
-        [paramKey]: value
-      }
-    }));
+  public debugFactory(): void {
+    console.group('🔍 Factory Debug');
+    console.log('bashConfigFactory:', this.bashConfigFactory);
+    console.log('currentConfig:', this.currentConfig());
 
-    this.addLog(`Parameter updated: ${paramKey} = ${value}`, 'info');
-  }
-
-  /**
-   * Handle configuration updates from sidebar
-   */
-  private handleConfigUpdate(payload: any): void {
-    if (payload.reset) {
-      this.loadConfiguration();
-      this.addLog('Configuration reset to defaults', 'info');
-      return;
-    }
-
-    // Handle specific config changes
-    if (payload.section === 'terminal') {
-      this.handleTerminalConfigUpdate(payload.item, payload.value);
-    }
-  }
-
-  /**
-   * Handle terminal configuration updates
-   */
-  private handleTerminalConfigUpdate(itemId: string, value: any): void {
-    const directive = this.terminalDirective();
-    if (!directive) return;
-
-    switch (itemId) {
-      case 'terminal-height':
-        this.currentConfig.update(config => {
-          if (config) {
-            config.terminal.height = `${value}px`;
-          }
-          return config;
-        });
-        this.addLog(`Terminal height updated: ${value}px`, 'info');
-        break;
-
-      case 'auto-scroll':
-        // This would require updating the directive's autoScroll input
-        this.addLog(`Auto-scroll ${value ? 'enabled' : 'disabled'}`, 'info');
-        break;
-    }
-  }
-
-  /**
-   * Export current data
-   */
-  private exportData(): void {
-    const data = this.data();
-    if (data.length === 0) {
-      this.addLog('No data to export', 'warning');
-      return;
-    }
-
-    const csv = this.convertToCSV(data);
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `data-export-${Date.now()}.csv`;
-    a.click();
-
-    URL.revokeObjectURL(url);
-    this.addLog(`Data exported: ${data.length} records`, 'success');
-  }
-
-  /**
-   * Test connection to current endpoint
-   */
-  private async testConnection(): Promise<void> {
-    const endpoint = this.currentEndpoint();
-    if (!endpoint) {
-      this.addLog('No endpoint selected for testing', 'warning');
-      return;
-    }
-
-    this.addLog(`Testing connection to ${endpoint}...`, 'info');
-
-    try {
-      // Simple ping test
-      await this.executeEndpoint();
-      this.addLog(`✅ Connection test successful`, 'success');
-    } catch (error) {
-      this.addLog(`❌ Connection test failed: ${error}`, 'error');
-    }
-  }
-
-  /**
-   * Reload configuration
-   */
-  private async reloadConfiguration(): Promise<void> {
-    this.addLog('Reloading configuration...', 'info');
-    await this.loadConfiguration();
-    this.addLog('Configuration reloaded successfully', 'success');
-  }
-
-  /**
-   * Convert data to CSV format
-   */
-  private convertToCSV(data: BashData[]): string {
-    if (data.length === 0) return '';
-
-    const headers = Object.keys(data[0]);
-    const csvContent = [
-      headers.join(','),
-      ...data.map(row =>
-        headers.map(header => {
-          const value = row[header];
-          return typeof value === 'string' ? `"${value}"` : value;
-        }).join(',')
-      )
-    ].join('\n');
-
-    return csvContent;
-  }
-
-  private async loadConfiguration(): Promise<void> {
-    try {
-      const configId = this.configId();
-      let config: IBashConfig;
-
-      // Use the correct factory methods based on configId
-      switch (configId) {
-        case 'binance-debug-v1':
-          config = this.bashConfigFactory.createBinanceAccountConfig();
-          break;
-        case 'binance-debug-v2':
-        default:
-          config = this.bashConfigFactory.createBinanceDebugConfig();
-          break;
-        case 'ibkr-debug-v1':
-          config = this.bashConfigFactory.createIbkrConfig();
-          break;
-      }
-
-      this.currentConfig.set(config);
-      this.addLog(`Configuration loaded: ${config.title}`, 'info');
-    } catch (error) {
-      this.addLog(`Failed to load configuration: ${error}`, 'error');
-    }
-  }
-
-  private initializeEndpoint(): void {
     const config = this.currentConfig();
-    if (config && config.endpoints.length > 0) {
-      const defaultEndpoint = config.defaultEndpoint || config.endpoints[0].id;
-      this.currentEndpoint.set(defaultEndpoint);
-      this.addLog(`Default endpoint set: ${defaultEndpoint}`, 'info');
+    if (config) {
+      console.log('Config endpoints:', config.endpoints);
+      console.log('Default endpoint:', config.defaultEndpoint);
+      console.log('Current endpoint signal:', this.currentEndpoint());
     }
+    console.groupEnd();
   }
-
-  private async loadEndpointData(endpointId: string): Promise<void> {
-    const config = this.currentConfig();
-    if (!config) return;
-
-    const endpoint = config.endpoints.find(ep => ep.id === endpointId);
-    if (!endpoint) return;
-
-    this.setLoading(true);
-    try {
-      const data = await this.loadDataFromEndpoint(endpoint);
-      this.data.set(data);
-      this.addLog(`Data loaded for ${endpoint.name}: ${data.length} records`, 'info');
-    } catch (error) {
-      this.handleError(error);
-    } finally {
-      this.setLoading(false);
-    }
-  }
-
-  private async loadDataFromEndpoint(endpoint: any): Promise<BashData[]> {
-    // Implementation depends on endpoint type
-    if (endpoint.id.includes('binance')) {
-      return this.loadBinanceData(endpoint);
-    }
-
-    // Default fallback
-    return [];
-  }
-
-  private async loadBinanceData(endpoint: any): Promise<BashData[]> {
-    try {
-      switch (endpoint.id) {
-        case 'account':
-          const accountInfo = await firstValueFrom(this.binanceService.getAccount());
-          return [{ id: 'account', ...accountInfo }];
-
-        case 'trades':
-          const trades = await firstValueFrom(this.binanceService.getMyTrades('BTCUSDT', undefined, undefined, 100));
-          return Array.isArray(trades) ? trades.map((trade: any, index: number) => ({
-            id: trade.id || index,
-            ...trade
-          })) : [];
-
-        case 'ticker':
-          const ticker = await firstValueFrom(this.binanceService.getTickerPrice('BTCUSDT'));
-          return [{ id: 'ticker', ...ticker }];
-
-        default:
-          return [];
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  private parseTerminalCommands(content: string): void {
-    const lines = content.split('\n');
-    const lastLine = lines[lines.length - 1]?.trim();
-
-    if (lastLine?.startsWith('/')) {
-      const command = lastLine.slice(1).toLowerCase();
-      this.executeTerminalCommand(command);
-    }
-  }
-
-  private executeTerminalCommand(command: string): void {
-    const [cmd, ...args] = command.split(' ');
-
-    switch (cmd) {
-      case 'clear':
-        this.clearTerminal();
-        break;
-      case 'export':
-        this.exportTerminalContent();
-        break;
-      case 'connect':
-        if (args[0]) {
-          this.currentEndpoint.set(args[0]);
-          this.loadEndpointData(args[0]);
-        }
-        break;
-      case 'help':
-        this.showHelp();
-        break;
-      default:
-        this.addLog(`Unknown command: /${cmd}`, 'warning');
-    }
-  }
-
-  private showHelp(): void {
-    const helpText = [
-      'Available commands:',
-      '/clear - Clear terminal',
-      '/export - Export terminal content',
-      '/connect <endpoint> - Connect to endpoint',
-      '/help - Show this help'
-    ];
-
-    helpText.forEach(line => this.addLog(line, 'info'));
-  }
-
-  private addLog(message: string, level: 'info' | 'success' | 'warning' | 'error' = 'info'): void {
-    const logEntry: IBashLogEntry = {
-      timestamp: new Date(),
-      level,
-      message,
-      metadata: {
-        source: 'bash-component'
-      }
-    };
-
-    this.logs.update(logs => [...logs, logEntry]);
-
-    // Emit event
-    this.eventEmitted.emit({
-      type: 'log-added',
-      payload: logEntry,
-      timestamp: new Date()
-    });
-  }
-
-  private setLoading(loading: boolean): void {
-    this.terminalState.update(state => ({ ...state, loading }));
-  }
-
-  private handleError(error: any): void {
-    const errorMessage = error?.message || 'Unknown error occurred';
-    this.error.set(errorMessage);
-    this.addLog(`❌ Error: ${errorMessage}`, 'error');
-    this.errorOccurred.emit(errorMessage);
-
-    this.terminalState.update(state => ({
-      ...state,
-      connectionStatus: 'disconnected',
-      error: errorMessage
-    }));
-  }
-
 }

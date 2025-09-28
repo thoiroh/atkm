@@ -115,7 +115,7 @@ export class AtkBashService {
 
         // Cache the result if cacheable
         if (endpoint.cacheable) {
-          this.setCache(cacheKey, transformedData, endpoint.cacheDuration || 300000);
+          this.setCache(cacheKey, Array.isArray(transformedData) ? transformedData : [transformedData], endpoint.cacheDuration || 300000);
         }
 
         return transformedData as T[];

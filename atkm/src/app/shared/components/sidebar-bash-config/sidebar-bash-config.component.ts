@@ -1,532 +1,545 @@
-// src/app/shared/components/sidebar-bash-config/sidebar-bash-config.component.ts
-// Updated component with direct ApiManagementStateService integration
+// atk-sidebar-bash-config.component.ts
+// CORRECTED - Component for displaying API data in sidebar with Angular 20 signals
 
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AtkBashConfigFactory } from '@shared/components/atk-bash/atk-bash-config.factory';
+import { IBashEndpointConfig, IBashSidebarField } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
-import { AtkApiManagementConfigFactory } from '../atk-api-management/atk-api-management-config.factory';
-import { IBashConfig, IBashEndpointConfig } from '../atk-bash/atk-bash.interfaces';
 
-/**
- * Configuration sections for bash terminal control
- */
-interface IBashConfigSection {
-  id: string;
-  title: string;
-  icon: string;
-  isExpanded: boolean;
-  items: IBashConfigItem[];
-}
-
-interface IBashConfigItem {
-  id: string;
-  type: 'select' | 'input' | 'toggle' | 'button' | 'range' | 'color';
-  label: string;
+interface SidebarFieldDisplay {
+  field: IBashSidebarField;
   value: any;
-  options?: Array<{ value: any; label: string; disabled?: boolean }>;
-  min?: number;
-  max?: number;
-  step?: number;
-  placeholder?: string;
-  description?: string;
-  disabled?: boolean;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
-}
-
-/**
- * Events emitted by the sidebar config
- */
-interface IBashConfigEvent {
-  type: 'endpoint-change' | 'parameter-change' | 'action-execute' | 'config-update' | 'account-refresh';
-  payload: any;
-  timestamp: Date;
+  formattedValue: string;
+  visible: boolean;
 }
 
 @Component({
   selector: 'atk-sidebar-bash-config',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    AtkIconComponent
-  ],
-  templateUrl: './sidebar-bash-config.component.html',
-  styleUrls: ['./sidebar-bash-config.component.css']
+  imports: [CommonModule, AtkIconComponent],
+  template: `
+    <div class="sidebar-bash-config">
+
+      <!-- Header Section -->
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <atk-icon name="settings" [size]="16" color="var(--color-accent-fg)" />
+          <h3>{{ configTitle() || 'API Configuration' }}</h3>
+        </div>
+
+        @if (loading()) {
+          <div class="sidebar-status loading">
+            <atk-icon name="loader" [size]="14" color="var(--color-accent-fg)" />
+            <span>Loading...</span>
+          </div>
+        } @else if (error()) {
+          <div class="sidebar-status error">
+            <atk-icon name="alert-circle" [size]="14" color="var(--color-danger)" />
+            <span>{{ error() }}</span>
+          </div>
+        } @else if (hasData()) {
+          <div class="sidebar-status success">
+            <atk-icon name="check-circle" [size]="14" color="var(--color-success-emphasis)" />
+            <span>Connected</span>
+          </div>
+        }
+      </div>
+
+      <!-- Current Endpoint Info -->
+      @if (currentEndpoint()) {
+        <div class="sidebar-section">
+          <div class="section-header">
+            <atk-icon name="globe" [size]="14" color="var(--color-fg-muted)" />
+            <span class="section-title">Endpoint</span>
+          </div>
+          <div class="section-content">
+            <div class="endpoint-name">{{ getEndpointName() }}</div>
+            <div class="endpoint-id">{{ currentEndpoint() }}</div>
+          </div>
+        </div>
+      }
+
+      <!-- Data Summary -->
+      @if (summary(); as summaryData) {
+        <div class="sidebar-section">
+          <div class="section-header">
+            <atk-icon name="bar-chart" [size]="14" color="var(--color-fg-muted)" />
+            <span class="section-title">Data Summary</span>
+          </div>
+          <div class="section-content">
+            <div class="data-metric">
+              <span class="metric-label">Sidebar Fields:</span>
+              <span class="metric-value">{{ summaryData.sidebarFields }}</span>
+            </div>
+            <div class="data-metric">
+              <span class="metric-label">Table Rows:</span>
+              <span class="metric-value">{{ summaryData.tableRows }}</span>
+            </div>
+            @if (summaryData.lastUpdate) {
+              <div class="data-metric">
+                <span class="metric-label">Last Update:</span>
+                <span class="metric-value timestamp">{{ formatTimestamp(summaryData.lastUpdate) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Sidebar Fields Data -->
+      @if (displayFields().length > 0) {
+        <div class="sidebar-section">
+          <div class="section-header">
+            <atk-icon name="list" [size]="14" color="var(--color-fg-muted)" />
+            <span class="section-title">Account Info</span>
+          </div>
+          <div class="section-content">
+            @for (fieldDisplay of displayFields(); track fieldDisplay.field.key) {
+              @if (fieldDisplay.visible) {
+                <div class="field-row" [ngClass]="'field-' + fieldDisplay.field.type">
+                  <div class="field-label">
+                    @if (fieldDisplay.field.icon) {
+                      <atk-icon [name]="fieldDisplay.field.icon" [size]="12" color="var(--color-fg-muted)" />
+                    }
+                    <span>{{ fieldDisplay.field.label }}:</span>
+                  </div>
+                  <div class="field-value" [ngClass]="fieldDisplay.field.cssClass">
+                    @switch (fieldDisplay.field.type) {
+                      @case ('boolean') {
+                        <span class="boolean-badge" [ngClass]="fieldDisplay.value ? 'true' : 'false'">
+                          <atk-icon [name]="fieldDisplay.value ? 'check' : 'x'" [size]="10" />
+                          {{ fieldDisplay.value ? 'Yes' : 'No' }}
+                        </span>
+                      }
+                      @case ('status') {
+                        <span class="status-badge" [ngClass]="'status-' + (fieldDisplay.value || '').toLowerCase()">
+                          {{ fieldDisplay.formattedValue }}
+                        </span>
+                      }
+                      @case ('date') {
+                        <span class="date-value">{{ fieldDisplay.formattedValue }}</span>
+                      }
+                      @default {
+                        <span class="text-value">{{ fieldDisplay.formattedValue }}</span>
+                      }
+                    }
+                  </div>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Debug Info (Development Only) -->
+      @if (showDebugInfo()) {
+        <div class="sidebar-section debug-section">
+          <div class="section-header">
+            <atk-icon name="bug" [size]="14" color="var(--color-warning)" />
+            <span class="section-title">Debug Info</span>
+          </div>
+          <div class="section-content">
+            <pre class="debug-data">{{ getDebugInfo() }}</pre>
+          </div>
+        </div>
+      }
+    </div>
+  `,
+  styles: [`
+    .sidebar-bash-config {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--color-canvas-subtle);
+      border-radius: 6px;
+      border: 1px solid var(--color-border-default);
+    }
+
+    /* Header */
+    .sidebar-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-title h3 {
+      margin: 0;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-fg-default);
+    }
+
+    .sidebar-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .sidebar-status.loading {
+      background: var(--color-canvas-default);
+      color: var(--color-accent-fg);
+    }
+
+    .sidebar-status.error {
+      background: rgba(248, 81, 73, 0.1);
+      color: var(--color-danger);
+    }
+
+    .sidebar-status.success {
+      background: rgba(35, 134, 54, 0.1);
+      color: var(--color-success-emphasis);
+    }
+
+    /* Sections */
+    .sidebar-section {
+      background: var(--color-canvas-default);
+      border-radius: 4px;
+      border: 1px solid var(--color-border-muted);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--color-canvas-subtle);
+      border-bottom: 1px solid var(--color-border-muted);
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-fg-default);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .section-content {
+      padding: 0.75rem;
+    }
+
+    /* Endpoint Info */
+    .endpoint-name {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-fg-default);
+    }
+
+    .endpoint-id {
+      font-size: 0.75rem;
+      color: var(--color-fg-muted);
+      font-family: var(--fontStack-monospace);
+    }
+
+    /* Data Metrics */
+    .data-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.25rem 0;
+      font-size: 0.75rem;
+    }
+
+    .metric-label {
+      color: var(--color-fg-muted);
+    }
+
+    .metric-value {
+      font-weight: 500;
+      color: var(--color-fg-default);
+    }
+
+    .metric-value.timestamp {
+      font-family: var(--fontStack-monospace);
+      font-size: 0.6875rem;
+    }
+
+    /* Field Rows */
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--color-border-muted);
+    }
+
+    .field-row:last-child {
+      border-bottom: none;
+    }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.75rem;
+      color: var(--color-fg-muted);
+      min-width: 0;
+      flex: 1;
+    }
+
+    .field-value {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    /* Boolean badges */
+    .boolean-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.6875rem;
+      font-weight: 500;
+    }
+
+    .boolean-badge.true {
+      background: rgba(35, 134, 54, 0.1);
+      color: var(--color-success-emphasis);
+    }
+
+    .boolean-badge.false {
+      background: rgba(248, 81, 73, 0.1);
+      color: var(--color-danger);
+    }
+
+    /* Status badges */
+    .status-badge {
+      padding: 0.125rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .status-badge.status-spot {
+      background: rgba(31, 111, 235, 0.1);
+      color: var(--color-accent-fg);
+    }
+
+    .status-badge.status-margin {
+      background: rgba(255, 140, 0, 0.1);
+      color: #ff8c00;
+    }
+
+    /* Date values */
+    .date-value {
+      font-family: var(--fontStack-monospace);
+      font-size: 0.6875rem;
+      color: var(--color-fg-default);
+    }
+
+    /* Text values */
+    .text-value {
+      color: var(--color-fg-default);
+    }
+
+    /* Debug section */
+    .debug-section {
+      border-color: var(--color-warning);
+    }
+
+    .debug-data {
+      font-family: var(--fontStack-monospace);
+      font-size: 0.6875rem;
+      color: var(--color-fg-muted);
+      background: var(--color-canvas-subtle);
+      padding: 0.5rem;
+      border-radius: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin: 0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .field-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
+
+      .field-value {
+        text-align: left;
+      }
+    }
+  `]
 })
-export class SidebarBashConfigComponent {
+export class SidebarBashConfigComponent implements OnInit {
 
-  bashConfig = input<any>();          // IBashConfig | null
-  terminalState = input<any>();       // état du terminal
-  currentEndpoint = input<string>();  // id endpoint courant
-  accountData = input<any>();         // infos compte
-  // Component outputs (kept for backward compatibility if needed)
-  configChange = output<IBashConfigEvent>();
-  togglePanel = output<void>();
-  // Services
-  private configFactory = inject(AtkApiManagementConfigFactory);
-  public stateService = inject(ApiManagementStateService);
-  // Internal state signals
-  internalConfig = signal<IBashConfigSection[]>([]);
-  searchQuery = signal<string>('');
-  activeTab = signal<'endpoints' | 'parameters' | 'terminal' | 'actions' | 'account'>('endpoints');
-  // Computed properties using state service
-  availableEndpoints = computed(() => {
-    const config = this.stateService.currentConfig();
-    return config?.endpoints || [];
+  // =========================================
+  // INPUTS
+  // =========================================
+
+  configId = input<string>('binance-debug-v2');
+  showDebugInfo = input<boolean>(false);
+
+  // =========================================
+  // SERVICES
+  // =========================================
+
+  private apiManagementState = inject(ApiManagementStateService);
+  private bashConfigFactory = inject(AtkBashConfigFactory);
+
+  // =========================================
+  // SIGNALS
+  // =========================================
+
+  private currentConfig = signal<any>(null);
+
+  // =========================================
+  // COMPUTED SIGNALS - Angular 20 Style
+  // =========================================
+
+  public readonly configTitle = computed(() => this.currentConfig()?.title);
+  public readonly currentEndpoint = computed(() => this.apiManagementState.currentEndpoint());
+  public readonly loading = computed(() => this.apiManagementState.loading());
+  public readonly error = computed(() => this.apiManagementState.error());
+  public readonly hasData = computed(() => this.apiManagementState.hasData());
+  public readonly sidebarData = computed(() => this.apiManagementState.sidebarData());
+  public readonly summary = computed(() => this.apiManagementState.summary());
+
+  public readonly currentEndpointConfig = computed(() => {
+    const config = this.currentConfig();
+    const endpoint = this.currentEndpoint();
+
+    if (!config || !endpoint) return null;
+
+    return config.endpoints?.find((ep: IBashEndpointConfig) => ep.id === endpoint) || null;
   });
 
-  filteredSections = computed(() => {
-    const sections = this.internalConfig();
-    const query = this.searchQuery().toLowerCase();
-    if (!query) return sections;
-    return sections.map(section => ({
-      ...section,
-      items: section.items.filter(item =>
-        item.label.toLowerCase().includes(query) ||
-        item.description?.toLowerCase().includes(query)
-      )
-    })).filter(section => section.items.length > 0);
+  public readonly sidebarFields = computed(() => {
+    const endpointConfig = this.currentEndpointConfig();
+    return endpointConfig?.sidebarFields || [];
   });
 
-  // State service computed properties
-  isLoading = computed(() => this.stateService.isLoading());
-  hasError = computed(() => this.stateService.hasError());
-  connectionStatus = computed(() => this.stateService.terminalState().connectionStatus || 'disconnected');
-  isCollapsed = computed(() => this.stateService.sidebarCollapsed());
+  public readonly displayFields = computed((): SidebarFieldDisplay[] => {
+    const fields = this.sidebarFields();
+    const data = this.sidebarData();
 
-  // Account computed properties
-  accountInfo = computed(() => {
-    const account = this.stateService.accountData();
-    if (!account) return null;
-
-    return {
-      accountType: account.accountType || 'Unknown',
-      updateTime: account.updateTime ? new Date(account.updateTime).toLocaleString('fr-FR') : 'Not available',
-      permissions: account.permissions || [],
-      canTrade: account.canTrade || false,
-      canWithdraw: account.canWithdraw || false,
-      canDeposit: account.canDeposit || false,
-      balanceCount: account.balances?.length || 0,
-      significantBalances: account.balances?.filter(b =>
-        parseFloat(b.free?.toString() || '0') > 0 ||
-        parseFloat(b.locked?.toString() || '0') > 0
-      ).length || 0
-    };
+    return fields.map((field: IBashSidebarField) => ({
+      field,
+      value: data[field.key],
+      formattedValue: this.formatFieldValue(data[field.key], field),
+      visible: field.visible !== false && data[field.key] !== undefined
+    }));
   });
+
+  // =========================================
+  // CONSTRUCTOR & LIFECYCLE
+  // =========================================
 
   constructor() {
-    // Watch for config changes from state service and rebuild internal config
+    // Effect to load configuration when configId changes
     effect(() => {
-      const config = this.stateService.currentConfig();
-      if (config) {
-        this.buildConfigSections(config);
-      }
+      const configIdValue = this.configId();
+      this.loadConfiguration(configIdValue);
     });
 
-    // Subscribe to state service events for logging
-    this.stateService.events$.subscribe(event => {
-      console.log(`🎛️ Sidebar received state event:`, event.type, event.payload);
-    });
+    // Subscribe to API management events
+    this.apiManagementState.events$
+      .pipe(takeUntilDestroyed())
+      .subscribe(event => {
+        console.log('📡 Sidebar received event:', event.type, event.payload);
+      });
   }
 
-  /**
-   * Handle panel toggle via state service
-   */
-  onToggle(): void {
-    // this.togglePanel.emit();
-    this.stateService.toggleSidebar();
+  ngOnInit(): void {
+    // Set the config ID in the API management service
+    this.apiManagementState.setConfigId(this.configId());
   }
 
-  /**
-   * Handle tab change
-   */
-  setActiveTab(tab: 'endpoints' | 'parameters' | 'terminal' | 'actions' | 'account'): void {
-    this.activeTab.set(tab);
+  // =========================================
+  // PUBLIC METHODS
+  // =========================================
+
+  public getEndpointName(): string {
+    const endpointConfig = this.currentEndpointConfig();
+    return endpointConfig?.name || 'Unknown Endpoint';
   }
 
-  /**
-   * Handle search input
-   */
-  onSearchChange(query: string): void {
-    this.searchQuery.set(query);
-  }
-
-  /**
-   * Handle section toggle
-   */
-  toggleSection(sectionId: string): void {
-    this.internalConfig.update(sections =>
-      sections.map(section =>
-        section.id === sectionId
-          ? { ...section, isExpanded: !section.isExpanded }
-          : section
-      )
-    );
-  }
-
-  /**
-   * Handle endpoint selection - direct state service integration
-   */
-  onEndpointChange(endpointId: string): void {
-    this.stateService.setCurrentEndpoint(endpointId);
-    this.emitConfigEvent('endpoint-change', { endpointId });
-  }
-
-  /**
-   * Handle parameter changes - direct state service integration
-   */
-  onParameterChange(paramKey: string, value: any): void {
-    this.stateService.updateRequestParameter(paramKey, value);
-    this.emitConfigEvent('parameter-change', {
-      parameter: paramKey,
-      value,
-      endpoint: this.stateService.currentEndpoint()
+  public formatTimestamp(timestamp: string): string {
+    return new Date(timestamp).toLocaleString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
     });
   }
 
-  /**
-   * Handle configuration item value changes
-   */
-  onConfigItemChange(sectionId: string, itemId: string, value: any): void {
-    this.internalConfig.update(sections =>
-      sections.map(section =>
-        section.id === sectionId
-          ? {
-            ...section,
-            items: section.items.map(item =>
-              item.id === itemId ? { ...item, value } : item
-            )
-          }
-          : section
-      )
-    );
-
-    this.emitConfigEvent('config-update', {
-      section: sectionId,
-      item: itemId,
-      value
-    });
-  }
-
-  /**
-   * Execute terminal actions - direct state service integration
-   */
-  executeAction(actionId: string): void {
-    this.stateService.executeAction(actionId);
-    this.emitConfigEvent('action-execute', { actionId });
-  }
-
-  /**
-   * Execute account actions - direct state service integration
-   */
-  executeAccountAction(actionId: string): void {
-    this.stateService.executeAction(actionId);
-    this.emitConfigEvent('account-refresh', { actionId });
-  }
-
-  /**
-   * Get current endpoint configuration from state service
-   */
-  getCurrentEndpointConfig(): IBashEndpointConfig | null {
-    return this.stateService.currentEndpointConfig();
-  }
-
-  /**
-   * Export current configuration
-   */
-  exportConfig(): void {
-    const config = {
-      bashConfig: this.stateService.currentConfig(),
-      terminalState: this.stateService.terminalState(),
-      internalConfig: this.internalConfig(),
-      accountData: this.stateService.accountData(),
-      completeState: this.stateService.getCompleteState(),
-      timestamp: new Date().toISOString()
+  public getDebugInfo(): string {
+    const debugData = {
+      configId: this.configId(),
+      currentEndpoint: this.currentEndpoint(),
+      hasData: this.hasData(),
+      sidebarFields: this.sidebarFields().length,
+      sidebarData: Object.keys(this.sidebarData()).length,
+      summary: this.summary()
     };
 
-    const blob = new Blob([JSON.stringify(config, null, 2)], {
-      type: 'application/json'
-    });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `api-management-config-${Date.now()}.json`;
-    a.click();
-
-    URL.revokeObjectURL(url);
+    return JSON.stringify(debugData, null, 2);
   }
 
-  /**
-   * Reset configuration to defaults - direct state service integration
-   */
-  resetToDefaults(): void {
-    this.stateService.resetState();
+  // =========================================
+  // PRIVATE METHODS
+  // =========================================
 
-    // Rebuild internal config
-    const config = this.stateService.currentConfig();
+  private loadConfiguration(configId: string): void {
+    let config = null;
+
+    switch (configId) {
+      case 'binance-debug-v2':
+        config = this.bashConfigFactory.createBinanceDebugConfig();
+        break;
+      case 'ibkr-debug-v1':
+        config = this.bashConfigFactory.createIbkrConfig();
+        break;
+      default:
+        console.warn(`Unknown config ID: ${configId}`);
+        return;
+    }
+
     if (config) {
-      this.buildConfigSections(config);
+      this.currentConfig.set(config);
+      console.log('🔧 Sidebar loaded configuration:', config.title);
+    }
+  }
+
+  private formatFieldValue(value: any, field: IBashSidebarField): string {
+    if (value === null || value === undefined) return 'N/A';
+
+    // Use custom formatter if available
+    if (field.formatter) {
+      return field.formatter(value);
     }
 
-    this.emitConfigEvent('config-update', { reset: true });
-  }
-
-  /**
-   * Format account permissions for display
-   */
-  formatAccountPermissions(permissions: string[]): string {
-    if (!permissions || permissions.length === 0) {
-      return 'None';
+    // Default formatting based on type
+    switch (field.type) {
+      case 'boolean':
+        return value ? 'Yes' : 'No';
+      case 'date':
+        return new Date(value).toLocaleString('fr-FR');
+      case 'number':
+        return typeof value === 'number' ? value.toLocaleString() : value.toString();
+      case 'status':
+        return value.toString().toUpperCase();
+      default:
+        return value.toString();
     }
-    return permissions.join(', ');
-  }
-
-  /**
-   * Get account status icon
-   */
-  getAccountStatusIcon(canTrade: boolean, canWithdraw: boolean, canDeposit: boolean): string {
-    if (canTrade && canWithdraw && canDeposit) return 'check-circle';
-    if (canTrade || canWithdraw || canDeposit) return 'alert-circle';
-    return 'x-circle';
-  }
-
-  /**
-   * Get account status color
-   */
-  getAccountStatusColor(canTrade: boolean, canWithdraw: boolean, canDeposit: boolean): string {
-    if (canTrade && canWithdraw && canDeposit) return 'var(--color-success-emphasis)';
-    if (canTrade || canWithdraw || canDeposit) return 'var(--color-attention-emphasis)';
-    return 'var(--color-danger-emphasis)';
-  }
-
-  // Private methods
-
-  private buildConfigSections(config: IBashConfig): void {
-    const sections: IBashConfigSection[] = [
-      this.buildEndpointsSection(config),
-      this.buildParametersSection(config),
-      this.buildTerminalSection(config),
-      this.buildActionsSection(config)
-    ];
-
-    this.internalConfig.set(sections);
-  }
-
-  private buildEndpointsSection(config: IBashConfig): IBashConfigSection {
-    const currentEndpoint = this.stateService.currentEndpoint();
-
-    const endpointItems: IBashConfigItem[] = [
-      {
-        id: 'current-endpoint',
-        type: 'select' as const,
-        label: 'Active Endpoint',
-        value: currentEndpoint,
-        options: config.endpoints.map(ep => ({
-          value: ep.id,
-          label: ep.name,
-          disabled: false
-        })),
-        description: 'Select the API endpoint to use for data retrieval'
-      },
-      {
-        id: 'auto-refresh',
-        type: 'toggle' as const,
-        label: 'Auto Refresh',
-        value: false,
-        description: 'Automatically refresh data at intervals'
-      },
-      {
-        id: 'refresh-interval',
-        type: 'range' as const,
-        label: 'Refresh Interval (seconds)',
-        value: 30,
-        min: 5,
-        max: 300,
-        step: 5,
-        description: 'How often to refresh the data'
-      }
-    ];
-
-    return {
-      id: 'endpoints',
-      title: 'API Endpoints',
-      icon: 'server',
-      isExpanded: true,
-      items: endpointItems
-    };
-  }
-
-  private buildParametersSection(config: IBashConfig): IBashConfigSection {
-    const currentEndpoint = this.getCurrentEndpointConfig();
-    const requestParams = this.stateService.terminalState().requestParams || {};
-
-    // Combine endpoint default params with current request params
-    const allParams = { ...currentEndpoint?.params, ...requestParams };
-
-    const paramItems: IBashConfigItem[] = Object.entries(allParams).map(([key, value]) => ({
-      id: `param-${key}`,
-      type: typeof value === 'boolean' ? 'toggle' as const : 'input' as const,
-      label: this.formatParameterLabel(key),
-      value: value,
-      placeholder: `Enter ${key}...`,
-      description: `Parameter: ${key}`
-    }));
-
-    const addParamItem: IBashConfigItem = {
-      id: 'add-parameter',
-      type: 'button' as const,
-      label: 'Add Custom Parameter',
-      value: null,
-      variant: 'secondary' as const,
-      description: 'Add a custom request parameter'
-    };
-
-    return {
-      id: 'parameters',
-      title: 'Request Parameters',
-      icon: 'settings',
-      isExpanded: false,
-      items: [...paramItems, addParamItem]
-    };
-  }
-
-  private buildTerminalSection(config: IBashConfig): IBashConfigSection {
-    const terminalItems: IBashConfigItem[] = [
-      {
-        id: 'terminal-height',
-        type: 'range' as const,
-        label: 'Terminal Height (px)',
-        value: parseInt(config.terminal.height) || 500,
-        min: 200,
-        max: 1000,
-        step: 50,
-        description: 'Height of the terminal window'
-      },
-      {
-        id: 'auto-scroll',
-        type: 'toggle' as const,
-        label: 'Auto Scroll',
-        value: true,
-        description: 'Automatically scroll to bottom on new content'
-      },
-      {
-        id: 'show-timestamps',
-        type: 'toggle' as const,
-        label: 'Show Timestamps',
-        value: true,
-        description: 'Display timestamps in terminal logs'
-      },
-      {
-        id: 'max-log-entries',
-        type: 'range' as const,
-        label: 'Max Log Entries',
-        value: 1000,
-        min: 100,
-        max: 5000,
-        step: 100,
-        description: 'Maximum number of log entries to keep'
-      },
-      {
-        id: 'terminal-theme',
-        type: 'select' as const,
-        label: 'Terminal Theme',
-        value: 'dark',
-        options: [
-          { value: 'dark', label: 'Dark Theme' },
-          { value: 'light', label: 'Light Theme' },
-          { value: 'high-contrast', label: 'High Contrast' }
-        ],
-        description: 'Visual theme for the terminal'
-      }
-    ];
-
-    return {
-      id: 'terminal',
-      title: 'Terminal Settings',
-      icon: 'terminal',
-      isExpanded: false,
-      items: terminalItems
-    };
-  }
-
-  private buildActionsSection(config: IBashConfig): IBashConfigSection {
-    const actionItems: IBashConfigItem[] = [
-      {
-        id: 'clear-terminal',
-        type: 'button' as const,
-        label: 'Clear Terminal',
-        value: null,
-        variant: 'secondary' as const,
-        description: 'Clear all terminal content and logs'
-      },
-      {
-        id: 'export-logs',
-        type: 'button' as const,
-        label: 'Export Logs',
-        value: null,
-        variant: 'secondary' as const,
-        description: 'Export terminal logs to file'
-      },
-      {
-        id: 'export-data',
-        type: 'button' as const,
-        label: 'Export Data',
-        value: null,
-        variant: 'secondary' as const,
-        description: 'Export current data to CSV/JSON'
-      },
-      {
-        id: 'test-connection',
-        type: 'button' as const,
-        label: 'Test Connection',
-        value: null,
-        variant: 'primary' as const,
-        description: 'Test connection to current endpoint'
-      },
-      {
-        id: 'reload-config',
-        type: 'button' as const,
-        label: 'Reload Config',
-        value: null,
-        variant: 'warning' as const,
-        description: 'Reload configuration from factory'
-      },
-      {
-        id: 'refresh-account',
-        type: 'button' as const,
-        label: 'Refresh Account',
-        value: null,
-        variant: 'success' as const,
-        description: 'Refresh account data'
-      }
-    ];
-
-    return {
-      id: 'actions',
-      title: 'Quick Actions',
-      icon: 'zap',
-      isExpanded: false,
-      items: actionItems
-    };
-  }
-
-  private formatParameterLabel(key: string): string {
-    return key
-      .split(/[_-]/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  }
-
-  private emitConfigEvent(type: IBashConfigEvent['type'], payload: any): void {
-    const event: IBashConfigEvent = {
-      type,
-      payload,
-      timestamp: new Date()
-    };
-
-    this.configChange.emit(event);
   }
 }

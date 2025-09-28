@@ -1,47 +1,30 @@
-// src/app/shared/services/api-management-state.service.ts
-// Service for state management between sidebar-bash-config and api-management components
+// api-management-state.service.ts
+// EXTENDED - Angular 20 service for API management with separated data streams
 
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { BinanceAccount } from '@features/binance/models/binance.model';
-import {
-  BashData,
-  IBashConfig,
-  IBashTerminalState
-} from '@shared/components/atk-bash/atk-bash.interfaces';
-import { Subject } from 'rxjs';
-import { ToolsService } from '../components/atk-tools/tools.service';
+import { Injectable, signal, computed, effect } from '@angular/core';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { IBashDataTransformResult, IBashEvent, IBashSidebarField, BashData } from '@shared/components/atk-bash/atk-bash.interfaces';
 
 /**
- * Events for communication between components
+ * State interface for API management
  */
-export interface ApiManagementEvent {
-  type: 'endpoint-change' | 'parameter-change' | 'action-execute' | 'config-update' | 'data-loaded' | 'error-occurred';
-  payload: any;
-  timestamp: Date;
-  source: 'sidebar' | 'terminal' | 'datatable';
+export interface ApiManagementState {
+  configId: string | null;
+  currentEndpoint: string | null;
+  loading: boolean;
+  error: string | null;
+  rawData: any;
+  sidebarData: Record<string, any>;
+  tableData: BashData[];
+  lastUpdated: Date | null;
 }
 
 /**
- * Complete state interface for API management
+ * Commands that can be sent to the service
  */
-export interface ApiManagementState {
-  // Configuration
-  currentConfig: IBashConfig | null;
-  currentEndpoint: string;
-
-  // Terminal state
-  terminalState: IBashTerminalState;
-
-  // Data state
-  currentData: BashData[];
-  dataLoading: boolean;
-  dataError: string | null;
-
-  // UI state
-  sidebarCollapsed: boolean;
-
-  // Account data (for Binance specifically)
-  accountData: BinanceAccount | null;
+export interface ApiManagementCommand {
+  type: 'LOAD_ENDPOINT' | 'SET_CONFIG' | 'CLEAR_DATA' | 'REFRESH_DATA';
+  payload?: any;
 }
 
 @Injectable({
@@ -49,277 +32,285 @@ export interface ApiManagementState {
 })
 export class ApiManagementStateService {
 
-  // Core state signals
-  private _currentConfig = signal<IBashConfig | null>(null);
-  private _currentEndpoint = signal<string>('');
-  private _terminalState = signal<IBashTerminalState>({
-    loading: false,
-    connectionStatus: 'disconnected',
-    requestParams: {}
+  // =========================================
+  // ANGULAR 20 SIGNALS - Core State
+  // =========================================
+
+  private _configId = signal<string | null>(null);
+  private _currentEndpoint = signal<string | null>(null);
+  private _loading = signal<boolean>(false);
+  private _error = signal<string | null>(null);
+  private _rawData = signal<any>(null);
+  private _sidebarData = signal<Record<string, any>>({});
+  private _tableData = signal<BashData[]>([]);
+  private _lastUpdated = signal<Date | null>(null);
+
+  // =========================================
+  // PUBLIC READONLY SIGNALS
+  // =========================================
+
+  public readonly configId = this._configId.asReadonly();
+  public readonly currentEndpoint = this._currentEndpoint.asReadonly();
+  public readonly loading = this._loading.asReadonly();
+  public readonly error = this._error.asReadonly();
+  public readonly rawData = this._rawData.asReadonly();
+  public readonly sidebarData = this._sidebarData.asReadonly();
+  public readonly tableData = this._tableData.asReadonly();
+  public readonly lastUpdated = this._lastUpdated.asReadonly();
+
+  // =========================================
+  // COMPUTED SIGNALS
+  // =========================================
+
+  /**
+   * Complete state as computed signal
+   */
+  public readonly state = computed<ApiManagementState>(() => ({
+    configId: this._configId(),
+    currentEndpoint: this._currentEndpoint(),
+    loading: this._loading(),
+    error: this._error(),
+    rawData: this._rawData(),
+    sidebarData: this._sidebarData(),
+    tableData: this._tableData(),
+    lastUpdated: this._lastUpdated()
+  }));
+
+  /**
+   * Has valid data
+   */
+  public readonly hasData = computed(() =>
+    this._rawData() !== null &&
+    (this._sidebarData() && Object.keys(this._sidebarData()).length > 0 ||
+      this._tableData().length > 0)
+  );
+
+  /**
+   * Is data stale (older than 5 minutes)
+   */
+  public readonly isStale = computed(() => {
+    const lastUpdate = this._lastUpdated();
+    if (!lastUpdate) return true;
+
+    const fiveMinutes = 5 * 60 * 1000;
+    return Date.now() - lastUpdate.getTime() > fiveMinutes;
   });
 
-  // Data signals
-  private _currentData = signal<BashData[]>([]);
-  private _dataLoading = signal<boolean>(false);
-  private _dataError = signal<string | null>(null);
+  /**
+   * Summary info for debugging
+   */
+  public readonly summary = computed(() => ({
+    configId: this._configId(),
+    endpoint: this._currentEndpoint(),
+    hasData: this.hasData(),
+    isStale: this.isStale(),
+    sidebarFields: Object.keys(this._sidebarData()).length,
+    tableRows: this._tableData().length,
+    lastUpdate: this._lastUpdated()?.toISOString()
+  }));
 
-  // UI signals
-  private _sidebarCollapsed = signal<boolean>(false);
+  // =========================================
+  // EVENT STREAMS - Angular 20 Recommended
+  // =========================================
 
-  // Account data
-  private _accountData = signal<BinanceAccount | null>(null);
+  private _events = new Subject<IBashEvent>();
+  private _commands = new Subject<ApiManagementCommand>();
 
-  // Event streams
-  private _eventsSubject = new Subject<ApiManagementEvent>();
-  private _commandsSubject = new Subject<ApiManagementEvent>();
+  public readonly events$ = this._events.asObservable();
+  public readonly commands$ = this._commands.asObservable();
 
-  // Public readonly signals
-  readonly currentConfig = this._currentConfig.asReadonly();
-  readonly currentEndpoint = this._currentEndpoint.asReadonly();
-  readonly terminalState = this._terminalState.asReadonly();
-  readonly currentData = this._currentData.asReadonly();
-  readonly dataLoading = this._dataLoading.asReadonly();
-  readonly dataError = this._dataError.asReadonly();
-  readonly sidebarCollapsed = this._sidebarCollapsed.asReadonly();
-  readonly accountData = this._accountData.asReadonly();
-
-  // Computed properties
-  readonly currentEndpointConfig = computed(() => {
-    const config = this._currentConfig();
-    const endpointId = this._currentEndpoint();
-    if (!config || !endpointId) return null;
-    return config.endpoints.find(ep => ep.id === endpointId) || null;
-  });
-
-  readonly isConnected = computed(() =>
-    this._terminalState().connectionStatus === 'connected'
-  );
-
-  readonly hasError = computed(() =>
-    !!this._dataError() || !!this._terminalState().error
-  );
-
-  readonly isLoading = computed(() =>
-    this._dataLoading() || this._terminalState().loading
-  );
-
-  // Event observables
-  readonly events$ = this._eventsSubject.asObservable();
-  readonly commands$ = this._commandsSubject.asObservable();
-  private tools = inject(ToolsService);
+  // =========================================
+  // CONSTRUCTOR & EFFECTS
+  // =========================================
 
   constructor() {
-    // TAG: binance-account-info.component.27 ================ CONSOLE LOG IN PROGRESS
-    this.tools.consoleGroup({
-      title: `ApiManagementStateService initialized ..`,
-      tag: 'recycle',
-      data: null,
-      palette: 'su',
-      collapsed: true,
-      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-      fontSizePx: 13
+    // Effect to emit events when data changes
+    effect(() => {
+      const sidebarData = this._sidebarData();
+      const tableData = this._tableData();
+
+      if (Object.keys(sidebarData).length > 0) {
+        this.emitEvent('sidebar-data-updated', { data: sidebarData });
+      }
+
+      if (tableData.length > 0) {
+        this.emitEvent('table-data-updated', { data: tableData });
+      }
     });
+
+    // Load from session storage on init
+    this.loadFromSession();
+  }
+
+  // =========================================
+  // PUBLIC METHODS - Angular 20 Style
+  // =========================================
+
+  /**
+   * Set configuration ID
+   */
+  setConfigId(configId: string): void {
+    this._configId.set(configId);
+    this.emitEvent('endpoint-changed', { configId });
   }
 
   /**
-   * Configuration management
+   * Set current endpoint
    */
-  setConfiguration(config: IBashConfig): void {
-    this._currentConfig.set(config);
+  setCurrentEndpoint(endpoint: string): void {
+    this._currentEndpoint.set(endpoint);
+    this.emitEvent('endpoint-changed', { endpoint });
+  }
 
-    // Set default endpoint if not set
-    if (!this._currentEndpoint() && config.endpoints.length > 0) {
-      const defaultEndpoint = config.defaultEndpoint || config.endpoints[0].id;
-      this._currentEndpoint.set(defaultEndpoint);
+  /**
+   * Update data from API response using transform result
+   */
+  updateData(transformResult: IBashDataTransformResult): void {
+    this._sidebarData.set(transformResult.sidebarData);
+    this._tableData.set(transformResult.tableData);
+    this._lastUpdated.set(new Date());
+    this._error.set(null);
+
+    this.emitEvent('data-loaded', {
+      sidebarCount: Object.keys(transformResult.sidebarData).length,
+      tableCount: transformResult.tableData.length
+    });
+
+    this.saveToSession();
+  }
+
+  /**
+   * Update raw data and transform it
+   */
+  setRawData(data: any, transformer?: (data: any) => IBashDataTransformResult): void {
+    this._rawData.set(data);
+
+    if (transformer) {
+      const transformResult = transformer(data);
+      this.updateData(transformResult);
     }
-
-    this.emitEvent('config-update', { config }, 'terminal');
   }
 
   /**
-   * Endpoint management
+   * Set loading state
    */
-  setCurrentEndpoint(endpointId: string): void {
-    if (endpointId === this._currentEndpoint()) return;
-
-    this._currentEndpoint.set(endpointId);
-    this.clearData(); // Clear previous endpoint data
-    this.emitEvent('endpoint-change', { endpointId }, 'sidebar');
-  }
-
-  /**
-   * Terminal state management
-   */
-  updateTerminalState(updates: Partial<IBashTerminalState>): void {
-    this._terminalState.update(current => ({
-      ...current,
-      ...updates
-    }));
-  }
-
   setLoading(loading: boolean): void {
-    this._dataLoading.set(loading);
-    this.updateTerminalState({ loading });
-  }
-
-  setConnectionStatus(status: IBashTerminalState['connectionStatus']): void {
-    this.updateTerminalState({ connectionStatus: status });
+    this._loading.set(loading);
   }
 
   /**
-   * Data management
+   * Set error state
    */
-  setCurrentData(data: BashData[]): void {
-    this._currentData.set(data);
-    this._dataError.set(null);
-    this._dataLoading.set(false);
+  setError(error: string | null): void {
+    this._error.set(error);
+    this._loading.set(false);
 
-    // Update terminal state with success info
-    this.updateTerminalState({
-      loading: false,
-      connectionStatus: 'connected',
-      responseMetadata: {
-        statusCode: 200,
-        responseTime: Date.now() % 1000, // Mock response time
-        dataCount: data.length
-      }
-    });
-
-    this.emitEvent('data-loaded', { data, count: data.length }, 'terminal');
+    if (error) {
+      this.emitEvent('error', { error });
+    }
   }
 
-  setDataError(error: string): void {
-    this._dataError.set(error);
-    this._dataLoading.set(false);
-
-    // Update terminal state with error info
-    this.updateTerminalState({
-      loading: false,
-      connectionStatus: 'disconnected',
-      error
-    });
-
-    this.emitEvent('error-occurred', { error }, 'terminal');
-  }
-
+  /**
+   * Clear all data
+   */
   clearData(): void {
-    this._currentData.set([]);
-    this._dataError.set(null);
+    this._rawData.set(null);
+    this._sidebarData.set({});
+    this._tableData.set([]);
+    this._error.set(null);
+    this._lastUpdated.set(null);
+    this.clearSession();
   }
 
   /**
-   * Parameter management
+   * Send command to the service
    */
-  updateRequestParameter(key: string, value: any): void {
-    this._terminalState.update(state => ({
-      ...state,
-      requestParams: {
-        ...state.requestParams,
-        [key]: value
+  sendCommand(command: ApiManagementCommand): void {
+    this._commands.next(command);
+
+    // Handle commands
+    switch (command.type) {
+      case 'CLEAR_DATA':
+        this.clearData();
+        break;
+      case 'SET_CONFIG':
+        if (command.payload?.configId) {
+          this.setConfigId(command.payload.configId);
+        }
+        if (command.payload?.endpoint) {
+          this.setCurrentEndpoint(command.payload.endpoint);
+        }
+        break;
+    }
+  }
+
+  /**
+   * Get sidebar data for specific fields
+   */
+  getSidebarFieldsData(fields: IBashSidebarField[]): Record<string, any> {
+    const sidebarData = this._sidebarData();
+    const result: Record<string, any> = {};
+
+    fields.forEach(field => {
+      if (sidebarData.hasOwnProperty(field.key)) {
+        result[field.key] = sidebarData[field.key];
       }
-    }));
-
-    this.emitEvent('parameter-change', { key, value }, 'sidebar');
-  }
-
-  updateRequestParameters(params: Record<string, any>): void {
-    this._terminalState.update(state => ({
-      ...state,
-      requestParams: {
-        ...state.requestParams,
-        ...params
-      }
-    }));
-
-    this.emitEvent('parameter-change', { parameters: params }, 'sidebar');
-  }
-
-  /**
-   * UI state management
-   */
-  toggleSidebar(): void {
-    this._sidebarCollapsed.update(collapsed => !collapsed);
-  }
-
-  setSidebarCollapsed(collapsed: boolean): void {
-    this._sidebarCollapsed.set(collapsed);
-  }
-
-  /**
-   * Account data management (Binance specific)
-   */
-  setAccountData(accountData: BinanceAccount): void {
-    this._accountData.set(accountData);
-    this.emitEvent('data-loaded', { accountData }, 'terminal');
-  }
-
-  /**
-   * Action execution
-   */
-  executeAction(actionId: string, payload?: any): void {
-    this.emitEvent('action-execute', { actionId, payload }, 'sidebar');
-  }
-
-  /**
-   * Command execution (for terminal actions)
-   */
-  executeCommand(command: string, args?: string[]): void {
-    this._commandsSubject.next({
-      type: 'action-execute',
-      payload: { command, args },
-      timestamp: new Date(),
-      source: 'terminal'
     });
+
+    return result;
   }
 
-  /**
-   * State utilities
-   */
-  getCompleteState(): ApiManagementState {
-    return {
-      currentConfig: this._currentConfig(),
-      currentEndpoint: this._currentEndpoint(),
-      terminalState: this._terminalState(),
-      currentData: this._currentData(),
-      dataLoading: this._dataLoading(),
-      dataError: this._dataError(),
-      sidebarCollapsed: this._sidebarCollapsed(),
-      accountData: this._accountData()
-    };
-  }
+  // =========================================
+  // PRIVATE HELPER METHODS
+  // =========================================
 
-  resetState(): void {
-    this._currentConfig.set(null);
-    this._currentEndpoint.set('');
-    this._terminalState.set({
-      loading: false,
-      connectionStatus: 'disconnected',
-      requestParams: {}
-    });
-    this._currentData.set([]);
-    this._dataLoading.set(false);
-    this._dataError.set(null);
-    this._accountData.set(null);
-
-    this.emitEvent('config-update', { reset: true }, 'terminal');
-  }
-
-  // Private helper methods
-  private emitEvent(
-    type: ApiManagementEvent['type'],
-    payload: any,
-    source: ApiManagementEvent['source']
-  ): void {
-    const event: ApiManagementEvent = {
+  private emitEvent(type: IBashEvent['type'], payload: any): void {
+    this._events.next({
       type,
-      payload,
-      timestamp: new Date(),
-      source
-    };
+      payload: {
+        ...payload,
+        configId: this._configId(),
+        endpoint: this._currentEndpoint(),
+        timestamp: new Date()
+      },
+      timestamp: new Date()
+    });
+  }
 
-    this._eventsSubject.next(event);
+  private saveToSession(): void {
+    try {
+      const state = this.state();
+      sessionStorage.setItem('api_management_state', JSON.stringify(state));
+    } catch (error) {
+      console.warn('Failed to save API management state to session:', error);
+    }
+  }
 
-    // Debug logging
-    console.log(`📡 [${source}] ${type}:`, payload);
+  private loadFromSession(): void {
+    try {
+      const savedData = sessionStorage.getItem('api_management_state');
+      if (savedData) {
+        const state: ApiManagementState = JSON.parse(savedData);
+
+        if (state.configId) this._configId.set(state.configId);
+        if (state.currentEndpoint) this._currentEndpoint.set(state.currentEndpoint);
+        if (state.error) this._error.set(state.error);
+        if (state.rawData) this._rawData.set(state.rawData);
+        if (state.sidebarData) this._sidebarData.set(state.sidebarData);
+        if (state.tableData) this._tableData.set(state.tableData);
+        if (state.lastUpdated) this._lastUpdated.set(new Date(state.lastUpdated));
+      }
+    } catch (error) {
+      console.warn('Failed to load API management state from session:', error);
+      this.clearSession();
+    }
+  }
+
+  private clearSession(): void {
+    try {
+      sessionStorage.removeItem('api_management_state');
+    } catch (error) {
+      console.warn('Failed to clear API management session data:', error);
+    }
   }
 }

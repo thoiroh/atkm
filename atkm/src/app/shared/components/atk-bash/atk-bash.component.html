@@ -4,14 +4,14 @@
     {{ terminalState().connectionStatus | titlecase }}
   </span>
 
-  @if (isLoading()) {
+  @if (loading()) {
   <span class="loading-indicator">
     <span class="spinner"></span>
     Loading...
   </span>
   }
 
-  @if (terminalScrollState(); as scrollState) {
+  @if (terminalState().connectionStatus) {
   <span class="scroll-info">
     Content: {{ scrollState.contentHeight }}px / Visible: {{ scrollState.visibleHeight }}px
   </span>
@@ -22,5 +22,5 @@
 <textarea class="terminal-input" [style.--terminal-min-height]="currentConfig()?.terminal.height || '500px'"
   spellcheck="false" autocorrect="off" autocomplete="off" autocapitalize="off"
   placeholder="Terminal ready... Type /help for commands" atkTerminalInput [autoResize]="false"
-  [maxHeight]="currentConfig()?.terminal.height || '500px'" (contentChange)="onTerminalContentChange($event)"
-  (scrollChange)="onTerminalScrollChange($event)"></textarea>
+  [newHeight]="currentConfig()?.terminal?.height || '500px'" [maxHeight]="currentConfig()?.terminal.height || '500px'"
+  (contentChange)="onTerminalContentChange($event)" (scrollChange)="onTerminalScroll($event)"></textarea>

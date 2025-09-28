@@ -1,5 +1,5 @@
 // atk-bash.interfaces.ts
-// Generic interfaces for the ATK Bash component
+// Generic interfaces for the ATK Bash component - EXTENDED VERSION
 
 import { TemplateRef } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -8,6 +8,28 @@ import { Observable } from 'rxjs';
  * Generic data type that can be displayed in the bash terminal table
  */
 export type BashData = Record<string, any>;
+
+/**
+ * Configuration for a sidebar field display
+ */
+export interface IBashSidebarField {
+  /** Unique identifier for the field */
+  key: string;
+  /** Display label for the field */
+  label: string;
+  /** Data type for formatting */
+  type?: 'text' | 'number' | 'boolean' | 'date' | 'status' | 'custom';
+  /** Custom formatter function */
+  formatter?: (value: any) => string;
+  /** CSS class for styling */
+  cssClass?: string;
+  /** Whether field is visible */
+  visible?: boolean;
+  /** Field group/category */
+  group?: string;
+  /** Field icon */
+  icon?: string;
+}
 
 /**
  * Configuration for a data column in the bash table
@@ -36,7 +58,17 @@ export interface IBashColumn<T = BashData> {
 }
 
 /**
- * Configuration for API endpoint and data source
+ * Data transformation result for endpoint responses
+ */
+export interface IBashDataTransformResult {
+  /** Data for sidebar display */
+  sidebarData: Record<string, any>;
+  /** Data for table display */
+  tableData: BashData[];
+}
+
+/**
+ * Configuration for API endpoint and data source - EXTENDED
  */
 export interface IBashEndpointConfig {
   /** Unique identifier for the endpoint */
@@ -53,14 +85,16 @@ export interface IBashEndpointConfig {
   params?: Record<string, any>;
   /** Request body for POST/PUT requests */
   body?: any;
-  /** Column configuration for this endpoint's data */
+  /** Column configuration for table data */
   columns: IBashColumn[];
+  /** Sidebar fields configuration */
+  sidebarFields?: IBashSidebarField[];
   /** Whether to enable caching */
   cacheable?: boolean;
   /** Cache duration in milliseconds */
   cacheDuration?: number;
-  /** Data transformer function */
-  dataTransformer?: (data: any) => BashData[];
+  /** Data transformer function - UPDATED */
+  dataTransformer?: (data: any) => IBashDataTransformResult;
 }
 
 /**
@@ -172,11 +206,11 @@ export interface IBashAction {
 }
 
 /**
- * Event emitted by the bash component
+ * Event emitted by the bash component - EXTENDED
  */
 export interface IBashEvent<T = any> {
   /** Event type */
-  type: 'data-loaded' | 'error' | 'endpoint-changed' | 'action-clicked' | 'log-added';
+  type: 'data-loaded' | 'error' | 'endpoint-changed' | 'action-clicked' | 'log-added' | 'sidebar-data-updated' | 'table-data-updated';
   /** Event payload */
   payload: T;
   /** Timestamp */

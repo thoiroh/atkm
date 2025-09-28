@@ -1,5 +1,5 @@
 // src/app/features/landing/landing.component.ts
-// Updated to integrate ApiManagementStateService with SidebarBashConfigComponent
+// CORRECTED - Updated to integrate ApiManagementStateService with SidebarBashConfigComponent
 
 import { AfterViewInit, Component, OnInit, computed, inject } from '@angular/core';
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
@@ -37,22 +37,28 @@ export class LandingComponent implements OnInit, AfterViewInit {
   private breadcrumbService = inject(BreadcrumbService);
   private tools = inject(ToolsService);
 
-  // NEW: API Management State Service
+  // API Management State Service
   private apiStateService = inject(ApiManagementStateService);
 
-  // Computed properties for sidebar bash config
-  bashConfig = computed(() => this.apiStateService.currentConfig());
-  bashTerminalState = computed(() => this.apiStateService.terminalState());
+  // CORRECTED: Computed properties for sidebar bash config
+  bashConfig = computed(() => {
+    // The config will be managed by the SidebarBashConfigComponent itself
+    return null;
+  });
+
   bashCurrentEndpoint = computed(() => this.apiStateService.currentEndpoint());
-  bashConfigPanelCollapsed = computed(() => this.apiStateService.sidebarCollapsed());
-  bashAccountData = computed(() => this.apiStateService.accountData());
+  bashConfigPanelCollapsed = computed(() => this.config?.configPanel?.isCollapsed || true);
+
+  // CORRECTED: Removed non-existent methods
+  bashSummary = computed(() => this.apiStateService.summary());
+  bashHasData = computed(() => this.apiStateService.hasData());
 
   ngOnInit(): void {
     this.configService.loadLandingConfig().subscribe({
       next: (config) => {
         this.config = config;
-        // Initialize bash config panel as collapsed
-        this.apiStateService.setSidebarCollapsed(true);
+        // Initialize configuration
+        this.updateConfigForNavigation();
       },
       error: (error) => {
         console.error('Erreur lors du chargement de la configuration:', error);
@@ -64,7 +70,7 @@ export class LandingComponent implements OnInit, AfterViewInit {
       this.tools.consoleGroup({
         title: `Landing received API Management event`,
         tag: 'check',
-        data: { type: event.type, source: event.source, payload: event.payload },
+        data: { type: event.type, payload: event.payload },
         palette: 'de',
         collapsed: true,
         fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
@@ -78,7 +84,7 @@ export class LandingComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Handle traditional config panel toggle (if still needed)
+   * Handle traditional config panel toggle
    */
   toggleConfigPanel(): void {
     if (this.config) {
@@ -90,12 +96,13 @@ export class LandingComponent implements OnInit, AfterViewInit {
    * Handle bash config panel toggle via state service
    */
   toggleBashConfigPanel(): void {
-    this.apiStateService.toggleSidebar();
+    // Toggle the traditional config panel for now
+    this.toggleConfigPanel();
 
     this.tools.consoleGroup({
       title: `Landing toggled bash config panel`,
       tag: 'check',
-      data: { collapsed: this.apiStateService.sidebarCollapsed() },
+      data: { collapsed: this.config?.configPanel?.isCollapsed },
       palette: 'de',
       collapsed: true,
       fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
@@ -105,12 +112,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
 
   /**
    * Handle configuration changes from SidebarBashConfigComponent
-   * These are now handled by the state service directly
    */
   onBashConfigChange(event: any): void {
-    // The SidebarBashConfigComponent will interact directly with ApiManagementStateService
-    // This method is kept for potential custom handling at the Landing level
-
     this.tools.consoleGroup({
       title: `Landing received bash config change`,
       tag: 'check',
@@ -128,25 +131,25 @@ export class LandingComponent implements OnInit, AfterViewInit {
         break;
 
       case 'parameter-change':
-        this.apiStateService.updateRequestParameter(
-          event.payload.parameter,
-          event.payload.value
-        );
+        // Handle parameter changes
+        console.log('Parameter change:', event.payload);
         break;
 
       case 'action-execute':
-        this.apiStateService.executeAction(event.payload.actionId, event.payload);
+        // Handle action execution
+        console.log('Action execute:', event.payload);
         break;
 
       case 'account-refresh':
-        // This will trigger a refresh of account data in components that listen to the state service
-        this.apiStateService.executeAction('refresh-account');
+        // Handle account refresh
+        console.log('Account refresh requested');
         break;
 
       case 'config-update':
         // Handle configuration updates
         if (event.payload.reset) {
-          this.apiStateService.resetState();
+          // Reset state if needed
+          console.log('Config reset requested');
         }
         break;
     }
@@ -154,7 +157,6 @@ export class LandingComponent implements OnInit, AfterViewInit {
 
   /**
    * Provide API state service to child components via dependency injection
-   * This allows child components to access the state service
    */
   getApiStateService(): ApiManagementStateService {
     return this.apiStateService;
@@ -166,7 +168,6 @@ export class LandingComponent implements OnInit, AfterViewInit {
   onNavigationChange(route: string): void {
     // If navigating away from API management pages, we might want to pause certain operations
     if (!route.includes('binance') && !route.includes('ibkr')) {
-      // Optional: pause API polling, clear sensitive data, etc.
       this.tools.consoleGroup({
         title: `Landing detected navigation away from API pages`,
         tag: 'check',
