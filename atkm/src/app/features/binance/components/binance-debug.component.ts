@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, effect, inject, NgZone, OnInit, signal, viewChild } from '@angular/core';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { TerminalInputDirective } from '@shared/directives/terminal-input.directive';
+import { ToolsService } from '@shared/services/tools.service';
 import { BinanceService } from '../services/binance.service';
 
 @Component({

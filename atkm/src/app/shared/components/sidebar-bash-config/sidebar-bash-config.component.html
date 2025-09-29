@@ -1,495 +1,125 @@
-<aside class="config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
-  <button class="config-toggle" (click)="onToggle()"
-    [attr.aria-label]="isCollapsed() ? 'Open configuration' : 'Close configuration'">
-    @if (!isCollapsed()) {
-    <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76"></atk-icon>
-    } @else {
-    <atk-icon class="toggle-arrow left" name="triangle-left" [size]="16" color="#656d76"></atk-icon>
+<div class="sidebar-bash-config">
+
+  <!-- Header Section -->
+  <div class="sidebar-header">
+    <div class="sidebar-title">
+      <atk-icon name="settings" [size]="16" color="var(--color-accent-fg)" />
+      <h3>{{ configTitle() || 'API Configuration' }}</h3>
+    </div>
+
+    @if (loading()) {
+    <div class="sidebar-status loading">
+      <atk-icon name="loader" [size]="14" color="var(--color-accent-fg)" />
+      <span>Loading...</span>
+    </div>
+    } @else if (error()) {
+    <div class="sidebar-status error">
+      <atk-icon name="alert-circle" [size]="14" color="var(--color-danger)" />
+      <span>{{ error() }}</span>
+    </div>
+    } @else if (hasData()) {
+    <div class="sidebar-status success">
+      <atk-icon name="check-circle" [size]="14" color="var(--color-success-emphasis)" />
+      <span>Connected</span>
+    </div>
     }
-  </button>
+  </div>
 
-  <div class="config-wrapper">
-    <div class="config-content">
-      <div class="config-section">
-        <header class="config-header">
-          <h3 class="panel-title">
-            <atk-icon name="terminal" [size]="18" color="var(--color-accent-fg)"></atk-icon>
-            API Management Control
-          </h3>
-
-          <!-- Connection Status -->
-          <div class="connection-status" [class]="connectionStatus()">
-            <span class="status-indicator" [class]="connectionStatus()">
-              @switch (connectionStatus()) {
-              @case ('connected') {
-              <atk-icon name="wifi" [size]="14" color="var(--color-success-emphasis)"></atk-icon>
-              }
-              @case ('connecting') {
-              <atk-icon name="loader" [size]="14" color="var(--color-accent-fg)"></atk-icon>
-              }
-              @default {
-              <atk-icon name="wifi-off" [size]="14" color="var(--color-fg-muted)"></atk-icon>
-              }
-              }
-            </span>
-            <span class="status-text">{{ connectionStatus() | titlecase }}</span>
-            @if (isLoading()) {
-            <span class="loading-spinner"></span>
-            }
-          </div>
-        </header>
-
-        <!-- Tab Navigation -->
-        <nav class="bash-config-tabs">
-          <button class="tab-button" [class.active]="activeTab() === 'endpoints'" (click)="setActiveTab('endpoints')">
-            <atk-icon name="server" [size]="14" color="currentColor"></atk-icon>
-            Endpoints
-          </button>
-          <button class="tab-button" [class.active]="activeTab() === 'parameters'" (click)="setActiveTab('parameters')">
-            <atk-icon name="settings" [size]="14" color="currentColor"></atk-icon>
-            Params
-          </button>
-          <button class="tab-button" [class.active]="activeTab() === 'terminal'" (click)="setActiveTab('terminal')">
-            <atk-icon name="monitor" [size]="14" color="currentColor"></atk-icon>
-            Terminal
-          </button>
-          <button class="tab-button" [class.active]="activeTab() === 'actions'" (click)="setActiveTab('actions')">
-            <atk-icon name="zap" [size]="14" color="currentColor"></atk-icon>
-            Actions
-          </button>
-          <button class="tab-button" [class.active]="activeTab() === 'account'" (click)="setActiveTab('account')">
-            <atk-icon name="user" [size]="14" color="currentColor"></atk-icon>
-            Account
-          </button>
-        </nav>
-
-        <!-- Search Bar -->
-        <div class="bash-config-search">
-          <div class="search-input-wrapper">
-            <atk-icon name="search" [size]="14" color="var(--color-fg-muted)"></atk-icon>
-            <input type="text" class="search-input" placeholder="Search configuration..." [value]="searchQuery()"
-              (input)="onSearchChange($any($event.target).value)">
-            @if (searchQuery()) {
-            <button class="search-clear" (click)="onSearchChange('')">
-              <atk-icon name="x" [size]="12" color="var(--color-fg-muted)"></atk-icon>
-            </button>
-            }
-          </div>
-        </div>
-
-        <!-- Configuration Content -->
-        <div class="bash-config-content">
-
-          <!-- Endpoints Tab -->
-          @if (activeTab() === 'endpoints') {
-          <div class="config-tab-content">
-            @for (section of filteredSections(); track section.id) {
-            @if (section.id === 'endpoints') {
-            <div class="bash-config-section">
-              <button class="section-header" (click)="toggleSection(section.id)">
-                <atk-icon [name]="section.icon" [size]="16" color="var(--color-fg-default)"></atk-icon>
-                <span class="section-title">{{ section.title }}</span>
-                <atk-icon name="chevron-down" [size]="14" color="var(--color-fg-muted)"
-                  [class.rotated]="!section.isExpanded">
-                </atk-icon>
-              </button>
-
-              @if (section.isExpanded) {
-              <div class="section-content">
-                @for (item of section.items; track item.id) {
-                <div class="config-item">
-
-                  <!-- Select Input -->
-                  @if (item.type === 'select') {
-                  <label class="item-label">{{ item.label }}</label>
-                  <select class="item-select"
-                    [value]="item.id === 'current-endpoint' ? stateService.currentEndpoint() : item.value"
-                    [disabled]="item.disabled || isLoading()"
-                    (change)="item.id === 'current-endpoint' ? onEndpointChange($any($event.target).value) : onConfigItemChange(section.id, item.id, $any($event.target).value)">
-                    @for (option of item.options; track option.value) {
-                    <option [value]="option.value" [disabled]="option.disabled">
-                      {{ option.label }}
-                    </option>
-                    }
-                  </select>
-                  @if (item.description) {
-                  <p class="item-description">{{ item.description }}</p>
-                  }
-                  }
-
-                  <!-- Toggle Input -->
-                  @if (item.type === 'toggle') {
-                  <div class="item-toggle-wrapper">
-                    <label class="item-label">{{ item.label }}</label>
-                    <label class="toggle-switch">
-                      <input type="checkbox" [checked]="item.value" [disabled]="item.disabled || isLoading()"
-                        (change)="onConfigItemChange(section.id, item.id, $any($event.target).checked)">
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  @if (item.description) {
-                  <p class="item-description">{{ item.description }}</p>
-                  }
-                  }
-
-                  <!-- Range Input -->
-                  @if (item.type === 'range') {
-                  <label class="item-label">{{ item.label }} <span class="range-value">({{ item.value }})</span></label>
-                  <input type="range" class="item-range" [min]="item.min" [max]="item.max" [step]="item.step"
-                    [value]="item.value" [disabled]="item.disabled || isLoading()"
-                    (input)="onConfigItemChange(section.id, item.id, +$any($event.target).value)">
-                  @if (item.description) {
-                  <p class="item-description">{{ item.description }}</p>
-                  }
-                  }
-
-                </div>
-                }
-              </div>
-              }
-            </div>
-            }
-            }
-          </div>
-          }
-
-          <!-- Parameters Tab -->
-          @if (activeTab() === 'parameters') {
-          <div class="config-tab-content">
-            @for (section of filteredSections(); track section.id) {
-            @if (section.id === 'parameters') {
-            <div class="config-section">
-              <button class="section-header" (click)="toggleSection(section.id)">
-                <atk-icon [name]="section.icon" [size]="16" color="var(--color-fg-default)"></atk-icon>
-                <span class="section-title">{{ section.title }}</span>
-                <atk-icon name="chevron-down" [size]="14" color="var(--color-fg-muted)"
-                  [class.rotated]="!section.isExpanded">
-                </atk-icon>
-              </button>
-
-              @if (section.isExpanded) {
-              <div class="section-content">
-                @for (item of section.items; track item.id) {
-                <div class="config-item">
-
-                  @if (item.type === 'input') {
-                  <label class="item-label">{{ item.label }}</label>
-                  <input type="text" class="item-input" [value]="item.value" [placeholder]="item.placeholder"
-                    [disabled]="item.disabled || isLoading()"
-                    (input)="onParameterChange(item.id.replace('param-', ''), $any($event.target).value)">
-                  @if (item.description) {
-                  <p class="item-description">{{ item.description }}</p>
-                  }
-                  }
-
-                  @if (item.type === 'toggle') {
-                  <div class="item-toggle-wrapper">
-                    <label class="item-label">{{ item.label }}</label>
-                    <label class="toggle-switch">
-                      <input type="checkbox" [checked]="item.value" [disabled]="item.disabled || isLoading()"
-                        (change)="onParameterChange(item.id.replace('param-', ''), $any($event.target).checked)">
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  @if (item.description) {
-                  <p class="item-description">{{ item.description }}</p>
-                  }
-                  }
-
-                  @if (item.type === 'button') {
-                  <button class="item-button" [class]="'btn-' + (item.variant || 'secondary')"
-                    [disabled]="item.disabled || isLoading()" (click)="executeAction(item.id)">
-                    {{ item.label }}
-                  </button>
-                  @if (item.description) {
-                  <p class="item-description">{{ item.description }}</p>
-                  }
-                  }
-
-                </div>
-                }
-              </div>
-              }
-            </div>
-            }
-            }
-          </div>
-          }
-
-          <!-- Terminal Tab -->
-          @if (activeTab() === 'terminal') {
-          <div class="config-tab-content">
-            @for (section of filteredSections(); track section.id) {
-            @if (section.id === 'terminal') {
-            <div class="config-section">
-              <button class="section-header" (click)="toggleSection(section.id)">
-                <atk-icon [name]="section.icon" [size]="16" color="var(--color-fg-default)"></atk-icon>
-                <span class="section-title">{{ section.title }}</span>
-                <atk-icon name="chevron-down" [size]="14" color="var(--color-fg-muted)"
-                  [class.rotated]="!section.isExpanded">
-                </atk-icon>
-              </button>
-
-              @if (section.isExpanded) {
-              <div class="section-content">
-                @for (item of section.items; track item.id) {
-                <div class="config-item">
-
-                  @if (item.type === 'range') {
-                  <label class="item-label">{{ item.label }} <span class="range-value">({{ item.value }})</span></label>
-                  <input type="range" class="item-range" [min]="item.min" [max]="item.max" [step]="item.step"
-                    [value]="item.value" [disabled]="item.disabled || isLoading()"
-                    (input)="onConfigItemChange(section.id, item.id, +$any($event.target).value)">
-                  @if (item.description) {
-                  <p class="item-description">{{ item.description }}</p>
-                  }
-                  }
-
-                  @if (item.type === 'toggle') {
-                  <div class="item-toggle-wrapper">
-                    <label class="item-label">{{ item.label }}</label>
-                    <label class="toggle-switch">
-                      <input type="checkbox" [checked]="item.value" [disabled]="item.disabled || isLoading()"
-                        (change)="onConfigItemChange(section.id, item.id, $any($event.target).checked)">
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  @if (item.description) {
-                  <p class="item-description">{{ item.description }}</p>
-                  }
-                  }
-
-                  @if (item.type === 'select') {
-                  <label class="item-label">{{ item.label }}</label>
-                  <select class="item-select" [value]="item.value" [disabled]="item.disabled || isLoading()"
-                    (change)="onConfigItemChange(section.id, item.id, $any($event.target).value)">
-                    @for (option of item.options; track option.value) {
-                    <option [value]="option.value" [disabled]="option.disabled">
-                      {{ option.label }}
-                    </option>
-                    }
-                  </select>
-                  @if (item.description) {
-                  <p class="item-description">{{ item.description }}</p>
-                  }
-                  }
-
-                </div>
-                }
-              </div>
-              }
-            </div>
-            }
-            }
-          </div>
-          }
-
-          <!-- Actions Tab -->
-          @if (activeTab() === 'actions') {
-          <div class="config-tab-content">
-            @for (section of filteredSections(); track section.id) {
-            @if (section.id === 'actions') {
-            <div class="config-section">
-              <button class="section-header" (click)="toggleSection(section.id)">
-                <atk-icon [name]="section.icon" [size]="16" color="var(--color-fg-default)"></atk-icon>
-                <span class="section-title">{{ section.title }}</span>
-                <atk-icon name="chevron-down" [size]="14" color="var(--color-fg-muted)"
-                  [class.rotated]="!section.isExpanded">
-                </atk-icon>
-              </button>
-
-              @if (section.isExpanded) {
-              <div class="section-content">
-                @for (item of section.items; track item.id) {
-                <div class="config-item">
-
-                  @if (item.type === 'button') {
-                  <button class="item-button action-button" [class]="'btn-' + (item.variant || 'secondary')"
-                    [disabled]="item.disabled || isLoading()" (click)="executeAction(item.id)">
-                    @switch (item.id) {
-                    @case ('clear-terminal') {
-                    <atk-icon name="trash-2" [size]="14" color="currentColor"></atk-icon>
-                    }
-                    @case ('export-logs') {
-                    <atk-icon name="download" [size]="14" color="currentColor"></atk-icon>
-                    }
-                    @case ('export-data') {
-                    <atk-icon name="file-down" [size]="14" color="currentColor"></atk-icon>
-                    }
-                    @case ('test-connection') {
-                    <atk-icon name="wifi" [size]="14" color="currentColor"></atk-icon>
-                    }
-                    @case ('reload-config') {
-                    <atk-icon name="refresh-cw" [size]="14" color="currentColor"></atk-icon>
-                    }
-                    @case ('refresh-account') {
-                    <atk-icon name="user-check" [size]="14" color="currentColor"></atk-icon>
-                    }
-                    @default {
-                    <atk-icon name="play" [size]="14" color="currentColor"></atk-icon>
-                    }
-                    }
-                    {{ item.label }}
-                  </button>
-                  @if (item.description) {
-                  <p class="item-description">{{ item.description }}</p>
-                  }
-                  }
-
-                </div>
-                }
-              </div>
-              }
-            </div>
-            }
-            }
-          </div>
-          }
-
-          <!-- Account Tab -->
-          @if (activeTab() === 'account') {
-          <div class="config-tab-content">
-            @if (accountInfo(); as account) {
-            <div class="config-section">
-              <div class="section-header">
-                <atk-icon name="user" [size]="16" color="var(--color-fg-default)"></atk-icon>
-                <span class="section-title">Account Information</span>
-              </div>
-
-              <div class="section-content">
-                <div class="account-info-grid">
-
-                  <!-- Account Type -->
-                  <div class="account-info-item">
-                    <label class="account-label">Account Type</label>
-                    <span class="account-value">{{ account.accountType }}</span>
-                  </div>
-
-                  <!-- Last Update -->
-                  <div class="account-info-item">
-                    <label class="account-label">Last Update</label>
-                    <span class="account-value">{{ account.updateTime }}</span>
-                  </div>
-
-                  <!-- Permissions -->
-                  <div class="account-info-item full-width">
-                    <label class="account-label">Permissions</label>
-                    <span class="account-value">{{ formatAccountPermissions(account.permissions) }}</span>
-                  </div>
-
-                  <!-- Trading Status -->
-                  <div class="account-status-grid">
-                    <div class="status-item">
-                      <atk-icon [name]="getAccountStatusIcon(account.canTrade, false, false)" [size]="16"
-                        [color]="getAccountStatusColor(account.canTrade, false, false)"></atk-icon>
-                      <span [class]="account.canTrade ? 'status-enabled' : 'status-disabled'">
-                        Trade: {{ account.canTrade ? 'Enabled' : 'Disabled' }}
-                      </span>
-                    </div>
-
-                    <div class="status-item">
-                      <atk-icon [name]="getAccountStatusIcon(false, account.canWithdraw, false)" [size]="16"
-                        [color]="getAccountStatusColor(false, account.canWithdraw, false)"></atk-icon>
-                      <span [class]="account.canWithdraw ? 'status-enabled' : 'status-disabled'">
-                        Withdraw: {{ account.canWithdraw ? 'Enabled' : 'Disabled' }}
-                      </span>
-                    </div>
-
-                    <div class="status-item">
-                      <atk-icon [name]="getAccountStatusIcon(false, false, account.canDeposit)" [size]="16"
-                        [color]="getAccountStatusColor(false, false, account.canDeposit)"></atk-icon>
-                      <span [class]="account.canDeposit ? 'status-enabled' : 'status-disabled'">
-                        Deposit: {{ account.canDeposit ? 'Enabled' : 'Disabled' }}
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Balance Statistics -->
-                  <div class="balance-stats">
-                    <div class="balance-stat">
-                      <span class="stat-label">Total Balances</span>
-                      <span class="stat-value">{{ account.balanceCount }}</span>
-                    </div>
-                    <div class="balance-stat">
-                      <span class="stat-label">Active Balances</span>
-                      <span class="stat-value">{{ account.significantBalances }}</span>
-                    </div>
-                  </div>
-
-                  <!-- Account Actions -->
-                  <div class="account-actions">
-                    <button class="account-action-btn" (click)="executeAccountAction('refresh-account')"
-                      [disabled]="isLoading()">
-                      <atk-icon name="refresh-cw" [size]="14" color="currentColor"></atk-icon>
-                      Refresh Account
-                    </button>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-            } @else {
-            <!-- No Account Data -->
-            <div class="config-section">
-              <div class="section-content">
-                <div class="no-account-data">
-                  <atk-icon name="user-x" [size]="32" color="var(--color-fg-muted)"></atk-icon>
-                  <p>No account data available</p>
-                  <button class="account-action-btn" (click)="executeAccountAction('refresh-account')"
-                    [disabled]="isLoading()">
-                    <atk-icon name="refresh-cw" [size]="14" color="currentColor"></atk-icon>
-                    Load Account Data
-                  </button>
-                </div>
-              </div>
-            </div>
-            }
-          </div>
-          }
-
-        </div>
-
-        <!-- Error Display -->
-        @if (hasError() && stateService.terminalState().error; as error) {
-        <div class="bash-config-error">
-          <atk-icon name="alert-circle" [size]="16" color="var(--color-danger-fg)"></atk-icon>
-          <span class="error-message">{{ error }}</span>
-          <button class="error-dismiss" (click)="executeAction('clear-error')">
-            <atk-icon name="x" [size]="12" color="var(--color-fg-muted)"></atk-icon>
-          </button>
-        </div>
-        }
-
-        <!-- Footer Actions -->
-        <footer class="bash-config-footer">
-          <div class="footer-actions">
-            <button class="footer-btn secondary" (click)="exportConfig()" [disabled]="isLoading()">
-              <atk-icon name="download" [size]="14" color="currentColor"></atk-icon>
-              Export
-            </button>
-            <button class="footer-btn warning" (click)="resetToDefaults()" [disabled]="isLoading()">
-              <atk-icon name="rotate-ccw" [size]="14" color="currentColor"></atk-icon>
-              Reset
-            </button>
-          </div>
-
-          <!-- Quick Stats -->
-          @if (stateService.terminalState().responseMetadata; as meta) {
-          <div class="quick-stats">
-            <div class="stat-item">
-              <span class="stat-label">Records:</span>
-              <span class="stat-value">{{ meta.dataCount || 0 }}</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Response:</span>
-              <span class="stat-value">{{ meta.responseTime || 0 }}ms</span>
-            </div>
-          </div>
-          }
-        </footer>
-
-      </div>
+  <!-- Current Endpoint Info -->
+  @if (currentEndpoint()) {
+  <div class="sidebar-section">
+    <div class="section-header">
+      <atk-icon name="globe" [size]="14" color="var(--color-fg-muted)" />
+      <span class="section-title">Endpoint</span>
+    </div>
+    <div class="section-content">
+      <div class="endpoint-name">{{ getEndpointName() }}</div>
+      <div class="endpoint-id">{{ currentEndpoint() }}</div>
     </div>
   </div>
-</aside>
+  }
+
+  <!-- Data Summary -->
+  @if (summary(); as summaryData) {
+  <div class="sidebar-section">
+    <div class="section-header">
+      <atk-icon name="bar-chart" [size]="14" color="var(--color-fg-muted)" />
+      <span class="section-title">Data Summary</span>
+    </div>
+    <div class="section-content">
+      <div class="data-metric">
+        <span class="metric-label">Sidebar Fields:</span>
+        <span class="metric-value">{{ summaryData.sidebarFields }}</span>
+      </div>
+      <div class="data-metric">
+        <span class="metric-label">Table Rows:</span>
+        <span class="metric-value">{{ summaryData.tableRows }}</span>
+      </div>
+      @if (summaryData.lastUpdate) {
+      <div class="data-metric">
+        <span class="metric-label">Last Update:</span>
+        <span class="metric-value timestamp">{{ formatTimestamp(summaryData.lastUpdate) }}</span>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Sidebar Fields Data -->
+  @if (displayFields().length > 0) {
+  <div class="sidebar-section">
+    <div class="section-header">
+      <atk-icon name="list" [size]="14" color="var(--color-fg-muted)" />
+      <span class="section-title">Account Info</span>
+    </div>
+    <div class="section-content">
+      @for (fieldDisplay of displayFields(); track fieldDisplay.field.key) {
+      @if (fieldDisplay.visible) {
+      <div class="field-row" [ngClass]="'field-' + fieldDisplay.field.type">
+        <div class="field-label">
+          @if (fieldDisplay.field.icon) {
+          <atk-icon [name]="fieldDisplay.field.icon" [size]="12" color="var(--color-fg-muted)" />
+          }
+          <span>{{ fieldDisplay.field.label }}:</span>
+        </div>
+        <div class="field-value" [ngClass]="fieldDisplay.field.cssClass">
+          @switch (fieldDisplay.field.type) {
+          @case ('boolean') {
+          <span class="boolean-badge" [ngClass]="fieldDisplay.value ? 'true' : 'false'">
+            <atk-icon [name]="fieldDisplay.value ? 'check' : 'x'" [size]="10" />
+            {{ fieldDisplay.value ? 'Yes' : 'No' }}
+          </span>
+          }
+          @case ('status') {
+          <span class="status-badge" [ngClass]="'status-' + (fieldDisplay.value || '').toLowerCase()">
+            {{ fieldDisplay.formattedValue }}
+          </span>
+          }
+          @case ('date') {
+          <span class="date-value">{{ fieldDisplay.formattedValue }}</span>
+          }
+          @default {
+          <span class="text-value">{{ fieldDisplay.formattedValue }}</span>
+          }
+          }
+        </div>
+      </div>
+      }
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Debug Info (Development Only) -->
+  @if (showDebugInfo()) {
+  <div class="sidebar-section debug-section">
+    <div class="section-header">
+      <atk-icon name="bug" [size]="14" color="var(--color-warning)" />
+      <span class="section-title">Debug Info</span>
+    </div>
+    <div class="section-content">
+      <pre class="debug-data">{{ getDebugInfo() }}</pre>
+    </div>
+  </div>
+  }
+</div>

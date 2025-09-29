@@ -9,8 +9,8 @@ import { AtkBashConfigFactory } from '@shared/components/atk-bash/atk-bash-confi
 import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
 import { AtkDatatableComponent, IDatatableColumn } from '@shared/components/atk-datatable/atk-datatable.component';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
+import { ToolsService } from '@shared/services/tools.service';
 import { firstValueFrom } from 'rxjs';
 import { BashData, IBashEndpointConfig, IBashEvent } from '../atk-bash/atk-bash.interfaces';
 
@@ -34,7 +34,7 @@ interface IApiManagementEvent {
     AtkDatatableComponent
   ],
   templateUrl: './atk-api-management.component.html',
-  styleUrls: ['./atk-api-management.component.css']
+  // styleUrls: ['./atk-api-management.component.css']
 })
 export class AtkApiManagementComponent implements OnInit {
 
@@ -98,23 +98,24 @@ export class AtkApiManagementComponent implements OnInit {
     effect(() => {
       const summary = this.apiStateService.summary();
 
-      this.tools.consoleGroup({
-        title: `AtkApiManagement state change`,
-        tag: 'check',
-        data: {
-          configId: summary.configId,
-          endpoint: summary.endpoint,
-          hasData: summary.hasData,
-          tableRows: summary.tableRows,
-          sidebarFields: summary.sidebarFields,
-          loading: this.apiStateService.loading(),
-          error: this.apiStateService.error()
-        },
-        palette: 'de',
-        collapsed: true,
-        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-        fontSizePx: 13
-      });
+      // OFF: atk-api-management.121 ================ CONSOLE LOG IN PROGRESS
+      // this.tools.consoleGroup({
+      //   title: `atk-api-management state change ${summary.configId}`,
+      //   tag: 'check',
+      //   data: {
+      //     configId: summary.configId,
+      //     endpoint: summary.endpoint,
+      //     hasData: summary.hasData,
+      //     tableRows: summary.tableRows,
+      //     sidebarFields: summary.sidebarFields,
+      //     loading: this.apiStateService.loading(),
+      //     error: this.apiStateService.error()
+      //   },
+      //   palette: 'de',
+      //   collapsed: true,
+      //   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      //   fontSizePx: 13
+      // });
     });
 
     // Effect to initialize configuration

@@ -4,11 +4,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ToolsService } from '@shared/services/tools.service';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkApiManagementComponent } from '@shared/components/atk-api-management/atk-api-management.component';
 import { BashData } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 
@@ -98,15 +98,16 @@ export class BinanceApiManagementComponent implements OnInit {
     this.apiStateService.events$
       .pipe(takeUntilDestroyed())
       .subscribe(event => {
-        this.tools.consoleGroup({
-          title: `BinanceApiManagement received event: ${event.type}`,
-          tag: 'check',
-          data: event.payload,
-          palette: 'de',
-          collapsed: true,
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-          fontSizePx: 13
-        });
+        // OFF: atk-binance-api-management.101 ================ CONSOLE LOG IN PROGRESS
+        // this.tools.consoleGroup({
+        //   title: `atk-binance-api-management received event: ${event.type}`,
+        //   tag: 'check',
+        //   data: event.payload,
+        //   palette: 'de',
+        //   collapsed: true,
+        //   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+        //   fontSizePx: 13
+        // });
       });
 
     // Effect to initialize config
@@ -117,20 +118,21 @@ export class BinanceApiManagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tools.consoleGroup({
-      title: `BinanceApiManagement initialized with config: ${this.configId()}`,
-      tag: 'check',
-      data: {
-        configId: this.configId(),
-        autoLoad: this.autoLoad(),
-        showSidebar: this.showSidebar(),
-        debugMode: this.debugMode()
-      },
-      palette: 'su',
-      collapsed: true,
-      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-      fontSizePx: 13
-    });
+    // OFF: atk-binance-api-management.121 ================ CONSOLE LOG IN PROGRESS
+    // this.tools.consoleGroup({
+    //   title: `atk-binance-api-management initialized with config: ${this.configId()}`,
+    //   tag: 'check',
+    //   data: {
+    //     configId: this.configId(),
+    //     autoLoad: this.autoLoad(),
+    //     showSidebar: this.showSidebar(),
+    //     debugMode: this.debugMode()
+    //   },
+    //   palette: 'su',
+    //   collapsed: true,
+    //   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+    //   fontSizePx: 13
+    // });
   }
 
   // =========================================

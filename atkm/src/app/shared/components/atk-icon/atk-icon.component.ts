@@ -29,10 +29,10 @@ type RectDef = {
     }
   `]
 })
+
 export class AtkIconComponent {
   private iconRegistry = inject(IconRegistryService);
 
-  // Interface conservée - même inputs qu'avant
   name = input<string>('default');
   variant = input<string | null>(null);
   color = input<string>('#656d76');

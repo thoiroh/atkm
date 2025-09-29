@@ -1,8 +1,7 @@
 // atk-bash-config.factory.ts
 // EXTENDED - Factory with enhanced crypto formatters
-
 import { Injectable, inject } from '@angular/core';
-import { IBashConfig, IBashEndpointConfig, IBashSidebarField, IBashDataTransformResult } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { IBashConfig, IBashDataTransformResult, IBashEndpointConfig } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { CryptoTradingFormatters } from '@shared/formatters/crypto-trading.formatters';
 
 @Injectable({
@@ -691,12 +690,7 @@ export class AtkBashConfigFactory {
   /**
    * Enhanced generic API configuration creator
    */
-  createGenericApiConfig(
-    id: string,
-    title: string,
-    baseUrl: string,
-    customFormatters?: Record<string, (value: any, row?: any) => string>
-  ): IBashConfig {
+  createGenericApiConfig(id: string, title: string, baseUrl: string, customFormatters?: Record<string, (value: any, row?: any) => string>): IBashConfig {
     return {
       id,
       title,
@@ -752,4 +746,5 @@ export class AtkBashConfigFactory {
       actions: []
     };
   }
+
 }

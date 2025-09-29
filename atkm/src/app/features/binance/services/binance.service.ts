@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { ToolsService } from '@shared/components/atk-tools/tools.service';
+import { ToolsService } from '@shared/services/tools.service';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BinanceAccount, BinanceApiResponse } from '../models/binance.model';
@@ -23,88 +23,24 @@ export class BinanceService {
     return this.http.get<BinanceApiResponse<BinanceAccount>>(`${this.apiBaseUrl}/api/v3/account`)
       .pipe(
         map(response => {
-          // TAG: binance.service.27 ================ CONSOLE LOG IN PROGRESS
-          this.tools.consoleGroup({
-            title: 'BinanceService.27: Raw API response received',
-            tag: 'check',           // clé du JSON ou texte libre
-            data: response,
-            palette: 'su',
-            collapsed: true,
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-            fontSizePx: 13
-          });
 
           // Validate response success using PHP structure
           if (!response.success) {
             const errorMessage = response.error?.message || response.message || 'Failed to get account data';
-            // TAG: binance.service.42 ================ CONSOLE LOG IN PROGRESS
-            this.tools.consoleGroup({
-              title: 'BinanceService.42: API returned error',
-              tag: 'cross',
-              data: response.error,
-              palette: 'er',
-              collapsed: true,
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSizePx: 13
-            });
             throw this.errorHandler.handleDataValidationError('getAccount - API Error', response);
           }
 
           // Validate data presence
           const accountData = response.data;
           if (!accountData) {
-            // TAG: binance.service.57 ================ CONSOLE LOG IN PROGRESS
-            this.tools.consoleGroup({
-              title: 'BinanceService.57: No account data in response',
-              tag: 'cross',
-              data: response,
-              palette: 'er',
-              collapsed: true,
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSizePx: 13
-            });
             throw this.errorHandler.handleDataValidationError('getAccount - No Data', response);
           }
 
           // Convert balances object to array if needed
           if (accountData.balances && !Array.isArray(accountData.balances)) {
-            // TAG: binance.service.72 ================ CONSOLE LOG IN PROGRESS
-            this.tools.consoleGroup({
-              title: 'BinanceService.72: balances is an object, converting to array...',
-              tag: 'warning',
-              data: {
-                type: typeof accountData.balances,
-                keys: Object.keys(accountData.balances).length
-              },
-              palette: 'su',
-              collapsed: true,
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSizePx: 13
-            });
-
             // Convert object with numeric keys to array
             accountData.balances = Object.values(accountData.balances);
-            // TAG: binance.service.88 ================ CONSOLE LOG IN PROGRESS
-            this.tools.consoleGroup({
-              title: `BinanceService.88: Converted balances to array: ${accountData.balances.length}, items`,
-              tag: 'check',
-              data: `Converted balances to array of ${accountData.balances.length} items`,
-              palette: 'su',
-              collapsed: true,
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSizePx: 13
-            });
           } else if (!accountData.balances) {
-            // TAG: binance.service.100 ================ CONSOLE LOG IN PROGRESS
-            this.tools.consoleGroup({
-              title: `BinanceService: No balances property, setting empty array`,
-              tag: 'cross',
-              data: null,
-              palette: 'wa',
-              collapsed: true,
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSizePx: 13
-            });
             accountData.balances = [];
           }
 
@@ -121,20 +57,20 @@ export class BinanceService {
             balances: processedBalances
           };
 
-          // TAG: binance.service.127 ================ CONSOLE LOG IN PROGRESS
-          this.tools.consoleGroup({
-            title: `BinanceService.127: Account data processed successfully`,
-            tag: 'check',
-            data: {
-              accountType: processedAccount.accountType,
-              balancesCount: processedAccount.balances.length,
-              canTrade: processedAccount.canTrade
-            },
-            palette: 'su',
-            collapsed: true,
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-            fontSizePx: 13
-          });
+          // OFF: binance.service.127 ================ CONSOLE LOG IN PROGRESS
+          // this.tools.consoleGroup({
+          //   title: `BinanceService.127: Account data processed successfully`,
+          //   tag: 'check',
+          //   data: {
+          //     accountType: processedAccount.accountType,
+          //     balancesCount: processedAccount.balances.length,
+          //     canTrade: processedAccount.canTrade
+          //   },
+          //   palette: 'su',
+          //   collapsed: true,
+          //   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          //   fontSizePx: 13
+          // });
 
           return processedAccount;
         }),

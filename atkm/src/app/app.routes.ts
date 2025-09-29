@@ -45,6 +45,10 @@ export const routes: Routes = [
         loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
       },
       {
+        path: 'debug',
+        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
+      },
+      {
         path: 'bash',
         loadComponent: () => import('./shared/components/atk-bash/atk-bash.component').then(m => m.AtkBashComponent),
         title: 'atk bash | api tool'

@@ -5,7 +5,6 @@ import { AfterViewInit, Component, OnInit, computed, inject } from '@angular/cor
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
 import { ConfigService, ILandingConfig } from '@core/services/config.service';
 import { NavigationStateService } from '@core/services/navigation-state.service';
-import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { ContentMainComponent } from '@shared/components/content-main/content-main.component';
 import { NavbarBrandComponent } from '@shared/components/navbar-brand/navbar-brand.component';
 import { NavbarMainComponent } from '@shared/components/navbar-main/navbar-main.component';
@@ -13,6 +12,7 @@ import { NavbarToolsComponent } from '@shared/components/navbar-tools/navbar-too
 import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
 import { SidebarNavComponent } from '@shared/components/sidebar-nav/sidebar-nav.component';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
+import { ToolsService } from '@shared/services/tools.service';
 
 @Component({
   selector: 'atk-landing',
@@ -65,15 +65,16 @@ export class LandingComponent implements OnInit, AfterViewInit {
 
     // Subscribe to API Management state changes for debugging
     this.apiStateService.events$.subscribe(event => {
-      this.tools.consoleGroup({
-        title: `Landing received API Management event`,
-        tag: 'check',
-        data: { type: event.type, payload: event.payload },
-        palette: 'de',
-        collapsed: true,
-        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-        fontSizePx: 13
-      });
+      // OFF: atk-landing.68 ================ CONSOLE LOG IN PROGRESS
+      // this.tools.consoleGroup({
+      //   title: `atk-landing received API Management event: ${event.type}`,
+      //   tag: 'check',
+      //   data: { type: event.type, payload: event.payload },
+      //   palette: 'de',
+      //   collapsed: true,
+      //   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      //   fontSizePx: 13
+      // });
     });
   }
 
@@ -96,16 +97,6 @@ export class LandingComponent implements OnInit, AfterViewInit {
   toggleBashConfigPanel(): void {
     // Toggle the traditional config panel for now
     this.toggleConfigPanel();
-
-    this.tools.consoleGroup({
-      title: `Landing toggled bash config panel`,
-      tag: 'check',
-      data: { collapsed: this.config?.configPanel?.isCollapsed },
-      palette: 'de',
-      collapsed: true,
-      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-      fontSizePx: 13
-    });
   }
 
   /**

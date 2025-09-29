@@ -1,12 +1,10 @@
-<div class="binance-api-management">
+<div class="terminal-wrapper">
 
   <!-- Header Section -->
-  <div class="binance-header">
-    <div class="header-title">
-      <atk-icon name="trending-up" [size]="24" color="var(--color-accent-fg)" />
-      <h1>{{ title() }}</h1>
-    </div>
-    <div class="header-meta">
+  <div class="terminal-header">
+    <atk-icon name="trending-up" [size]="24" color="var(--color-accent-fg)" />
+    <h1>{{ title() }}</h1>
+    <div class="terminal-details">
       <div class="connection-status" [ngClass]="connectionStatusClass()">
         <atk-icon [name]="connectionStatusIcon()" [size]="16" />
         <span>{{ connectionStatusText() }}</span>
@@ -32,11 +30,11 @@
   <div class="binance-layout">
 
     <!-- Sidebar Configuration Panel -->
-    @if (showSidebar()) {
+    <!-- @if (showSidebar()) {
     <div class="binance-sidebar">
       <atk-sidebar-bash-config [configId]="configId()" [showDebugInfo]="debugMode()" />
     </div>
-    }
+    } -->
 
     <!-- Main API Management Component -->
     <div class="binance-main" [class.full-width]="!showSidebar()">
