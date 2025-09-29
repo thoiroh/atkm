@@ -13,8 +13,7 @@
 
   @if (terminalState().connectionStatus) {
   <span class="scroll-info">
-    Content: {{ scrollState.contentHeight }}px / Visible: {{ scrollState.visibleHeight }}px
-  </span>
+    Content: {{ scrollStateDisplay().contentHeight }}px / Visible: {{ scrollStateDisplay().visibleHeight }}px </span>
   }
 </div>
 

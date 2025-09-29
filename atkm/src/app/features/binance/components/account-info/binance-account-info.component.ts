@@ -5,15 +5,14 @@ import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { Subject, takeUntil } from 'rxjs';
 
 import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
-import { IBashConfig, IBashTerminalState } from '@shared/components/atk-bash';
 import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
+import { IBashConfig, IBashTerminalState } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
 
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
 import { ConfigService, ILandingConfig } from '@core/services/config.service';
 import { NavigationStateService } from '@core/services/navigation-state.service';
-
 @Component({
   selector: 'atk-binance-account-info',
   standalone: true,
@@ -197,11 +196,8 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
     * Handle bash configuration requests from AtkBashComponent
     * Event handler with correct signature
     */
-  protected onBashConfigRequest(config: IBashConfig): void {
-    // Handle bash config request
+  onBashConfigRequest(config: IBashConfig): void {
     console.log('Bash config requested:', config);
-    // Update terminal state with new config
-    // Implementation according to your business logic
   }
 
   /**

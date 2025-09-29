@@ -6,7 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
 import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
-import { IBashConfig, IBashTerminalState } from '../atk-bash';
+import { IBashConfig, IBashTerminalState } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { AtkIconComponent } from '../atk-icon/atk-icon.component';
 
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
@@ -199,12 +199,8 @@ export class HomeContentComponent implements OnInit {
    * Handle bash configuration requests from AtkBashComponent
    * Event handler with correct signature
    */
-  protected onBashConfigRequest(config: IBashConfig): void {
-    // Handle bash config request
-    console.log('Bash config requested:', config);
-
-    // Update terminal state with new config
-    // Implementation according to your business logic
+  onBashConfigRequest(config: IBashConfig): void {
+    console.log('Bash config requested in home content:', config);
   }
 
   /**

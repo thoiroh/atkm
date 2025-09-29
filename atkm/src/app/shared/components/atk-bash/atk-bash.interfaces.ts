@@ -111,6 +111,17 @@ export interface IBashLogEntry {
   metadata?: Record<string, any>;
 }
 
+// + à placer au-dessus de la déclaration du computed (par ex. avec les autres interfaces importées)
+export interface ITerminalInputState {
+  content: string;
+  line: number;
+  column: number;
+  caretIndex: number;
+  selectionText: string;
+  history: string[];
+  historyIndex: number;
+}
+
 /**
  * Terminal state for debugging information
  */

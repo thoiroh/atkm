@@ -1,6 +1,3 @@
-<!-- src/app/shared/components/atk-api-management/atk-api-management.component.html -->
-<!-- Updated template without sidebar integration -->
-
 <div class="api-management-wrapper">
   <!-- Main Content Area -->
   <div class="api-content-area">
@@ -9,16 +6,15 @@
     <div class="terminal-section">
       <div class="terminal-content">
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
-        <atk-bash [configId]="configId()" [autoLoad]="autoLoad()" (configRequest)="onBashConfigRequest($event)"
-          (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)"
-          (eventEmitted)="onBashEvent($event)" />
+        <atk-bash [configId]="configId()" [autoLoad]="autoLoad()" (dataLoaded)="onBashDataLoaded($event)"
+          (errorOccurred)="onBashError($event)" (eventEmitted)="onBashEvent($event)" />
       </div>
     </div>
 
     <!-- Data Display Section -->
     <div class="data-section">
-      <atk-datatable [data]="stateService.currentData()" [currentEndpoint]="stateService.currentEndpointConfig()"
-        [loading]="stateService.dataLoading()" [error]="stateService.dataError()" [searchEnabled]="true"
+      <atk-datatable #dt [data]="apiStateService.tableData()" [loading]="apiStateService.loading()"
+        [error]="apiStateService.error()" [columns]="currentEndpointColumns()" [searchEnabled]="true"
         [itemsPerPage]="50" [rowClickable]="true" (rowClick)="onDataRowClick($event)" (retryLoad)="onRetryDataLoad()"
         (exportRequest)="onDataExport($event)" />
     </div>

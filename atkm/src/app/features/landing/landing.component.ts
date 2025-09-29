@@ -41,10 +41,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
   private apiStateService = inject(ApiManagementStateService);
 
   // CORRECTED: Computed properties for sidebar bash config
-  bashConfig = computed(() => {
-    // The config will be managed by the SidebarBashConfigComponent itself
-    return null;
-  });
+  bashConfig = computed<null>(() => null);
+
 
   bashCurrentEndpoint = computed(() => this.apiStateService.currentEndpoint());
   bashConfigPanelCollapsed = computed(() => this.config?.configPanel?.isCollapsed || true);

@@ -18,7 +18,7 @@ import {
 import { BalanceFormatPipe, CryptoPrecisionPipe, StatusBadgePipe, TimestampToDatePipe } from '@shared/pipes/pipes';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { AtkBashConfigFactory } from './atk-bash-config.factory';
-import { BashData, IBashConfig, IBashDataTransformResult, IBashEvent, IBashLogEntry, IBashTerminalState } from './atk-bash.interfaces';
+import { BashData, IBashConfig, IBashDataTransformResult, IBashEvent, IBashLogEntry, IBashTerminalState, ITerminalInputState } from './atk-bash.interfaces';
 import { AtkBashService } from './atk-bash.service';
 
 @Component({
@@ -71,32 +71,41 @@ export class AtkBashComponent implements OnInit {
   private logs = signal<IBashLogEntry[]>([]);
 
   // State signals - accessible in template
-  protected terminalState = signal<IBashTerminalState>({
+  terminalState = signal<IBashTerminalState>({
     loading: false,
     connectionStatus: 'disconnected',
-    // ✅ No history property needed - use logs signal instead
-    requestParams: undefined,
-    error: undefined,
-    currentEndpoint: undefined,
-    responseMetadata: undefined
+    requestParams: {},
   });
 
   protected currentConfig = signal<IBashConfig | null>(null);
   protected loading = signal<boolean>(false);
-  protected scrollState = signal<{
-    contentHeight: number;
-    visibleHeight: number;
-  }>({
+  scrollState = signal<{ contentHeight: number; visibleHeight: number }>({
     contentHeight: 0,
     visibleHeight: 0
   });
 
+  scrollStateDisplay = computed(() => {
+    const state = this.scrollState();
+    return {
+      contentHeight: state.contentHeight,
+      visibleHeight: state.visibleHeight
+    };
+  });
+
+  configRequest = output<IBashConfig>();
+
+  emitCurrentConfig(): void {
+    const config = this.currentConfig();
+    if (config) {
+      this.configRequest.emit(config);
+    }
+  }
   // =========================================
   // COMPUTED SIGNALS
   // =========================================
 
   // CORRECTED: Simple terminal state without directive dependency
-  private terminalInputState = computed(() => ({
+  private terminalInputState = computed<ITerminalInputState>(() => ({
     content: '',
     line: 0,
     column: 0,

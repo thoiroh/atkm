@@ -3,15 +3,16 @@
 
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, OnInit, output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BinanceService } from '@features/binance/services/binance.service';
+import { AtkBashConfigFactory } from '@shared/components/atk-bash/atk-bash-config.factory';
+import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
+import { AtkDatatableComponent, IDatatableColumn } from '@shared/components/atk-datatable/atk-datatable.component';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { ToolsService } from '@shared/components/atk-tools/tools.service';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { firstValueFrom } from 'rxjs';
-import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
-import { BashData, IBashConfig, IBashEndpointConfig, IBashEvent, IBashTerminalState } from '../atk-bash/atk-bash.interfaces';
-import { AtkBashConfigFactory } from '@shared/components/atk-bash/atk-bash-config.factory';
-import { AtkDatatableComponent } from '@shared/components/atk-datatable/atk-datatable.component';
+import { BashData, IBashEndpointConfig, IBashEvent } from '../atk-bash/atk-bash.interfaces';
 
 /**
  * Configuration event from sidebar
@@ -27,46 +28,12 @@ interface IApiManagementEvent {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     AtkIconComponent,
     AtkBashComponent,
     AtkDatatableComponent
   ],
-  template: `
-    <div class="api-management-wrapper">
-      <!-- Main Content Area -->
-      <div class="api-content-area">
-
-        <!-- Terminal Section -->
-        <div class="terminal-section">
-          <div class="terminal-content">
-            <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
-            <atk-bash
-              [configId]="configId()"
-              [autoLoad]="autoLoad()"
-              (dataLoaded)="onBashDataLoaded($event)"
-              (errorOccurred)="onBashError($event)"
-              (eventEmitted)="onBashEvent($event)" />
-          </div>
-        </div>
-
-        <!-- Data Display Section -->
-        <div class="data-section">
-          <atk-datatable
-            [data]="apiStateService.tableData()"
-            [loading]="apiStateService.loading()"
-            [error]="apiStateService.error()"
-            [columns]="currentEndpointColumns()"
-            [searchEnabled]="true"
-            [itemsPerPage]="50"
-            [rowClickable]="true"
-            (rowClick)="onDataRowClick($event)"
-            (retryLoad)="onRetryDataLoad()"
-            (exportRequest)="onDataExport($event)" />
-        </div>
-
-      </div>
-    </div>
-  `,
+  templateUrl: './atk-api-management.component.html',
   styleUrls: ['./atk-api-management.component.css']
 })
 export class AtkApiManagementComponent implements OnInit {
@@ -104,17 +71,15 @@ export class AtkApiManagementComponent implements OnInit {
 
   private currentEndpoint = computed(() => this.apiStateService.currentEndpoint());
 
-  public currentEndpointColumns = computed(() => {
-    const config = this.currentConfig();
-    const endpoint = this.currentEndpoint();
-
-    if (!config || !endpoint) return [];
-
-    const endpointConfig = config.endpoints.find(ep => ep.id === endpoint);
-    return endpointConfig?.columns || [];
-  });
-
-  // =========================================
+  currentEndpointColumns(): IDatatableColumn[] {
+    // Return your columns array here
+    return [
+      { key: 'id', label: 'ID', type: 'text', width: '80px' },
+      { key: 'name', label: 'Name', type: 'text', width: '200px' },
+      { key: 'status', label: 'Status', type: 'badge', width: '100px' }
+      // Add more columns as needed
+    ];
+  }  // =========================================
   // CONSTRUCTOR & LIFECYCLE
   // =========================================
 
@@ -245,7 +210,7 @@ export class AtkApiManagementComponent implements OnInit {
     this.tools.consoleGroup({
       title: `AtkApiManagement data export requested`,
       tag: 'check',
-      data: { count: data.length },
+      data: { count: Array.isArray(data) ? data.length : 0 },
       palette: 'de',
       collapsed: true,
       fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
