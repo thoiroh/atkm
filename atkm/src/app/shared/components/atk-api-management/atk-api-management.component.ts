@@ -34,7 +34,7 @@ interface IApiManagementEvent {
     AtkDatatableComponent
   ],
   templateUrl: './atk-api-management.component.html',
-  // styleUrls: ['./atk-api-management.component.css']
+  styleUrls: ['./atk-api-management.component.css']
 })
 export class AtkApiManagementComponent implements OnInit {
 

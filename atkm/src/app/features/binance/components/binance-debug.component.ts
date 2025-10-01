@@ -9,7 +9,7 @@ import { BinanceService } from '../services/binance.service';
 @Component({
   selector: 'atk-binance-debug',
   standalone: true,
-  imports: [CommonModule, AtkIconComponent, TerminalInputDirective],
+  imports: [CommonModule, AtkIconComponent],
   templateUrl: './binance-debug.component.html',
   styles: []
 })

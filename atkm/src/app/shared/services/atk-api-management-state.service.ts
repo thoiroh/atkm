@@ -1,9 +1,10 @@
 // api-management-state.service.ts
 // EXTENDED - Angular 20 service for API management with separated data streams
 
-import { Injectable, signal, computed, effect } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { IBashDataTransformResult, IBashEvent, IBashSidebarField, BashData } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { BashData, IBashDataTransformResult, IBashEvent, IBashSidebarField } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { Subject } from 'rxjs';
+import { ToolsService } from './tools.service';
 
 /**
  * State interface for API management
@@ -44,6 +45,8 @@ export class ApiManagementStateService {
   private _sidebarData = signal<Record<string, any>>({});
   private _tableData = signal<BashData[]>([]);
   private _lastUpdated = signal<Date | null>(null);
+
+  private tools = inject(ToolsService);
 
   // =========================================
   // PUBLIC READONLY SIGNALS
@@ -152,6 +155,13 @@ export class ApiManagementStateService {
   setConfigId(configId: string): void {
     this._configId.set(configId);
     this.emitEvent('endpoint-changed', { configId });
+    // TAG: ApiManagementStateService.159 ================ CONSOLE LOG IN PROGRESS
+    this.tools.consoleGroup({
+      title: `ApiManagementStateService 159 -> setConfigId() -> configId: `,
+      tag: 'check',
+      data: { configId: configId, state: this.state() },
+      palette: 'su',
+    });
   }
 
   /**
@@ -313,4 +323,5 @@ export class ApiManagementStateService {
       console.warn('Failed to clear API management session data:', error);
     }
   }
+
 }

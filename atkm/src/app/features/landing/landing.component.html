@@ -41,7 +41,8 @@
       [accountData]="bashAccountData()" (configChange)="onBashConfigChange($event)"
       (togglePanel)="toggleBashConfigPanel()" /> -->
 
-    <atk-sidebar-bash-config (configChange)="onBashConfigChange($event)" (togglePanel)="toggleBashConfigPanel()" />
+    <atk-sidebar-bash-config [isCollapsed]="config.configPanel.isCollapsed" (configChange)="onBashConfigChange($event)"
+      (togglePanel)="toggleConfigPanel()" />
 
   </div>
 </div>

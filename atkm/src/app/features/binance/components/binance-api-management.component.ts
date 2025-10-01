@@ -4,13 +4,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ToolsService } from '@shared/services/tools.service';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkApiManagementComponent } from '@shared/components/atk-api-management/atk-api-management.component';
 import { BashData } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
+import { ToolsService } from '@shared/services/tools.service';
 
 /**
  * Binance-specific wrapper for AtkApiManagement
@@ -22,11 +21,10 @@ import { ApiManagementStateService } from '@shared/services/atk-api-management-s
   imports: [
     CommonModule,
     AtkIconComponent,
-    AtkApiManagementComponent,
-    SidebarBashConfigComponent
+    AtkApiManagementComponent
   ],
   templateUrl: './binance-api-management.component.html',
-  styles: ['./binance-api-management.component.css']
+  styleUrls: ['./binance-api-management.component.css']
 })
 export class BinanceApiManagementComponent implements OnInit {
 

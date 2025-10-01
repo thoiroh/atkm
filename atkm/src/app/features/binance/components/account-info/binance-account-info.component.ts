@@ -8,15 +8,15 @@ import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance
 import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
 import { IBashConfig, IBashTerminalState } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
 
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
 import { ConfigService, ILandingConfig } from '@core/services/config.service';
 import { NavigationStateService } from '@core/services/navigation-state.service';
+
 @Component({
   selector: 'atk-binance-account-info',
   standalone: true,
-  imports: [CommonModule, AtkIconComponent, AtkBashComponent, SidebarBashConfigComponent],
+  imports: [CommonModule, AtkIconComponent, AtkBashComponent],
   templateUrl: './binance-account-info.component.html',
   styleUrls: ['./../binance.component.css']
 })

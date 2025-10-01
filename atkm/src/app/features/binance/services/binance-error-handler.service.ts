@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { ToolsService } from '@shared/services/tools.service';
 import { Observable, throwError } from 'rxjs';
 
 export interface ErrorDetails {
@@ -27,16 +28,32 @@ export interface BinanceErrorResponse {
 })
 export class BinanceErrorHandlerService {
 
+  private tools = inject(ToolsService);
+
   /**
    * Handle HTTP errors with comprehensive Binance and PHP backend support
    */
   handleHttpError(error: HttpErrorResponse): Observable<never> {
     let errorDetails: ErrorDetails;
 
-    console.group('🔴 BinanceErrorHandler: Processing HTTP Error');
-    console.log('Error object:', error);
-    console.log('Error status:', error.status);
-    console.log('Error body:', error.error);
+    // TAG: BinanceErrorHandlerService.39 ================ CONSOLE LOG IN PROGRESS
+    this.tools.consoleGroup({
+      title: `BinanceErrorHandlerService 39 BinanceErrorHandler Processing HTTP Error -> handleHttpError init : ${error.error.message}`,
+      tag: 'warning',
+      data: {
+        code: error.error.code,
+        message: error.error.error.message,
+        source: error.error.source,
+        status: error.status,
+        details: {
+          endpoint: error.error.endpoint,
+          binanceCode: error.error.error.code,
+          serverResponse: error.error
+        },
+        timestamp: new Date()
+      },
+      palette: 'er',
+    });
 
     if (error.error instanceof ErrorEvent) {
       // Client-side/network error
@@ -47,11 +64,9 @@ export class BinanceErrorHandlerService {
         details: { originalError: error.error },
         timestamp: new Date()
       };
-      console.log('Identified as: CLIENT_ERROR');
     } else {
       // Server-side error - handle PHP Response format
       if (error.error && typeof error.error === 'object') {
-
         // Check for PHP Response::error() format
         if (error.error.success === false && error.error.error) {
           errorDetails = {
@@ -65,7 +80,6 @@ export class BinanceErrorHandlerService {
             },
             timestamp: new Date()
           };
-          console.log('Identified as: PHP Response::error() format');
         }
         // Check for PHP Response::success() format with validation error
         else if (error.error.success === false) {
@@ -79,7 +93,6 @@ export class BinanceErrorHandlerService {
             },
             timestamp: new Date()
           };
-          console.log('Identified as: PHP Response validation error');
         }
         // Standard error with message
         else if (error.error.message) {
@@ -90,7 +103,7 @@ export class BinanceErrorHandlerService {
             details: error.error,
             timestamp: new Date()
           };
-          console.log('Identified as: Standard server error');
+          // console.log('Identified as: Standard server error');
         }
         // Fallback for unknown object format
         else {
@@ -101,7 +114,7 @@ export class BinanceErrorHandlerService {
             details: { originalError: error.error, httpStatus: error.status },
             timestamp: new Date()
           };
-          console.log('Identified as: Unknown object format');
+          // console.log('Identified as: Unknown object format');
         }
       } else {
         // Fallback for non-object or null error body
@@ -112,12 +125,20 @@ export class BinanceErrorHandlerService {
           details: { httpStatus: error.status, originalError: error.error },
           timestamp: new Date()
         };
-        console.log('Identified as: Non-object error body');
+        // console.log('Identified as: Non-object error body');
       }
     }
 
-    console.log('Final error details:', errorDetails);
-    console.groupEnd();
+    // TAG: BinanceErrorHandlerService.39 ================ CONSOLE LOG IN PROGRESS
+    this.tools.consoleGroup({
+      title: `BinanceErrorHandlerService 39 BinanceErrorHandler Processing HTTP Error -> handleHttpError init : ${error.error.message}`,
+      tag: 'warning',
+      data: errorDetails,
+      palette: 'er',
+    });
+
+    // console.log('Final error details:', errorDetails);
+    // console.groupEnd();
 
     // Log to console with appropriate level
     if (errorDetails.source === 'client') {

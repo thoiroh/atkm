@@ -1,12 +1,44 @@
 // atk-sidebar-bash-config.component.ts
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AtkBashConfigFactory } from '@shared/components/atk-bash/atk-bash-config.factory';
 import { IBashEndpointConfig, IBashSidebarField } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { ToolsService } from '@shared/services/tools.service';
+
+/**
+ * Configuration sections for bash terminal control
+ */
+interface IBashConfigSection {
+  id: string;
+  title: string;
+  icon: string;
+  isExpanded: boolean;
+  items: IBashConfigItem[];
+}
+
+interface IBashConfigItem {
+  id: string;
+  type: 'select' | 'input' | 'toggle' | 'button' | 'range' | 'color';
+  label: string;
+  value: any;
+  options?: Array<{ value: any; label: string; disabled?: boolean }>;
+  min?: number;
+  max?: number;
+  step?: number;
+  placeholder?: string;
+  description?: string;
+  disabled?: boolean;
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+}
+
+interface IBashConfigEvent {
+  type: 'endpoint-change' | 'parameter-change' | 'action-execute' | 'config-update';
+  payload: any;
+  timestamp: Date;
+}
 
 interface SidebarFieldDisplay {
   field: IBashSidebarField;
@@ -30,6 +62,12 @@ export class SidebarBashConfigComponent implements OnInit {
 
   configId = input<string>('binance-debug-v2');
   showDebugInfo = input<boolean>(false);
+  isCollapsed = input<boolean>(true);
+  togglePanel = output<void>();
+
+  internalConfig = signal<IBashConfigSection[]>([]);
+  searchQuery = signal<string>('');
+  activeTab = signal<'endpoints' | 'parameters' | 'terminal' | 'actions' | 'account'>('endpoints');
 
   // =========================================
   // SERVICES
@@ -121,6 +159,17 @@ export class SidebarBashConfigComponent implements OnInit {
   // PUBLIC METHODS
   // =========================================
 
+  public onToggle(): void {
+    this.togglePanel.emit();
+  }
+
+  /**
+  * Handle tab change
+  */
+  public setActiveTab(tab: 'endpoints' | 'parameters' | 'terminal' | 'actions' | 'account'): void {
+    this.activeTab.set(tab);
+  }
+
   public getEndpointName(): string {
     const endpointConfig = this.currentEndpointConfig();
     return endpointConfig?.name || 'Unknown Endpoint';
@@ -180,9 +229,6 @@ export class SidebarBashConfigComponent implements OnInit {
           'Current endpoint signal:': this.currentEndpoint()
         },
         palette: 'su',
-        collapsed: true,
-        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-        fontSizePx: 13
       });
     }
   }
