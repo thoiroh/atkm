@@ -1,139 +1,147 @@
-<div class="terminal-wrapper">
-  <header class="terminal-header">
-    <h1>atomeek home content</h1>
-    <div class="terminal-details">
-      <h2>when data finally reaches its owner.</h2>
-    </div>
+<div class="content-wrapper" [class.config-collapsed]="configPanelCollapsed">
+  <header class="content-header">
+    <h1>home-content {{ configPanelCollapsed }}</h1>
   </header>
-  <!-- État de chargement -->
-  @if (loading() && !account()) {
-  <div class="loading-state">
-    <div class="spinner"></div>
-    <p>Chargement des informations du compte...</p>
-  </div>
-  }
-  <!-- État d'erreur -->
-  @if (error()) {
-  <div class="error-state">
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-      <path
-        d="M2.343 13.657A8 8 0 1 1 13.657 2.343 8 8 0 0 1 2.343 13.657ZM6.03 4.97a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042L6.94 8 4.97 9.97a.749.749 0 0 0 .326 1.275.749.749 0 0 0 .734-.215L8 9.06l1.97 1.97a.749.749 0 0 0 1.275-.326.749.749 0 0 0-.215-.734L9.06 8l1.97-1.97a.749.749 0 0 0-.326-1.275.749.749 0 0 0-.734.215L8 6.94Z" />
-    </svg>
-    <p>{{ error() }}</p>
-    <button class="retry-btn" (click)="refreshAccount()">Réessayer</button>
-  </div>
-  }
-
-  <!-- Informations du compte -->
-  <div class="terminal-main">
-    @if (account(); as currentAccount) {
-    <span>currentAccount</span>
-    <!-- Informations générales -->
-    <div class="terminal-section">
-      <div class="section-content">
-        <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
-        <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
-          (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" />
+  <div class="terminal-wrapper">
+    <header class="terminal-header">
+      <h1>atomeek home content</h1>
+      <div class="terminal-details">
+        <h2>when data finally reaches its owner.</h2>
       </div>
-
-      <div class="terminal-section">
-        <div class="infos-items">
-          <div class="infos-item" [class.enabled]="currentAccount.canTrade">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path
-                d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
-            </svg>
-            <span>Trading</span>
-            <span class="status">{{ currentAccount.canTrade ? 'Activé' : 'Désactivé' }}</span>
-          </div>
-          <div class="infos-item" [class.enabled]="currentAccount.canWithdraw">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path
-                d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
-            </svg>
-            <span>Retrait</span>
-            <span class="status">{{ currentAccount.canWithdraw ? 'Activé' : 'Désactivé' }}</span>
-          </div>
-          <div class="infos-item" [class.enabled]="currentAccount.canDeposit">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path
-                d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
-            </svg>
-            <span>Dépôt</span>
-            <span class="status">{{ currentAccount.canDeposit ? 'Activé' : 'Désactivé' }}</span>
-          </div>
-        </div>
-        <div class="terminal-cmd">
-          <div class="cmd-item">
-            <label>Type de compte</label>
-            <span class="cmd-text">{{ currentAccount.accountType }}</span>
-          </div>
-          <div class="cmd-item">
-            <label>Dernière mise à jour</label>
-            <span class="cmd-text">{{ formatUpdateTime(currentAccount.updateTime) }}</span>
-          </div>
-          @if (currentAccount.permissions.length > 0) {
-          <div class="cmd-item">
-            <label>Permissions supplémentaires</label>
-            <div class="cmd-tags">
-              @for (permission of currentAccount.permissions; track permission) {
-              <span class="cmd-tag" [ngClass]="getPermissionClass(permission)">
-                {{ permission }}
-              </span>
-              }
-            </div>
-          </div>
-          }
-        </div>
-      </div>
-    </div>
-
-    <!-- Soldes des actifs -->
-    <div class="terminal-section">
-      <div class="section-content">
-        <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
-        <div class="infos-title">
-          <h2>Soldes des actifs</h2>
-        </div>
-        @if (significantBalances().length === 0) {
-        <div class="no-balances">
-          <p>Aucun actif avec solde disponible</p>
-        </div>
-        }
-        @if (significantBalances().length > 0) {
-        <div class="terminal-table">
-          <div class="table-header">
-            <div class="header-cell left">Actif</div>
-            <div class="header-cell right">Disponible</div>
-            <div class="header-cell right">Bloqué</div>
-            <div class="header-cell right">Total</div>
-          </div>
-          @for (balance of significantBalances(); track trackByAsset($index, balance)) {
-          <div class="balance-row">
-            <div class="balance-cell asset-cell">
-              <span class="asset-name">{{ balance.asset }}</span>
-            </div>
-            <div class="balance-cell amount-cell">
-              <span class="amount">{{ formatBalance(balance.free) }}</span>
-            </div>
-            <div class="balance-cell amount-cell">
-              <span class="amount locked" [class.has-locked]="balance.locked > 0">
-                {{ formatBalance(balance.locked) }}
-              </span>
-            </div>
-            <div class="balance-cell amount-cell total-cell">
-              <span class="amount total">{{ formatBalance(balance.total) }}</span>
-            </div>
-          </div>
-          }
-        </div>
-        }
-      </div>
-    </div>
-    } @else {
-    <div class="cmd-text">
-      <p>No account information available. Please set up your API connection.</p>
+    </header>
+    <!-- État de chargement -->
+    @if (loading() && !account()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des informations du compte...</p>
     </div>
     }
+    <!-- État d'erreur -->
+    @if (error()) {
+    <div class="error-state">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path
+          d="M2.343 13.657A8 8 0 1 1 13.657 2.343 8 8 0 0 1 2.343 13.657ZM6.03 4.97a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042L6.94 8 4.97 9.97a.749.749 0 0 0 .326 1.275.749.749 0 0 0 .734-.215L8 9.06l1.97 1.97a.749.749 0 0 0 1.275-.326.749.749 0 0 0-.215-.734L9.06 8l1.97-1.97a.749.749 0 0 0-.326-1.275.749.749 0 0 0-.734.215L8 6.94Z" />
+      </svg>
+      <p>{{ error() }}</p>
+      <button class="retry-btn" (click)="refreshAccount()">Réessayer</button>
+    </div>
+    }
+
+    <!-- Informations du compte -->
+    <div class="terminal-main">
+      @if (account(); as currentAccount) {
+      <span>currentAccount</span>
+      <!-- Informations générales -->
+      <div class="terminal-section">
+        <div class="section-content">
+          <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+          <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
+            (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" />
+        </div>
+
+        <div class="terminal-section">
+          <div class="infos-items">
+            <div class="infos-item" [class.enabled]="currentAccount.canTrade">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
+              </svg>
+              <span>Trading</span>
+              <span class="status">{{ currentAccount.canTrade ? 'Activé' : 'Désactivé' }}</span>
+            </div>
+            <div class="infos-item" [class.enabled]="currentAccount.canWithdraw">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
+              </svg>
+              <span>Retrait</span>
+              <span class="status">{{ currentAccount.canWithdraw ? 'Activé' : 'Désactivé' }}</span>
+            </div>
+            <div class="infos-item" [class.enabled]="currentAccount.canDeposit">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
+              </svg>
+              <span>Dépôt</span>
+              <span class="status">{{ currentAccount.canDeposit ? 'Activé' : 'Désactivé' }}</span>
+            </div>
+          </div>
+          <div class="terminal-cmd">
+            <div class="cmd-item">
+              <label>Type de compte</label>
+              <span class="cmd-text">{{ currentAccount.accountType }}</span>
+            </div>
+            <div class="cmd-item">
+              <label>Dernière mise à jour</label>
+              <span class="cmd-text">{{ formatUpdateTime(currentAccount.updateTime) }}</span>
+            </div>
+            @if (currentAccount.permissions.length > 0) {
+            <div class="cmd-item">
+              <label>Permissions supplémentaires</label>
+              <div class="cmd-tags">
+                @for (permission of currentAccount.permissions; track permission) {
+                <span class="cmd-tag" [ngClass]="getPermissionClass(permission)">
+                  {{ permission }}
+                </span>
+                }
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Soldes des actifs -->
+      <div class="terminal-section">
+        <div class="section-content">
+          <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+          <div class="infos-title">
+            <h2>Soldes des actifs</h2>
+          </div>
+          @if (significantBalances().length === 0) {
+          <div class="no-balances">
+            <p>Aucun actif avec solde disponible</p>
+          </div>
+          }
+          @if (significantBalances().length > 0) {
+          <div class="terminal-table">
+            <div class="table-header">
+              <div class="header-cell left">Actif</div>
+              <div class="header-cell right">Disponible</div>
+              <div class="header-cell right">Bloqué</div>
+              <div class="header-cell right">Total</div>
+            </div>
+            @for (balance of significantBalances(); track trackByAsset($index, balance)) {
+            <div class="balance-row">
+              <div class="balance-cell asset-cell">
+                <span class="asset-name">{{ balance.asset }}</span>
+              </div>
+              <div class="balance-cell amount-cell">
+                <span class="amount">{{ formatBalance(balance.free) }}</span>
+              </div>
+              <div class="balance-cell amount-cell">
+                <span class="amount locked" [class.has-locked]="balance.locked > 0">
+                  {{ formatBalance(balance.locked) }}
+                </span>
+              </div>
+              <div class="balance-cell amount-cell total-cell">
+                <span class="amount total">{{ formatBalance(balance.total) }}</span>
+              </div>
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+      } @else {
+      <div class="cmd-text">
+        <p>No account information available. Please set up your API connection.</p>
+      </div>
+      }
+    </div>
   </div>
 </div>
+
+<atk-sidebar-config [sections]="config.configPanel.sections" [isCollapsed]="config.configPanel.isCollapsed"
+  (togglePanel)="toggleConfigPanel()" />

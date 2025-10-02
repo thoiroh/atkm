@@ -1,5 +1,5 @@
-<aside class="bash-config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
-  <button class="bash-config-toggle" (click)="onToggle()"
+<aside class="config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
+  <button class="config-toggle" (click)="onToggle()"
     [attr.aria-label]="isCollapsed() ? 'Open configuration' : 'Close configuration'">
     @if (!isCollapsed()) {
     <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76"></atk-icon>
@@ -8,178 +8,30 @@
     }
   </button>
 
-  <div class="bash-config-wrapper">
-    <div class="bash-config-content">
-
-      <div class="bash-config-section">
-        <div class="bash-config-header">
-          <h3 class="panel-title">
-            <atk-icon name="settings" [size]="16" color="var(--color-accent-fg)" />
-            {{ configTitle() || 'API Configuration' }}
-          </h3>
-
-          <!-- <div class="connection-status" [class]="connectionStatus()">
-            <span class="status-indicator" [class]="connectionStatus()">
-              @switch (connectionStatus()) {
-              @case ('connected') {
-              <atk-icon name="wifi" [size]="14" color="var(--color-success-emphasis)"></atk-icon>
-              }
-              @case ('connecting') {
-              <atk-icon name="loader" [size]="14" color="var(--color-accent-fg)"></atk-icon>
-              }
-              @default {
-              <atk-icon name="wifi-off" [size]="14" color="var(--color-fg-muted)"></atk-icon>
-              }
-              }
-            </span>
-            <span class="status-text">{{ connectionStatus() | titlecase }}</span>
-            @if (isLoading()) {
-            <span class="loading-spinner"></span>
-            }
-          </div> -->
-
-          @if (loading()) {
-          <div class="config-status loading">
-            <atk-icon name="loader" [size]="14" color="var(--color-accent-fg)" />
-            <span>Loading...</span>
-          </div>
-          } @else if (error()) {
-          <div class="config-status error">
-            <atk-icon name="alert-circle" [size]="14" color="var(--color-danger)" />
-            <span>{{ error() }}</span>
-          </div>
-          } @else if (hasData()) {
-          <div class="config-status success">
-            <atk-icon name="check-circle" [size]="14" color="var(--color-success-emphasis)" />
-            <span>Connected</span>
-          </div>
-          }
+  <div class="config-wrapper">
+    <div class="config-content">
+      @for (section of sections(); track section.title) {
+      <div class="config-section">
+        <div class="config-title has-hover-dot" data-hover-color="red" hoverDot icon="radio-dot">
+          <div class="config-title-text"> {{ section.title }}</div>
         </div>
-
-
-
-        <!-- Current Endpoint Info -->
-        @if (currentEndpoint()) {
-        <div class="bash-config-section">
-          <div class="section-header">
-            <atk-icon name="globe" [size]="14" color="var(--color-fg-muted)" />
-            <span class="section-title">Endpoint</span>
-          </div>
-          <div class="section-content">
-            <div class="endpoint-name">{{ getEndpointName() }}</div>
-            <div class="endpoint-id">{{ currentEndpoint() }}</div>
-          </div>
-        </div>
-        }
-
-        <!-- Data Summary -->
-        @if (summary(); as summaryData) {
-        <div class="config-section">
-          <div class="section-header">
-            <atk-icon name="bar-chart" [size]="14" color="var(--color-fg-muted)" />
-            <span class="section-title">Data Summary</span>
-          </div>
-          <div class="section-content">
-            <div class="data-metric">
-              <span class="metric-label">Sidebar Fields:</span>
-              <span class="metric-value">{{ summaryData.sidebarFields }}</span>
-            </div>
-            <div class="data-metric">
-              <span class="metric-label">Table Rows:</span>
-              <span class="metric-value">{{ summaryData.tableRows }}</span>
-            </div>
-            @if (summaryData.lastUpdate) {
-            <div class="data-metric">
-              <span class="metric-label">Last Update:</span>
-              <span class="metric-value timestamp">{{ formatTimestamp(summaryData.lastUpdate) }}</span>
-            </div>
-            }
-          </div>
-        </div>
-        }
-
-        <!-- Sidebar Fields Data -->
-        @if (displayFields().length > 0) {
-        <div class="config-section">
-          <div class="section-header">
-            <atk-icon name="list" [size]="14" color="var(--color-fg-muted)" />
-            <span class="section-title">Account Info</span>
-          </div>
-          <div class="section-content">
-            @for (fieldDisplay of displayFields(); track fieldDisplay.field.key) {
-            @if (fieldDisplay.visible) {
-            <div class="field-row" [ngClass]="'field-' + fieldDisplay.field.type">
-              <div class="field-label">
-                @if (fieldDisplay.field.icon) {
-                <atk-icon [name]="fieldDisplay.field.icon" [size]="12" color="var(--color-fg-muted)" />
-                }
-                <span>{{ fieldDisplay.field.label }}:</span>
-              </div>
-              <div class="field-value" [ngClass]="fieldDisplay.field.cssClass">
-                @switch (fieldDisplay.field.type) {
-                @case ('boolean') {
-                <span class="boolean-badge" [ngClass]="fieldDisplay.value ? 'true' : 'false'">
-                  <atk-icon [name]="fieldDisplay.value ? 'check' : 'x'" [size]="10" />
-                  {{ fieldDisplay.value ? 'Yes' : 'No' }}
-                </span>
-                }
-                @case ('status') {
-                <span class="status-badge" [ngClass]="'status-' + (fieldDisplay.value || '').toLowerCase()">
-                  {{ fieldDisplay.formattedValue }}
-                </span>
-                }
-                @case ('date') {
-                <span class="date-value">{{ fieldDisplay.formattedValue }}</span>
-                }
-                @default {
-                <span class="text-value">{{ fieldDisplay.formattedValue }}</span>
-                }
-                }
-              </div>
-            </div>
-            }
-            }
-          </div>
-        </div>
-        }
-
-        <!-- Tab Navigation -->
-        <nav class="bash-config-tabs">
-          <button class="tab-button" [class.active]="activeTab() === 'endpoints'" (click)="setActiveTab('endpoints')">
-            <atk-icon name="server" [size]="14" color="currentColor"></atk-icon>
-            Endpoints
-          </button>
-          <button class="tab-button" [class.active]="activeTab() === 'parameters'" (click)="setActiveTab('parameters')">
-            <atk-icon name="settings" [size]="14" color="currentColor"></atk-icon>
-            Params
-          </button>
-          <button class="tab-button" [class.active]="activeTab() === 'terminal'" (click)="setActiveTab('terminal')">
-            <atk-icon name="monitor" [size]="14" color="currentColor"></atk-icon>
-            Terminal
-          </button>
-          <button class="tab-button" [class.active]="activeTab() === 'actions'" (click)="setActiveTab('actions')">
-            <atk-icon name="zap" [size]="14" color="currentColor"></atk-icon>
-            Actions
-          </button>
-          <button class="tab-button" [class.active]="activeTab() === 'account'" (click)="setActiveTab('account')">
-            <atk-icon name="user" [size]="14" color="currentColor"></atk-icon>
-            Account
-          </button>
-        </nav>
-
-        <!-- Debug Info (Development Only) -->
-        @if (showDebugInfo()) {
-        <div class="config-section debug-section">
-          <div class="section-header">
-            <atk-icon name="bug" [size]="14" color="var(--color-warning)" />
-            <span class="section-title">Debug Info</span>
-          </div>
-          <div class="section-content">
-            <pre class="debug-data">{{ getDebugInfo() }}</pre>
+        @for (item of section.items; track item.title) {
+        <div class="config-item">
+          @let ic = (item.icon | icon: { defaultName: 'default', defaultColor: '#656d76', size: 16 });
+          <!-- <span class="icon-name">{{ ic.name }}</span> -->
+          <atk-icon class="config-item-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color"
+            [size]="ic.size">
+          </atk-icon>
+          <div class="config-item-content">
+            <a [href]="item.link" class="config-item-title" (click)="navigateToConfig($event, item.link)">
+              {{ item.title }}
+            </a>
+            <div class="config-item-desc">{{ item.description }}</div>
           </div>
         </div>
         }
       </div>
+      }
     </div>
   </div>
 </aside>

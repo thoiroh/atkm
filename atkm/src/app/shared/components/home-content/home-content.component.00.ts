@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { ToolsService } from '@shared/services/tools.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -12,19 +12,15 @@ import { AtkIconComponent } from '../atk-icon/atk-icon.component';
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
 import { ConfigService, ILandingConfig } from '@core/services/config.service';
 import { NavigationStateService } from '@core/services/navigation-state.service';
-import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 
 @Component({
   selector: 'atk-home-content',
   standalone: true,
-  imports: [CommonModule, AtkIconComponent, AtkBashComponent, SidebarConfigComponent],
+  imports: [CommonModule, AtkIconComponent, AtkBashComponent],
   templateUrl: './home-content.component.html',
   styles: []
 })
 export class HomeContentComponent implements OnInit {
-
-  @Input() configPanelCollapsed: boolean = false;
-
   config: ILandingConfig | null = null;
   account = signal<BinanceAccount | null>(null);
   loading = signal<boolean>(false);
@@ -109,12 +105,6 @@ export class HomeContentComponent implements OnInit {
       error: (error) => {
         console.error('Erreur lors du chargement de la configuration:', error);
       }
-    });
-    this.tools.consoleGroup({ // TAG AtkDevIntegrationComponent 101 ngOnInit()
-      title: `HomeContentComponent initialized`, tag: 'check', palette: 'su',
-      data: {
-        config: this.config
-      },
     });
   }
 

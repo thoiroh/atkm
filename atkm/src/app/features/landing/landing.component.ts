@@ -14,11 +14,13 @@ import { SidebarConfigComponent } from '@shared/components/sidebar-config/sideba
 import { SidebarNavComponent } from '@shared/components/sidebar-nav/sidebar-nav.component';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { ToolsService } from '@shared/services/tools.service';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'atk-landing',
   standalone: true,
   imports: [
+    RouterOutlet,
     NavbarMainComponent,
     NavbarBrandComponent,
     NavbarToolsComponent,

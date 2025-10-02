@@ -5,11 +5,13 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AtkApiManagementComponent } from '@shared/components/atk-api-management/atk-api-management.component';
-import { BashData } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { BashData, IBashConfig } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
+import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { ToolsService } from '@shared/services/tools.service';
-import { ILandingConfig } from '../../core/services/config.service';
+import { ConfigService, ILandingConfig } from '../../core/services/config.service';
 
 @Component({
   selector: 'atk-dev-integration',
@@ -17,7 +19,9 @@ import { ILandingConfig } from '../../core/services/config.service';
   imports: [
     CommonModule,
     AtkIconComponent,
-    AtkApiManagementComponent
+    AtkApiManagementComponent,
+    SidebarBashConfigComponent,
+    SidebarConfigComponent
   ],
   templateUrl: './atk-dev-integration.component.html',
   // styleUrls: ['./atk-dev-integration.component.css']
@@ -33,11 +37,13 @@ export class AtkDevIntegrationComponent implements OnInit {
   config: ILandingConfig | null = null;
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
+  bashConfigPanelCollapsed = signal<boolean>(false);
 
   // =========================================
   // SERVICES
   // =========================================
 
+  private configService = inject(ConfigService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private tools = inject(ToolsService);
@@ -91,6 +97,16 @@ export class AtkDevIntegrationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.configService.loadLandingConfig().subscribe({
+      next: (config) => {
+        this.config = config;
+        // Initialize bash config panel as collapsed
+        this.bashConfigPanelCollapsed.set(false);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement de la configuration:', error);
+      }
+    });
     // Parse route parameters if any
     // this.route.queryParams
     //   .pipe(takeUntilDestroyed())
@@ -106,11 +122,21 @@ export class AtkDevIntegrationComponent implements OnInit {
     this.tools.consoleGroup({ // TAG AtkDevIntegrationComponent 101 ngOnInit()
       title: `AtkDevIntegrationComponent initialized`, tag: 'check', palette: 'su',
       data: {
+        config: this.config,
         showSidebar: this.showSidebar(),
         debugMode: this.debugMode(),
         autoRefresh: this.autoRefresh()
       },
     });
+  }
+
+  /**
+   * Handle traditional config panel toggle (if still needed)
+  */
+  toggleConfigPanel(): void {
+    if (this.config) {
+      this.config.configPanel.isCollapsed = !this.config.configPanel.isCollapsed;
+    }
   }
 
   // =========================================
@@ -354,6 +380,30 @@ export class AtkDevIntegrationComponent implements OnInit {
       clearInterval(this.autoRefreshInterval);
       this.autoRefreshInterval = null;
     }
+  }
+
+  // =========================================
+  // PRIVATE METHODS Handle bash configuration requests from AtkBashComponent
+  // =========================================
+
+  onBashConfigRequest(config: IBashConfig): void {
+    console.log('Bash config requested in home content:', config);
+  }
+
+  onBashConfigChange(event: any): void {
+    // Forward the configuration change to the AtkBashComponent
+    // This will be handled by the component reference or service communication
+    console.log('Bash config change received:', event);
+    // Here you could emit events to child components or use a service
+    // For now, we'll just log the event
+  }
+
+  onBashDataLoaded(data: any[]): void {
+    console.log('Bash data loaded:', data.length, 'records');
+  }
+
+  onBashError(error: string): void {
+    console.error('Bash error occurred:', error);
   }
 
   // Cleanup on destroy
