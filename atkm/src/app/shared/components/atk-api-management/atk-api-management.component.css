@@ -28,7 +28,7 @@
   background: var(--color-canvas-subtle);
 }
 
-.terminal-content {
+.section-content {
   height: 100%;
   position: relative;
 }

@@ -155,12 +155,9 @@ export class ApiManagementStateService {
   setConfigId(configId: string): void {
     this._configId.set(configId);
     this.emitEvent('endpoint-changed', { configId });
-    // TAG: ApiManagementStateService.159 ================ CONSOLE LOG IN PROGRESS
-    this.tools.consoleGroup({
-      title: `ApiManagementStateService 159 -> setConfigId() -> configId: `,
-      tag: 'check',
-      data: { configId: configId, state: this.state() },
-      palette: 'su',
+    this.tools.consoleGroup({ // TAG: ApiManagementStateService.159 ================ CONSOLE LOG IN PROGRESS
+      title: `ApiManagementStateService 159 -> setConfigId() -> configId: `, tag: 'recycle', palette: 'su',
+      data: { configId: configId, state: this.state() }
     });
   }
 
@@ -291,6 +288,10 @@ export class ApiManagementStateService {
     try {
       const state = this.state();
       sessionStorage.setItem('api_management_state', JSON.stringify(state));
+      this.tools.consoleGroup({ // TAG: ApiManagementStateService.291 ================ CONSOLE LOG IN PROGRESS
+        title: `ApiManagementStateService 291 -> saveToSession() -> api_management_state: `, tag: 'check', palette: 'su',
+        data: { state }
+      });
     } catch (error) {
       console.warn('Failed to save API management state to session:', error);
     }

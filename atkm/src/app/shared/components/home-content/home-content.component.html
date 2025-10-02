@@ -1,8 +1,8 @@
 <div class="terminal-wrapper">
   <header class="terminal-header">
-    <h1>Binance Account NEW Assets Inventory</h1>
+    <h1>atomeek home content</h1>
     <div class="terminal-details">
-      <h2>Binance account information & assets inventory.</h2>
+      <h2>when data finally reaches its owner.</h2>
     </div>
   </header>
   <!-- État de chargement -->
@@ -25,11 +25,12 @@
   }
 
   <!-- Informations du compte -->
-  @if (account(); as currentAccount) {
   <div class="terminal-main">
+    @if (account(); as currentAccount) {
+    <span>currentAccount</span>
     <!-- Informations générales -->
     <div class="terminal-section">
-      <div class="terminal-content">
+      <div class="section-content">
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
         <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
           (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" />
@@ -89,7 +90,7 @@
 
     <!-- Soldes des actifs -->
     <div class="terminal-section">
-      <div class="terminal-content">
+      <div class="section-content">
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
         <div class="infos-title">
           <h2>Soldes des actifs</h2>
@@ -129,6 +130,10 @@
         }
       </div>
     </div>
+    } @else {
+    <div class="cmd-text">
+      <p>No account information available. Please set up your API connection.</p>
+    </div>
+    }
   </div>
-  }
 </div>

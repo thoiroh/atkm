@@ -45,12 +45,12 @@ export const routes: Routes = [
         loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
       },
       {
-        path: 'debug',
+        path: 'home',
         loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
       },
       {
         path: 'bash',
-        loadComponent: () => import('./shared/components/atk-bash/atk-bash.component').then(m => m.AtkBashComponent),
+        loadComponent: () => import('./features/atk-dev-integration/atk-dev-integration.component').then(m => m.AtkDevIntegrationComponent),
         title: 'atk bash | api tool'
       },
       {
@@ -59,7 +59,7 @@ export const routes: Routes = [
         title: 'Binance Account | Debug'
       },
       {
-        path: 'binance/apim',
+        path: 'binance/bbash',
         loadComponent: () => import('./features/binance/components/binance-api-management.component').then(m => m.BinanceApiManagementComponent),
         title: 'Binance Account | Debug'
       },

@@ -219,16 +219,13 @@ export class SidebarBashConfigComponent implements OnInit {
 
     if (config) {
       this.currentConfig.set(config);
-      // TAG: atk-sidebar-bash-config.173 ================ CONSOLE LOG IN PROGRESS
-      this.tools.consoleGroup({
-        title: `atk-sidebar-bash-config 173 SidebarBashConfigComponent -> loadConfiguration() -> configTitle: ${config.title}`,
-        tag: 'check',
+      this.tools.consoleGroup({       // TAG: atk-sidebar-bash-config.222 ================ CONSOLE LOG IN PROGRESS
+        title: `SidebarBashConfigComponent 222  -> loadConfiguration() -> configTitle: ${config.title}`, tag: 'check', palette: 'su',
         data: {
           'Config endpoints': config.endpoints,
           'Default endpoint:': config.defaultEndpoint,
           'Current endpoint signal:': this.currentEndpoint()
-        },
-        palette: 'su',
+        }
       });
     }
   }

@@ -22,33 +22,16 @@
         "items": [
           {
             "icon": "dot",
-            "label": "Binance Component (dashboard/binance/apim)",
-            "link": "/dashboard/binance/apim",
+            "label": "[dev] HomeComponent",
+            "link": "/dashboard",
             "action": false,
             "isExpanded": false,
             "subMenu": []
           },
           {
             "icon": "dot",
-            "label": "Binance Debug Bash (dashboard/binance/debug)",
-            "link": "/dashboard/binance/debug",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": []
-          },
-
-          {
-            "icon": "dot",
-            "label": "Dashboard Bash (dashboard/bash)",
+            "label": "[dev] AtkDevIntegrationComponent",
             "link": "/dashboard/bash",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": []
-          },
-          {
-            "icon": "dot",
-            "label": "[dev] Debug Bash (dashboard/debug)",
-            "link": "/dashboard/debug",
             "action": false,
             "isExpanded": false,
             "subMenu": []
@@ -63,6 +46,22 @@
           "action": "createRepo"
         },
         "items": [
+          {
+            "icon": "dot",
+            "label": "[dev] BinanceDebugComponent",
+            "link": "/dashboard/binance/debug",
+            "action": false,
+            "isExpanded": false,
+            "subMenu": []
+          },
+          {
+            "icon": "dot",
+            "label": "[dev] BinanceApiManagementComponent",
+            "link": "/dashboard/binance/bbash",
+            "action": false,
+            "isExpanded": false,
+            "subMenu": []
+          },
           {
             "icon": "dot",
             "label": "Assets Inventory (user)",

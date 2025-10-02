@@ -9,7 +9,7 @@ export interface GroupOptions {
   /** Any data to dump inside the group. */
   data: any;
   /** Predefined color palette. */
-  palette?: 'de' | 'in' | 'wa' | 'er' | 'ac' | 'su';
+  palette?: 'de' | 'in' | 'wa' | 'er' | 'ac' | 'su' | 'se';
   /** Use console.groupCollapsed when true. */
   collapsed?: boolean;
   /** Optional CSS font-family for header text. */

@@ -4,7 +4,7 @@
 
     <!-- Terminal Section -->
     <div class="terminal-section">
-      <div class="terminal-content">
+      <div class="section-content">
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
         <atk-bash [configId]="configId()" [autoLoad]="autoLoad()" (dataLoaded)="onBashDataLoaded($event)"
           (errorOccurred)="onBashError($event)" (eventEmitted)="onBashEvent($event)" />

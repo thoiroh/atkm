@@ -144,33 +144,33 @@ const symbols = {
   snowflake: "\u{2744}", // ❄ Flocon de neige
   crescentMoon: "\u{1F319}", // 🌙 Lune croissante
   // Cartes et échecs
-  heart: "\u{2665}", // ♥ Cœur
-  spade: "\u{2660}", // ♠ Pique
+  bishop: "\u{265D}", // ♝ Fou
   club: "\u{2663}", // ♣ Trèfle
   diamond: "\u{2666}", // ♦ Carreau
+  heart: "\u{2665}", // ♥ Cœur
   king: "\u{265A}", // ♚ Roi
-  queen: "\u{265B}", // ♛ Reine
-  rook: "\u{265C}", // ♜ Tour
-  bishop: "\u{265D}", // ♝ Fou
   knight: "\u{265E}", // ♞ Cavalier
+  queen: "\u{265B}", // ♛ Reine
   pawn: "\u{265F}", // ♟ Pion
+  rook: "\u{265C}", // ♜ Tour
+  spade: "\u{2660}", // ♠ Pique
   // Autres symboles
   skullAndCrossbones: "\u{2620}", // ☠ Tête de mort
-  yinYang: "\u{262F}", // ☯ Yin et Yang
   anchor: "\u{2693}", // ⚓ Ancre
-  scissors: "\u{2702}", // ✂ Ciseaux
-  pencil: "\u{270F}", // ✏ Crayon
-  hourglass: "\u{231B}", // ⌛ Sablier plein
-  hourglassEmpty: "\u{23F3}", // ⏳ Sablier vide
-  recycle: "\u{267B}", // ♻ Recyclage
-  radioactive: "\u{2622}", // ☢ Radioactif
   biohazard: "\u{2623}", // ☣ Biohazard
   copyright: "\u{00A9}", // © Copyright
-  trademark: "\u{2122}", // ™ Marque déposée
-  registered: "\u{00AE}", // ® Enregistré
-  euro: "\u{20AC}", // € Euro
   dollar: "\u{24}", // $ Dollar
+  euro: "\u{20AC}", // € Euro
+  hourglass: "\u{231B}", // ⌛ Sablier plein
+  hourglassEmpty: "\u{23F3}", // ⏳ Sablier vide
+  pencil: "\u{270F}", // ✏ Crayon
   pound: "\u{00A3}", // £ Livre sterling
+  registered: "\u{00AE}", // ® Enregistré
+  recycle: "\u{267B}", // ♻ Recyclage
+  radioactive: "\u{2622}", // ☢ Radioactif
+  scissors: "\u{2702}", // ✂ Ciseaux
+  section: "\u{00A7}", // § Section
+  trademark: "\u{2122}", // ™ Marque déposée
   yen: "\u{00A5}", // ¥ Yen
-  section: "\u{00A7}" // § Section
+  yinYang: "\u{262F}", // ☯ Yin et Yang
 };

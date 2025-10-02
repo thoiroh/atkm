@@ -18,8 +18,8 @@
             {{ configTitle() || 'API Configuration' }}
           </h3>
 
-          <div class="connection-status" [class]="connectionStatus()">
-            <!-- <span class="status-indicator" [class]="connectionStatus()">
+          <!-- <div class="connection-status" [class]="connectionStatus()">
+            <span class="status-indicator" [class]="connectionStatus()">
               @switch (connectionStatus()) {
               @case ('connected') {
               <atk-icon name="wifi" [size]="14" color="var(--color-success-emphasis)"></atk-icon>
@@ -35,25 +35,25 @@
             <span class="status-text">{{ connectionStatus() | titlecase }}</span>
             @if (isLoading()) {
             <span class="loading-spinner"></span>
-            } -->
+            }
+          </div> -->
 
-            <!-- @if (loading()) {
-            <div class="config-status loading">
-              <atk-icon name="loader" [size]="14" color="var(--color-accent-fg)" />
-              <span>Loading...</span>
-            </div>
-            } @else if (error()) {
-            <div class="config-status error">
-              <atk-icon name="alert-circle" [size]="14" color="var(--color-danger)" />
-              <span>{{ error() }}</span>
-            </div>
-            } @else if (hasData()) {
-            <div class="config-status success">
-              <atk-icon name="check-circle" [size]="14" color="var(--color-success-emphasis)" />
-              <span>Connected</span>
-            </div>
-            } -->
+          @if (loading()) {
+          <div class="config-status loading">
+            <atk-icon name="loader" [size]="14" color="var(--color-accent-fg)" />
+            <span>Loading...</span>
           </div>
+          } @else if (error()) {
+          <div class="config-status error">
+            <atk-icon name="alert-circle" [size]="14" color="var(--color-danger)" />
+            <span>{{ error() }}</span>
+          </div>
+          } @else if (hasData()) {
+          <div class="config-status success">
+            <atk-icon name="check-circle" [size]="14" color="var(--color-success-emphasis)" />
+            <span>Connected</span>
+          </div>
+          }
         </div>
 
 

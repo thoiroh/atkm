@@ -783,7 +783,7 @@ li,
   color: var(--color-fg-default);
 }
 
-.terminal-content {
+.section-content {
   position: relative;
   display: flex;
   flex-direction: column;

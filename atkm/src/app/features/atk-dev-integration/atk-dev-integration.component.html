@@ -1,0 +1,32 @@
+<div class="terminal-wrapper">
+  <header class="terminal-header">
+    <h1>AtkDevIntegrationComponent {{ configPanelCollapsed }}</h1>
+    <div class="terminal-details">
+      <h2>when data finally reaches its owner.</h2>
+    </div>
+  </header>
+  <!-- État de chargement -->
+  @if (loading() ) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des informations du compte...</p>
+  </div>
+  }
+  <!-- État d'erreur -->
+  @if (error()) {
+  <div class="error-state">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+      <path
+        d="M2.343 13.657A8 8 0 1 1 13.657 2.343 8 8 0 0 1 2.343 13.657ZM6.03 4.97a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042L6.94 8 4.97 9.97a.749.749 0 0 0 .326 1.275.749.749 0 0 0 .734-.215L8 9.06l1.97 1.97a.749.749 0 0 0 1.275-.326.749.749 0 0 0-.215-.734L9.06 8l1.97-1.97a.749.749 0 0 0-.326-1.275.749.749 0 0 0-.734.215L8 6.94Z" />
+    </svg>
+    <p>{{ error() }}</p>
+    <button class="retry-btn">Réessayer</button>
+  </div>
+  }
+  <!-- Router outlet for dynamic content -->
+  <div class="terminal-main">
+    <atk-api-management configId="binance-debug-v2" [autoLoad]="true" title="atk dashboard"
+      (balanceSelected)="onBalanceSelected($event)" (errorOccurred)="onErrorOccurred($event)" />
+  </div>
+  <!-- (endpointChanged)="onEndpointChanged($event)" -->
+</div>

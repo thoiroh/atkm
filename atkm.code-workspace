@@ -133,7 +133,7 @@
     "git.enableSmartCommit": true,
     "containers.containers.groupBy": "None",
     "containers.containers.sortBy": "CreatedTime",
-    "todo-tree.tree.scanMode": "workspace only"
+    "todo-tree.tree.scanMode": "open files"
   },
   "extensions": {
     "recommendations": [

@@ -9,7 +9,7 @@
 
   <!-- Controls Section -->
   <div class="terminal-section">
-    <div class="terminal-content">
+    <div class="section-content">
       <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
       <div class="infos-title">
         <h2>Filters & Controls</h2>
@@ -144,7 +144,7 @@
   <!-- Data Tables -->
   @if (selectedSymbol() && currentData().length > 0 && !currentLoading()) {
   <div class="terminal-section">
-    <div class="terminal-content">
+    <div class="section-content">
       <div class="table-header">
         <h3>{{ activeTab() | titlecase }} History</h3>
         <div class="table-actions">
@@ -327,7 +327,7 @@
   <!-- Summary Section -->
   @if (summary() && !currentLoading()) {
   <div class="terminal-section">
-    <div class="terminal-content">
+    <div class="section-content">
       <div class="infos-title">
         <h2>Transaction Summary</h2>
       </div>
