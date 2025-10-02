@@ -1,10 +1,8 @@
 import { Component, input, output } from '@angular/core';
-import { IConfigPanelSection } from '../../../core/services/config.service';
-
-// UI
-import { AtkIconComponent } from '../../../shared/components/atk-icon/atk-icon.component';
-import { IconPipe } from '../../../shared/pipes/icon.pipe';
-import { HoverDotDirective } from '../../directives/hover-dot.directive';
+import { IConfigPanelSection } from '@core/services/config.service';
+import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { HoverDotDirective } from '@shared/directives/hover-dot.directive';
+import { IconPipe } from '@shared/pipes/icon.pipe';
 
 @Component({
   selector: 'atk-sidebar-config',

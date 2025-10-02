@@ -5,7 +5,6 @@ import { AfterViewInit, Component, OnInit, computed, inject } from '@angular/cor
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
 import { ConfigService, ILandingConfig } from '@core/services/config.service';
 import { NavigationStateService } from '@core/services/navigation-state.service';
-import { ContentMainComponent } from '@shared/components/content-main/content-main.component';
 import { NavbarBrandComponent } from '@shared/components/navbar-brand/navbar-brand.component';
 import { NavbarMainComponent } from '@shared/components/navbar-main/navbar-main.component';
 import { NavbarToolsComponent } from '@shared/components/navbar-tools/navbar-tools.component';
@@ -25,7 +24,6 @@ import { RouterOutlet } from '@angular/router';
     NavbarBrandComponent,
     NavbarToolsComponent,
     SidebarNavComponent,
-    ContentMainComponent,
     SidebarBashConfigComponent,
     SidebarConfigComponent
   ],

@@ -624,7 +624,7 @@ input:checked+.toggle-slider:before {
   margin-top: 16px;
 }
 
-.account-action-btn {
+.account-navbar-btn {
   width: 100%;
   padding: 10px 16px;
   background: var(--color-btn-bg-action);
@@ -641,12 +641,12 @@ input:checked+.toggle-slider:before {
   justify-content: center;
 }
 
-.account-action-btn:hover:not(:disabled) {
+.account-navbar-btn:hover:not(:disabled) {
   background: var(--color-btn-hover-bg);
   border-color: var(--color-btn-hover-border);
 }
 
-.account-action-btn:disabled {
+.account-navbar-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

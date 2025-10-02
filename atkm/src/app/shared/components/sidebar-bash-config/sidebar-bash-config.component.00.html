@@ -419,7 +419,7 @@
 
                   <!-- Account Actions -->
                   <div class="account-actions">
-                    <button class="account-action-btn" (click)="executeAccountAction('refresh-account')"
+                    <button class="account-navbar-btn" (click)="executeAccountAction('refresh-account')"
                       [disabled]="isLoading()">
                       <atk-icon name="refresh-cw" [size]="14" color="currentColor"></atk-icon>
                       Refresh Account
@@ -437,7 +437,7 @@
                 <div class="no-account-data">
                   <atk-icon name="user-x" [size]="32" color="var(--color-fg-muted)"></atk-icon>
                   <p>No account data available</p>
-                  <button class="account-action-btn" (click)="executeAccountAction('refresh-account')"
+                  <button class="account-navbar-btn" (click)="executeAccountAction('refresh-account')"
                     [disabled]="isLoading()">
                     <atk-icon name="refresh-cw" [size]="14" color="currentColor"></atk-icon>
                     Load Account Data

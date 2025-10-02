@@ -22,7 +22,7 @@ export interface IconRegistry {
 export class IconRegistryService {
   private http = inject(HttpClient);
   private url = '/assets/config/icons.json';
-  //HACK=============================== SIGNALS FOR SERVICE STATUS ====================================================
+  // HACK=============================== SIGNALS FOR SERVICE STATUS ====================================================
   private _registry = signal<IconRegistry>(this.createEmptyRegistry());
   private _isLoaded = signal<boolean>(false);
   private _hasError = signal<boolean>(false);

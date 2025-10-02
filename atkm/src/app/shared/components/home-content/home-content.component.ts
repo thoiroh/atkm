@@ -104,7 +104,7 @@ export class HomeContentComponent implements OnInit {
       next: (config) => {
         this.config = config;
         // Initialize bash config panel as collapsed
-        this.bashConfigPanelCollapsed.set(false);
+        this.bashConfigPanelCollapsed.set(true);
       },
       error: (error) => {
         console.error('Erreur lors du chargement de la configuration:', error);
@@ -119,7 +119,7 @@ export class HomeContentComponent implements OnInit {
   }
 
   /**
- * Handle traditional config panel toggle (if still needed)
+ * Handle config panel toggle
  */
   toggleConfigPanel(): void {
     if (this.config) {

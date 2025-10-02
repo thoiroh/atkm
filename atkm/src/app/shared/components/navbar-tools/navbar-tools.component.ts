@@ -1,9 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ConfigService, ILandingConfig } from '../../../core/services/config.service';
+import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
 @Component({
   selector: 'atk-navbar-tools',
   standalone: true,
+  imports: [AtkIconComponent],
   templateUrl: './navbar-tools.component.html',
 })
 export class NavbarToolsComponent implements OnInit {

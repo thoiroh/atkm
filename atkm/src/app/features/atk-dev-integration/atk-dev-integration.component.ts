@@ -130,9 +130,14 @@ export class AtkDevIntegrationComponent implements OnInit {
     });
   }
 
-  /**
-   * Handle traditional config panel toggle (if still needed)
-  */
+  ngOnDestroy(): void {
+    this.stopAutoRefresh();
+  }
+
+  // =========================================
+  // TOGGLE METHODS
+  // =========================================
+
   toggleConfigPanel(): void {
     if (this.config) {
       this.config.configPanel.isCollapsed = !this.config.configPanel.isCollapsed;
@@ -406,8 +411,4 @@ export class AtkDevIntegrationComponent implements OnInit {
     console.error('Bash error occurred:', error);
   }
 
-  // Cleanup on destroy
-  ngOnDestroy(): void {
-    this.stopAutoRefresh();
-  }
 }

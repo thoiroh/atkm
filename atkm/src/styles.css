@@ -290,7 +290,7 @@ atk-content-main {
   gap: 8px;
 }
 
-.action-btn {
+.navbar-btn {
   background: #30363d;
   border: 1px solid #484f58;
   color: #f0f6fc;
@@ -303,7 +303,7 @@ atk-content-main {
 }
 
 .user-btn:hover,
-.action-btn:hover {
+.navbar-btn:hover {
   background-color: #424a53;
   border-color: #656d76;
 }
@@ -1339,15 +1339,14 @@ li,
 /* .config-toggle:hover, */
 .toggle-arrow.right:hover {
   display: inline-block;
-  animation: move-right 1s linear infinite;
+  /* animation: move-right 1s linear infinite; */
   transition-delay: 1s;
 }
 
 .toggle-arrow.left:hover {
   display: inline-block;
-  animation: move-left 1s linear infinite;
+  /* animation: move-left 1s linear infinite; */
   transition-delay: 1s;
-  /* 1s de délai */
 }
 
 .config-section {
@@ -1528,7 +1527,7 @@ li,
   }
 
   /* Réduit la taille des éléments */
-  .action-btn {
+  .navbar-btn {
     padding: 6px;
   }
 
@@ -1556,7 +1555,7 @@ li,
     gap: 6px;
   }
 
-  .action-btn {
+  .navbar-btn {
     padding: 4px;
   }
 
