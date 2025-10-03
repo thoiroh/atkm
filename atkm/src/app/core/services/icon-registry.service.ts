@@ -22,7 +22,7 @@ export interface IconRegistry {
 export class IconRegistryService {
   private http = inject(HttpClient);
   private url = '/assets/config/icons.json';
-  // HACK=============================== SIGNALS FOR SERVICE STATUS ====================================================
+  // HACK IconRegistryService -> Signals for service status ====================================================
   private _registry = signal<IconRegistry>(this.createEmptyRegistry());
   private _isLoaded = signal<boolean>(false);
   private _hasError = signal<boolean>(false);
@@ -34,7 +34,7 @@ export class IconRegistryService {
   readonly hasError = this._hasError.asReadonly();
 
   constructor() {
-    // HACK============================ EFFECT TO LOAD ICONS AT FIRST INJECTION =======================================
+    // HACK IconRegistryService -> Effect to load icons at first injection =======================================
     effect(() => {
       if (!this._isLoaded() && !this._hasError()) {
         this.loadIcons();

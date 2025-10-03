@@ -57,20 +57,15 @@ export class BinanceService {
             balances: processedBalances
           };
 
-          // OFF: binance.service.127 ================ CONSOLE LOG IN PROGRESS
-          // this.tools.consoleGroup({
-          //   title: `BinanceService.127: Account data processed successfully`,
-          //   tag: 'check',
-          //   data: {
-          //     accountType: processedAccount.accountType,
-          //     balancesCount: processedAccount.balances.length,
-          //     canTrade: processedAccount.canTrade
-          //   },
-          //   palette: 'su',
-          //   collapsed: true,
-          //   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-          //   fontSizePx: 13
-          // });
+          this.tools.consoleGroup({ // TAG BinanceService -> getAccount() ================ CONSOLE LOG IN PROGRESS
+            title: `BinanceService getAccount() ∝ 61 : Account data processed successfully`,
+            tag: 'recycle', palette: 'su', collapsed: true,
+            data: {
+              accountType: processedAccount.accountType,
+              balancesCount: processedAccount.balances.length,
+              canTrade: processedAccount.canTrade
+            },
+          });
 
           return processedAccount;
         }),

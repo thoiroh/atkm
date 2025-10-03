@@ -62,8 +62,8 @@ export class HomeContentComponent implements OnInit {
     // });
     this.config = this.configService.getConfig();
 
-    this.tools.consoleGroup({ // TAG HomeContentComponent 113 ngOnInit()
-      title: `HomeContentComponent initialized`, tag: 'check', palette: 'su',
+    this.tools.consoleGroup({ // TAG HomeContentComponent -> ngOnInit()
+      title: `HomeContentComponent initialized`, tag: 'check', palette: 'in', collapsed: true,
       data: {
         config: this.config
       },
@@ -124,16 +124,6 @@ export class HomeContentComponent implements OnInit {
    * Load Binance account information
    */
   loadAccountInfo(): void {
-    // OFF: atk-home-content.165 ================ CONSOLE LOG IN PROGRESS
-    // this.tools.consoleGroup({
-    //   title: `AccountInfoComponent.160: loadAccountInfo() AccountInfo: Loading account data ...`,
-    //   tag: 'check',
-    //   data: null,
-    //   palette: 'de',
-    //   collapsed: true,
-    //   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-    //   fontSizePx: 13
-    // });
     this.loading.set(true);
     this.error.set(null);
 
@@ -142,28 +132,12 @@ export class HomeContentComponent implements OnInit {
       .subscribe({
         next: (account) => {
           if (account.balances && account.balances.length > 0) {
-            // OFF : atk-home-content.183 ================ CONSOLE LOG IN PROGRESS
-            this.tools.consoleGroup({
-              title: `AccountInfoComponent.187: loadAccountInfo() AccountInfo: Account data received:`,
-              tag: 'check',
-              data: [account.balances],
-              palette: 'su',
-              collapsed: false,
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSizePx: 13,
-              arrayAsTable: 'auto',         // 'true' pour forcer, 'false' pour désactiver
-              tableMinRows: 3,
-              tableMinCommonKeys: 2,
-              tableSampleSize: 8
-            });
           }
-          // data: { account: account, count: account.balances?.length || 0, balances: account.balances },
-
           this.account.set(account);
           this.loading.set(false);
         },
         error: (error) => {
-          // TAG: atk-home-content 214 ================ CONSOLE LOG IN PROGRESS
+          // TAG HomeContentComponent -> loadAccountInfo() ================ CONSOLE LOG IN PROGRESS
           this.tools.consoleGroup({
             title: `AccountInfoComponent.187: binanceService.getAccount() AccountInfo: Error loading account:`,
             tag: 'cross',

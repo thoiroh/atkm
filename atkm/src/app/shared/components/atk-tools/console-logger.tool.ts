@@ -246,13 +246,14 @@ export class ConsoleLogger {
       value: this.hex('#00CED1'),
       meta: this.hex('#646464ff')
     };
+    // HACK ConsoleLogger -> getPalette() ====================================================
     const named: Record<string, typeof base> = {
       de: base,
       su: { ...base, title: this.hex('#ebebebff'), key: this.hex('#2cf72cff'), tag: this.hex('#64ff64'), value: this.hex('#2cf72c'), meta: this.hex('#646464ff') },
-      in: { ...base, title: this.hex('#ebebebff'), key: this.hex('#2cf72cff'), tag: this.hex('#1E90FF'), value: this.hex('#ddf7ff'), meta: this.hex('#646464ff') },
-      wa: { ...base, title: this.hex('#ebebebff'), key: this.hex('#2cf72cff'), tag: this.hex('#FFA500'), value: this.hex('#FFD700'), meta: this.hex('#646464ff') },
-      er: { ...base, title: this.hex('#ebebebff'), key: this.hex('#2cf72cff'), tag: this.hex('#E81123'), value: this.hex('#FA8072'), meta: this.hex('#646464ff') },
-      ac: { ...base, title: this.hex('#ebebebff'), key: this.hex('#2cf72cff'), tag: this.hex('#BA55D3'), value: this.hex('#EE82EE'), meta: this.hex('#646464ff') }
+      in: { ...base, title: this.hex('#ebebebff'), key: this.hex('#1E90FF'), tag: this.hex('#1E90FF'), value: this.hex('#ddf7ff'), meta: this.hex('#646464ff') },
+      wa: { ...base, title: this.hex('#ebebebff'), key: this.hex('#FFA500'), tag: this.hex('#FFA500'), value: this.hex('#FFD700'), meta: this.hex('#646464ff') },
+      er: { ...base, title: this.hex('#ebebebff'), key: this.hex('#E81123'), tag: this.hex('#E81123'), value: this.hex('#FA8072'), meta: this.hex('#646464ff') },
+      ac: { ...base, title: this.hex('#ebebebff'), key: this.hex('#BA55D3'), tag: this.hex('#BA55D3'), value: this.hex('#EE82EE'), meta: this.hex('#646464ff') }
     };
     return named[name ?? 'default'];
   }

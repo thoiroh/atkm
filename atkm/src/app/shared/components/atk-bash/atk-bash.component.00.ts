@@ -10,7 +10,9 @@ import { BinanceErrorHandlerService } from '@app/features/binance/services/binan
 import { TransactionStateService } from '@app/features/binance/services/binance-transaction-state.service';
 import { BinanceService } from '@features/binance/services/binance.service';
 
-import { TerminalInputDirective } from '@shared/directives/terminal-input.directive';
+import {
+  TerminalInputDirective
+} from '@shared/directives/terminal-input.directive';
 import { BalanceFormatPipe } from '@shared/pipes/pipes';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { ToolsService } from '@shared/services/tools.service';
@@ -31,36 +33,22 @@ import { AtkBashService } from './atk-bash.service';
   templateUrl: './atk-bash.component.html',
   // styleUrls: ['./atk-bash.component.css'],
 })
-
 export class AtkBashComponent implements OnInit {
 
-  // =========================================
-  // ViewChild directive - Angular 20 Style
-  // =========================================
-
+  // Modern Angular 20 ViewChild syntax for directive reference
   private terminalDirective = viewChild(TerminalInputDirective);
+  private tools = inject(ToolsService);
 
-  // =========================================
-  // INPUTS - Angular 20 Style
-  // =========================================
-
+  // Component inputs
   configId = input<string>('binance-debug-v2');
   autoLoad = input<boolean>(true);
   history: string[] = [];
-
-  // =========================================
-  // OUTPUTS - Angular 20 Style
-  // =========================================
-
+  // Component outputs
   dataLoaded = output<BashData[]>();
   errorOccurred = output<string>();
   eventEmitted = output<IBashEvent>();
-  configRequest = output<IBashConfig>();
 
-  // =========================================
-  // SERVICES - Angular 20 Style
-  // =========================================
-
+  // Services
   private bashService = inject(AtkBashService);
   private bashConfigFactory = inject(AtkBashConfigFactory);
   private binanceService = inject(BinanceService);
@@ -69,14 +57,11 @@ export class AtkBashComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private zone = inject(NgZone);
   private apiManagementState = inject(ApiManagementStateService); // CORRECTED path
-  private tools = inject(ToolsService);
 
   // =========================================
   // SIGNALS - Angular 20 Style
   // =========================================
 
-  protected currentConfig = signal<IBashConfig | null>(null);
-  protected loading = signal<boolean>(false);
   private currentEndpoint = signal<string>('');
   private data = signal<BashData[]>([]);
   private error = signal<string | null>(null);
@@ -88,10 +73,14 @@ export class AtkBashComponent implements OnInit {
     connectionStatus: 'disconnected',
     requestParams: {},
   });
+
+  protected currentConfig = signal<IBashConfig | null>(null);
+  protected loading = signal<boolean>(false);
   scrollState = signal<{ contentHeight: number; visibleHeight: number }>({
     contentHeight: 0,
     visibleHeight: 0
   });
+
   scrollStateDisplay = computed(() => {
     const state = this.scrollState();
     return {
@@ -99,6 +88,8 @@ export class AtkBashComponent implements OnInit {
       visibleHeight: state.visibleHeight
     };
   });
+
+  configRequest = output<IBashConfig>();
 
   emitCurrentConfig(): void {
     const config = this.currentConfig();
@@ -168,24 +159,32 @@ export class AtkBashComponent implements OnInit {
     // Initialize configuration
     effect(() => {
       const configIdValue = this.configId();
+      // TAG: atk-bash.165 ================ CONSOLE LOG IN PROGRESS
+      this.tools.consoleGroup({
+        title: `atk-bash 165 AtkBashComponent -> constructor -> effect() triggered / configIdValue: ${configIdValue}`,
+        tag: 'check', palette: 'su', collapsed: true,
+        data: null
+      });
+
       if (configIdValue === 'binance-debug-v2') {
         const config = this.bashConfigFactory.createBinanceDebugConfig();
+        console.log('Config created:', config);
         this.currentConfig.set(config);
         this.bashService.registerConfig(config);
+
         // Set config in API management service
-        // this.apiManagementState.setConfigId(configIdValue); // FIX AtkBashComponent (i perqué cui ?)
+        this.apiManagementState.setConfigId(configIdValue);
       }
+
       // Set default endpoint
       const config = this.currentConfig();
       if (config && config.defaultEndpoint) {
-        this.tools.consoleGroup({ // TAG AtkBashComponent -> constructor -> effect() ================ CONSOLE LOG IN PROGRESS
-          title: `AtkBashComponent ∝ 181 -> constructor -> effect() triggered -> config created: ${configIdValue}`,
-          tag: 'check', palette: 'ac', collapsed: false,
-          data: { config: config, defaultEndpoint: config.defaultEndpoint }
-        });
+        console.log('Setting default endpoint:', config.defaultEndpoint);
         this.currentEndpoint.set(config.defaultEndpoint);
+
         // Set endpoint in API management service
-        // this.apiManagementState.setCurrentEndpoint(config.defaultEndpoint); // FIX AtkBashComponent (i perqué cui ?)
+        this.apiManagementState.setCurrentEndpoint(config.defaultEndpoint);
+
         if (this.autoLoad()) {
           this.loadData();
         }
@@ -233,22 +232,28 @@ export class AtkBashComponent implements OnInit {
     this.apiManagementState.events$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(event => {
+        // OFF: atk-bash.233 ================ CONSOLE LOG IN PROGRESS
+        // this.tools.consoleGroup({
+        //   title: `atk-bash 233 received event: ${event.type}`,
+        //   tag: 'check',
+        //   data: event.payload,
+        //   palette: 'de',
+        //   collapsed: true,
+        //   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+        //   fontSizePx: 13
+        // });
         this.handleApiManagementEvent(event);
       });
 
     // Auto-update terminal content when logs change
     effect(() => {
-      // this.updateTerminalContent(); // FIX AtkBashComponent (i perqué cui ?)
+      this.updateTerminalContent();
     });
   }
 
-  // =========================================
-  // LIFECYCLE
-  // =========================================
-
   ngOnInit(): void {
 
-    // this.debugFactory();
+    this.debugFactory();
 
     this.addLog('ATK Bash Terminal initialized', 'info');
     this.terminalState.update(state => ({
@@ -259,7 +264,19 @@ export class AtkBashComponent implements OnInit {
 
     // Post-init check
 
-    // setTimeout(() => { // FIX AtkBashComponent (i perqué cui ?)
+    // setTimeout(() => {
+    //   // TAG: atk-bash.274 ================ CONSOLE LOG IN PROGRESS
+    //   this.tools.consoleGroup({
+    //     title: `atk-bash 274 AtkBashComponent -> ngOnInit -> setTimeout -> Current endpoint: ${this.currentConfig()}`,
+    //     tag: 'check',
+    //     data: {
+    //       'Current endpoint:': this.currentEndpoint(),
+    //       'Current config:': this.currentConfig()
+    //     },
+    //     palette: 'su',
+    //     collapsed: true,
+    //   });
+
     //   if (!this.currentEndpoint() && this.currentConfig()?.defaultEndpoint) {
     //     console.warn('⚠️ Endpoint not set, forcing default');
     //     this.currentEndpoint.set(this.currentConfig()!.defaultEndpoint!);
@@ -665,25 +682,32 @@ export class AtkBashComponent implements OnInit {
   public selectionText(): string { return ''; }
 
   public debugFactory(): void {
-    this.tools.consoleGroup({ // TAG AtkBashComponent -> debugFactory() ================ CONSOLE LOG IN PROGRESS
-      title: `AtkBashComponent 691 -> debugFactory(1) -> currentConfig: ${this.currentConfig()}`,
-      tag: 'check', palette: 'su', collapsed: false,
-      data: {
-        currentConfig: this.currentConfig(),
-        bashConfigFactory: this.bashConfigFactory
-      },
+    // TAG: atk-bash.702 ================ CONSOLE LOG IN PROGRESS
+    this.tools.consoleGroup({
+      title: `atk-bash 702 AtkBashComponent -> debugFactory(1) -> currentConfig: ${this.currentConfig()}`,
+      tag: 'check',
+      data: { config: this.bashConfigFactory, currentConfig: this.currentConfig() },
+      palette: 'su',
+      collapsed: true,
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      fontSizePx: 13
     });
 
     const config = this.currentConfig();
     if (config) {
-      this.tools.consoleGroup({ // TAG AtkBashComponent -> debugFactory() ================ CONSOLE LOG IN PROGRESS
-        title: `AtkBashComponent 702 -> debugFactory(2) -> currentEndpoint: ${this.currentEndpoint()}`,
-        tag: 'check', palette: 'su', collapsed: true,
+      // TAG: atk-bash.715 ================ CONSOLE LOG IN PROGRESS
+      this.tools.consoleGroup({
+        title: `atk-bash 715 AtkBashComponent -> debugFactory(2) -> currentEndpoint: ${this.currentEndpoint()}`,
+        tag: 'check',
         data: {
           'Config endpoints': config.endpoints,
           'Default endpoint:': config.defaultEndpoint,
           'Current endpoint signal:': this.currentEndpoint()
         },
+        palette: 'su',
+        collapsed: true,
+        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+        fontSizePx: 13
       });
     }
   }

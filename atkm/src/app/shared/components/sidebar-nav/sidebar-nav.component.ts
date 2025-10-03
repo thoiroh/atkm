@@ -31,8 +31,8 @@ export class SidebarNavComponent implements OnInit {
       next: (config) => { this.config = config.sidebar; },
       error: (error) => { console.error('Erreur lors du chargement de la configuration:', error); }
     });
-    this.tools.consoleGroup({ // TAG SidebarNavComponent 34 ngOnInit()
-      title: `SidebarNavComponent initialized`, tag: 'check', palette: 'su', collapsed: true,
+    this.tools.consoleGroup({ // TAG SidebarNavComponent -> ngOnInit()
+      title: `SidebarNavComponent initialized ngOnInit()`, tag: 'check', palette: 'in', collapsed: true,
       data: { config: this.config },
     });
   }

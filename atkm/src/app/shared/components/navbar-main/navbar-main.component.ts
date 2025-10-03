@@ -23,8 +23,8 @@ export class NavbarMainComponent implements OnInit {
       next: (config) => { this.config = config; },
       error: (error) => { console.error('Erreur lors du chargement de la configuration:', error); }
     });
-    this.tools.consoleGroup({ // TAG NavbarMainComponent 29 ngOnInit()
-      title: `NavbarMainComponent initialized`, tag: 'check', palette: 'su', collapsed: true,
+    this.tools.consoleGroup({ // TAG NavbarMainComponent -> ngOnInit()
+      title: `NavbarMainComponent initialized ngOnInit()`, tag: 'check', palette: 'in', collapsed: true,
       data: { config: this.config },
     });
   }

@@ -155,8 +155,8 @@ export class ApiManagementStateService {
   setConfigId(configId: string): void {
     this._configId.set(configId);
     this.emitEvent('endpoint-changed', { configId });
-    this.tools.consoleGroup({ // TAG: ApiManagementStateService.159 ================ CONSOLE LOG IN PROGRESS
-      title: `ApiManagementStateService 159 -> setConfigId() -> configId: `, tag: 'recycle', palette: 'su',
+    this.tools.consoleGroup({ // TAG ApiManagementStateService -> setConfigId()================ CONSOLE LOG IN PROGRESS
+      title: `ApiManagementStateService ∝ 159 -> setConfigId() -> configId: `, tag: 'recycle', palette: 'su',
       data: { configId: configId, state: this.state() }
     });
   }
@@ -183,7 +183,7 @@ export class ApiManagementStateService {
       tableCount: transformResult.tableData.length
     });
 
-    this.saveToSession();
+    // this.saveToSession();// FIX ApiManagementStateService (i perqué cui ?)
   }
 
   /**
@@ -288,8 +288,8 @@ export class ApiManagementStateService {
     try {
       const state = this.state();
       sessionStorage.setItem('api_management_state', JSON.stringify(state));
-      this.tools.consoleGroup({ // TAG: ApiManagementStateService.291 ================ CONSOLE LOG IN PROGRESS
-        title: `ApiManagementStateService 291 -> saveToSession() -> api_management_state: `, tag: 'check', palette: 'su',
+      this.tools.consoleGroup({ // TAG ApiManagementStateService -> saveToSession() ================ CONSOLE LOG IN PROGRESS
+        title: `ApiManagementStateService ∝ 291 -> saveToSession() -> api_management_state: `, tag: 'recycle', palette: 'ac',
         data: { state }
       });
     } catch (error) {

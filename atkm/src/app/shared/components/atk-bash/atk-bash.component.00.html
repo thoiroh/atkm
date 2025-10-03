@@ -1,0 +1,24 @@
+<div class="terminal-status">
+  <span class="status-indicator" [class]="terminalState().connectionStatus">
+    {{ getStatusIcon(terminalState().connectionStatus) }}
+    {{ terminalState().connectionStatus | titlecase }}
+  </span>
+
+  @if (loading()) {
+  <span class="loading-indicator">
+    <span class="spinner"></span>
+    Loading...
+  </span>
+  }
+
+  @if (terminalState().connectionStatus) {
+  <span class="scroll-info">
+    Content: {{ scrollStateDisplay().contentHeight }}px / Visible: {{ scrollStateDisplay().visibleHeight }}px </span>
+  }
+</div>
+
+<!-- Terminal textarea with simplified directive -->
+<textarea [style.--terminal-min-height]="currentConfig()?.terminal.height || '500px'"
+  [style.max-height]="currentConfig()?.terminal.height || '500px'" (input)="onTerminalContentChange($event)"
+  (scroll)="onTerminalScroll($event)">
+</textarea>

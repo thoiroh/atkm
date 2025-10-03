@@ -115,8 +115,8 @@ export class AtkDevIntegrationComponent implements OnInit {
     //     }
     //   });
 
-    this.tools.consoleGroup({ // TAG AtkDevIntegrationComponent 101 ngOnInit()
-      title: `AtkDevIntegrationComponent initialized`, tag: 'check', palette: 'su',
+    this.tools.consoleGroup({ // TAG AtkDevIntegrationComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+      title: `AtkDevIntegrationComponent initialized ngOnInit() ∝ 119`, tag: 'check', palette: 'su',
       data: {
         config: this.config,
         showSidebar: this.showSidebar(),

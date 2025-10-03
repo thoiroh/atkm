@@ -189,7 +189,7 @@ export class TransactionStateService {
         return { ...this.getInitialState(), ...parsed };
       }
     } catch (error) {
-      console.warn('Failed to load transaction state from localStorage:', error);
+      // console.warn('Failed to load transaction state from localStorage:', error); // FIX TransactionStateService (i perqué cui ?)
       localStorage.removeItem(this.storageKey);
     }
     return null;
