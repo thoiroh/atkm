@@ -13,7 +13,8 @@
   "sidebar": {
     "userContext": {
       "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
-      "username": "ThomBarth"
+      "username": "ThomBarth",
+      "title": "when data finally reaches its owner."
     },
     "sections": [
       {
@@ -267,25 +268,25 @@
         "icon": "settings",
         "items": [
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "Favorite Trading Pairs",
             "description": "Manage your most traded cryptocurrency pairs",
             "link": "/config/trading-pairs"
           },
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "Default Time Ranges",
             "description": "Set preferred periods for transaction history",
             "link": "/config/time-ranges"
           },
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "P&L Calculation Method",
             "description": "Choose FIFO, LIFO, or weighted average",
             "link": "/config/calculation-method"
           },
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "Display Currency",
             "description": "USD, EUR, or crypto base currency preferences",
             "link": "/config/display-currency"
@@ -297,25 +298,25 @@
         "icon": "default",
         "items": [
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "Display Settings",
             "description": "Configure views and filters for the main grid",
             "link": "/config/display"
           },
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "User Preferences",
             "description": "Customize interface and component settings",
             "link": "/config/preferences"
           },
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "Keyboard Shortcuts",
             "description": "Configure shortcuts and hotkeys",
             "link": "/config/shortcuts"
           },
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "Component Layout",
             "description": "Organization and arrangement of elements",
             "link": "/config/layout"
@@ -327,25 +328,25 @@
         "icon": "default",
         "items": [
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "Export Transaction Data",
             "description": "Export complete trading history to CSV/Excel",
             "link": "/tools/export-transactions"
           },
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "Import External Data",
             "description": "Import trading data from other platforms",
             "link": "/tools/import"
           },
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "Bulk Analysis Tools",
             "description": "Advanced P&L and performance analysis",
             "link": "/tools/bulk-analysis"
           },
           {
-            "icon": "toggle",
+            "icon": "cross",
             "title": "Tax Reporting Helper",
             "description": "Generate reports for tax purposes",
             "link": "/tools/tax-reporting"

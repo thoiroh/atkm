@@ -1,5 +1,4 @@
 // src/app/features/binance/pages/binance-dashboard/binance-dashboard.component.ts
-// COMPLETE EXAMPLE - Using the new unified system
 
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
@@ -28,12 +27,9 @@ import { ConfigService, ILandingConfig } from '../../core/services/config.servic
 })
 export class AtkDevIntegrationComponent implements OnInit {
 
-  // =========================================
-  // INPUTS
-  // =========================================
-
   @Input() title: string = 'atk dashboard';
   @Input() configPanelCollapsed: boolean = false;
+
   config: ILandingConfig | null = null;
   loading = signal<boolean>(false);
   error = signal<string | null>(null);

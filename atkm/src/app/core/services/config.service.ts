@@ -26,6 +26,7 @@ export interface ISidebarNavConfig {
   userContext: {
     avatar: string;
     username: string;
+    title: string;
   };
   sections: ISidebarSection[];
 }

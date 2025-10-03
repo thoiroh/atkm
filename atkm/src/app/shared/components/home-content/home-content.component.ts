@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { ToolsService } from '@shared/services/tools.service';
 import { Subject, takeUntil } from 'rxjs';
 
 import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
 import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
-import { IBashConfig, IBashTerminalState } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { IBashConfig } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { AtkIconComponent } from '../atk-icon/atk-icon.component';
 
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
@@ -24,16 +24,17 @@ import { SidebarConfigComponent } from '@shared/components/sidebar-config/sideba
 export class HomeContentComponent implements OnInit {
 
   @Input() configPanelCollapsed: boolean = false;
+  @Input() config: ILandingConfig | null = null;
 
-  config: ILandingConfig | null = null;
+  // config: ILandingConfig | null = null;
   account = signal<BinanceAccount | null>(null);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
 
-  bashConfig = signal<IBashConfig | null>(null);
-  bashTerminalState = signal<IBashTerminalState | null>(null);
-  bashCurrentEndpoint = signal<string>('');
-  bashConfigPanelCollapsed = signal<boolean>(false);
+  // bashConfig = signal<IBashConfig | null>(null);
+  // bashTerminalState = signal<IBashTerminalState | null>(null);
+  // bashCurrentEndpoint = signal<string>('');
+  // bashConfigPanelCollapsed = signal<boolean>(false);
 
   private destroy$ = new Subject<void>();
   private binanceService = inject(BinanceService);
@@ -42,75 +43,26 @@ export class HomeContentComponent implements OnInit {
   private breadcrumbService = inject(BreadcrumbService);
   private tools = inject(ToolsService);
 
-  // Computed property for significant balances - UPDATED with better filtering
-  significantBalances = computed(() => {
-    const currentAccount = this.account();
+  // =========================================
+  // CONSTRUCTOR & LIFECYCLE
+  // =========================================
 
-
-    if (!currentAccount) {
-      return [];
-    }
-
-    if (!currentAccount.balances) {
-      return [];
-    }
-
-    if (!Array.isArray(currentAccount.balances)) {
-      return [];
-    }
-
-    // UPDATED - Improved filtering logic with detailed logging
-    const significantBalances = currentAccount.balances.filter(balance => {
-      if (!balance || typeof balance !== 'object') {
-        return false;
-      }
-
-      // Convert to numbers - handle both string and number formats
-      const free = parseFloat(balance.free?.toString() || '0');
-      const locked = parseFloat(balance.locked?.toString() || '0');
-
-      // Calculate total if not provided by service
-      const total = balance.total !== undefined
-        ? parseFloat(balance.total.toString())
-        : free + locked;
-
-      const hasBalance = free > 0 || locked > 0 || total > 0;
-
-      // Log detailed info for each asset with balance
-      if (hasBalance) {
-
-        // console.log(`✅ ${balance.asset}: free=${free}, locked=${locked}, total=${total}`);
-      }
-
-      return hasBalance;
-    });
-
-    // OFF: atk-home-content.84 ================ CONSOLE LOG IN PROGRESS
-    // this.tools.consoleGroup({
-    //   title: `AccountInfoComponent.139: AccountInfo Significant balances found:`,
-    //   tag: 'cross',
-    //   data: { significantBalances: significantBalances.length, assets: [significantBalances.map(b => b.asset)] },
-    //   palette: 'wa',
-    //   collapsed: false,
-    //   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-    //   fontSizePx: 13
-    // });
-
-    return significantBalances;
-  });
+  constructor() { }
 
   ngOnInit(): void {
-    this.configService.loadLandingConfig().subscribe({
-      next: (config) => {
-        this.config = config;
-        // Initialize bash config panel as collapsed
-        this.bashConfigPanelCollapsed.set(true);
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement de la configuration:', error);
-      }
-    });
-    this.tools.consoleGroup({ // TAG AtkDevIntegrationComponent 101 ngOnInit()
+    // this.configService.loadLandingConfig().subscribe({
+    //   next: (config) => {
+    //     this.config = config;
+    //     // Initialize bash config panel as collapsed
+    //     // this.bashConfigPanelCollapsed.set(true);
+    //   },
+    //   error: (error) => {
+    //     console.error('Erreur lors du chargement de la configuration:', error);
+    //   }
+    // });
+    this.config = this.configService.getConfig();
+
+    this.tools.consoleGroup({ // TAG HomeContentComponent 113 ngOnInit()
       title: `HomeContentComponent initialized`, tag: 'check', palette: 'su',
       data: {
         config: this.config
@@ -131,7 +83,7 @@ export class HomeContentComponent implements OnInit {
  * Handle bash config panel toggle
  */
   toggleBashConfigPanel(): void {
-    this.bashConfigPanelCollapsed.update(collapsed => !collapsed);
+    // this.bashConfigPanelCollapsed.update(collapsed => !collapsed);
   }
 
   /**
@@ -211,7 +163,7 @@ export class HomeContentComponent implements OnInit {
           this.loading.set(false);
         },
         error: (error) => {
-          // TAG: atk-home-content.204 ================ CONSOLE LOG IN PROGRESS
+          // TAG: atk-home-content 214 ================ CONSOLE LOG IN PROGRESS
           this.tools.consoleGroup({
             title: `AccountInfoComponent.187: binanceService.getAccount() AccountInfo: Error loading account:`,
             tag: 'cross',
@@ -233,7 +185,6 @@ export class HomeContentComponent implements OnInit {
   refreshAccount(): void {
     this.loadAccountInfo();
   }
-
 
   /**
    * Format balance number with appropriate decimals

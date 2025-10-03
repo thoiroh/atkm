@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { ConfigService, ILandingConfig } from '@core/services/config.service';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { ToolsService } from '@shared/services/tools.service';
 
 @Component({
   selector: 'atk-navbar-main',
@@ -12,16 +13,19 @@ import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component
 export class NavbarMainComponent implements OnInit {
   @Input() config: ILandingConfig | null = null;
 
-  constructor(private configService: ConfigService) { }
+  private configService = inject(ConfigService);
+  private tools = inject(ToolsService);
+
+  constructor() { }
 
   ngOnInit(): void {
     this.configService.loadLandingConfig().subscribe({
-      next: (config) => {
-        this.config = config;
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement de la configuration:', error);
-      }
+      next: (config) => { this.config = config; },
+      error: (error) => { console.error('Erreur lors du chargement de la configuration:', error); }
+    });
+    this.tools.consoleGroup({ // TAG NavbarMainComponent 29 ngOnInit()
+      title: `NavbarMainComponent initialized`, tag: 'check', palette: 'su', collapsed: true,
+      data: { config: this.config },
     });
   }
 }

@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ISidebarNavConfig } from '@core/services/config.service';
+import { ConfigService, ISidebarNavConfig } from '@core/services/config.service';
 import { IconRegistryService } from '@core/services/icon-registry.service';
 import { HoverDotDirective } from '@directives/hover-dot.directive';
 import { IconPipe } from '@pipes/icon.pipe';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { ToolsService } from '@shared/services/tools.service';
 
 @Component({
   selector: 'atk-sidebar-nav',
@@ -14,13 +15,26 @@ import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component
   templateUrl: './sidebar-nav.component.html',
 })
 
-export class SidebarNavComponent {
+export class SidebarNavComponent implements OnInit {
   @Input() config: ISidebarNavConfig | null = null;
 
   private iconRegistry = inject(IconRegistryService);
+  private configService = inject(ConfigService);
+  private tools = inject(ToolsService);
 
   constructor() {
     // console.log('IconRegistry registry signal:', this.iconRegistry.registry());
+  }
+
+  ngOnInit(): void {
+    this.configService.loadLandingConfig().subscribe({
+      next: (config) => { this.config = config.sidebar; },
+      error: (error) => { console.error('Erreur lors du chargement de la configuration:', error); }
+    });
+    this.tools.consoleGroup({ // TAG SidebarNavComponent 34 ngOnInit()
+      title: `SidebarNavComponent initialized`, tag: 'check', palette: 'su', collapsed: true,
+      data: { config: this.config },
+    });
   }
 
   // Toggle pour les sections

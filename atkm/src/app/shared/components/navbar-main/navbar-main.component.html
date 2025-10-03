@@ -16,6 +16,7 @@
     <button class="navbar-btn" aria-label="Créer quelque chose de nouveau">
       <atk-icon name="cross" color="currentColor" />
     </button>
+
     <a class="logo" [href]="config?.navbar?.logo?.link || '#'" aria-label="Homepage">
       <svg aria-hidden="true" height="40" viewBox="0 0 32 32" version="1.1" width="40">
         <defs>
@@ -30,7 +31,7 @@
       </svg>
     </a>
 
-    <nav role="navigation" aria-label="ATK Breadcrumb">
+    <nav class="navbar-nav" role="navigation" aria-label="ATK Breadcrumb">
       <span *ngFor="let item of config?.navbar.breadcrumb || []; let last = last">
         {{item}}
       </span>
