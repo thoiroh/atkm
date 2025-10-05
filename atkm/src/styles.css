@@ -1685,6 +1685,10 @@ li,
   fill: #f59e0b;
 }
 
+[data-hover-color="success"] ._hover-dot svg {
+  fill: #64ff64;
+}
+
 [data-hover-color="red"] ._hover-dot svg {
   fill: #ff0606;
 }

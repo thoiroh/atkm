@@ -2,7 +2,8 @@
 <!-- Updated template with SidebarBashConfigComponent integration -->
 
 @if (config) {
-<div class="landing-wrapper" [class.config-collapsed]="config?.configPanel?.isCollapsed">
+<div class="landing-wrapper">
+  <!-- <div class="landing-wrapper" [class.config-collapsed]="configPanelCollapsed?true:false"> -->
 
   <!-- GRILLE 1: MENU PRINCIPAL (gauche) -->
   <atk-navbar-main [config]="config" />

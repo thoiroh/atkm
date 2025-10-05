@@ -1,358 +1,742 @@
 {
-  "navbar": {
-    "logo": {
-      "svg": "atk-logo",
-      "alt": "atkm",
-      "link": "/dashboard"
+  "default": {
+    "atkapp": {
+      "version": "0.2025.09.12.120032",
+      "buildDate": "2025-09-12T12:00:32Z",
+      "commitHash": "abc123def456ghi789jkl012mno345pqr678stu9",
+      "environment": "development",
+      "apiBaseUrl": "http://localhost:3000/api",
+      "title": "atomeek - api management for data integration",
+      "subtitle": "when data finally reaches its owner.",
+      "logo": "atk-logo",
+      "favicon": "atk-favicon",
+      "master": "ThomBarth"
     },
-    "breadcrumb": ["Dashboard"],
-    "centerTitle": "atomeek - api management for data integration",
-    "centerSubtitle": "{ v.0.2025.09.12.120032 }",
-    "centerBadge": " β "
-  },
-  "sidebar": {
-    "userContext": {
-      "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
-      "username": "ThomBarth",
-      "title": "when data finally reaches its owner."
-    },
-    "sections": [
-      {
-        "title": "Dev Tools",
-        "icon": "default",
-        "items": [
-          {
-            "icon": "dot",
-            "label": "[dev] HomeComponent",
-            "link": "/dashboard",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": []
-          },
-          {
-            "icon": "dot",
-            "label": "[dev] AtkDevIntegrationComponent",
-            "link": "/dashboard/bash",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": []
-          }
-        ]
+    "navbar": {
+      "logo": {
+        "svg": "atk-logo",
+        "alt": "atkm",
+        "link": "/dashboard"
       },
-      {
-        "title": "Binance Wallet",
-        "icon": "default",
-        "action": {
-          "label": "New",
-          "action": "createRepo"
-        },
-        "items": [
-          {
-            "icon": "dot",
-            "label": "[dev] BinanceDebugComponent",
-            "link": "/dashboard/binance/debug",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": []
-          },
-          {
-            "icon": "dot",
-            "label": "[dev] BinanceApiManagementComponent",
-            "link": "/dashboard/binance/bbash",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": []
-          },
-          {
-            "icon": "dot",
-            "label": "Assets Inventory (user)",
-            "link": "/dashboard/binance/account",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": []
-          },
-          {
-            "icon": "toggle",
-            "label": "Transaction History (user)",
-            "link": "",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": [
-              {
-                "icon": "trending-up",
-                "label": "Transaction History",
-                "link": "/dashboard/binance/history",
-                "action": {
-                  "label": "new",
-                  "action": "viewHistory"
-                },
-                "isExpanded": false
-              },
-              {
-                "icon": "arrow-down",
-                "label": "Deposit History",
-                "link": "/dashboard/binance/history?tab=transfers&type=deposits",
-                "action": false,
-                "isExpanded": false
-              },
-              {
-                "icon": "arrow-up",
-                "label": "Withdrawal History",
-                "link": "/dashboard/binance/history?tab=transfers&type=withdrawals",
-                "action": false,
-                "isExpanded": false
-              }
-            ]
-          },
-          {
-            "icon": "toggle",
-            "label": "Popular Coins",
-            "link": "",
-            "action": false,
-            "isExpanded": false,
-            "subMenu": [
-              {
-                "icon": "currency-bitcoin",
-                "label": "BTC/USDT",
-                "link": "/dashboard/binance/history/BTCUSDT",
-                "action": {
-                  "label": "hot",
-                  "action": "viewBTC"
-                },
-                "isExpanded": false
-              },
-              {
-                "icon": "currency-ethereum",
-                "label": "ETH/USDT",
-                "link": "/dashboard/binance/history/ETHUSDT",
-                "action": false,
-                "isExpanded": false
-              },
-              {
-                "icon": "currency-binance",
-                "label": "BNB/USDT",
-                "link": "/dashboard/binance/history/BNBUSDT",
-                "action": false,
-                "isExpanded": false
-              },
-              {
-                "icon": "default",
-                "label": "ADA/USDT",
-                "link": "/dashboard/binance/history/ADAUSDT",
-                "action": false,
-                "isExpanded": false
-              }
-            ]
-          },
-          {
-            "icon": "dot",
-            "label": "Global Watchlist (user)",
-            "link": "/dashboard/binance/snapshot",
-            "action": false,
-            "isExpanded": false
-          },
-          {
-            "icon": "dot",
-            "label": "Streaming Market Data",
-            "link": "/dashboard/binance/market-data",
-            "action": {
-              "label": "on.going",
-              "action": "streamData"
+      "breadcrumb": ["Dashboard"],
+      "centerTitle": "atomeek - api management for data integration",
+      "centerSubtitle": "{ v.0.2025.09.12.120032 }",
+      "centerBadge": " β "
+    },
+    "sidebar": {
+      "userContext": {
+        "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+        "username": "ThomBarth",
+        "title": "when data finally reaches its owner."
+      },
+      "sections": [
+        {
+          "title": "Dev Tools",
+          "icon": "default",
+          "items": [
+            {
+              "icon": "dot",
+              "label": "[dev] HomeComponent",
+              "link": "/dashboard",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": []
             },
-            "isExpanded": false
-          }
-        ]
-      },
-      {
-        "title": "Interactive Brokers Platform",
-        "icon": "radio-dot",
-        "action": {
-          "label": "New",
-          "action": "createRepo"
+            {
+              "icon": "dot",
+              "label": "[dev] AtkDevIntegrationComponent",
+              "link": "/dashboard/bash",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": []
+            }
+          ]
         },
+        {
+          "title": "Binance Wallet",
+          "icon": "default",
+          "action": {
+            "label": "New",
+            "action": "createRepo"
+          },
+          "items": [
+            {
+              "icon": "dot",
+              "label": "[dev] BinanceDebugComponent",
+              "link": "/dashboard/binance/debug",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": []
+            },
+            {
+              "icon": "dot",
+              "label": "[dev] BinanceApiManagementComponent",
+              "link": "/dashboard/binance/bbash",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": []
+            },
+            {
+              "icon": "dot",
+              "label": "Assets Inventory (user)",
+              "link": "/dashboard/binance/account",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": []
+            },
+            {
+              "icon": "toggle",
+              "label": "Transaction History (user)",
+              "link": "",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": [
+                {
+                  "icon": "trending-up",
+                  "label": "Transaction History",
+                  "link": "/dashboard/binance/history",
+                  "action": {
+                    "label": "new",
+                    "action": "viewHistory"
+                  },
+                  "isExpanded": false
+                },
+                {
+                  "icon": "arrow-down",
+                  "label": "Deposit History",
+                  "link": "/dashboard/binance/history?tab=transfers&type=deposits",
+                  "action": false,
+                  "isExpanded": false
+                },
+                {
+                  "icon": "arrow-up",
+                  "label": "Withdrawal History",
+                  "link": "/dashboard/binance/history?tab=transfers&type=withdrawals",
+                  "action": false,
+                  "isExpanded": false
+                }
+              ]
+            },
+            {
+              "icon": "toggle",
+              "label": "Popular Coins",
+              "link": "",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": [
+                {
+                  "icon": "currency-bitcoin",
+                  "label": "BTC/USDT",
+                  "link": "/dashboard/binance/history/BTCUSDT",
+                  "action": {
+                    "label": "hot",
+                    "action": "viewBTC"
+                  },
+                  "isExpanded": false
+                },
+                {
+                  "icon": "currency-ethereum",
+                  "label": "ETH/USDT",
+                  "link": "/dashboard/binance/history/ETHUSDT",
+                  "action": false,
+                  "isExpanded": false
+                },
+                {
+                  "icon": "currency-binance",
+                  "label": "BNB/USDT",
+                  "link": "/dashboard/binance/history/BNBUSDT",
+                  "action": false,
+                  "isExpanded": false
+                },
+                {
+                  "icon": "default",
+                  "label": "ADA/USDT",
+                  "link": "/dashboard/binance/history/ADAUSDT",
+                  "action": false,
+                  "isExpanded": false
+                }
+              ]
+            },
+            {
+              "icon": "dot",
+              "label": "Global Watchlist (user)",
+              "link": "/dashboard/binance/snapshot",
+              "action": false,
+              "isExpanded": false
+            },
+            {
+              "icon": "dot",
+              "label": "Streaming Market Data",
+              "link": "/dashboard/binance/market-data",
+              "action": {
+                "label": "on.going",
+                "action": "streamData"
+              },
+              "isExpanded": false
+            }
+          ]
+        },
+        {
+          "title": "Interactive Brokers Platform",
+          "icon": "radio-dot",
+          "action": {
+            "label": "New",
+            "action": "createRepo"
+          },
+          "items": [
+            {
+              "icon": "toggle",
+              "label": "Account History",
+              "link": "/dashboard/ibkr/account",
+              "action": false
+            },
+            {
+              "icon": "toggle",
+              "label": "Account Snapshot",
+              "link": "/dashboard/ibkr/snapshot",
+              "action": false
+            },
+            {
+              "icon": "toggle",
+              "label": "Live Market Data",
+              "link": "/dashboard/ibkr/market-data",
+              "action": false
+            }
+          ]
+        },
+        {
+          "title": "Recent activity",
+          "icon": "default",
+          "items": []
+        }
+      ]
+    },
+    "feeds": [
+      {
+        "id": "feed-1",
+        "title": "2025.01.04.102157-Feed",
         "items": [
           {
-            "icon": "toggle",
-            "label": "Account History",
-            "link": "/dashboard/ibkr/account",
-            "action": false
+            "id": "item-1",
+            "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+            "action": "joaeff starred a repository",
+            "time": "10 hours ago",
+            "repo": {
+              "name": "asyncio/big_space",
+              "link": "/repo/big_space",
+              "description": "ai reconstruit entièrement le fichier pour garantir que chaque section contient désormais une démo visible..."
+            },
+            "stats": {
+              "language": {
+                "name": "Rust",
+                "color": "#dea584"
+              },
+              "stars": 638
+            }
           },
           {
-            "icon": "toggle",
-            "label": "Account Snapshot",
-            "link": "/dashboard/ibkr/snapshot",
-            "action": false
+            "id": "item-2",
+            "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+            "action": "Repository update",
+            "time": "2 days ago",
+            "repo": {
+              "name": "moeru-ai/airi",
+              "link": "/repo/airi",
+              "description": "Self hosted, you owned Grok Companion; a container of souls of waifu; cyber livings"
+            },
+            "stats": {
+              "language": {
+                "name": "Vue",
+                "color": "#41b883"
+              },
+              "stars": 10000
+            }
           },
           {
-            "icon": "toggle",
-            "label": "Live Market Data",
-            "link": "/dashboard/ibkr/market-data",
-            "action": false
+            "id": "item-3",
+            "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+            "action": "Repository update",
+            "time": "3 days ago",
+            "repo": {
+              "name": "atkm/matrix",
+              "link": "/repo/matrix",
+              "description": "ATK Matrix - Universal API management framework for financial data integration with Angular + PHP + Docker stack"
+            },
+            "stats": {
+              "language": {
+                "name": "TypeScript",
+                "color": "#3178c6"
+              },
+              "stars": 42
+            }
           }
         ]
-      },
-      {
-        "title": "Recent activity",
-        "icon": "default",
-        "items": []
       }
-    ]
-  },
-  "feeds": [
-    {
-      "id": "feed-1",
-      "title": "2025.01.04.102157-Feed",
-      "items": [
+    ],
+    "configPanel": {
+      "isCollapsed": false,
+      "sections": [
         {
-          "id": "item-1",
-          "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
-          "action": "joaeff starred a repository",
-          "time": "10 hours ago",
-          "repo": {
-            "name": "asyncio/big_space",
-            "link": "/repo/big_space",
-            "description": "ai reconstruit entièrement le fichier pour garantir que chaque section contient désormais une démo visible..."
-          },
-          "stats": {
-            "language": {
-              "name": "Rust",
-              "color": "#dea584"
+          "title": "Trading Configuration",
+          "icon": "settings",
+          "items": [
+            {
+              "icon": "cross",
+              "title": "Favorite Trading Pairs",
+              "description": "Manage your most traded cryptocurrency pairs",
+              "link": "/config/trading-pairs"
             },
-            "stars": 638
-          }
+            {
+              "icon": "cross",
+              "title": "Default Time Ranges",
+              "description": "Set preferred periods for transaction history",
+              "link": "/config/time-ranges"
+            },
+            {
+              "icon": "cross",
+              "title": "P&L Calculation Method",
+              "description": "Choose FIFO, LIFO, or weighted average",
+              "link": "/config/calculation-method"
+            },
+            {
+              "icon": "cross",
+              "title": "Display Currency",
+              "description": "USD, EUR, or crypto base currency preferences",
+              "link": "/config/display-currency"
+            }
+          ]
         },
         {
-          "id": "item-2",
-          "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
-          "action": "Repository update",
-          "time": "2 days ago",
-          "repo": {
-            "name": "moeru-ai/airi",
-            "link": "/repo/airi",
-            "description": "Self hosted, you owned Grok Companion; a container of souls of waifu; cyber livings"
-          },
-          "stats": {
-            "language": {
-              "name": "Vue",
-              "color": "#41b883"
+          "title": "Dashboard Configuration",
+          "icon": "default",
+          "items": [
+            {
+              "icon": "cross",
+              "title": "Display Settings",
+              "description": "Configure views and filters for the main grid",
+              "link": "/config/display"
             },
-            "stars": 10000
-          }
+            {
+              "icon": "cross",
+              "title": "User Preferences",
+              "description": "Customize interface and component settings",
+              "link": "/config/preferences"
+            },
+            {
+              "icon": "cross",
+              "title": "Keyboard Shortcuts",
+              "description": "Configure shortcuts and hotkeys",
+              "link": "/config/shortcuts"
+            },
+            {
+              "icon": "cross",
+              "title": "Component Layout",
+              "description": "Organization and arrangement of elements",
+              "link": "/config/layout"
+            }
+          ]
         },
         {
-          "id": "item-3",
-          "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
-          "action": "Repository update",
-          "time": "3 days ago",
-          "repo": {
-            "name": "atkm/matrix",
-            "link": "/repo/matrix",
-            "description": "ATK Matrix - Universal API management framework for financial data integration with Angular + PHP + Docker stack"
-          },
-          "stats": {
-            "language": {
-              "name": "TypeScript",
-              "color": "#3178c6"
+          "title": "Quick Tools",
+          "icon": "default",
+          "items": [
+            {
+              "icon": "cross",
+              "title": "Export Transaction Data",
+              "description": "Export complete trading history to CSV/Excel",
+              "link": "/tools/export-transactions"
             },
-            "stars": 42
-          }
+            {
+              "icon": "cross",
+              "title": "Import External Data",
+              "description": "Import trading data from other platforms",
+              "link": "/tools/import"
+            },
+            {
+              "icon": "cross",
+              "title": "Bulk Analysis Tools",
+              "description": "Advanced P&L and performance analysis",
+              "link": "/tools/bulk-analysis"
+            },
+            {
+              "icon": "cross",
+              "title": "Tax Reporting Helper",
+              "description": "Generate reports for tax purposes",
+              "link": "/tools/tax-reporting"
+            }
+          ]
         }
       ]
     }
-  ],
-  "configPanel": {
-    "isCollapsed": false,
-    "sections": [
-      {
-        "title": "Trading Configuration",
-        "icon": "settings",
-        "items": [
-          {
-            "icon": "cross",
-            "title": "Favorite Trading Pairs",
-            "description": "Manage your most traded cryptocurrency pairs",
-            "link": "/config/trading-pairs"
-          },
-          {
-            "icon": "cross",
-            "title": "Default Time Ranges",
-            "description": "Set preferred periods for transaction history",
-            "link": "/config/time-ranges"
-          },
-          {
-            "icon": "cross",
-            "title": "P&L Calculation Method",
-            "description": "Choose FIFO, LIFO, or weighted average",
-            "link": "/config/calculation-method"
-          },
-          {
-            "icon": "cross",
-            "title": "Display Currency",
-            "description": "USD, EUR, or crypto base currency preferences",
-            "link": "/config/display-currency"
-          }
-        ]
+  },
+  "atkcash": {
+    "atkapp": {
+      "version": "0.2025.09.12.120032",
+      "buildDate": "2025-09-12T12:00:32Z",
+      "commitHash": "abc123def456ghi789jkl012mno345pqr678stu9",
+      "environment": "development",
+      "apiBaseUrl": "http://localhost:3000/api",
+      "title": "atomeek - api management for data integration",
+      "subtitle": "when data finally reaches its owner.",
+      "logo": "atk-logo",
+      "favicon": "atk-favicon",
+      "master": "ThomBarth"
+    },
+    "navbar": {
+      "logo": {
+        "svg": "atk-logo",
+        "alt": "atkm",
+        "link": "/dashboard"
       },
-      {
-        "title": "Dashboard Configuration",
-        "icon": "default",
-        "items": [
-          {
-            "icon": "cross",
-            "title": "Display Settings",
-            "description": "Configure views and filters for the main grid",
-            "link": "/config/display"
-          },
-          {
-            "icon": "cross",
-            "title": "User Preferences",
-            "description": "Customize interface and component settings",
-            "link": "/config/preferences"
-          },
-          {
-            "icon": "cross",
-            "title": "Keyboard Shortcuts",
-            "description": "Configure shortcuts and hotkeys",
-            "link": "/config/shortcuts"
-          },
-          {
-            "icon": "cross",
-            "title": "Component Layout",
-            "description": "Organization and arrangement of elements",
-            "link": "/config/layout"
-          }
-        ]
+      "breadcrumb": ["Dashboard"],
+      "centerTitle": "atomeek - api management for data integration",
+      "centerSubtitle": "{ v.0.2025.09.12.120032 }",
+      "centerBadge": " β "
+    },
+    "sidebar": {
+      "userContext": {
+        "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+        "username": "ThomBarth",
+        "title": "when data finally reaches its owner."
       },
+      "sections": [
+        {
+          "title": "Dev Tools",
+          "icon": "default",
+          "items": [
+            {
+              "icon": "dot",
+              "label": "[dev] HomeComponent",
+              "link": "/dashboard",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": []
+            },
+            {
+              "icon": "dot",
+              "label": "[dev] AtkDevIntegrationComponent",
+              "link": "/dashboard/bash",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": []
+            }
+          ]
+        },
+        {
+          "title": "Binance Wallet",
+          "icon": "default",
+          "action": {
+            "label": "New",
+            "action": "createRepo"
+          },
+          "items": [
+            {
+              "icon": "dot",
+              "label": "[dev] BinanceDebugComponent",
+              "link": "/dashboard/binance/debug",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": []
+            },
+            {
+              "icon": "dot",
+              "label": "[dev] BinanceApiManagementComponent",
+              "link": "/dashboard/binance/bbash",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": []
+            },
+            {
+              "icon": "dot",
+              "label": "Assets Inventory (user)",
+              "link": "/dashboard/binance/account",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": []
+            },
+            {
+              "icon": "toggle",
+              "label": "Transaction History (user)",
+              "link": "",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": [
+                {
+                  "icon": "trending-up",
+                  "label": "Transaction History",
+                  "link": "/dashboard/binance/history",
+                  "action": {
+                    "label": "new",
+                    "action": "viewHistory"
+                  },
+                  "isExpanded": false
+                },
+                {
+                  "icon": "arrow-down",
+                  "label": "Deposit History",
+                  "link": "/dashboard/binance/history?tab=transfers&type=deposits",
+                  "action": false,
+                  "isExpanded": false
+                },
+                {
+                  "icon": "arrow-up",
+                  "label": "Withdrawal History",
+                  "link": "/dashboard/binance/history?tab=transfers&type=withdrawals",
+                  "action": false,
+                  "isExpanded": false
+                }
+              ]
+            },
+            {
+              "icon": "toggle",
+              "label": "Popular Coins",
+              "link": "",
+              "action": false,
+              "isExpanded": false,
+              "subMenu": [
+                {
+                  "icon": "currency-bitcoin",
+                  "label": "BTC/USDT",
+                  "link": "/dashboard/binance/history/BTCUSDT",
+                  "action": {
+                    "label": "hot",
+                    "action": "viewBTC"
+                  },
+                  "isExpanded": false
+                },
+                {
+                  "icon": "currency-ethereum",
+                  "label": "ETH/USDT",
+                  "link": "/dashboard/binance/history/ETHUSDT",
+                  "action": false,
+                  "isExpanded": false
+                },
+                {
+                  "icon": "currency-binance",
+                  "label": "BNB/USDT",
+                  "link": "/dashboard/binance/history/BNBUSDT",
+                  "action": false,
+                  "isExpanded": false
+                },
+                {
+                  "icon": "default",
+                  "label": "ADA/USDT",
+                  "link": "/dashboard/binance/history/ADAUSDT",
+                  "action": false,
+                  "isExpanded": false
+                }
+              ]
+            },
+            {
+              "icon": "dot",
+              "label": "Global Watchlist (user)",
+              "link": "/dashboard/binance/snapshot",
+              "action": false,
+              "isExpanded": false
+            },
+            {
+              "icon": "dot",
+              "label": "Streaming Market Data",
+              "link": "/dashboard/binance/market-data",
+              "action": {
+                "label": "on.going",
+                "action": "streamData"
+              },
+              "isExpanded": false
+            }
+          ]
+        },
+        {
+          "title": "Interactive Brokers Platform",
+          "icon": "radio-dot",
+          "action": {
+            "label": "New",
+            "action": "createRepo"
+          },
+          "items": [
+            {
+              "icon": "toggle",
+              "label": "Account History",
+              "link": "/dashboard/ibkr/account",
+              "action": false
+            },
+            {
+              "icon": "toggle",
+              "label": "Account Snapshot",
+              "link": "/dashboard/ibkr/snapshot",
+              "action": false
+            },
+            {
+              "icon": "toggle",
+              "label": "Live Market Data",
+              "link": "/dashboard/ibkr/market-data",
+              "action": false
+            }
+          ]
+        },
+        {
+          "title": "Recent activity",
+          "icon": "default",
+          "items": []
+        }
+      ]
+    },
+    "feeds": [
       {
-        "title": "Quick Tools",
-        "icon": "default",
+        "id": "feed-1",
+        "title": "2025.01.04.102157-Feed",
         "items": [
           {
-            "icon": "cross",
-            "title": "Export Transaction Data",
-            "description": "Export complete trading history to CSV/Excel",
-            "link": "/tools/export-transactions"
+            "id": "item-1",
+            "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+            "action": "joaeff starred a repository",
+            "time": "10 hours ago",
+            "repo": {
+              "name": "asyncio/big_space",
+              "link": "/repo/big_space",
+              "description": "ai reconstruit entièrement le fichier pour garantir que chaque section contient désormais une démo visible..."
+            },
+            "stats": {
+              "language": {
+                "name": "Rust",
+                "color": "#dea584"
+              },
+              "stars": 638
+            }
           },
           {
-            "icon": "cross",
-            "title": "Import External Data",
-            "description": "Import trading data from other platforms",
-            "link": "/tools/import"
+            "id": "item-2",
+            "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+            "action": "Repository update",
+            "time": "2 days ago",
+            "repo": {
+              "name": "moeru-ai/airi",
+              "link": "/repo/airi",
+              "description": "Self hosted, you owned Grok Companion; a container of souls of waifu; cyber livings"
+            },
+            "stats": {
+              "language": {
+                "name": "Vue",
+                "color": "#41b883"
+              },
+              "stars": 10000
+            }
           },
           {
-            "icon": "cross",
-            "title": "Bulk Analysis Tools",
-            "description": "Advanced P&L and performance analysis",
-            "link": "/tools/bulk-analysis"
-          },
-          {
-            "icon": "cross",
-            "title": "Tax Reporting Helper",
-            "description": "Generate reports for tax purposes",
-            "link": "/tools/tax-reporting"
+            "id": "item-3",
+            "avatar": "https://avatars.githubusercontent.com/u/32144309?v=4",
+            "action": "Repository update",
+            "time": "3 days ago",
+            "repo": {
+              "name": "atkm/matrix",
+              "link": "/repo/matrix",
+              "description": "ATK Matrix - Universal API management framework for financial data integration with Angular + PHP + Docker stack"
+            },
+            "stats": {
+              "language": {
+                "name": "TypeScript",
+                "color": "#3178c6"
+              },
+              "stars": 42
+            }
           }
         ]
       }
-    ]
+    ],
+    "configPanel": {
+      "isCollapsed": false,
+      "sections": [
+        {
+          "title": "Trading Configuration",
+          "icon": "settings",
+          "items": [
+            {
+              "icon": "cross",
+              "title": "Favorite Trading Pairs",
+              "description": "Manage your most traded cryptocurrency pairs",
+              "link": "/config/trading-pairs"
+            },
+            {
+              "icon": "cross",
+              "title": "Default Time Ranges",
+              "description": "Set preferred periods for transaction history",
+              "link": "/config/time-ranges"
+            },
+            {
+              "icon": "cross",
+              "title": "P&L Calculation Method",
+              "description": "Choose FIFO, LIFO, or weighted average",
+              "link": "/config/calculation-method"
+            },
+            {
+              "icon": "cross",
+              "title": "Display Currency",
+              "description": "USD, EUR, or crypto base currency preferences",
+              "link": "/config/display-currency"
+            }
+          ]
+        },
+        {
+          "title": "Dashboard Configuration",
+          "icon": "default",
+          "items": [
+            {
+              "icon": "cross",
+              "title": "Display Settings",
+              "description": "Configure views and filters for the main grid",
+              "link": "/config/display"
+            },
+            {
+              "icon": "cross",
+              "title": "User Preferences",
+              "description": "Customize interface and component settings",
+              "link": "/config/preferences"
+            },
+            {
+              "icon": "cross",
+              "title": "Keyboard Shortcuts",
+              "description": "Configure shortcuts and hotkeys",
+              "link": "/config/shortcuts"
+            },
+            {
+              "icon": "cross",
+              "title": "Component Layout",
+              "description": "Organization and arrangement of elements",
+              "link": "/config/layout"
+            }
+          ]
+        },
+        {
+          "title": "Quick Tools",
+          "icon": "default",
+          "items": [
+            {
+              "icon": "cross",
+              "title": "Export Transaction Data",
+              "description": "Export complete trading history to CSV/Excel",
+              "link": "/tools/export-transactions"
+            },
+            {
+              "icon": "cross",
+              "title": "Import External Data",
+              "description": "Import trading data from other platforms",
+              "link": "/tools/import"
+            },
+            {
+              "icon": "cross",
+              "title": "Bulk Analysis Tools",
+              "description": "Advanced P&L and performance analysis",
+              "link": "/tools/bulk-analysis"
+            },
+            {
+              "icon": "cross",
+              "title": "Tax Reporting Helper",
+              "description": "Generate reports for tax purposes",
+              "link": "/tools/tax-reporting"
+            }
+          ]
+        }
+      ]
+    }
   }
 }

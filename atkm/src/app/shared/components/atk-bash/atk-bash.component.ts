@@ -1,7 +1,6 @@
 // atk-bash.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, effect, inject, input, NgZone, OnInit, output, signal, viewChild } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { finalize, firstValueFrom } from 'rxjs';
@@ -100,12 +99,13 @@ export class AtkBashComponent implements OnInit {
     };
   });
 
-  emitCurrentConfig(): void {
-    const config = this.currentConfig();
-    if (config) {
-      this.configRequest.emit(config);
-    }
-  }
+  // emitCurrentConfig(): void {
+  //   const config = this.currentConfig();
+  //   if (config) {
+  //     this.configRequest.emit(config);
+  //   }
+  // }
+
   // =========================================
   // COMPUTED SIGNALS
   // =========================================
@@ -122,43 +122,43 @@ export class AtkBashComponent implements OnInit {
   }));
 
   // Terminal display with cursor animation
-  terminalContent = computed(() => {
-    const state = this.terminalInputState();
-    const logs = this.logs();
+  // terminalContent = computed(() => {
+  //   const state = this.terminalInputState();
+  //   const logs = this.logs();
 
-    let output = '';
+  //   let output = '';
 
-    // Add logs
-    logs.forEach(log => {
-      const icon = this.getLogIcon(log.level);
-      const timestamp = log.timestamp.toLocaleTimeString('fr-FR', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      });
-      output += `[${timestamp}] ${icon} ${log.message}\n`;
-    });
+  //   // Add logs
+  //   logs.forEach(log => {
+  //     const icon = this.getLogIcon(log.level);
+  //     const timestamp = log.timestamp.toLocaleTimeString('fr-FR', {
+  //       hour12: false,
+  //       hour: '2-digit',
+  //       minute: '2-digit',
+  //       second: '2-digit'
+  //     });
+  //     output += `[${timestamp}] ${icon} ${log.message}\n`;
+  //   });
 
-    // Add current input line with cursor
-    const cursor = Date.now() % 1000 < 500 ? '▮' : '';
-    output += cursor;
-    return output;
-  });
+  //   // Add current input line with cursor
+  //   const cursor = Date.now() % 1000 < 500 ? '▮' : '';
+  //   output += cursor;
+  //   return output;
+  // });
 
-  visibleColumns = computed(() => {
-    const config = this.currentConfig();
-    const endpoint = config?.endpoints.find(ep => ep.id === this.currentEndpoint());
-    return endpoint?.columns.filter(col => col.visible !== false) || [];
-  });
+  // visibleColumns = computed(() => {
+  //   const config = this.currentConfig();
+  //   const endpoint = config?.endpoints.find(ep => ep.id === this.currentEndpoint());
+  //   return endpoint?.columns.filter(col => col.visible !== false) || [];
+  // });
 
   // Get current endpoint name
-  getCurrentEndpointName = computed(() => {
-    const config = this.currentConfig();
-    const endpointId = this.currentEndpoint();
-    const endpoint = config?.endpoints.find(ep => ep.id === endpointId);
-    return endpoint?.name || 'Unknown Endpoint';
-  });
+  // getCurrentEndpointName = computed(() => {
+  //   const config = this.currentConfig();
+  //   const endpointId = this.currentEndpoint();
+  //   const endpoint = config?.endpoints.find(ep => ep.id === endpointId);
+  //   return endpoint?.name || 'Unknown Endpoint';
+  // });
 
   // =========================================
   // CONSTRUCTOR & EFFECTS
@@ -166,75 +166,75 @@ export class AtkBashComponent implements OnInit {
 
   constructor() {
     // Initialize configuration
-    effect(() => {
-      const configIdValue = this.configId();
-      if (configIdValue === 'binance-debug-v2') {
-        const config = this.bashConfigFactory.createBinanceDebugConfig();
-        this.currentConfig.set(config);
-        this.bashService.registerConfig(config);
-        // Set config in API management service
-        // this.apiManagementState.setConfigId(configIdValue); // FIX AtkBashComponent (i perqué cui ?)
-      }
-      // Set default endpoint
-      const config = this.currentConfig();
-      if (config && config.defaultEndpoint) {
-        this.tools.consoleGroup({ // TAG AtkBashComponent -> constructor -> effect() ================ CONSOLE LOG IN PROGRESS
-          title: `AtkBashComponent ∝ 181 -> constructor -> effect() triggered -> config created: ${configIdValue}`,
-          tag: 'check', palette: 'ac', collapsed: false,
-          data: { config: config, defaultEndpoint: config.defaultEndpoint }
-        });
-        this.currentEndpoint.set(config.defaultEndpoint);
-        // Set endpoint in API management service
-        // this.apiManagementState.setCurrentEndpoint(config.defaultEndpoint); // FIX AtkBashComponent (i perqué cui ?)
-        if (this.autoLoad()) {
-          this.loadData();
-        }
-      }
-    });
+    // effect(() => {
+    //   const configIdValue = this.configId();
+    //   if (configIdValue === 'binance-debug-v2') {
+    //     const config = this.bashConfigFactory.createBinanceDebugConfig();
+    //     this.currentConfig.set(config);
+    //     // this.bashService.registerConfig(config);
+    //     // Set config in API management service
+    //     // this.apiManagementState.setConfigId(configIdValue); // FIX AtkBashComponent (i perqué cui ?)
+    //   }
+    //   // Set default endpoint
+    //   const config = this.currentConfig();
+    //   if (config && config.defaultEndpoint) {
+    //     this.tools.consoleGroup({ // TAG AtkBashComponent -> constructor -> effect() ================ CONSOLE LOG IN PROGRESS
+    //       title: `AtkBashComponent ∝ 181 -> constructor -> effect() triggered -> config created: ${configIdValue}`,
+    //       tag: 'check', palette: 'ac', collapsed: false,
+    //       data: { config: config, defaultEndpoint: config.defaultEndpoint }
+    //     });
+    //     this.currentEndpoint.set(config.defaultEndpoint);
+    //     // Set endpoint in API management service
+    //     // this.apiManagementState.setCurrentEndpoint(config.defaultEndpoint); // FIX AtkBashComponent (i perqué cui ?)
+    //     if (this.autoLoad()) {
+    //       this.loadData();
+    //     }
+    //   }
+    // });
 
     // Effect to sync data with ApiManagementStateService
     effect(() => {
-      const tableData = this.apiManagementState.tableData();
-      if (tableData.length > 0) {
-        this.data.set(tableData);
-        console.log('📊 Data synced from ApiManagementStateService:', tableData.length, 'items');
-      }
+      // const tableData = this.apiManagementState.tableData();
+      // if (tableData.length > 0) {
+      //   this.data.set(tableData);
+      //   console.log('📊 Data synced from ApiManagementStateService:', tableData.length, 'items');
+      // }
     });
 
     // Effect to sync loading state
     effect(() => {
-      const loading = this.apiManagementState.loading();
-      this.terminalState.update(state => ({ ...state, loading }));
+      // const loading = this.apiManagementState.loading();
+      // this.terminalState.update(state => ({ ...state, loading }));
     });
 
     // Effect to sync error state
     effect(() => {
-      const error = this.apiManagementState.error();
-      if (error) {
-        this.error.set(error);
-        this.addLog(`❌ API Error: ${error}`, 'error');
-      }
+      // const error = this.apiManagementState.error();
+      // if (error) {
+      //   this.error.set(error);
+      //   this.addLog(`❌ API Error: ${error}`, 'error');
+      // }
     });
 
     // Subscribe to bash service events
-    this.bashService.events$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(events => {
-        const relevantEvents = events.filter(event =>
-          event.payload.configId === this.configId()
-        );
-        relevantEvents.forEach(event => {
-          this.eventEmitted.emit(event);
-          this.handleServiceEvent(event);
-        });
-      });
+    // this.bashService.events$
+    //   .pipe(takeUntilDestroyed(this.destroyRef))
+    //   .subscribe(events => {
+    //     const relevantEvents = events.filter(event =>
+    //       event.payload.configId === this.configId()
+    //     );
+    //     relevantEvents.forEach(event => {
+    //       this.eventEmitted.emit(event);
+    //       this.handleServiceEvent(event);
+    //     });
+    //   });
 
     // Subscribe to API management events
-    this.apiManagementState.events$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(event => {
-        this.handleApiManagementEvent(event);
-      });
+    // this.apiManagementState.events$
+    //   .pipe(takeUntilDestroyed(this.destroyRef))
+    //   .subscribe(event => {
+    //     this.handleApiManagementEvent(event);
+    //   });
 
     // Auto-update terminal content when logs change
     effect(() => {

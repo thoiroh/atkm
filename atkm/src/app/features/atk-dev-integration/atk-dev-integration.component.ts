@@ -103,7 +103,7 @@ export class AtkDevIntegrationComponent implements OnInit {
         console.error('Erreur lors du chargement de la configuration:', error);
       }
     });
-    // Parse route parameters if any
+    // Parse route parameters if any // FIX AtkDevIntegrationComponent (i perqué cui ?)
     // this.route.queryParams
     //   .pipe(takeUntilDestroyed())
     //   .subscribe(params => {
@@ -116,7 +116,7 @@ export class AtkDevIntegrationComponent implements OnInit {
     //   });
 
     this.tools.consoleGroup({ // TAG AtkDevIntegrationComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-      title: `AtkDevIntegrationComponent initialized ngOnInit() ∝ 119`, tag: 'check', palette: 'su',
+      title: `AtkDevIntegrationComponent initialized ngOnInit() ∝ 119`, tag: 'check', palette: 'in',
       data: {
         config: this.config,
         showSidebar: this.showSidebar(),

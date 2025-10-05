@@ -6,9 +6,6 @@ import { BashData, IBashDataTransformResult, IBashEvent, IBashSidebarField } fro
 import { Subject } from 'rxjs';
 import { ToolsService } from './tools.service';
 
-/**
- * State interface for API management
- */
 export interface ApiManagementState {
   configId: string | null;
   currentEndpoint: string | null;
@@ -20,9 +17,6 @@ export interface ApiManagementState {
   lastUpdated: Date | null;
 }
 
-/**
- * Commands that can be sent to the service
- */
 export interface ApiManagementCommand {
   type: 'LOAD_ENDPOINT' | 'SET_CONFIG' | 'CLEAR_DATA' | 'REFRESH_DATA';
   payload?: any;
@@ -31,22 +25,21 @@ export interface ApiManagementCommand {
 @Injectable({
   providedIn: 'root'
 })
+
 export class ApiManagementStateService {
 
   // =========================================
   // ANGULAR 20 SIGNALS - Core State
   // =========================================
 
+  private _error = signal<string | null>(null);
+  private _loading = signal<boolean>(false);
   private _configId = signal<string | null>(null);
   private _currentEndpoint = signal<string | null>(null);
-  private _loading = signal<boolean>(false);
-  private _error = signal<string | null>(null);
   private _rawData = signal<any>(null);
-  private _sidebarData = signal<Record<string, any>>({});
   private _tableData = signal<BashData[]>([]);
+  private _sidebarData = signal<Record<string, any>>({});
   private _lastUpdated = signal<Date | null>(null);
-
-  private tools = inject(ToolsService);
 
   // =========================================
   // PUBLIC READONLY SIGNALS
@@ -60,6 +53,12 @@ export class ApiManagementStateService {
   public readonly sidebarData = this._sidebarData.asReadonly();
   public readonly tableData = this._tableData.asReadonly();
   public readonly lastUpdated = this._lastUpdated.asReadonly();
+
+  // =========================================
+  // SERVICES
+  // =========================================
+
+  private tools = inject(ToolsService);
 
   // =========================================
   // COMPUTED SIGNALS

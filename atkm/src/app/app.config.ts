@@ -11,7 +11,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withComponentInputBinding(),
-      withViewTransitions(),
+      // withViewTransitions(),
+      withViewTransitions({ skipInitialTransition: true }),
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
       withRouterConfig({ onSameUrlNavigation: 'reload', paramsInheritanceStrategy: 'always' })
       // , withPreloading(PreloadAllModules) // si nécessaire

@@ -1,19 +1,21 @@
 // src/app/features/landing/landing.component.ts
 // CORRECTED - Updated to integrate ApiManagementStateService with SidebarBashConfigComponent
 
-import { AfterViewInit, Component, OnInit, computed, inject } from '@angular/core';
-import { BreadcrumbService } from '@core/services/breadcrumb.service';
-import { ConfigService, ILandingConfig } from '@core/services/config.service';
-import { NavigationStateService } from '@core/services/navigation-state.service';
+import { AfterViewInit, Component, OnInit, inject, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
 import { NavbarBrandComponent } from '@shared/components/navbar-brand/navbar-brand.component';
 import { NavbarMainComponent } from '@shared/components/navbar-main/navbar-main.component';
 import { NavbarToolsComponent } from '@shared/components/navbar-tools/navbar-tools.component';
 import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
 import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 import { SidebarNavComponent } from '@shared/components/sidebar-nav/sidebar-nav.component';
+
+import { BreadcrumbService } from '@core/services/breadcrumb.service';
+import { ConfigService, ILandingConfig } from '@core/services/config.service';
+import { NavigationStateService } from '@core/services/navigation-state.service';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { ToolsService } from '@shared/services/tools.service';
-import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'atk-landing',
@@ -30,80 +32,91 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './landing.component.html',
   styles: []
 })
-export class LandingComponent implements OnInit, AfterViewInit {
-  config: ILandingConfig | null = null;
 
-  // Services
-  private configService = inject(ConfigService);
+export class LandingComponent implements OnInit, AfterViewInit {
+
+  // config: ILandingConfig | null = null;
+  config = signal<ILandingConfig | null>(null);
+  configPanelCollapsed = signal<boolean>(true);
+  // =========================================
+  // SERVICES - Angular 20 Style
+  // =========================================
+
   private navigationService = inject(NavigationStateService);
   private breadcrumbService = inject(BreadcrumbService);
+  private configService = inject(ConfigService);
   private tools = inject(ToolsService);
-
-  // API Management State Service
   private apiStateService = inject(ApiManagementStateService);
 
-  // CORRECTED: Computed properties for sidebar bash config
-  bashConfig = computed<null>(() => null);
+  // =========================================
+  // COMPUTED SIGNALS
+  // =========================================
 
+  // bashConfig = computed<null>(() => null);
+  // bashCurrentEndpoint = computed(() => this.apiStateService.currentEndpoint());
+  // bashConfigPanelCollapsed = computed(() => this.config?.configPanel?.isCollapsed || true);
+  // bashSummary = computed(() => this.apiStateService.summary());
+  // bashHasData = computed(() => this.apiStateService.hasData());
 
-  bashCurrentEndpoint = computed(() => this.apiStateService.currentEndpoint());
-  bashConfigPanelCollapsed = computed(() => this.config?.configPanel?.isCollapsed || true);
-
-  // CORRECTED: Removed non-existent methods
-  bashSummary = computed(() => this.apiStateService.summary());
-  bashHasData = computed(() => this.apiStateService.hasData());
+  // =========================================
+  // LIFECYCLE
+  // =========================================
 
   ngOnInit(): void {
     this.configService.loadLandingConfig().subscribe({
       next: (config) => {
-        this.config = config;
-        // Initialize configuration
-        this.updateConfigForNavigation();
+        this.config.set(config);
+        // === NEW: hydrate le signal local depuis le JSON ===
+        this.configPanelCollapsed.set(config?.configPanel?.isCollapsed ?? true);
       },
       error: (error) => {
         console.error('Erreur lors du chargement de la configuration:', error);
       }
     });
 
-    // Subscribe to API Management state changes for debugging
-    this.apiStateService.events$.subscribe(event => {
-      // OFF: atk-landing.68 ================ CONSOLE LOG IN PROGRESS
-      // this.tools.consoleGroup({
-      //   title: `atk-landing received API Management event: ${event.type}`,
-      //   tag: 'check',
-      //   data: { type: event.type, payload: event.payload },
-      //   palette: 'de',
-      //   collapsed: true,
-      //   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-      //   fontSizePx: 13
-      // });
+    this.tools.consoleGroup({ // TAG LandingComponent -> ngOnInit()
+      title: `LandingComponent -> ngOnInit() -> loadLandingConfig(): ${this.config} `, tag: 'check', palette: 'in', collapsed: true,
+      data: this.config,
+      // title: `LandingComponent -> ngOnInit() -> loadLandingConfig(): ${this.config.atkapp.master} `, tag: 'check', palette: 'in', collapsed: true, data: { config: this.config },
     });
+
+    // Subscribe to API Management state changes for debugging
+    // this.apiStateService.events$.subscribe(event => { // FIX LandingComponent (i perqué cui ?)
+    //   this.tools.consoleGroup({ // OFF: LandingComponent ngOnInit() ================ CONSOLE LOG IN PROGRESS
+    //     title: `atk-landing received API Management event: ${event.type}`,
+    //     tag: 'check', collapsed: true, palette: 'in',
+    //     data: { type: event.type, payload: event.payload },
+    //   });
+    // });
+
   }
 
   ngAfterViewInit(): void {
     // Your existing logic can stay here
   }
 
-  /**
-   * Handle traditional config panel toggle
-   */
+  // =========================================
+  // PUBLIC & PRIVATE METHODS
+  // =========================================
+
   toggleConfigPanel(): void {
-    if (this.config) {
-      this.config.configPanel.isCollapsed = !this.config.configPanel.isCollapsed;
-    }
+    // effect(() => {
+    //   if (this.config()) {
+    //     this.config.isCollapsed.update(current => ({
+    //       ...current,
+    //       configPanel.isCollapsed: 'New Title'
+    //     }));
+    //     this.config.configPanel.isCollapsed = !this.config.configPanel.isCollapsed;
+
+    //   }
+    // });
   }
 
-  /**
-   * Handle bash config panel toggle via state service
-   */
   toggleBashConfigPanel(): void {
     // Toggle the traditional config panel for now
     this.toggleConfigPanel();
   }
 
-  /**
-   * Handle configuration changes from SidebarBashConfigComponent
-   */
   onBashConfigChange(event: any): void {
     this.tools.consoleGroup({
       title: `Landing received bash config change`,
@@ -146,54 +159,43 @@ export class LandingComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /**
-   * Provide API state service to child components via dependency injection
-   */
   getApiStateService(): ApiManagementStateService {
     return this.apiStateService;
   }
 
-  /**
-   * Handle routing or navigation events that might affect the API management
-   */
   onNavigationChange(route: string): void {
     // If navigating away from API management pages, we might want to pause certain operations
     if (!route.includes('binance') && !route.includes('ibkr')) {
-      this.tools.consoleGroup({
-        title: `Landing detected navigation away from API pages`,
-        tag: 'check',
+      this.tools.consoleGroup({ // TAG LandingComponent -> onNavigationChange()
+        title: `LandingComponent -> onNavigationChange() -> Landing detected navigation away from API pages`, tag: 'check', palette: 'in', collapsed: false,
         data: { route },
-        palette: 'wa',
-        collapsed: true,
-        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-        fontSizePx: 13
       });
     }
   }
 
   private updateConfigForNavigation(): void {
-    if (!this.config) return;
+    // if (!this.config) return;
 
-    // Update sidebar sections with proper navigation paths
-    this.config.sidebar.sections = this.config.sidebar.sections.map(section => {
-      if (section.title === 'Binance Wallet') {
-        section.items = section.items.map(item => ({
-          ...item,
-          link: item.label === 'Account History' ? '/dashboard/binance/account' :
-            item.label === 'Account Snapshot' ? '/dashboard/binance/snapshot' :
-              item.label === 'Live Market Data' ? '/dashboard/binance/market-data' :
-                item.link
-        }));
-      } else if (section.title === 'IBKR Platform') {
-        section.items = section.items.map(item => ({
-          ...item,
-          link: item.label === 'Account History' ? '/dashboard/ibkr/account' :
-            item.label === 'Account Snapshot' ? '/dashboard/ibkr/snapshot' :
-              item.label === 'Live Market Data' ? '/dashboard/ibkr/market-data' :
-                item.link
-        }));
-      }
-      return section;
-    });
+    // // Update sidebar sections with proper navigation paths
+    // this.config.sidebar.sections = this.config.sidebar.sections.map(section => {
+    //   if (section.title === 'Binance Wallet') {
+    //     section.items = section.items.map(item => ({
+    //       ...item,
+    //       link: item.label === 'Account History' ? '/dashboard/binance/account' :
+    //         item.label === 'Account Snapshot' ? '/dashboard/binance/snapshot' :
+    //           item.label === 'Live Market Data' ? '/dashboard/binance/market-data' :
+    //             item.link
+    //     }));
+    //   } else if (section.title === 'IBKR Platform') {
+    //     section.items = section.items.map(item => ({
+    //       ...item,
+    //       link: item.label === 'Account History' ? '/dashboard/ibkr/account' :
+    //         item.label === 'Account Snapshot' ? '/dashboard/ibkr/snapshot' :
+    //           item.label === 'Live Market Data' ? '/dashboard/ibkr/market-data' :
+    //             item.link
+    //     }));
+    //   }
+    //   return section;
+    // });
   }
 }

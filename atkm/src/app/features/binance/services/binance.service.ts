@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ToolsService } from '@shared/services/tools.service';
-import { Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { bufferCount, catchError, concatMap, delay, map, mergeMap, reduce, tap } from 'rxjs/operators';
 import { BinanceAccount, BinanceApiResponse } from '../models/binance.model';
 import { BinanceErrorHandlerService } from './binance-error-handler.service';
 
@@ -11,66 +11,132 @@ import { BinanceErrorHandlerService } from './binance-error-handler.service';
 })
 export class BinanceService {
   private readonly apiBaseUrl = 'http://localhost:8000';
-  private http = inject(HttpClient);
   private errorHandler = inject(BinanceErrorHandlerService);
   private tools = inject(ToolsService);
+  private http = inject(HttpClient);
 
   /**
    * Get Binance account information
    * Returns account data with validated balances array
    */
+  getAccount01(): Observable<BinanceAccount> {
+    const url = `${this.apiBaseUrl}/api/v3/account`;
+    return this.http.get<BinanceApiResponse<BinanceAccount>>(url).pipe(
+      map(response => {
+        // Validate response success using PHP structure
+        if (!response.success) {
+          const errorMessage = response.error?.message || response.message || 'Failed to get account data';
+          throw this.errorHandler.handleDataValidationError('getAccount - API Error', response);
+        }
+        // Validate data presence
+        const accountData = response.data;
+        if (!accountData) {
+          throw this.errorHandler.handleDataValidationError('getAccount - No Data', response);
+        }
+        // Convert balances object to array if needed
+        if (accountData.balances && !Array.isArray(accountData.balances)) {
+          // Convert object with numeric keys to array
+          accountData.balances = Object.values(accountData.balances);
+        } else if (!accountData.balances) {
+          accountData.balances = [];
+        }
+
+
+
+        // Add computed total for each balance
+        const processedBalances = accountData.balances.map(balance => ({
+          ...balance,
+          free: Number(balance.free) || 0,
+          locked: Number(balance.locked) || 0,
+          total: (Number(balance.free) || 0) + (Number(balance.locked) || 0)
+        }));
+        const processedAccount = {
+          ...accountData,
+          balances: processedBalances
+        };
+
+        this.tools.consoleGroup({ // TAG BinanceService -> getAccount() ================ CONSOLE LOG IN PROGRESS
+          title: `BinanceService getAccount() ∝ 61 : Account data processed successfully`,
+          tag: 'recycle', palette: 'su', collapsed: false,
+          data: {
+            accountType: processedAccount.accountType,
+            balancesCount: processedAccount.balances.length,
+            canTrade: processedAccount.canTrade,
+            processedAccount: processedAccount
+          },
+        });
+
+        return processedAccount;
+      }),
+      catchError(error => this.errorHandler.handleHttpError(error))
+    );
+  }
+
   getAccount(): Observable<BinanceAccount> {
-    return this.http.get<BinanceApiResponse<BinanceAccount>>(`${this.apiBaseUrl}/api/v3/account`)
-      .pipe(
-        map(response => {
+    const url = `${this.apiBaseUrl}/api/v3/account`;
 
-          // Validate response success using PHP structure
-          if (!response.success) {
-            const errorMessage = response.error?.message || response.message || 'Failed to get account data';
-            throw this.errorHandler.handleDataValidationError('getAccount - API Error', response);
-          }
-
-          // Validate data presence
-          const accountData = response.data;
-          if (!accountData) {
-            throw this.errorHandler.handleDataValidationError('getAccount - No Data', response);
-          }
-
-          // Convert balances object to array if needed
-          if (accountData.balances && !Array.isArray(accountData.balances)) {
-            // Convert object with numeric keys to array
-            accountData.balances = Object.values(accountData.balances);
-          } else if (!accountData.balances) {
-            accountData.balances = [];
-          }
-
-          // Add computed total for each balance
-          const processedBalances = accountData.balances.map(balance => ({
-            ...balance,
-            free: Number(balance.free) || 0,
-            locked: Number(balance.locked) || 0,
-            total: (Number(balance.free) || 0) + (Number(balance.locked) || 0)
-          }));
-
-          const processedAccount = {
+    return this.http.get<BinanceApiResponse<BinanceAccount>>(url).pipe(
+      // 1) Validation / normalisation de la réponse
+      map(response => {
+        if (!response.success) {
+          const errorMessage = response.error?.message || response.message || 'Failed to get account data';
+          throw this.errorHandler.handleDataValidationError('getAccount - API Error', response);
+        }
+        const accountData = response.data;
+        if (!accountData) {
+          throw this.errorHandler.handleDataValidationError('getAccount - No Data', response);
+        }
+        // Garantir un tableau pour balances
+        if (accountData.balances && !Array.isArray(accountData.balances)) {
+          accountData.balances = Object.values(accountData.balances);
+        } else if (!accountData.balances) {
+          accountData.balances = [];
+        }
+        return accountData;
+      }),
+      // 2) Traitement par paquets (chunk) + “pause” entre paquets pour ne pas bloquer le main thread
+      mergeMap(accountData => {
+        const balancesArray = accountData.balances ?? [];
+        return from(balancesArray).pipe(
+          // paquets de 500
+          bufferCount(500),
+          // céder la main entre paquets (delay(0) ~ setTimeout 0)
+          concatMap(part =>
+            of(part).pipe(
+              delay(0),
+              // mapping du paquet local
+              map(chunk => chunk.map(b => {
+                const free = +b.free || 0;
+                const locked = +b.locked || 0;
+                return { ...b, free, locked, total: free + locked };
+              }))
+            )
+          ),
+          // recompose le tableau final
+          reduce((acc, part) => (acc.push(...part), acc), [] as typeof balancesArray),
+          // reconstruire l'objet account
+          map(processedBalances => ({
             ...accountData,
             balances: processedBalances
-          };
+          }))
+        );
+      }),
+      // 3) Logging léger (pas de payload complet ici)
+      tap(processedAccount => {
+        // this.tools.consoleGroup({
+        //   title: `BinanceService getAccount() ∝ 61 : Account data processed successfully`,
+        //   tag: 'recycle', palette: 'su', collapsed: true,
+        //   data: {
+        //     accountType: processedAccount.accountType,
+        //     balancesCount: processedAccount.balances.length,
+        //     canTrade: processedAccount.canTrade
+        //   },
+        // });
+      }),
 
-          this.tools.consoleGroup({ // TAG BinanceService -> getAccount() ================ CONSOLE LOG IN PROGRESS
-            title: `BinanceService getAccount() ∝ 61 : Account data processed successfully`,
-            tag: 'recycle', palette: 'su', collapsed: true,
-            data: {
-              accountType: processedAccount.accountType,
-              balancesCount: processedAccount.balances.length,
-              canTrade: processedAccount.canTrade
-            },
-          });
-
-          return processedAccount;
-        }),
-        catchError(error => this.errorHandler.handleHttpError(error))
-      );
+      // 4) Gestion d'erreur HTTP
+      catchError(error => this.errorHandler.handleHttpError(error))
+    );
   }
 
   /**

@@ -1,16 +1,41 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 // NOTE: enable in tsconfig.json:  "resolveJsonModule": true, "esModuleInterop": true
 import colors from '@assets/config/tools-configs/console-logger.config.colors.json';
 import symbols from '@assets/config/tools-configs/console-logger.config.symbols.json';
 import { ConsoleLogger, GroupOptions } from '@shared/components/atk-tools/console-logger.tool';
 
-/**
- * ToolsService — lean, reusable utilities.
- * All comments are in English as requested.
- */
 interface Timer { id: number; timer: any; };
+
+let busy = false;
+export function navigateSafely(commands: any[], extras?: any) {
+  if (busy) return;
+  busy = true;
+  const router = inject(Router);
+  router.navigate(commands, extras).finally(() => (busy = false));
+}
+
+export function chunk<T>(arr: T[], size = 500): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+export async function processBigList<T>(
+  items: T[],
+  heavyWork: (part: T[]) => void,
+  size = 500
+) {
+  for (const part of chunk(items, size)) {
+    heavyWork(part);
+    await new Promise(r => setTimeout(r));
+  }
+}
+
 
 @Injectable({ providedIn: 'root' })
 export class ToolsService {

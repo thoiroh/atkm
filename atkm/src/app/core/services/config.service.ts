@@ -1,8 +1,27 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { IconSpec } from '@shared/models/icon.model';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
+
+type RepoAction = false | {
+  label: string;
+  action: string;
+};
+
+export interface IAtkAppConfig {
+  name: string;
+  version: string;
+  buildDate: string;
+  commitHash: string;
+  environment: string;
+  apiBaseUrl: string;
+  title: string;
+  subtitle: string;
+  logo: string;
+  favicon?: string;
+  master: string;
+}
 
 export interface INavbarConfig {
   logo: {
@@ -17,11 +36,6 @@ export interface INavbarConfig {
   centerBadge?: string;
 }
 
-type RepoAction = false | {
-  label: string;
-  action: string;
-};
-
 export interface ISidebarNavConfig {
   userContext: {
     avatar: string;
@@ -31,7 +45,6 @@ export interface ISidebarNavConfig {
   sections: ISidebarSection[];
 }
 
-
 export interface ISidebarSection {
   title: string;
   icon: IconSpec;
@@ -39,7 +52,6 @@ export interface ISidebarSection {
   items: ISidebarMenuItem[];
   isExpanded?: boolean;
 }
-
 
 export interface ISidebarMenuItem {
   icon: IconSpec;
@@ -82,6 +94,7 @@ export interface IConfigPanelSection {
 }
 
 export interface ILandingConfig {
+  atkapp: IAtkAppConfig;
   navbar: INavbarConfig;
   sidebar: ISidebarNavConfig;
   feeds: Array<{
@@ -95,16 +108,37 @@ export interface ILandingConfig {
   }
 }
 
+export interface LandingConfigFile {
+  default: ILandingConfig;
+  // si tu prévois d'autres variantes : [key: string]: ILandingConfig;
+}
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class ConfigService {
+
   private configSubject = new BehaviorSubject<ILandingConfig | null>(null);
+  private http = inject(HttpClient);
+
   public config$ = this.configSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  loadLandingConfig(key: keyof LandingConfigFile = 'default'): Observable<ILandingConfig> {
+    return this.http.get<LandingConfigFile>('assets/config/landing-data.json').pipe(
+      map(file => file[key]),
+      tap(config => this.configSubject.next(config))
+    );
+  }
 
-  loadLandingConfig(): Observable<ILandingConfig> {
+  loadLandingConfig01(): Observable<ILandingConfig> {
+    return this.http.get<LandingConfigFile>('assets/config/landing-data.json').pipe(
+      map(file => file.default),
+      tap(config => this.configSubject.next(config))
+    );
+  }
+
+  loadLandingConfig02(): Observable<ILandingConfig> {
     return this.http.get<ILandingConfig>('assets/config/landing-data.json')
       .pipe(
         tap(config => this.configSubject.next(config))
