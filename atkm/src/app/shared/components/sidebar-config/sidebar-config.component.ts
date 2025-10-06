@@ -1,9 +1,8 @@
-// src/app/shared/components/sidebar.config/sidebar.config.component.ts
-// Configuration sidebar component using input signals
-// Angular 20 - Modern signal-based inputs and outputs
+// src/app/shared/components/sidebar-config/sidebar-config.component.ts
+// Configuration sidebar component using ConfigStore
+// Angular 20 - Modern signal-based approach
 
-import { Component, computed, inject, input, output } from '@angular/core';
-import { IConfigPanelSection } from '@core/models/config.models';
+import { Component, inject } from '@angular/core';
 import { ConfigStore } from '@core/store/config.store';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { HoverDotDirective } from '@shared/directives/hover-dot.directive';
@@ -24,12 +23,11 @@ export class SidebarConfigComponent {
   private readonly configStore = inject(ConfigStore);
 
   // =========================================
-  // INPUTS & OUTPUTS (Angular 20 style)
+  // COMPUTED SIGNALS FROM STORE
   // =========================================
 
-  sections = input<IConfigPanelSection[]>([]);
-  isCollapsed = input<boolean>(true);
-  togglePanel = output<void>();
+  sections = this.configStore.configPanelSections;  // ← Use the new computed property
+  isCollapsed = this.configStore.configPanelCollapsed;
 
   // =========================================
   // EVENT HANDLERS
@@ -46,9 +44,9 @@ export class SidebarConfigComponent {
   }
 
   /**
-   * Emit toggle event
+   * Toggle configuration panel via store
    */
   onToggle(): void {
-    this.togglePanel.emit();
+    this.configStore.toggleConfigPanel();
   }
 }

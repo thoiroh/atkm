@@ -2,7 +2,7 @@
 // Provides reactive access to configuration across the application
 
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { ConfigProfile, IConfigPanel, ILandingConfig, INavbarConfig } from '@core/models/config.models';
+import { ConfigProfile, IAtomeekAppConfig, IConfigPanel, IFeed, ILandingConfig, INavbarConfig, ISidebarNavConfig } from '@core/models/config.models';
 import { ConfigService } from '@core/services/config.service';
 import { ToolsService } from '@shared/services/tools.service';
 
@@ -73,12 +73,13 @@ export class ConfigStore {
   readonly error = computed(() => this._error());
 
   // Specific configuration sections
-  readonly atkapp = computed(() => this._config().atkapp);
+  readonly atkapp = computed<IAtomeekAppConfig>(() => this._config().atkapp);
   readonly navbar = computed<INavbarConfig>(() => this._config().navbar);
-  readonly sidebar = computed(() => this._config().sidebar);
-  readonly feeds = computed(() => this._config().feeds);
+  readonly sidebar = computed<ISidebarNavConfig>(() => this._config().sidebar);
+  readonly feeds = computed<IFeed[]>(() => this._config().feeds);
   readonly configPanel = computed<IConfigPanel>(() => this._config().configPanel);
   readonly configPanelCollapsed = computed<boolean>(() => this._config().configPanel.isCollapsed);
+  readonly configPanelSections = computed(() => this._config().configPanel.sections);
 
   // =========================================
   // PUBLIC METHODS

@@ -5,7 +5,7 @@ import type { IconSpec } from '@shared/models/icon.model';
 /**
  * Application metadata and versioning information
  */
-export interface IAtomicAppConfig {
+export interface IAtomeekAppConfig {
   version: string;
   buildDate: string;
   commitHash: string;
@@ -152,7 +152,7 @@ export interface IConfigPanel {
  * This is the main configuration object used throughout the app
  */
 export interface ILandingConfig {
-  atkapp: IAtomicAppConfig;
+  atkapp: IAtomeekAppConfig;
   navbar: INavbarConfig;
   sidebar: ISidebarNavConfig;
   feeds: IFeed[];

@@ -1092,6 +1092,7 @@ li,
   flex-direction: column;
   border: 1px solid var(--color-border-default);
   border-radius: 6px;
+  padding: 10px 10px 10px 5px;
   overflow: hidden;
   width: 100%;
 }

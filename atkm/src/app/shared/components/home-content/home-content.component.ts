@@ -38,7 +38,7 @@ export class HomeContentComponent implements OnInit {
   private readonly tools = inject(ToolsService);
 
   config = this.configStore.config;
-  navbar = this.configStore.navbar;
+  // navbar = this.configStore.navbar;
   configPanelCollapsed = this.configStore.configPanelCollapsed;
 
   // =========================================

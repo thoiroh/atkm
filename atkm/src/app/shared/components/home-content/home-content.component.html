@@ -1,6 +1,7 @@
 <div class="content-wrapper" [class.config-collapsed]="configPanelCollapsed()">
   <header class="content-header">
-    <!-- <h1>home-content {{ configPanelCollapsed }} {{ config.sidebar.userContext.username }}</h1> -->
+    <h1>home-content {{ configPanelCollapsed() }} </h1>
+    <!-- {{ config.sidebar.userContext.username }} -->
   </header>
   <div class="terminal-wrapper">
     <header class="terminal-header">
@@ -109,5 +110,6 @@
   </div>
 </div>
 
-<atk-sidebar-config [sections]="config().configPanel.sections" [isCollapsed]="config().configPanel.isCollapsed"
-  (togglePanel)="toggleConfigPanel()" />
+<atk-sidebar-config />
+<!-- <atk-sidebar-config [sections]="config().configPanel.sections" [isCollapsed]="config().configPanel.isCollapsed"
+  (togglePanel)="toggleConfigPanel()" /> -->
