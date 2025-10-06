@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
@@ -9,10 +9,11 @@ import { SidebarConfigComponent } from '@shared/components/sidebar-config/sideba
 import { AtkIconComponent } from '../atk-icon/atk-icon.component';
 
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
-import { ConfigService, ILandingConfig } from '@core/services/config.service';
+import { ConfigService } from '@core/services/config.service';
 import { NavigationStateService } from '@core/services/navigation-state.service';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { ToolsService } from '@shared/services/tools.service';
+import { ConfigStore } from '../../../core/store/config.store';
 
 @Component({
   selector: 'atk-home-content',
@@ -23,8 +24,12 @@ import { ToolsService } from '@shared/services/tools.service';
 })
 export class HomeContentComponent implements OnInit {
 
-  @Input() configPanelCollapsed: boolean = false;
-  @Input() config: ILandingConfig | null = null;
+  private readonly configStore = inject(ConfigStore);
+
+
+  config = this.configStore.config;
+  navbar = this.configStore.navbar;
+  configPanelCollapsed = this.configStore.configPanelCollapsed;
 
   // config: ILandingConfig | null = null;
   account = signal<BinanceAccount | null>(null);
@@ -50,18 +55,6 @@ export class HomeContentComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    // this.configService.loadLandingConfig().subscribe({
-    //   next: (config) => {
-    //     this.config = config;
-    //     // Initialize bash config panel as collapsed
-    //     // this.bashConfigPanelCollapsed.set(true);
-    //   },
-    //   error: (error) => {
-    //     console.error('Erreur lors du chargement de la configuration:', error);
-    //   }
-    // });
-    this.config = this.configService.getConfig();
-
     this.tools.consoleGroup({ // TAG HomeContentComponent -> ngOnInit()
       title: `HomeContentComponent initialized`, tag: 'check', palette: 'in', collapsed: true,
       data: {
@@ -74,9 +67,8 @@ export class HomeContentComponent implements OnInit {
  * Handle config panel toggle
  */
   toggleConfigPanel(): void {
-    if (this.config) {
-      this.config.configPanel.isCollapsed = !this.config.configPanel.isCollapsed;
-    }
+    this.configStore.toggleConfigPanel();
+
   }
 
   /**

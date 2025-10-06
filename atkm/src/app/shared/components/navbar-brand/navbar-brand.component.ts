@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { ILandingConfig } from '@core/services/config.service';
+import { ILandingConfig } from '@core/models/config.models';
 
 @Component({
   selector: 'atk-navbar-brand',

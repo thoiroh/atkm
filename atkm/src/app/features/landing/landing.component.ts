@@ -1,7 +1,7 @@
 // src/app/features/landing/landing.component.ts
 // CORRECTED - Updated to integrate ApiManagementStateService with SidebarBashConfigComponent
 
-import { AfterViewInit, Component, OnInit, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { NavbarBrandComponent } from '@shared/components/navbar-brand/navbar-brand.component';
@@ -12,10 +12,12 @@ import { SidebarConfigComponent } from '@shared/components/sidebar-config/sideba
 import { SidebarNavComponent } from '@shared/components/sidebar-nav/sidebar-nav.component';
 
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
-import { ConfigService, ILandingConfig } from '@core/services/config.service';
+import { ConfigService } from '@core/services/config.service';
 import { NavigationStateService } from '@core/services/navigation-state.service';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { ToolsService } from '@shared/services/tools.service';
+
+import { ConfigStore } from '@core/store/config.store';
 
 @Component({
   selector: 'atk-landing',
@@ -35,9 +37,11 @@ import { ToolsService } from '@shared/services/tools.service';
 
 export class LandingComponent implements OnInit, AfterViewInit {
 
-  // config: ILandingConfig | null = null;
-  config = signal<ILandingConfig | null>(null);
+  private readonly configStore = inject(ConfigStore);
+
+  // config = signal<ILandingConfig | null>(null);
   configPanelCollapsed = signal<boolean>(true);
+  config = computed(() => this.configStore.config())
   // =========================================
   // SERVICES - Angular 20 Style
   // =========================================
@@ -45,13 +49,20 @@ export class LandingComponent implements OnInit, AfterViewInit {
   private navigationService = inject(NavigationStateService);
   private breadcrumbService = inject(BreadcrumbService);
   private configService = inject(ConfigService);
-  private tools = inject(ToolsService);
   private apiStateService = inject(ApiManagementStateService);
+  private tools = inject(ToolsService);
 
   // =========================================
-  // COMPUTED SIGNALS
+  //  SIGNALS / COMPUTED
   // =========================================
 
+  constructor() {
+
+
+    // navbar = this.configStore.navbar;
+    // configPanelCollapsed = signal<boolean>(true);
+
+  }
   // bashConfig = computed<null>(() => null);
   // bashCurrentEndpoint = computed(() => this.apiStateService.currentEndpoint());
   // bashConfigPanelCollapsed = computed(() => this.config?.configPanel?.isCollapsed || true);
@@ -63,20 +74,12 @@ export class LandingComponent implements OnInit, AfterViewInit {
   // =========================================
 
   ngOnInit(): void {
-    this.configService.loadLandingConfig().subscribe({
-      next: (config) => {
-        this.config.set(config);
-        // === NEW: hydrate le signal local depuis le JSON ===
-        this.configPanelCollapsed.set(config?.configPanel?.isCollapsed ?? true);
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement de la configuration:', error);
-      }
-    });
-
+    this.configStore.loadLandingConfig()
+      .catch(err => console.error('Erreur lors du chargement de la configuration:', err));
+    this.config = computed(() => this.configStore.config())
     this.tools.consoleGroup({ // TAG LandingComponent -> ngOnInit()
       title: `LandingComponent -> ngOnInit() -> loadLandingConfig(): ${this.config} `, tag: 'check', palette: 'in', collapsed: true,
-      data: this.config,
+      data: { config: this.config(), configPanelCollapsed: this.configPanelCollapsed() }
       // title: `LandingComponent -> ngOnInit() -> loadLandingConfig(): ${this.config.atkapp.master} `, tag: 'check', palette: 'in', collapsed: true, data: { config: this.config },
     });
 
@@ -98,8 +101,9 @@ export class LandingComponent implements OnInit, AfterViewInit {
   // =========================================
   // PUBLIC & PRIVATE METHODS
   // =========================================
-
   toggleConfigPanel(): void {
+
+    this.configStore.toggleConfigPanel();
     // effect(() => {
     //   if (this.config()) {
     //     this.config.isCollapsed.update(current => ({

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ConfigService, ILandingConfig } from '../../../core/services/config.service';
+import { ConfigService } from '@core/services/config.service';
+import { ILandingConfig } from '@core/models/config.models';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
 @Component({

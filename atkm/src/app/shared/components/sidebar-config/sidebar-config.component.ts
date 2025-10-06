@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { IConfigPanelSection } from '@core/services/config.service';
+import { IConfigPanelSection } from '@core/models/config.models';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { HoverDotDirective } from '@shared/directives/hover-dot.directive';
 import { IconPipe } from '@shared/pipes/icon.pipe';

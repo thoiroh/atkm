@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ConfigService, ISidebarNavConfig } from '@core/services/config.service';
+import { ConfigService } from '@core/services/config.service';
+import { ISidebarNavConfig } from '@core/models/config.models';
 import { HoverDotDirective } from '@directives/hover-dot.directive';
 import { IconPipe } from '@pipes/icon.pipe';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';

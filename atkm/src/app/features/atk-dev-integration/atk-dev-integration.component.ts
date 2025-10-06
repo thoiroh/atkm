@@ -10,7 +10,8 @@ import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-conf
 import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { ToolsService } from '@shared/services/tools.service';
-import { ConfigService, ILandingConfig } from '../../core/services/config.service';
+import { ConfigService } from '@core/services/config.service';
+import { ILandingConfig } from '@core/models/config.models';
 
 @Component({
   selector: 'atk-dev-integration',
