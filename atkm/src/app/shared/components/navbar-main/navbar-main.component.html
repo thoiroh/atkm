@@ -1,7 +1,10 @@
+<!-- src/app/shared/components/navbar.main/navbar.main.component.html -->
+
+@if (navbar(); as nav) {
 <main class="side-main">
   <menu class="menu-main">
 
-    <button class="hamburger-btn" aria-label="Ouvrir le menu de navigation">
+    <button class="hamburger-btn" aria-label="Open navigation menu">
       <atk-icon name="hamburger" />
     </button>
 
@@ -13,11 +16,12 @@
     <button class="navbar-btn">
       <atk-icon name="cross" color="currentColor" />
     </button>
-    <button class="navbar-btn" aria-label="Créer quelque chose de nouveau">
+
+    <button class="navbar-btn" aria-label="Create something new">
       <atk-icon name="cross" color="currentColor" />
     </button>
 
-    <a class="logo" [href]="config?.navbar?.logo?.link || '#'" aria-label="Homepage">
+    <a class="logo" [href]="nav.logo.link" aria-label="Homepage">
       <svg aria-hidden="true" height="40" viewBox="0 0 32 32" version="1.1" width="40">
         <defs>
           <style>
@@ -32,13 +36,9 @@
     </a>
 
     <nav class="navbar-nav" role="navigation" aria-label="ATK Breadcrumb">
-      <!-- <span *ngFor="let item of config?.navbar.breadcrumb || []; let last = last"> -->
-      <!-- {{item}} -->
-      <!-- </span> -->
+      <!-- Breadcrumb can be added here if needed -->
     </nav>
 
   </menu>
-
-
-  <!-- <atk-navbar-brand [config]="config.navbar" /> -->
 </main>
+}

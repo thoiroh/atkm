@@ -1,54 +1,56 @@
+// src/app/core/models/config.models.ts / Central configuration interfaces for the ATK application
+
 import type { IconSpec } from '@shared/models/icon.model';
 
-type RepoAction = false | {
-  label: string;
-  action: string;
-};
-
-export interface IAtkAppConfig {
-  name: string;
+/**
+ * Application metadata and versioning information
+ */
+export interface IAtomicAppConfig {
   version: string;
   buildDate: string;
   commitHash: string;
-  environment: string;
+  environment: 'development' | 'staging' | 'production';
   apiBaseUrl: string;
   title: string;
   subtitle: string;
   logo: string;
-  favicon?: string;
+  favicon: string;
   master: string;
 }
 
+/**
+ * Navbar logo configuration
+ */
+export interface INavbarLogoConfig {
+  src?: string;
+  svg?: string;
+  alt: string;
+  link: string;
+}
+
+/**
+ * Main navbar configuration
+ */
 export interface INavbarConfig {
-  logo: {
-    src?: string;
-    svg?: string;
-    alt: string;
-    link: string;
-  };
+  logo: INavbarLogoConfig;
   breadcrumb: string[];
   centerTitle: string;
   centerSubtitle: string;
   centerBadge?: string;
 }
 
-export interface ISidebarNavConfig {
-  userContext: {
-    avatar: string;
-    username: string;
-    title: string;
-  };
-  sections: ISidebarSection[];
-}
+/**
+ * Repository action type
+ * Can be false (no action) or an object with label and action
+ */
+export type RepoAction = false | {
+  label: string;
+  action: string;
+};
 
-export interface ISidebarSection {
-  title: string;
-  icon: IconSpec;
-  action?: RepoAction;
-  items: ISidebarMenuItem[];
-  isExpanded?: boolean;
-}
-
+/**
+ * Sidebar menu item configuration
+ */
 export interface ISidebarMenuItem {
   icon: IconSpec;
   label: string;
@@ -59,6 +61,37 @@ export interface ISidebarMenuItem {
   isExpanded?: boolean;
 }
 
+/**
+ * Sidebar section configuration
+ */
+export interface ISidebarSection {
+  title: string;
+  icon: IconSpec;
+  action?: RepoAction;
+  items: ISidebarMenuItem[];
+  isExpanded?: boolean;
+}
+
+/**
+ * User context displayed in sidebar
+ */
+export interface ISidebarUserContext {
+  avatar: string;
+  username: string;
+  title: string;
+}
+
+/**
+ * Complete sidebar navigation configuration
+ */
+export interface ISidebarNavConfig {
+  userContext: ISidebarUserContext;
+  sections: ISidebarSection[];
+}
+
+/**
+ * Feed item for activity feeds
+ */
 export interface IFeedItem {
   id: string;
   avatar: string;
@@ -78,33 +111,65 @@ export interface IFeedItem {
   };
 }
 
+/**
+ * Feed section containing multiple feed items
+ */
+export interface IFeed {
+  id: string;
+  title: string;
+  items: IFeedItem[];
+}
+
+/**
+ * Configuration panel item
+ */
+export interface IConfigPanelItem {
+  icon: IconSpec;
+  title: string;
+  description: string;
+  link: string;
+}
+
+/**
+ * Configuration panel section
+ */
 export interface IConfigPanelSection {
   title: string;
   icon: IconSpec;
-  items: Array<{
-    icon: IconSpec;
-    title: string;
-    description: string;
-    link: string;
-  }>;
+  items: IConfigPanelItem[];
 }
 
+/**
+ * Configuration panel state and sections
+ */
+export interface IConfigPanel {
+  isCollapsed: boolean;
+  sections: IConfigPanelSection[];
+}
+
+/**
+ * Complete landing page configuration
+ * This is the main configuration object used throughout the app
+ */
 export interface ILandingConfig {
-  atkapp: IAtkAppConfig;
+  atkapp: IAtomicAppConfig;
   navbar: INavbarConfig;
   sidebar: ISidebarNavConfig;
-  feeds: Array<{
-    id: string;
-    title: string;
-    items: IFeedItem[];
-  }>;
-  configPanel: {
-    isCollapsed: boolean;
-    sections: IConfigPanelSection[];
-  }
+  feeds: IFeed[];
+  configPanel: IConfigPanel;
 }
 
+/**
+ * Landing configuration file structure
+ * Contains multiple profiles (default, atkcash, etc.)
+ */
 export interface LandingConfigFile {
   default: ILandingConfig;
-  // si tu prévois d'autres variantes : [key: string]: ILandingConfig;
+  atkcash: ILandingConfig;
+  [key: string]: ILandingConfig; // Allow additional profiles
 }
+
+/**
+ * Available configuration profiles
+ */
+export type ConfigProfile = 'default' | 'atkcash';

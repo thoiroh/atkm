@@ -1,58 +1,43 @@
 <!-- src/app/features/landing/landing.component.html -->
-<!-- Updated template with SidebarBashConfigComponent integration -->
+<!-- Landing page template with proper null guards -->
 
-@if (config) {
-<div class="landing-wrapper">
-  <!-- <div class="landing-wrapper" [class.config-collapsed]="configPanelCollapsed?true:false"> -->
-
-  <!-- GRILLE 1: MENU PRINCIPAL (gauche) -->
-  <atk-navbar-main />
-
-  <!-- GRILLE 2: ZONE CENTRALE TRANSPARENTE (centre) -->
-  <atk-navbar-brand />
-
-  <!-- GRILLE 3: OUTILS UTILISATEUR (droite) -->
-  <atk-navbar-tools />
-
-  <!-- GRILLE 4: NAVIGATION SIDEBAR (gauche) -->
-  <atk-sidebar-nav />
-
-  <!-- GRILLE 5: CONTENU PRINCIPAL avec BASH COMPONENT -->
-  <div class="landing-main">
-
-    <router-outlet></router-outlet>
-
-
-    <!-- Traditional Content -->
-    <!-- <atk-content-main [feeds]="config.feeds" [configPanelCollapsed]="bashConfigPanelCollapsed()" /> -->
-
-    <!-- <atk-content-main [feeds]="config.feeds" [configPanelCollapsed]="bashConfigPanelCollapsed()"
-      (configRequest)="onBashConfigRequest($event)" (dataLoaded)="onBashDataLoaded($event)"
-      (errorOccurred)="onBashError($event)" /> -->
-
-    <!-- NEW: Bash Terminal Component -->
-    <!-- <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
-      (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" /> -->
-
-    <!-- GRILLE 6: SIDEBAR CONFIGURATION (droite) -->
-    <!-- <atk-sidebar-config [sections]="config.configPanel.sections" [isCollapsed]="config.configPanel.isCollapsed"
-      (togglePanel)="toggleConfigPanel()" /> -->
-
-    <!-- GRILLE 6: NEW BASH CONFIGURATION (droite) -->
-    <!-- <atk-sidebar-bash-config [bashConfig]="bashConfig()" [terminalState]="bashTerminalState()"
-      [isCollapsed]="bashConfigPanelCollapsed()" [currentEndpoint]="bashCurrentEndpoint()"
-      [accountData]="bashAccountData()" (configChange)="onBashConfigChange($event)"
-      (togglePanel)="toggleBashConfigPanel()" /> -->
-
-    <!-- <atk-sidebar-bash-config [isCollapsed]="config.configPanel.isCollapsed" (configChange)="onBashConfigChange($event)"
-      (togglePanel)="toggleConfigPanel()" /> -->
-
-  </div>
-</div>
-
-} @else {
+@if (loading()) {
 <!-- Loading state -->
 <div class="loading-wrapper">
-  <div class="loading-spinner">Chargement...</div>
+  <div class="loading-spinner">Loading configuration...</div>
+</div>
+} @else if (error()) {
+<!-- Error state -->
+<div class="error-wrapper">
+  <div class="error-message">
+    <p>Error loading configuration:</p>
+    <p>{{ error() }}</p>
+  </div>
+</div>
+} @else if (config()) {
+<!-- Main content - only renders when config is loaded -->
+<div class="landing-wrapper">
+
+  <!-- GRID 1: MAIN MENU (left) -->
+  <atk-navbar-main />
+
+  <!-- GRID 2: CENTRAL TRANSPARENT ZONE (center) -->
+  <atk-navbar-brand />
+
+  <!-- GRID 3: USER TOOLS (right) -->
+  <atk-navbar-tools />
+
+  <!-- GRID 4: NAVIGATION SIDEBAR (left) -->
+  <atk-sidebar-nav />
+
+  <!-- GRID 5: MAIN CONTENT with router outlet -->
+  <div class="landing-main">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+} @else {
+<!-- Fallback state (should not happen) -->
+<div class="fallback-wrapper">
+  <p>Initializing application...</p>
 </div>
 }

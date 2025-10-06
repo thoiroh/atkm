@@ -1,8 +1,11 @@
+// src/app/shared/components/sidebar.nav/sidebar.nav.component.ts
+// Navigation sidebar component using centralized ConfigStore
+// Angular 20 - Signal-based approach with modern patterns
+
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ConfigService } from '@core/services/config.service';
-import { ISidebarNavConfig } from '@core/models/config.models';
+import { ConfigStore } from '@core/store/config.store';
 import { HoverDotDirective } from '@directives/hover-dot.directive';
 import { IconPipe } from '@pipes/icon.pipe';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
@@ -11,57 +14,74 @@ import { ToolsService } from '@shared/services/tools.service';
 @Component({
   selector: 'atk-sidebar-nav',
   standalone: true,
-  imports: [CommonModule, RouterModule, AtkIconComponent, IconPipe, HoverDotDirective],
+  imports: [
+    CommonModule,
+    RouterModule,
+    AtkIconComponent,
+    IconPipe,
+    HoverDotDirective
+  ],
   templateUrl: './sidebar-nav.component.html',
 })
+export class SidebarNavComponent {
 
-export class SidebarNavComponent implements OnInit {
-  @Input() config: ISidebarNavConfig | null = null;
+  // =========================================
+  // DEPENDENCIES & COMPUTED SIGNALS
+  // =========================================
 
-  private configService = inject(ConfigService);
-  private tools = inject(ToolsService);
+  private readonly configStore = inject(ConfigStore);
+  private readonly tools = inject(ToolsService);
 
-  constructor() {
-    // console.log('IconRegistry registry signal:', this.iconRegistry.registry());
-  }
+  config = computed(() => this.configStore.sidebar());
 
-  ngOnInit(): void {
-    this.configService.loadLandingConfig().subscribe({
-      next: (config) => { this.config = config.sidebar; },
-      error: (error) => { console.error('Erreur lors du chargement de la configuration:', error); }
-    });
-    // this.tools.consoleGroup({ // TAG SidebarNavComponent -> ngOnInit()
-    //   title: `SidebarNavComponent initialized ngOnInit()`, tag: 'check', palette: 'in', collapsed: true,
-    //   data: { config: this.config },
-    // });
-  }
+  // =========================================
+  // EVENT HANDLERS
+  // =========================================
 
-  // Toggle pour les sections
+  /**
+   * Toggle a sidebar section's expanded state
+   * @param sectionIndex - Index of the section to toggle
+   */
   toggleSection(sectionIndex: number): void {
-    if (this.config?.sections[sectionIndex]) {
-      this.config.sections[sectionIndex].isExpanded =
-        !this.config.sections[sectionIndex].isExpanded;
+    const sidebarConfig = this.config();
+    if (sidebarConfig?.sections[sectionIndex]) {
+      sidebarConfig.sections[sectionIndex].isExpanded =
+        !sidebarConfig.sections[sectionIndex].isExpanded;
     }
   }
 
-  // Toggle pour les items
+  /**
+   * Toggle a menu item's expanded state
+   * @param sectionIndex - Index of the section
+   * @param itemIndex - Index of the item within the section
+   */
   toggleItem(sectionIndex: number, itemIndex: number): void {
-    if (this.config?.sections[sectionIndex]?.items[itemIndex]) {
-      this.config.sections[sectionIndex].items[itemIndex].isExpanded =
-        !this.config.sections[sectionIndex].items[itemIndex].isExpanded;
+    const sidebarConfig = this.config();
+    if (sidebarConfig?.sections[sectionIndex]?.items[itemIndex]) {
+      sidebarConfig.sections[sectionIndex].items[itemIndex].isExpanded =
+        !sidebarConfig.sections[sectionIndex].items[itemIndex].isExpanded;
     }
-
   }
-  // Toggle pour les sous-menus
+
+  /**
+   * Toggle a submenu item's expanded state
+   * @param sectionIndex - Index of the section
+   * @param itemIndex - Index of the item
+   * @param subMenuIndex - Index of the submenu item
+   */
   toggleSubMenu(sectionIndex: number, itemIndex: number, subMenuIndex: number): void {
-    const subMenuItem = this.config?.sections[sectionIndex]?.items[itemIndex]?.subMenu?.[subMenuIndex];
+    const sidebarConfig = this.config();
+    const subMenuItem = sidebarConfig?.sections[sectionIndex]?.items[itemIndex]?.subMenu?.[subMenuIndex];
     if (subMenuItem) {
       subMenuItem.isExpanded = !subMenuItem.isExpanded;
     }
   }
 
+  /**
+   * Handle action button clicks
+   * @param action - Action identifier string
+   */
   handleAction(action: string): void {
     console.log('Action:', action);
   }
-
 }

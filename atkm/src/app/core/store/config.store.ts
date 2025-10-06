@@ -1,74 +1,178 @@
+// src/app/core/store/config.store.ts // Centralized configuration state management using Angular 20 signals
+// Provides reactive access to configuration across the application
+
 import { computed, inject, Injectable, signal } from '@angular/core';
-
+import { ConfigProfile, IConfigPanel, ILandingConfig, INavbarConfig } from '@core/models/config.models';
+import { ConfigService } from '@core/services/config.service';
 import { ToolsService } from '@shared/services/tools.service';
-import { ConfigService } from '../services/config.service';
 
-import { ILandingConfig, INavbarConfig } from '@core/models/config.models';
+/**
+ * Default empty configuration to prevent null errors before loading
+ */
+const DEFAULT_CONFIG: ILandingConfig = {
+  atkapp: {
+    version: '0.0.0',
+    buildDate: new Date().toISOString(),
+    commitHash: 'unknown',
+    environment: 'development',
+    apiBaseUrl: '',
+    title: 'Loading...',
+    subtitle: '',
+    logo: '',
+    favicon: '',
+    master: ''
+  },
+  navbar: {
+    logo: { alt: '', link: '#' },
+    breadcrumb: [],
+    centerTitle: '',
+    centerSubtitle: '',
+    centerBadge: ''
+  },
+  sidebar: {
+    userContext: {
+      avatar: '',
+      username: '',
+      title: ''
+    },
+    sections: []
+  },
+  feeds: [],
+  configPanel: {
+    isCollapsed: true,
+    sections: []
+  }
+};
 
 @Injectable({ providedIn: 'root' })
-
 export class ConfigStore {
 
   // =========================================
-  // SERVICES -
+  // DEPENDENCIES
   // =========================================
 
-  private tools = inject(ToolsService);
+  private readonly tools = inject(ToolsService);
   private readonly configService = inject(ConfigService);
-  private readonly _config = signal<ILandingConfig | null>(null);
 
   // =========================================
-  // SELECTEURS
+  // STATE SIGNALS
+  // =========================================
+
+  private readonly _config = signal<ILandingConfig>(DEFAULT_CONFIG);
+  private readonly _profile = signal<ConfigProfile>('default');
+  private readonly _loading = signal<boolean>(false);
+  private readonly _error = signal<string | null>(null);
+
+  // =========================================
+  // COMPUTED SELECTORS
   // =========================================
 
   readonly config = computed(() => this._config());
-  readonly navbar = computed<INavbarConfig | null>(() => this._config()?.navbar ?? null);
-  readonly configPanelCollapsed = computed<boolean>(() => !!this._config()?.configPanel?.isCollapsed);
+  readonly profile = computed(() => this._profile());
+  readonly loading = computed(() => this._loading());
+  readonly error = computed(() => this._error());
+
+  // Specific configuration sections
+  readonly atkapp = computed(() => this._config().atkapp);
+  readonly navbar = computed<INavbarConfig>(() => this._config().navbar);
+  readonly sidebar = computed(() => this._config().sidebar);
+  readonly feeds = computed(() => this._config().feeds);
+  readonly configPanel = computed<IConfigPanel>(() => this._config().configPanel);
+  readonly configPanelCollapsed = computed<boolean>(() => this._config().configPanel.isCollapsed);
 
   // =========================================
-  // CONTROLLERS
+  // PUBLIC METHODS
   // =========================================
 
-  setConfig(cfg: ILandingConfig) {
+  /**
+   * Set the entire configuration
+   * @param cfg - New configuration object
+   */
+  setConfig(cfg: ILandingConfig): void {
     this._config.set(cfg);
-    // this.tools.consoleGroup({ // TAG ConfigStore -> ngOnInit()
-    //   title: `ConfigStore -> setConfig() : ${cfg.atkapp.master} `, tag: 'check', palette: 'in', collapsed: true,
-    //   data: this.config(),
-    //   // title: `LandingComponent -> ngOnInit() -> loadLandingConfig(): ${this.config.atkapp.master} `, tag: 'check', palette: 'in', collapsed: true, data: { config: this.config },
-    // });
   }
 
-  update(partial: Partial<ILandingConfig>) {
+  /**
+   * Update configuration with partial changes
+   * @param partial - Partial configuration to merge
+   */
+  update(partial: Partial<ILandingConfig>): void {
     const current = this._config();
-    if (!current) return;
     this._config.set({ ...current, ...partial });
   }
 
-  toggleConfigPanel() {
-    const cur = this._config();
-    if (!cur) return;
+  /**
+   * Toggle the configuration panel collapsed state
+   */
+  toggleConfigPanel(): void {
+    const current = this._config();
     this._config.set({
-      ...cur,
+      ...current,
       configPanel: {
-        ...cur.configPanel,
-        isCollapsed: !cur.configPanel?.isCollapsed,
-        sections: cur.configPanel?.sections ?? []
+        ...current.configPanel,
+        isCollapsed: !current.configPanel.isCollapsed
       }
     });
+  }
 
+  /**
+   * Set the current configuration profile
+   * @param profile - Profile name to activate
+   */
+  setProfile(profile: ConfigProfile): void {
+    this._profile.set(profile);
   }
 
   // =========================================
-  // HANDLERS
+  // ASYNC OPERATIONS
   // =========================================
 
-  async loadLandingConfig(): Promise<void> {
-    const cfg = await this.configService.loadLandingConfigOnce();
-    this._config.set(cfg);
-    this.tools.consoleGroup({ // TAG ConfigStore -> ngOnInit()
-      title: `ConfigStore -> setConfig() :`, tag: 'check', palette: 'in', collapsed: true,
-      data: this._config(),
-      // title: `LandingComponent -> ngOnInit() -> loadLandingConfig(): ${this.config.atkapp.master} `, tag: 'check', palette: 'in', collapsed: true, data: { config: this.config },
-    });
+  /**
+   * Load landing configuration from the server
+   * @param profile - Configuration profile to load (default or atkcash)
+   * @returns Promise that resolves when configuration is loaded
+   */
+  async loadLandingConfig(profile?: ConfigProfile): Promise<void> {
+    const targetProfile = profile || this._profile();
+
+    this._loading.set(true);
+    this._error.set(null);
+
+    try {
+      const cfg = await this.configService.loadLandingConfigOnce(targetProfile);
+      this._config.set(cfg);
+      this._profile.set(targetProfile);
+
+      this.tools.consoleGroup({ // TAG ConfigStore -> loadLandingConfig() ================ CONSOLE LOG IN PROGRESS
+        title: `ConfigStore -> loadLandingConfig()`, tag: 'check', palette: 'in', collapsed: false,
+        data: { config: this.config(), configPanelCollapsed: this.configPanelCollapsed() }
+      });
+
+
+    } catch (err: any) {
+      const errorMessage = err?.message || 'Unknown error loading configuration';
+      this._error.set(errorMessage);
+
+      this.tools.consoleGroup({ // TAG ConfigStore -> loadLandingConfig() ================ CONSOLE LOG IN PROGRESS
+        title: `ConfigStore -> loadLandingConfig() -> Error loading configuration`, tag: 'check', palette: 'er', collapsed: false,
+        data: { profile: targetProfile, error: err }
+      });
+
+      console.error('Error loading configuration:', err);
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  /**
+   * Switch to a different configuration profile
+   * @param profile - New profile to load
+   * @returns Promise that resolves when profile is loaded
+   */
+  async switchProfile(profile: ConfigProfile): Promise<void> {
+    if (profile === this._profile()) {
+      return; // Already using this profile
+    }
+    await this.loadLandingConfig(profile);
   }
 }

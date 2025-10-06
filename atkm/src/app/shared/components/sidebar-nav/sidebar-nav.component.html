@@ -1,20 +1,25 @@
+<!-- src/app/shared/components/sidebar-nav/sidebar-nav.component.html -->
+
 <aside class="sidebar-nav" aria-label="Navigation">
-  @for (section of (config?.sections || []); track sectionIndex; let sectionIndex = $index) {
+  @for (section of (config()?.sections || []); track section.title; let sectionIndex = $index) {
   <div class="sidebar-section" (click)="toggleSection(sectionIndex)">
     <div class="sidebar-title has-hover-dot" data-hover-color="success" hoverDot icon="radio-dot">
-      <div class="sidebar-title-text"> {{ section.title }}</div>
+      <div class="sidebar-title-text">{{ section.title }}</div>
     </div>
+
     @if (section?.items && section.items.length > 0) {
     <ul class="feature-list">
-      @for (item of section.items; track itemIndex; let itemIndex = $index) {
+      @for (item of section.items; track item.label; let itemIndex = $index) {
       <li class="feature-item">
         <div class="feature-header" [class.expanded]="item.isExpanded" (click)="toggleItem(sectionIndex, itemIndex)">
 
-          <!-- ================================ ICON =============================================================  -->
-          <!-- ===================================================================================================  -->
-          @let ic = (item?.icon | icon: { defaultName: 'repo', defaultColor: 'var(--color-icon-fill-default)', size: 16
+          <!-- ICON -->
+          @let ic = (item?.icon | icon: {
+          defaultName: 'repo',
+          defaultColor: 'var(--color-icon-fill-default)',
+          size: 16
           });
-          <!-- <span class="icon-name">{{ ic.name }}</span> -->
+
           @if (item?.link && item.link.trim() !== '' && item.link !== '#') {
           <a class="feature-title" [routerLink]="item?.link || ''">
             <atk-icon [name]="ic.name" [variant]="ic.variant" [color]="ic.color" [size]="+ic.size" />
@@ -26,6 +31,7 @@
             {{ item?.label || '' }}
           </a>
           }
+
           @if (item?.action && item.action !== false) {
           <button class="feature-btn-action" (click)="handleAction(item.action?.action || '')">
             {{ item.action?.label }}
@@ -33,11 +39,10 @@
           }
         </div>
 
-        <!-- ================================ COLLAPSIBLE ======================================================  -->
-        <!-- ===================================================================================================  -->
+        <!-- COLLAPSIBLE SUBMENU -->
         @if (item.subMenu && item.subMenu.length > 0) {
         <ul class="submenu-list" [class.collapsed]="!item.isExpanded">
-          @for (subItem of item.subMenu; track $index) {
+          @for (subItem of item.subMenu; track subItem.label) {
           <li class="submenu-item">
             <a class="submenu-title" [routerLink]="subItem?.link || '#'">
               {{ subItem?.label || '' }}
@@ -61,5 +66,4 @@
     }
   </div>
   }
-  <!-- <a href="#" class="show-more-link">Show more</a> -->
 </aside>

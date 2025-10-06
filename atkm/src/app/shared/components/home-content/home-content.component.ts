@@ -1,112 +1,103 @@
+// src/app/shared/components/home.content/home.content.component.ts
+// Home content component using centralized ConfigStore
+// Angular 20 - Signal-based approach
+
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
+import { ConfigStore } from '@core/store/config.store';
 import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
-import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
-import { IBashConfig } from '@shared/components/atk-bash/atk-bash.interfaces';
-import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
-import { AtkIconComponent } from '../atk-icon/atk-icon.component';
-
-import { BreadcrumbService } from '@core/services/breadcrumb.service';
-import { ConfigService } from '@core/services/config.service';
-import { NavigationStateService } from '@core/services/navigation-state.service';
 import { BinanceService } from '@features/binance/services/binance.service';
+import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
+import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 import { ToolsService } from '@shared/services/tools.service';
-import { ConfigStore } from '../../../core/store/config.store';
+import { IBashConfig } from '../atk-bash/atk-bash.interfaces';
 
 @Component({
   selector: 'atk-home-content',
   standalone: true,
-  imports: [CommonModule, AtkIconComponent, AtkBashComponent, SidebarConfigComponent],
+  imports: [
+    CommonModule,
+    AtkIconComponent,
+    AtkBashComponent,
+    SidebarConfigComponent
+  ],
   templateUrl: './home-content.component.html',
   styles: []
 })
 export class HomeContentComponent implements OnInit {
 
-  private readonly configStore = inject(ConfigStore);
+  // =========================================
+  // DEPENDENCIES & COMPUTED SIGNALS
+  // =========================================
 
+  private readonly configStore = inject(ConfigStore);
+  private readonly binanceService = inject(BinanceService);
+  private readonly tools = inject(ToolsService);
 
   config = this.configStore.config;
   navbar = this.configStore.navbar;
   configPanelCollapsed = this.configStore.configPanelCollapsed;
 
-  // config: ILandingConfig | null = null;
+  // =========================================
+  // LOCAL STATE
+  // =========================================
+
   account = signal<BinanceAccount | null>(null);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
 
-  // bashConfig = signal<IBashConfig | null>(null);
-  // bashTerminalState = signal<IBashTerminalState | null>(null);
-  // bashCurrentEndpoint = signal<string>('');
-  // bashConfigPanelCollapsed = signal<boolean>(false);
-
   private destroy$ = new Subject<void>();
-  private binanceService = inject(BinanceService);
-  private configService = inject(ConfigService);
-  private navigationService = inject(NavigationStateService);
-  private breadcrumbService = inject(BreadcrumbService);
-  private tools = inject(ToolsService);
 
   // =========================================
-  // CONSTRUCTOR & LIFECYCLE
+  // LIFECYCLE
   // =========================================
-
-  constructor() { }
 
   ngOnInit(): void {
-    this.tools.consoleGroup({ // TAG HomeContentComponent -> ngOnInit()
-      title: `HomeContentComponent initialized`, tag: 'check', palette: 'in', collapsed: true,
-      data: {
-        config: this.config
-      },
+    this.tools.consoleGroup({ // TAG HomeContentComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+      title: `HomeContentComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
+      data: { config: this.config() }
     });
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // =========================================
+  // PUBLIC METHODS
+  // =========================================
+
   /**
- * Handle config panel toggle
- */
+   * Toggle configuration panel
+   */
   toggleConfigPanel(): void {
     this.configStore.toggleConfigPanel();
-
   }
-
   /**
- * Handle bash config panel toggle
- */
-  toggleBashConfigPanel(): void {
-    // this.bashConfigPanelCollapsed.update(collapsed => !collapsed);
-  }
-
-  /**
-   * Handle bash configuration requests from AtkBashComponent
-   * Event handler with correct signature
-   */
+     * Handle bash configuration requests
+     */
   onBashConfigRequest(config: IBashConfig): void {
     console.log('Bash config requested in home content:', config);
   }
 
   /**
-   * Handle configuration changes from SidebarBashConfigComponent
+   * Handle configuration changes from sidebar
    */
   onBashConfigChange(event: any): void {
-    // Forward the configuration change to the AtkBashComponent
-    // This will be handled by the component reference or service communication
     console.log('Bash config change received:', event);
-
-    // Here you could emit events to child components or use a service
-    // For now, we'll just log the event
   }
 
   /**
    * Handle bash data loaded events
    */
   onBashDataLoaded(data: any[]): void {
-    this.tools.consoleGroup({ // TAG HomeContentComponent -> onBashDataLoaded()
-      title: `HomeContentComponent -> onBashDataLoaded() -> bash data loaded: ${data.length} records`, tag: 'check', palette: 'in', collapsed: true,
-      data: {
-        data: data
-      },
+    this.tools.consoleGroup({ // TAG HomeContentComponent -> onBashDataLoaded() ================ CONSOLE LOG IN PROGRESS
+      title: `HomeContentComponent -> onBashDataLoaded()`, tag: 'check', palette: 'in', collapsed: false,
+      data: { data: data }
     });
   }
 
@@ -128,21 +119,16 @@ export class HomeContentComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (account) => {
-          if (account.balances && account.balances.length > 0) {
-          }
           this.account.set(account);
           this.loading.set(false);
         },
         error: (error) => {
-          // TAG HomeContentComponent -> loadAccountInfo() ================ CONSOLE LOG IN PROGRESS
           this.tools.consoleGroup({
-            title: `AccountInfoComponent.187: binanceService.getAccount() AccountInfo: Error loading account:`,
+            title: `Error loading account`,
             tag: 'cross',
             data: error,
             palette: 'er',
-            collapsed: true,
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-            fontSizePx: 13
+            collapsed: true
           });
           this.error.set(error.message);
           this.loading.set(false);
@@ -177,20 +163,8 @@ export class HomeContentComponent implements OnInit {
    * Format update time
    */
   formatUpdateTime(timestamp: number | null | undefined): string {
-    if (!timestamp) return 'Non disponible';
+    if (!timestamp) return 'Not available';
     return new Date(timestamp).toLocaleString('fr-FR');
-  }
-
-  /**
-   * Get CSS class for permission status
-   */
-  getPermissionClass(permission: string): string {
-    const permissionClasses: { [key: string]: string } = {
-      'SPOT': 'permission-spot',
-      'MARGIN': 'permission-margin',
-      'FUTURES': 'permission-futures'
-    };
-    return permissionClasses[permission] || 'permission-default';
   }
 
   /**

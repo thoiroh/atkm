@@ -1,7 +1,10 @@
+// src/app/shared/components/navbar.main/navbar.main.component.ts
+// Main navbar component using centralized ConfigStore
+// Angular 20 - Signal-based approach
+
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { ConfigService } from '@core/services/config.service';
-import { ILandingConfig } from '@core/models/config.models';
+import { Component, computed, inject } from '@angular/core';
+import { ConfigStore } from '@core/store/config.store';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
 @Component({
@@ -10,20 +13,14 @@ import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component
   imports: [CommonModule, AtkIconComponent],
   templateUrl: './navbar-main.component.html',
 })
-export class NavbarMainComponent implements OnInit {
+export class NavbarMainComponent {
 
-  @Input() config: ILandingConfig | null = null;
+  // =========================================
+  // DEPENDENCIES & COMPUTED SIGNALS
+  // =========================================
 
-  constructor(private configService: ConfigService) { }
+  private readonly configStore = inject(ConfigStore);
 
-  ngOnInit(): void {
-    this.configService.loadLandingConfig().subscribe({
-      next: (config) => {
-        this.config = config;
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement de la configuration:', error);
-      }
-    });
-  }
+  config = this.configStore.config;
+  navbar = this.configStore.navbar;
 }

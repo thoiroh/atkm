@@ -1,6 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ConfigService } from '@core/services/config.service';
-import { ILandingConfig } from '@core/models/config.models';
+// src/app/shared/components/navbar.tools/navbar.tools.component.ts
+// User tools navbar component using centralized ConfigStore
+// Angular 20 - Signal-based approach
+
+import { Component, computed, inject } from '@angular/core';
+import { ConfigStore } from '@core/store/config.store';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
 @Component({
@@ -9,22 +12,19 @@ import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component
   imports: [AtkIconComponent],
   templateUrl: './navbar-tools.component.html',
 })
-export class NavbarToolsComponent implements OnInit {
-  @Input() configPanelCollapsed: boolean = false;
-  config: ILandingConfig | null = null;
+export class NavbarToolsComponent {
 
-  constructor(private configService: ConfigService) { }
+  // =========================================
+  // DEPENDENCIES & COMPUTED SIGNALS
+  // =========================================
 
-  ngOnInit(): void {
-    this.configService.loadLandingConfig().subscribe({
-      next: (config) => {
-        this.config = config;
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement de la configuration:', error);
-      }
-    });
-  }
+  private readonly configStore = inject(ConfigStore);
+
+  configPanelCollapsed = this.configStore.configPanelCollapsed;
+
+  // =========================================
+  // EVENT HANDLERS
+  // =========================================
 
   handleSearchShortcut(event: KeyboardEvent): void {
     if (event.key === '/' && (event.ctrlKey || event.metaKey)) {
