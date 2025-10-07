@@ -64,11 +64,11 @@ export class IconRegistryService {
   private async loadIcons(): Promise<void> {
     try {
       if (this._debugMode()) {
-        console.log('🔄 IconRegistry: Début du chargement...');
+        console.log('🔄 IconRegistry: start of loading...');
       }
       const data = await firstValueFrom(this.http.get<Partial<IconRegistry>>(this.url));
       if (!data) {
-        throw new Error('Données vides reçues');
+        throw new Error('Empty data received');
       }
       const registry: IconRegistry = {
         defaults: {
@@ -84,12 +84,12 @@ export class IconRegistryService {
       this._registry.set(registry);
       this._isLoaded.set(true);
       if (this._debugMode()) {
-        console.log('✅ IconRegistry: Chargement réussi');
-        console.log('📊 Icônes disponibles:', Object.keys(registry.icons));
+        console.log('✅ IconRegistry: successful upload');
+        console.log('📊 available icons:', Object.keys(registry.icons));
       }
 
     } catch (error) {
-      console.error('❌ IconRegistry: Erreur de chargement:', error);
+      console.error('❌ IconRegistry: loading error:', error);
       this._hasError.set(true);
 
       // En cas d'erreur, utiliser seulement l'icône de fallback
@@ -117,7 +117,7 @@ export class IconRegistryService {
     this._debugMode.set(false);
   }
 
-  // Force le rechargement (utile pour le développement)
+  // Force reload (useful for development)
   async reload(): Promise<void> {
     this._isLoaded.set(false);
     this._hasError.set(false);

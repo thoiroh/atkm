@@ -1,14 +1,37 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { ILandingConfig } from '@core/models/config.models';
+import { Component, inject, OnInit } from '@angular/core';
+import { ConfigStore } from '@core/store/config.store';
+import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { ToolsService } from '../../services/tools.service';
 
 @Component({
   selector: 'atk-navbar-brand',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AtkIconComponent],
   templateUrl: './navbar-brand.component.html',
 })
-export class NavbarBrandComponent {
-  @Input() configPanelCollapsed: boolean = false;
-  @Input() config: ILandingConfig | null = null;
+
+export class NavbarBrandComponent implements OnInit {
+
+  // =========================================
+  // DEPENDENCIES & COMPUTED SIGNALS
+  // =========================================
+
+  private readonly configStore = inject(ConfigStore);
+  private readonly tools = inject(ToolsService);
+
+  navbar = this.configStore.navbar;
+  configPanelCollapsed = this.configStore.configPanelCollapsed;
+
+  // =========================================
+  // LIFECYCLE
+  // =========================================
+
+  ngOnInit(): void {
+    // this.tools.consoleGroup({ // OFF NavbarBrandComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+    //   title: `NavbarBrandComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
+    //   data: { navbar: this.navbar() }
+    // });
+  }
+
 }

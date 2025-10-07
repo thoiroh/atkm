@@ -3,7 +3,7 @@
 // Angular 20 - Signal-based approach with modern patterns
 
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ConfigStore } from '@core/store/config.store';
 import { HoverDotDirective } from '@directives/hover-dot.directive';
@@ -23,7 +23,8 @@ import { ToolsService } from '@shared/services/tools.service';
   ],
   templateUrl: './sidebar-nav.component.html',
 })
-export class SidebarNavComponent {
+
+export class SidebarNavComponent implements OnInit {
 
   // =========================================
   // DEPENDENCIES & COMPUTED SIGNALS
@@ -32,7 +33,20 @@ export class SidebarNavComponent {
   private readonly configStore = inject(ConfigStore);
   private readonly tools = inject(ToolsService);
 
-  config = computed(() => this.configStore.sidebar());
+  // config = this.configStore.config;
+  sidebar = this.configStore.sidebar;
+
+
+  // =========================================
+  // LIFECYCLE
+  // =========================================
+
+  ngOnInit(): void {
+    this.tools.consoleGroup({ // TAG SidebarNavComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+      title: `SidebarNavComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
+      data: { sidebar: this.sidebar() }
+    });
+  }
 
   // =========================================
   // EVENT HANDLERS
@@ -43,10 +57,9 @@ export class SidebarNavComponent {
    * @param sectionIndex - Index of the section to toggle
    */
   toggleSection(sectionIndex: number): void {
-    const sidebarConfig = this.config();
-    if (sidebarConfig?.sections[sectionIndex]) {
-      sidebarConfig.sections[sectionIndex].isExpanded =
-        !sidebarConfig.sections[sectionIndex].isExpanded;
+    if (this.sidebar()?.sections[sectionIndex]) {
+      this.sidebar().sections[sectionIndex].isExpanded =
+        !this.sidebar().sections[sectionIndex].isExpanded;
     }
   }
 
@@ -56,10 +69,9 @@ export class SidebarNavComponent {
    * @param itemIndex - Index of the item within the section
    */
   toggleItem(sectionIndex: number, itemIndex: number): void {
-    const sidebarConfig = this.config();
-    if (sidebarConfig?.sections[sectionIndex]?.items[itemIndex]) {
-      sidebarConfig.sections[sectionIndex].items[itemIndex].isExpanded =
-        !sidebarConfig.sections[sectionIndex].items[itemIndex].isExpanded;
+    if (this.sidebar()?.sections[sectionIndex]?.items[itemIndex]) {
+      this.sidebar().sections[sectionIndex].items[itemIndex].isExpanded =
+        !this.sidebar().sections[sectionIndex].items[itemIndex].isExpanded;
     }
   }
 
@@ -70,8 +82,7 @@ export class SidebarNavComponent {
    * @param subMenuIndex - Index of the submenu item
    */
   toggleSubMenu(sectionIndex: number, itemIndex: number, subMenuIndex: number): void {
-    const sidebarConfig = this.config();
-    const subMenuItem = sidebarConfig?.sections[sectionIndex]?.items[itemIndex]?.subMenu?.[subMenuIndex];
+    const subMenuItem = this.sidebar()?.sections[sectionIndex]?.items[itemIndex]?.subMenu?.[subMenuIndex];
     if (subMenuItem) {
       subMenuItem.isExpanded = !subMenuItem.isExpanded;
     }

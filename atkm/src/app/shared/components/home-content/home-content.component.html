@@ -1,13 +1,13 @@
 <div class="content-wrapper" [class.config-collapsed]="configPanelCollapsed()">
   <header class="content-header">
-    <h1>home-content {{ configPanelCollapsed() }} </h1>
-    <!-- {{ config.sidebar.userContext.username }} -->
+    <h1>home-content {{ configPanelCollapsed() }} / {{ sidebar().userContext.username }}</h1>
+
   </header>
   <div class="terminal-wrapper">
     <header class="terminal-header">
       <h1>atomeek.home.content Component</h1>
       <div class="terminal-details">
-        <!-- <h2>{{ config.sidebar.userContext.title }}</h2> -->
+        <h2>{{ sidebar().userContext.title }}</h2>
       </div>
     </header>
     <!-- État de chargement -->

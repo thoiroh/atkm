@@ -136,6 +136,7 @@ export interface IConfigPanelItem {
 export interface IConfigPanelSection {
   title: string;
   icon: IconSpec;
+  isExpanded?: boolean;
   items: IConfigPanelItem[];
 }
 

@@ -1,7 +1,7 @@
 <!-- src/app/shared/components/sidebar-nav/sidebar-nav.component.html -->
 
 <aside class="sidebar-nav" aria-label="Navigation">
-  @for (section of (config()?.sections || []); track section.title; let sectionIndex = $index) {
+  @for (section of (sidebar()?.sections || []); track section.title; let sectionIndex = $index) {
   <div class="sidebar-section" (click)="toggleSection(sectionIndex)">
     <div class="sidebar-title has-hover-dot" data-hover-color="success" hoverDot icon="radio-dot">
       <div class="sidebar-title-text">{{ section.title }}</div>

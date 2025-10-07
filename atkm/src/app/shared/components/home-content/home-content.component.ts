@@ -38,7 +38,7 @@ export class HomeContentComponent implements OnInit {
   private readonly tools = inject(ToolsService);
 
   config = this.configStore.config;
-  // navbar = this.configStore.navbar;
+  sidebar = this.configStore.sidebar;
   configPanelCollapsed = this.configStore.configPanelCollapsed;
 
   // =========================================
@@ -58,7 +58,11 @@ export class HomeContentComponent implements OnInit {
   ngOnInit(): void {
     this.tools.consoleGroup({ // TAG HomeContentComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
       title: `HomeContentComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
-      data: { config: this.config() }
+      data: {
+        config: this.config(),
+        sidebar: this.sidebar(),
+        configPanelCollapsed: this.configPanelCollapsed()
+      }
     });
   }
 

@@ -17,12 +17,13 @@
       <atk-icon name="cross" color="currentColor" />
     </button>
 
-    <button class="navbar-btn" aria-label="Create something new">
-      <atk-icon name="cross" color="currentColor" />
+    <button class="navbar-btn" aria-label="Create something new" (click)="switchProfile()">
+      <atk-icon name="test-tube" color="currentColor" />
     </button>
 
     <a class="logo" [href]="nav.logo.link" aria-label="Homepage">
-      <svg aria-hidden="true" height="40" viewBox="0 0 32 32" version="1.1" width="40">
+      <!-- <atk-icon class="logo-icon" name="atk-logo" [size]="40" viewBox="0 0 40 40" color="currentColor" /> -->
+      <svg aria-hidden="true" height="45" viewBox="0 0 32 32" version="1.1" width="45">
         <defs>
           <style>
             .st0 {

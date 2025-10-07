@@ -1,26 +1,41 @@
-// src/app/shared/components/navbar.tools/navbar.tools.component.ts
-// User tools navbar component using centralized ConfigStore
-// Angular 20 - Signal-based approach
-
-import { Component, computed, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
 import { ConfigStore } from '@core/store/config.store';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { ToolsService } from '../../services/tools.service';
 
 @Component({
   selector: 'atk-navbar-tools',
   standalone: true,
-  imports: [AtkIconComponent],
+  imports: [CommonModule, AtkIconComponent],
   templateUrl: './navbar-tools.component.html',
 })
-export class NavbarToolsComponent {
+
+export class NavbarToolsComponent implements OnInit {
 
   // =========================================
   // DEPENDENCIES & COMPUTED SIGNALS
   // =========================================
 
   private readonly configStore = inject(ConfigStore);
+  private readonly tools = inject(ToolsService);
 
+  navbar = this.configStore.navbar;
   configPanelCollapsed = this.configStore.configPanelCollapsed;
+
+  // =========================================
+  // LIFECYCLE
+  // =========================================
+
+  ngOnInit(): void {
+    // this.tools.consoleGroup({ // OFF NavbarToolsComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+    //   title: `NavbarToolsComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
+    //   data: {
+    //     navbar: this.navbar(),
+    //     configPanelCollapsed: this.configPanelCollapsed()
+    //   }
+    // });
+  }
 
   // =========================================
   // EVENT HANDLERS

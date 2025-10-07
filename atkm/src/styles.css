@@ -136,8 +136,15 @@ atk-content-main {
   align-items: center;
   justify-content: center;
   margin-left: 5px;
+  margin-top: 5px;
   background-color: var(--color-canvas-subtle);
   color: var(--color-fg-default);
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  fill: var(--color-accent-emphasis);
 }
 
 .menu-main .hamburger-btn {

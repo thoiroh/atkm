@@ -14,8 +14,9 @@
     <p>{{ error() }}</p>
   </div>
 </div>
+
 } @else if (config()) {
-<!-- Main content - only renders when config is loaded -->
+
 <div class="landing-wrapper">
 
   <!-- GRID 1: MAIN MENU (left) -->
@@ -35,6 +36,7 @@
     <router-outlet></router-outlet>
   </div>
 </div>
+
 } @else {
 <!-- Fallback state (should not happen) -->
 <div class="fallback-wrapper">

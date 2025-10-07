@@ -2,12 +2,12 @@
   <div class="menu-brand-content">
     <div class="menu-brand-header">
       <span>
-        <h1 class="menu-brand-title">{{config?.navbar.centerTitle || ''}}</h1>
+        <h1 class="menu-brand-title">{{navbar().centerTitle || ''}}</h1>
       </span>
-      <span class="brand-btn-action" *ngIf="config?.navbar.centerBadge">
-        {{config?.navbar.centerBadge || ''}}
+      <span class="brand-btn-action" *ngIf="navbar()?.centerBadge">
+        {{navbar().centerBadge || ''}}
       </span>
-      <span class="menu-brand-subtitle">{{config?.navbar.centerSubtitle || ''}}</span>
+      <span class="menu-brand-subtitle">{{navbar().centerSubtitle || ''}}</span>
     </div>
   </div>
 </div>
