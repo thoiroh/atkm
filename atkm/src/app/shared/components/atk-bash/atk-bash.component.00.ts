@@ -159,9 +159,9 @@ export class AtkBashComponent implements OnInit {
     // Initialize configuration
     effect(() => {
       const configIdValue = this.configId();
-      // TAG: atk-bash.165 ================ CONSOLE LOG IN PROGRESS
+      // TAG: AtkBashComponent ================ CONSOLE LOG IN PROGRESS
       this.tools.consoleGroup({
-        title: `atk-bash 165 AtkBashComponent -> constructor -> effect() triggered / configIdValue: ${configIdValue}`,
+        title: `AtkBashComponent -> constructor -> effect() triggered / configIdValue: ${configIdValue}`,
         tag: 'check', palette: 'su', collapsed: true,
         data: null
       });
@@ -265,9 +265,9 @@ export class AtkBashComponent implements OnInit {
     // Post-init check
 
     // setTimeout(() => {
-    //   // TAG: atk-bash.274 ================ CONSOLE LOG IN PROGRESS
+    //   // OFF: AtkBashComponent ================ CONSOLE LOG IN PROGRESS
     //   this.tools.consoleGroup({
-    //     title: `atk-bash 274 AtkBashComponent -> ngOnInit -> setTimeout -> Current endpoint: ${this.currentConfig()}`,
+    //     title: `AtkBashComponent -> ngOnInit -> setTimeout -> Current endpoint: ${this.currentConfig()}`,
     //     tag: 'check',
     //     data: {
     //       'Current endpoint:': this.currentEndpoint(),
@@ -682,9 +682,9 @@ export class AtkBashComponent implements OnInit {
   public selectionText(): string { return ''; }
 
   public debugFactory(): void {
-    // TAG: atk-bash.702 ================ CONSOLE LOG IN PROGRESS
+    // TAG: AtkBashComponent ================ CONSOLE LOG IN PROGRESS
     this.tools.consoleGroup({
-      title: `atk-bash 702 AtkBashComponent -> debugFactory(1) -> currentConfig: ${this.currentConfig()}`,
+      title: `AtkBashComponent -> debugFactory(1) -> currentConfig: ${this.currentConfig()}`,
       tag: 'check',
       data: { config: this.bashConfigFactory, currentConfig: this.currentConfig() },
       palette: 'su',
@@ -695,9 +695,9 @@ export class AtkBashComponent implements OnInit {
 
     const config = this.currentConfig();
     if (config) {
-      // TAG: atk-bash.715 ================ CONSOLE LOG IN PROGRESS
+      // TAG: AtkBashComponent ================ CONSOLE LOG IN PROGRESS
       this.tools.consoleGroup({
-        title: `atk-bash 715 AtkBashComponent -> debugFactory(2) -> currentEndpoint: ${this.currentEndpoint()}`,
+        title: `AtkBashComponent -> debugFactory(2) -> currentEndpoint: ${this.currentEndpoint()}`,
         tag: 'check',
         data: {
           'Config endpoints': config.endpoints,

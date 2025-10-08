@@ -82,7 +82,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
       return hasBalance;
     });
 
-    // TAG: binance-account-info.component.137 ================ CONSOLE LOG IN PROGRESS
+    // TAG AccountInfoComponent ================ CONSOLE LOG IN PROGRESS
     this.tools.consoleGroup({
       title: `AccountInfoComponent.139: AccountInfo Significant balances found:`,
       tag: 'cross',
@@ -174,7 +174,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
           this.loading.set(false);
         },
         error: (error) => {
-          // TAG: binance-account-info.component.187 ================ CONSOLE LOG IN PROGRESS
+          // TAG AccountInfoComponent ================ CONSOLE LOG IN PROGRESS
           this.tools.consoleGroup({
             title: `AccountInfoComponent.187: binanceService.getAccount() AccountInfo: Error loading account:`,
             tag: 'cross',

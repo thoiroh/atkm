@@ -1,7 +1,8 @@
 // sidebar-bash-config.service.ts
 // Service for communication between sidebar and terminal components
 
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { ToolsService } from '@shared/services/tools.service';
 import { BehaviorSubject } from 'rxjs';
 
 export interface IBashConfigState {
@@ -22,7 +23,16 @@ export interface IBashConfigEvent {
 })
 export class SidebarBashConfigService {
 
-  // State management with signals
+  // =========================================
+  // DEPENDENCIES
+  // =========================================
+
+  private readonly tools = inject(ToolsService);
+
+  // =========================================
+  // STATE MANAGEMENT WITH SIGNALS
+  // =========================================
+
   private configState = signal<IBashConfigState>({
     currentEndpoint: 'account',
     parameters: {},
@@ -30,15 +40,28 @@ export class SidebarBashConfigService {
     connectionStatus: 'disconnected'
   });
 
-  // Event stream for complex communications
+  // =========================================
+  // EVENT STREAM FOR COMPLEX COMMUNICATIONS
+  // =========================================
+
   private eventsSubject = new BehaviorSubject<IBashConfigEvent[]>([]);
 
-  // Public readonly signals
+  // =========================================
+  // PUBLIC READONLY SIGNALS
+  // =========================================
+
   public readonly state = this.configState.asReadonly();
   public readonly events$ = this.eventsSubject.asObservable();
 
+  // =========================================
+  // CONSTRUCTOR
+  // =========================================
+
   constructor() {
-    console.log('🔧 SidebarBashConfigService initialized');
+    this.tools.consoleGroup({ // TAG SidebarBashConfigService -> constructor() ================ CONSOLE LOG IN PROGRESS
+      title: `SidebarBashConfigService -> constructor() `, tag: 'check', palette: 'in', collapsed: true,
+      data: this.configState()
+    });
   }
 
   /**

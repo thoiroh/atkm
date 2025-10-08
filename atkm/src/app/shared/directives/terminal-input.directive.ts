@@ -28,7 +28,12 @@ export interface TerminalInputState {
 })
 export class TerminalInputDirective implements OnInit {
 
-  // Configuration inputs using modern Angular 20 signals
+  // =========================================
+  // DEPENDENCIES & INPUTS / OUTPUTS
+  // =========================================
+
+  private elementRef = inject(ElementRef<HTMLTextAreaElement>);
+
   autoResize = input<boolean>(false);
   smoothScroll = input<boolean>(true);
   maxHeight = input<string>('800px');
@@ -37,7 +42,10 @@ export class TerminalInputDirective implements OnInit {
   stateChange = output<TerminalInputState>();
   scrollChange = output<{ scrollTop: number; scrollLeft: number }>();
 
-  // Internal state management
+  // =========================================
+  // LOCAL STATE
+  // =========================================
+
   private currentState = signal<TerminalInputState>({
     caretIndex: 0,
     selectionStart: 0,
@@ -50,8 +58,9 @@ export class TerminalInputDirective implements OnInit {
     textValue: ''
   });
 
-  // Element reference injection
-  private elementRef = inject(ElementRef<HTMLTextAreaElement>);
+  // =========================================
+  // CONSTRUCTOR & LIFECYCLE
+  // =========================================
 
   ngOnInit(): void {
     const textarea = this.getTextarea();
@@ -62,6 +71,10 @@ export class TerminalInputDirective implements OnInit {
     // Initialize state with current textarea content
     this.updateState();
   }
+
+  // =========================================
+  // PUBLIC METHODS
+  // =========================================
 
   /**
    * Handle all textarea events that affect cursor position and content
@@ -183,7 +196,9 @@ export class TerminalInputDirective implements OnInit {
     }
   }
 
-  // Private methods
+  // =========================================
+  // PRIVATE METHODS
+  // =========================================
 
   private updateState(): void {
     const textarea = this.getTextarea();

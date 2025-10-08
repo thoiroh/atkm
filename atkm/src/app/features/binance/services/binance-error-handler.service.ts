@@ -36,7 +36,7 @@ export class BinanceErrorHandlerService {
   handleHttpError(error: HttpErrorResponse): Observable<never> {
     let errorDetails: ErrorDetails;
 
-    // TAG: BinanceErrorHandlerService.39 ================ CONSOLE LOG IN PROGRESS
+    // TAG BinanceErrorHandlerService.39 ================ CONSOLE LOG IN PROGRESS
     this.tools.consoleGroup({
       title: `BinanceErrorHandlerService 39 BinanceErrorHandler Processing HTTP Error -> handleHttpError init : ${error.error.message}`,
       tag: 'warning',
@@ -129,7 +129,7 @@ export class BinanceErrorHandlerService {
       }
     }
 
-    // TAG: BinanceErrorHandlerService.39 ================ CONSOLE LOG IN PROGRESS
+    // TAG BinanceErrorHandlerService.39 ================ CONSOLE LOG IN PROGRESS
     this.tools.consoleGroup({
       title: `BinanceErrorHandlerService 39 BinanceErrorHandler Processing HTTP Error -> handleHttpError init : ${error.error.message}`,
       tag: 'warning',

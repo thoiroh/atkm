@@ -145,7 +145,7 @@ export class ConfigStore {
       this._profile.set(targetProfile);
 
       this.tools.consoleGroup({ // TAG ConfigStore -> loadLandingConfig() ================ CONSOLE LOG IN PROGRESS
-        title: `ConfigStore -> loadLandingConfig()`, tag: 'check', palette: 'in', collapsed: false,
+        title: `ConfigStore -> loadLandingConfig()`, tag: 'check', palette: 'in', collapsed: true,
         data: this.config()
       });
 
