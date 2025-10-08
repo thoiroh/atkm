@@ -2,9 +2,9 @@
 // ======================================================
 // FULL SIGNALS VERSION (Angular 20+)
 // Panneau latéral de configuration pour ATK Bash
-// - State via signals()
-// - Event-bus via signal<IBashConfigEvent[]>
-// - Plus aucun BehaviorSubject/Observable
+//  - State via signals()
+//  - Event-bus via signal<IBashConfigEvent[]>
+//  - Plus aucun BehaviorSubject/Observable
 // ======================================================
 
 import { inject, Injectable, signal } from '@angular/core';
@@ -24,15 +24,19 @@ export interface IBashConfigEvent {
 }
 
 @Injectable({ providedIn: 'root' })
+
 export class SidebarBashConfigService {
+
   // =========================
   // DEPENDENCIES
   // =========================
+
   private readonly tools = inject(ToolsService);
 
   // =========================
   // STATE (Signals)
   // =========================
+
   private _state = signal<IBashConfigState>({
     currentEndpoint: 'account',
     parameters: {},
@@ -46,6 +50,7 @@ export class SidebarBashConfigService {
   // =========================
   // PUBLIC API (readonly)
   // =========================
+
   public readonly state = this._state.asReadonly();
   public readonly events = this._events.asReadonly();
 
