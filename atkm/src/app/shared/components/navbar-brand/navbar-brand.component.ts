@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ConfigStore } from '@core/store/config.store';
-import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { ToolsService } from '../../services/tools.service';
 
 @Component({
   selector: 'atk-navbar-brand',
   standalone: true,
-  imports: [CommonModule, AtkIconComponent],
+  imports: [CommonModule],
   templateUrl: './navbar-brand.component.html',
 })
 

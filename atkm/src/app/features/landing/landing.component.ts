@@ -8,8 +8,6 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarBrandComponent } from '@shared/components/navbar-brand/navbar-brand.component';
 import { NavbarMainComponent } from '@shared/components/navbar-main/navbar-main.component';
 import { NavbarToolsComponent } from '@shared/components/navbar-tools/navbar-tools.component';
-import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
-import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 import { SidebarNavComponent } from '@shared/components/sidebar-nav/sidebar-nav.component';
 
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
@@ -27,8 +25,6 @@ import { ToolsService } from '@shared/services/tools.service';
     NavbarBrandComponent,
     NavbarToolsComponent,
     SidebarNavComponent,
-    SidebarBashConfigComponent,
-    SidebarConfigComponent
   ],
   templateUrl: './landing.component.html',
   styles: []
