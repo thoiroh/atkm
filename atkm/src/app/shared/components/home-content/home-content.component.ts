@@ -56,14 +56,10 @@ export class HomeContentComponent implements OnInit {
   // =========================================
 
   ngOnInit(): void {
-    this.tools.consoleGroup({ // TAG HomeContentComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-      title: `HomeContentComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
-      data: {
-        config: this.config(),
-        sidebar: this.sidebar(),
-        configPanelCollapsed: this.configPanelCollapsed()
-      }
-    });
+    // this.tools.consoleGroup({ // OFF HomeContentComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+    //   title: `HomeContentComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
+    //   data: this.config()
+    // });
   }
 
   ngOnDestroy(): void {

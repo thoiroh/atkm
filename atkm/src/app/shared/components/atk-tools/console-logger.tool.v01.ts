@@ -136,30 +136,17 @@ export class ConsoleLogger {
     const valStyle = [`color:${pal.value}`, ...(fmt?.valFont ?? [])].join(';');
     const metaStyle = [`color:${pal.meta}`].join(';');
     const logKeyWithObject = (label: string, obj: any) => {
-      // le label n'est pas utile ici : on part du principe qu'on log toujours un objet plat
-      if (obj && typeof obj === 'object') {
-        for (const [k, v] of Object.entries(obj)) {
-          const t = typeof v;
-          console.log(
-            `%c${k}: %c${v instanceof Object ? '' : String(v)} %c(${t})`,
-            keyStyle,
-            valStyle,
-            metaStyle,
-            v instanceof Object ? v : undefined
-          );
-        }
+      if (label !== undefined) {
+        console.group(`%c${label}:`, keyStyle, obj);
+        // console.group(`%c${label}:`, keyStyle);
+        // console.log(obj);
+        console.groupEnd();
       } else {
-        // fallback si jamais un non-objet était loggé par erreur
-        console.log(
-          `%c(value): %c${String(obj)} %c(${typeof obj})`,
-          keyStyle,
-          valStyle,
-          metaStyle
-        );
+        console.group(obj);
+        console.groupEnd();
+        // console.log(obj);
       }
     };
-
-
 
     switch (true) {
       case value instanceof Error: {
@@ -216,7 +203,6 @@ export class ConsoleLogger {
           logKeyWithObject(`${key ?? 'Map'}(${value.size})`, value);
           return;
         }
-        console.log('map');
         console.log(`%c${key ?? 'Map'}(${value.size})`, keyStyle);
         value.forEach((v, k) => this.dump(v, pal, `→ ${String(k)}`, fmt));
         return;
@@ -227,7 +213,6 @@ export class ConsoleLogger {
           logKeyWithObject(`${key ?? 'Set'}(${value.size})`, value);
           return;
         }
-        console.log('set');
         console.log(`%c${key ?? 'Set'}(${value.size})`, keyStyle);
         Array.from(value.values()).forEach((v, i) => this.dump(v, pal, `#${i}`, fmt));
         return;
@@ -238,7 +223,6 @@ export class ConsoleLogger {
           logKeyWithObject(`${key ?? 'Object'}`, value);
           return;
         }
-        console.log('obj');
         console.log(`%c${key ?? 'Object'}`, keyStyle);
         Object.entries(value).forEach(([k, v]) => this.dump(v, pal, k, fmt));
         return;

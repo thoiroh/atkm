@@ -65,15 +65,16 @@ export class LandingComponent implements OnInit, AfterViewInit {
         console.error('Error loading configuration in LandingComponent:', err);
       });
 
-    this.tools.consoleGroup({ // TAG LandingComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-      title: `LandingComponent -> ngOnInit() -> configStore.loadLandingConfig()`, tag: 'check', palette: 'in', collapsed: false,
-      data: {
-        config: this.config(),
-        loading: this.loading(),
-        error: this.error(),
-        configPanelCollapsed: this.configPanelCollapsed()
-      }
-    });
+    // this.tools.consoleGroup({ // OFF LandingComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+    //   title: `LandingComponent -> ngOnInit() -> configStore.loadLandingConfig()`, tag: 'check', palette: 'in', collapsed: true,
+    //   data: this.config()
+    //   // data: {
+    //   //   config: this.config(),
+    //   //   loading: this.loading(),
+    //   //   error: this.error(),
+    //   //   configPanelCollapsed: this.configPanelCollapsed()
+    //   // }
+    // });
   }
 
   ngAfterViewInit(): void {

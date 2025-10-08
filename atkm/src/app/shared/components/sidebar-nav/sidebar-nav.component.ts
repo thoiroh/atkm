@@ -42,10 +42,10 @@ export class SidebarNavComponent implements OnInit {
   // =========================================
 
   ngOnInit(): void {
-    this.tools.consoleGroup({ // TAG SidebarNavComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-      title: `SidebarNavComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
-      data: { sidebar: this.sidebar() }
-    });
+    // this.tools.consoleGroup({ // OFF SidebarNavComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+    //   title: `SidebarNavComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
+    //   data: { sidebar: this.sidebar() }
+    // });
   }
 
   // =========================================

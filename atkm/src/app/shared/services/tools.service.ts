@@ -2,10 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-// NOTE: enable in tsconfig.json:  "resolveJsonModule": true, "esModuleInterop": true
 import colors from '@assets/config/tools-configs/console-logger.config.colors.json';
 import symbols from '@assets/config/tools-configs/console-logger.config.symbols.json';
 import { ConsoleLogger, GroupOptions } from '@shared/components/atk-tools/console-logger.tool';
+// NOTE: enable in tsconfig.json:  "resolveJsonModule": true, "esModuleInterop": true
+
 
 interface Timer { id: number; timer: any; };
 
@@ -36,7 +37,6 @@ export async function processBigList<T>(
   }
 }
 
-
 @Injectable({ providedIn: 'root' })
 export class ToolsService {
   private timers: Timer[] = [];
@@ -60,8 +60,13 @@ export class ToolsService {
     this.timers = [];
   }
 
-  // ─────────────────────────────── HTTP / Files
-  /** Fetch a file as Blob. Throws on invalid path. */
+  /**
+   * Fetch a file as Blob. Throws on invalid path.
+   *
+   * @date 08/10/2025
+   * @param filePath
+   * @returns {*}
+   */
   public getFileObjectFromPath(filePath: string) {
     if (!filePath || typeof filePath !== 'string') {
       throw new Error('Invalid path: Path must be a non-empty string');
@@ -69,31 +74,60 @@ export class ToolsService {
     return this.httpClient.get(filePath, { responseType: 'blob' });
   }
 
-  // ─────────────────────────────── Numbers / Random
-  /** Inclusive random integer between min and max. */
+  /**
+   * Get random integer between min and max (inclusive).
+   *
+   * @date 08/10/2025
+   * @param min
+   * @param max
+   * @returns {*}
+   */
   public getRandomInt(min: number, max: number): number {
     if (max < min) [min, max] = [max, min];
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  // ─────────────────────────────── Arrays / Sorting
-  /** Sort array of objects by "index" property (numeric asc). */
+  /**
+   * Sort array of objects by "index" property (numeric asc). If "index" is missing, treat as 0.
+   *
+   * @date 08/10/2025
+   * @template T
+   * @param sourceArray
+   * @returns {*}
+   */
   public sortArrayOfObjectsByIndex<T extends Record<string, any>>(sourceArray: T[]): T[] {
     return [...sourceArray].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
   }
 
-  // ─────────────────────────────── Dates
-  /** Convert date string to Unix timestamp in ms. */
+  /**
+   * Convert date string to Unix timestamp in ms.
+   *
+   * @date 08/10/2025
+   * @param datestring
+   * @returns {*}
+   */
   public convertDateStringToTimestamp(datestring: string): number {
     return new Date(datestring).getTime();
   }
 
-  /** Convert Unix timestamp (ms) to ISO string. */
+  /**
+   * Convert Unix timestamp (ms) to ISO string.
+   *
+   * @date 08/10/2025
+   * @param timestampMs
+   * @returns {*}
+   */
   public convertTimestampToDateString(timestampMs: number): string {
     return new Date(timestampMs).toISOString();
   }
 
-  /** Generate contiguous 3-month ranges between start and end (true calendar months). */
+  /**
+   * Generate contiguous 3-month ranges between start and end (true calendar months).
+   *
+   * @date 08/10/2025
+   * @param { startTime, endTime }
+   * @returns {*}
+   */
   public generateThreeMonthRanges({ startTime, endTime }: { startTime: number; endTime: number }): Array<{ start: number; end: number }> {
     if (endTime < startTime) [startTime, endTime] = [endTime, startTime];
     const ranges: Array<{ start: number; end: number }> = [];
@@ -108,20 +142,37 @@ export class ToolsService {
     return ranges;
   }
 
-  /** Parse "<number>px" into number. Example: "16px" -> 16 */
+  /**
+   * Convert CSS property value in "px" to number.
+   *
+   * @date 08/10/2025
+   * @param property
+   * @return {*}
+   */
   public convertPropertyValueToNum(property: string): number {
     const m = /^(-?\d+(\.\d+)?)px$/.exec(property);
     if (!m) throw new Error('Expected a px value like "16px"');
     return parseFloat(m[1]);
   }
 
-  /** Pad number to 3 characters with leading zeros. */
+
+  /**
+   * Pad number to 3 digits with leading zeros.
+   *
+   * @date 08/10/2025
+   * @param n
+   * @return {*}
+   */
   public formatSourceToStringPad(n: number): string {
     return n.toString().padStart(3, '0');
   }
 
+
   /**
-   * General-purpose console group with custom header font and collapsed control.
+   * Log a console group with custom options.
+   *
+   * @date 08/10/2025
+   * @param opts
    */
   public consoleGroup(opts: GroupOptions): void {
     this.logger.group(opts);

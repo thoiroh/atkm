@@ -40,7 +40,7 @@ export class NavbarMainComponent implements OnInit {
       title: `NavbarMainComponent -> switchProfile()`, tag: 'check', palette: 'ac', collapsed: false,
       data: { atkapp: this.atkapp(), currentProfile: currentProfile }
     });
-    this.configStore.switchProfile('atkcash');
+    this.configStore.switchProfile('');
   }
 
 }

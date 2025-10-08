@@ -1,16 +1,17 @@
 // src/app/shared/directives/terminal-input.directive.ts
-// Simplified directive for terminal textarea functionality with auto-scroll
+// Standalone directive for terminal textarea functionality with cursor tracking
 
-import { Directive, ElementRef, inject, input, OnInit, output } from '@angular/core';
+import { Directive, ElementRef, inject, input, OnInit, output, signal } from '@angular/core';
 
-/**
- * Simplified state interface - only scroll and content information
- */
-export interface TerminalScrollState {
-  scrollTop: number;
-  scrollLeft: number;
-  contentHeight: number;
-  visibleHeight: number;
+export interface TerminalInputState {
+  caretIndex: number;
+  selectionStart: number;
+  selectionEnd: number;
+  line: number;
+  column: number;
+  selectionText: string;
+  currentLineText: string;
+  currentWord: string;
   textValue: string;
 }
 
@@ -18,21 +19,36 @@ export interface TerminalScrollState {
   selector: 'textarea[atkTerminalInput]',
   standalone: true,
   host: {
-    '(input)': 'onContentChange()',
-    '(scroll)': 'onScrollEvent()',
-    '(focus)': 'onScrollToBottom()',
+    '(input)': 'onTextareaEvent()',
+    '(keyup)': 'onTextareaEvent()',
+    '(click)': 'onTextareaEvent()',
+    '(select)': 'onTextareaEvent()',
+    '(scroll)': 'onScrollEvent()'
   }
 })
 export class TerminalInputDirective implements OnInit {
 
   // Configuration inputs using modern Angular 20 signals
   autoResize = input<boolean>(false);
-  autoScroll = input<boolean>(true);
+  smoothScroll = input<boolean>(true);
   maxHeight = input<string>('800px');
 
-  // Output events
-  contentChange = output<string>();
-  scrollChange = output<TerminalScrollState>();
+  // Output event for state changes
+  stateChange = output<TerminalInputState>();
+  scrollChange = output<{ scrollTop: number; scrollLeft: number }>();
+
+  // Internal state management
+  private currentState = signal<TerminalInputState>({
+    caretIndex: 0,
+    selectionStart: 0,
+    selectionEnd: 0,
+    line: 1,
+    column: 1,
+    selectionText: '',
+    currentLineText: '',
+    currentWord: '',
+    textValue: ''
+  });
 
   // Element reference injection
   private elementRef = inject(ElementRef<HTMLTextAreaElement>);
@@ -43,64 +59,89 @@ export class TerminalInputDirective implements OnInit {
       throw new Error('atkTerminalInput directive can only be applied to textarea elements');
     }
 
-    // Initialize auto-scroll behavior
-    if (this.autoScroll()) {
-      this.scrollToBottom();
-    }
-
-    // Initialize auto-resize if needed
-    if (this.autoResize()) {
-      this.performAutoResize();
-    }
+    // Initialize state with current textarea content
+    this.updateState();
   }
 
   /**
-   * Handle content changes in textarea
+   * Handle all textarea events that affect cursor position and content
    */
-  public onContentChange(): void {
-    const textarea = this.getTextarea();
-    if (!textarea) return;
+  public onTextareaEvent(): void {
+    this.updateState();
 
-    // Emit content change
-    this.contentChange.emit(textarea.value);
-
-    // Auto-resize if enabled
     if (this.autoResize()) {
       this.performAutoResize();
-    }
-
-    // Auto-scroll to bottom after content change
-    if (this.autoScroll()) {
-      // Small delay to ensure DOM is updated
-      setTimeout(() => this.scrollToBottom(), 10);
     }
   }
 
   /**
-   * Handle scroll events
+   * Handle scroll events for synchronization
    */
   public onScrollEvent(): void {
     const textarea = this.getTextarea();
     if (!textarea) return;
 
-    const scrollState: TerminalScrollState = {
+    this.scrollChange.emit({
       scrollTop: textarea.scrollTop,
-      scrollLeft: textarea.scrollLeft,
-      contentHeight: textarea.scrollHeight,
-      visibleHeight: textarea.clientHeight,
-      textValue: textarea.value
-    };
-
-    this.scrollChange.emit(scrollState);
+      scrollLeft: textarea.scrollLeft
+    });
   }
 
   /**
-   * Trigger scroll to bottom on focus
+   * Public API: Set caret position
    */
-  public onScrollToBottom(): void {
-    if (this.autoScroll()) {
+  public setCaret(position: number): void {
+    const textarea = this.getTextarea();
+    if (!textarea) return;
+
+    const clampedPosition = Math.max(0, Math.min(position, textarea.value.length));
+    textarea.setSelectionRange(clampedPosition, clampedPosition);
+    textarea.focus();
+    this.updateState();
+  }
+
+  /**
+   * Public API: Insert text at current caret position
+   */
+  public insertAtCaret(text: string): void {
+    const textarea = this.getTextarea();
+    if (!textarea) return;
+
+    const start = textarea.selectionStart ?? 0;
+    const end = textarea.selectionEnd ?? start;
+    const currentValue = textarea.value;
+
+    const newValue = currentValue.slice(0, start) + text + currentValue.slice(end);
+    const newPosition = start + text.length;
+
+    textarea.value = newValue;
+    textarea.setSelectionRange(newPosition, newPosition);
+    textarea.focus();
+
+    this.updateState();
+
+    if (this.smoothScroll()) {
       this.scrollToBottom();
     }
+  }
+
+  /**
+   * Public API: Get current state
+   */
+  public getCurrentState(): TerminalInputState {
+    return this.currentState();
+  }
+
+  /**
+   * Public API: Clear textarea content
+   */
+  public clearContent(): void {
+    const textarea = this.getTextarea();
+    if (!textarea) return;
+
+    textarea.value = '';
+    textarea.focus();
+    this.updateState();
   }
 
   /**
@@ -113,57 +154,15 @@ export class TerminalInputDirective implements OnInit {
     const targetPosition = textarea.scrollHeight - textarea.clientHeight;
     if (targetPosition <= 0) return;
 
-    try {
-      textarea.scrollTo({
-        top: targetPosition,
-        behavior: 'smooth'
-      });
-    } catch {
-      // Fallback for browsers that don't support smooth scrolling
+    if (this.smoothScroll()) {
+      try {
+        textarea.scrollTo({ top: targetPosition, behavior: 'smooth' });
+      } catch {
+        textarea.scrollTop = targetPosition;
+      }
+    } else {
       textarea.scrollTop = targetPosition;
     }
-  }
-
-  /**
-   * Public API: Insert text at current position and auto-scroll
-   */
-  public appendText(text: string): void {
-    const textarea = this.getTextarea();
-    if (!textarea) return;
-
-    const currentValue = textarea.value;
-    const newValue = currentValue + text;
-
-    textarea.value = newValue;
-
-    // Trigger content change event
-    this.onContentChange();
-
-    // Focus and scroll to bottom
-    textarea.focus();
-  }
-
-  /**
-   * Public API: Set complete textarea content
-   */
-  public setContent(content: string): void {
-    const textarea = this.getTextarea();
-    if (!textarea) return;
-
-    textarea.value = content;
-    this.onContentChange();
-  }
-
-  /**
-   * Public API: Clear textarea content
-   */
-  public clearContent(): void {
-    const textarea = this.getTextarea();
-    if (!textarea) return;
-
-    textarea.value = '';
-    this.onContentChange();
-    textarea.focus();
   }
 
   /**
@@ -173,14 +172,10 @@ export class TerminalInputDirective implements OnInit {
     const textarea = this.getTextarea();
     if (!textarea) return;
 
-    // Reset height to auto to get correct scrollHeight
     textarea.style.height = 'auto';
-
-    // Calculate new height within limits
     const newHeight = Math.min(textarea.scrollHeight, this.parseMaxHeight());
     textarea.style.height = `${newHeight}px`;
 
-    // Handle overflow
     if (textarea.scrollHeight > newHeight) {
       textarea.style.overflowY = 'auto';
     } else {
@@ -188,23 +183,49 @@ export class TerminalInputDirective implements OnInit {
     }
   }
 
-  /**
-   * Public API: Get current scroll state
-   */
-  public getScrollState(): TerminalScrollState | null {
+  // Private methods
+
+  private updateState(): void {
     const textarea = this.getTextarea();
-    if (!textarea) return null;
+    if (!textarea) return;
 
-    return {
-      scrollTop: textarea.scrollTop,
-      scrollLeft: textarea.scrollLeft,
-      contentHeight: textarea.scrollHeight,
-      visibleHeight: textarea.clientHeight,
-      textValue: textarea.value
+    const value = textarea.value;
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? selectionStart;
+
+    // Calculate line and column (1-based indexing)
+    const textUpToCaret = value.slice(0, selectionEnd);
+    const lines = textUpToCaret.split('\n');
+    const lineNumber = lines.length;
+    const columnNumber = lines[lines.length - 1].length + 1;
+
+    // Get current line text
+    const allLines = value.split('\n');
+    const currentLineText = allLines[lineNumber - 1] ?? '';
+
+    // Extract current word around caret position
+    const leftPart = currentLineText.slice(0, columnNumber - 1);
+    const rightPart = currentLineText.slice(columnNumber - 1);
+    const leftWord = leftPart.match(/[A-Za-z0-9_\-]+$/)?.[0] ?? '';
+    const rightWord = rightPart.match(/^[A-Za-z0-9_\-]+/)?.[0] ?? '';
+    const currentWord = leftWord + rightWord;
+
+    // Create new state
+    const newState: TerminalInputState = {
+      caretIndex: selectionEnd,
+      selectionStart,
+      selectionEnd,
+      line: lineNumber,
+      column: columnNumber,
+      selectionText: selectionStart !== selectionEnd ? value.slice(selectionStart, selectionEnd) : '',
+      currentLineText,
+      currentWord,
+      textValue: value
     };
-  }
 
-  // Private helper methods
+    this.currentState.set(newState);
+    this.stateChange.emit(newState);
+  }
 
   private getTextarea(): HTMLTextAreaElement | null {
     const element = this.elementRef.nativeElement;

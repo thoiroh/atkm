@@ -146,7 +146,7 @@ export class ConfigStore {
 
       this.tools.consoleGroup({ // TAG ConfigStore -> loadLandingConfig() ================ CONSOLE LOG IN PROGRESS
         title: `ConfigStore -> loadLandingConfig()`, tag: 'check', palette: 'in', collapsed: false,
-        data: { config: this.config(), configPanelCollapsed: this.configPanelCollapsed() }
+        data: this.config()
       });
 
 
@@ -170,7 +170,13 @@ export class ConfigStore {
    * @param profile - New profile to load
    * @returns Promise that resolves when profile is loaded
    */
-  async switchProfile(profile: ConfigProfile): Promise<void> {
+  async switchProfile(profile?: ConfigProfile | ''): Promise<void> {
+    if (profile === '' && this._profile() === 'default') {
+      profile = 'atkcash' as ConfigProfile;
+    } else {
+      // Sinon, on repasse sur "default"
+      profile = 'default' as ConfigProfile;
+    }
     if (profile === this._profile()) {
       return; // Already using this profile
     }
