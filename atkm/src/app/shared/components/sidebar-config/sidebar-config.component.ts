@@ -25,7 +25,7 @@ export class SidebarConfigComponent {
   // COMPUTED SIGNALS FROM STORE
   // =========================================
 
-  sections = this.configStore.configPanelSections;  // ← Use the new computed property
+  sections = this.configStore.configPanelSections;
   isCollapsed = this.configStore.configPanelCollapsed;
 
   // =========================================

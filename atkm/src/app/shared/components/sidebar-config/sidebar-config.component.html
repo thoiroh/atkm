@@ -1,6 +1,6 @@
 <!-- src/app/shared/components/sidebar.config/sidebar.config.component.html -->
 
-<aside class="config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
+<aside class="config-panel collapsed" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
 
   <button class="config-toggle" (click)="onToggle()"
     [attr.aria-label]="isCollapsed() ? 'Open configuration' : 'Close configuration'">

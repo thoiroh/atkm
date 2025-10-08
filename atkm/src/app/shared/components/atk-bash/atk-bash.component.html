@@ -17,8 +17,14 @@
     <!-- Terminal Display Section -->
     <div class="bash-section">
       <div class="bash-content">
-        <atk-icon class="bash-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
 
+        <!-- Terminal Textarea with directive -->
+        <textarea class="bash-input" [value]="terminalText()"
+          [style.--input-min-height]="currentConfig()?.terminal.height || '500px'" spellcheck="false" autocorrect="off"
+          autocomplete="off" autocapitalize="off" placeholder="Terminal output display" atkTerminalInput
+          [autoResize]="false" [smoothScroll]="true" [maxHeight]="currentConfig()?.terminal.height || '500px'"
+          (stateChange)="onTerminalStateChange($event)" readonly>
+        </textarea>
         <!-- Terminal Status Bar -->
         <div class="bash-status">
           <span>Ln {{ line() }},</span>
@@ -37,14 +43,6 @@
           <span class="bash-loading">Loading...</span>
           }
         </div>
-
-        <!-- Terminal Textarea with directive -->
-        <textarea class="bash-input" [value]="terminalText()"
-          [style.--input-min-height]="currentConfig()?.terminal.height || '500px'" spellcheck="false" autocorrect="off"
-          autocomplete="off" autocapitalize="off" placeholder="Terminal output display" atkTerminalInput
-          [autoResize]="false" [smoothScroll]="true" [maxHeight]="currentConfig()?.terminal.height || '500px'"
-          (stateChange)="onTerminalStateChange($event)" readonly>
-        </textarea>
       </div>
     </div>
 

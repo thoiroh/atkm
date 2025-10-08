@@ -6,7 +6,6 @@
   flex-direction: column;
   width: 100%;
   min-height: 100%;
-  background: var(--color-canvas-default);
   border-radius: 8px;
   overflow: hidden;
   font-family: var(--fontStack-system);
@@ -15,22 +14,27 @@
 .bash-header {
   display: flex;
   flex-direction: column;
-  padding: 20px 24px 16px;
+  padding: 0px 0px 22px 2px;
   background: var(--color-canvas-subtle);
-  border-bottom: 1px solid var(--color-border-default);
 }
 
 .bash-header h1 {
   font-size: 20px;
   font-weight: 600;
   color: var(--color-fg-default);
-  margin: 0 0 8px 0;
+  margin: 0 0 0px 0;
+}
+
+.bash-details {
+  position: absolute;
+  top: 44px;
+  left: 24px;
 }
 
 .bash-details h2 {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--color-fg-muted);
+  font-size: .8em;
+  font-weight: normal;
+  color: var(--color-fg-subtle);
   margin: 0;
 }
 
@@ -39,7 +43,6 @@
   flex-direction: column;
   flex: 1;
   gap: 24px;
-  padding: 24px;
 }
 
 /* ========================================
@@ -49,7 +52,9 @@
 .bash-section {
   display: flex;
   flex-direction: row;
+  width: 100%;
   gap: 20px;
+  padding: 20px 20px 4px 20px;
   background: var(--color-canvas-default);
   border: 1px solid var(--color-border-default);
   border-radius: 8px;
@@ -82,8 +87,7 @@
   gap: 16px;
   font-size: 12px;
   font-family: var(--fontStack-monospace);
-  color: var(--color-fg-muted);
-  margin-bottom: 8px;
+  color: var(--color-fg-subtle);
   flex-wrap: wrap;
 }
 
@@ -135,8 +139,7 @@
   width: 100%;
   min-height: var(--input-min-height, 500px);
   padding: 16px;
-  margin-left: 24px;
-  border: 1px solid var(--color-border-default);
+  /* border: 1px solid var(--color-border-default); */
   border-radius: 6px;
   background: var(--color-canvas-inset);
   font-family: var(--fontStack-monospace);
@@ -636,6 +639,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  flex: 1;
   padding: 60px 40px;
   text-align: center;
 }

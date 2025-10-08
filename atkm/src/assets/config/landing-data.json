@@ -280,7 +280,7 @@
       }
     ],
     "configPanel": {
-      "isCollapsed": false,
+      "isCollapsed": true,
       "sections": [
         {
           "title": "Trading Configuration",
