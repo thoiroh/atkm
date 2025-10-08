@@ -1,9 +1,14 @@
-// sidebar-bash-config.service.ts
-// Service for communication between sidebar and terminal components
+// sidebar-bash-config.service.v02.ts
+// ======================================================
+// FULL SIGNALS VERSION (Angular 20+)
+// Panneau latéral de configuration pour ATK Bash
+// - State via signals()
+// - Event-bus via signal<IBashConfigEvent[]>
+// - Plus aucun BehaviorSubject/Observable
+// ======================================================
 
 import { inject, Injectable, signal } from '@angular/core';
 import { ToolsService } from '@shared/services/tools.service';
-import { BehaviorSubject } from 'rxjs';
 
 export interface IBashConfigState {
   currentEndpoint: string;
@@ -18,179 +23,130 @@ export interface IBashConfigEvent {
   timestamp: Date;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SidebarBashConfigService {
-
-  // =========================================
+  // =========================
   // DEPENDENCIES
-  // =========================================
-
+  // =========================
   private readonly tools = inject(ToolsService);
 
-  // =========================================
-  // STATE MANAGEMENT WITH SIGNALS
-  // =========================================
-
-  private configState = signal<IBashConfigState>({
+  // =========================
+  // STATE (Signals)
+  // =========================
+  private _state = signal<IBashConfigState>({
     currentEndpoint: 'account',
     parameters: {},
     loading: false,
     connectionStatus: 'disconnected'
   });
 
-  // =========================================
-  // EVENT STREAM FOR COMPLEX COMMUNICATIONS
-  // =========================================
+  // Bus d’événements 100% signals
+  private _events = signal<IBashConfigEvent[]>([]);
 
-  private eventsSubject = new BehaviorSubject<IBashConfigEvent[]>([]);
-
-  // =========================================
-  // PUBLIC READONLY SIGNALS
-  // =========================================
-
-  public readonly state = this.configState.asReadonly();
-  public readonly events$ = this.eventsSubject.asObservable();
-
-  // =========================================
-  // CONSTRUCTOR
-  // =========================================
+  // =========================
+  // PUBLIC API (readonly)
+  // =========================
+  public readonly state = this._state.asReadonly();
+  public readonly events = this._events.asReadonly();
 
   constructor() {
-    this.tools.consoleGroup({ // TAG SidebarBashConfigService -> constructor() ================ CONSOLE LOG IN PROGRESS
-      title: `SidebarBashConfigService -> constructor() `, tag: 'check', palette: 'in', collapsed: true,
-      data: this.configState()
+    this.tools.consoleGroup({
+      title: 'SidebarBashConfigService -> constructor()',
+      tag: 'check',
+      palette: 'in',
+      collapsed: true,
+      data: this._state()
     });
   }
 
-  /**
-   * Update current endpoint selection
-   */
+  // =========================
+  // MUTATIONS D’ÉTAT
+  // =========================
+
+  /** Changer d’endpoint (réinitialise les paramètres) */
   updateEndpoint(endpointId: string): void {
-    this.configState.update(state => ({
-      ...state,
+    this._state.update(s => ({
+      ...s,
       currentEndpoint: endpointId,
-      parameters: {} // Reset parameters when changing endpoint
+      parameters: {}
     }));
-
     this.emitEvent('endpoint-change', { endpointId });
-    console.log(`📡 Endpoint changed to: ${endpointId}`);
   }
 
-  /**
-   * Update request parameters
-   */
+  /** Fusionner des paramètres */
   updateParameters(params: Record<string, any>): void {
-    this.configState.update(state => ({
-      ...state,
-      parameters: { ...state.parameters, ...params }
+    this._state.update(s => ({
+      ...s,
+      parameters: { ...s.parameters, ...params }
     }));
-
     this.emitEvent('parameter-change', { parameters: params });
-    console.log('📝 Parameters updated:', params);
   }
 
-  /**
-   * Update connection status
-   */
+  /** Statut de connexion */
   updateConnectionStatus(status: IBashConfigState['connectionStatus']): void {
-    this.configState.update(state => ({
-      ...state,
-      connectionStatus: status
-    }));
+    this._state.update(s => ({ ...s, connectionStatus: status }));
   }
 
-  /**
-   * Update loading state
-   */
+  /** Indicateur de chargement */
   updateLoadingState(loading: boolean): void {
-    this.configState.update(state => ({
-      ...state,
-      loading
-    }));
+    this._state.update(s => ({ ...s, loading }));
   }
 
-  /**
-   * Trigger data loading action
-   */
+  // =========================
+  // TRIGGERS (événements)
+  // =========================
+
   triggerDataLoad(params?: Record<string, any>): void {
-    if (params) {
-      this.updateParameters(params);
-    }
-
+    if (params) this.updateParameters(params);
     this.updateLoadingState(true);
-    this.emitEvent('load-data', {
-      endpoint: this.configState().currentEndpoint,
-      parameters: this.configState().parameters
-    });
 
-    console.log('🔄 Data load triggered');
+    this.emitEvent('load-data', {
+      endpoint: this._state().currentEndpoint,
+      parameters: this._state().parameters
+    });
   }
 
-  /**
-   * Trigger connection test
-   */
   triggerConnectionTest(): void {
     this.updateConnectionStatus('connecting');
     this.emitEvent('test-connection', {
-      endpoint: this.configState().currentEndpoint
+      endpoint: this._state().currentEndpoint
     });
-
-    console.log('🌐 Connection test triggered');
   }
 
-  /**
-   * Trigger custom action
-   */
   triggerAction(actionId: string, payload?: any): void {
     this.emitEvent('action-trigger', {
       actionId,
       payload,
-      endpoint: this.configState().currentEndpoint
+      endpoint: this._state().currentEndpoint
     });
-
-    console.log(`⚡ Action triggered: ${actionId}`);
   }
 
-  /**
-   * Get current state snapshot
-   */
+  // =========================
+  // UTILS
+  // =========================
+
   getStateSnapshot(): IBashConfigState {
-    return { ...this.configState() };
+    return { ...this._state() };
   }
 
-  /**
-   * Reset state to defaults
-   */
   resetState(): void {
-    this.configState.set({
+    this._state.set({
       currentEndpoint: 'account',
       parameters: {},
       loading: false,
       connectionStatus: 'disconnected'
     });
-
-    console.log('🔄 State reset to defaults');
   }
 
-  // Private helper methods
+  // =========================
+  // PRIVATE
+  // =========================
 
   private emitEvent(type: IBashConfigEvent['type'], payload: any): void {
-    const event: IBashConfigEvent = {
-      type,
-      payload,
-      timestamp: new Date()
-    };
-
-    const currentEvents = this.eventsSubject.value;
-    const updatedEvents = [...currentEvents, event];
-
-    // Keep only last 50 events to prevent memory issues
-    if (updatedEvents.length > 50) {
-      updatedEvents.splice(0, updatedEvents.length - 50);
-    }
-
-    this.eventsSubject.next(updatedEvents);
+    const event: IBashConfigEvent = { type, payload, timestamp: new Date() };
+    this._events.update(list => {
+      const updated = [...list, event];
+      return updated.length > 50 ? updated.slice(-50) : updated;
+    });
   }
 }

@@ -11,7 +11,9 @@
   <header class="bash-header">
     @if (currentConfig(); as config) {
     <h1>{{ config.title }}</h1>
-    <h2>{{ config.subtitle }}</h2>
+    <div class="bash-details">
+      <h2>{{ config.subtitle }}</h2>
+    </div>
     }
   </header>
 
@@ -20,14 +22,16 @@
     <!-- ======================= -->
     <!-- TERMINAL OUTPUT SECTION -->
     <!-- ======================= -->
-    <section class="bash-section terminal-section">
+    <section class="bash-section">
       <div class="bash-content">
 
         <textarea class="bash-input" atkTerminalInput [value]="terminalText()"
-          [style.--input-min-height]="currentConfig()?.terminal.height || '400px'"
+          [style.--input-min-height]="currentConfig()?.terminal.height || '600px'" [smoothScroll]="true"
           [maxHeight]="currentConfig()?.terminal.height || '400px'" spellcheck="false" autocorrect="off"
-          autocomplete="off" autocapitalize="off" readonly (stateChange)="onTerminalStateChange($event)">
+          autocomplete="off" autocapitalize="off" (stateChange)="onTerminalStateChange($event)">
         </textarea>
+
+        <!-- readonly -->
 
         <!-- Terminal Status -->
         <div class="bash-status">

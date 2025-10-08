@@ -11,11 +11,12 @@ import { TransactionStateService } from '@features/binance/services/binance-tran
 import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkBashConfigFactory } from '@shared/components/atk-bash/atk-bash-config.factory';
 import { AtkBashService } from '@shared/components/atk-bash/atk-bash.service';
-import { SidebarBashConfigService } from '@shared/components/sidebar-bash-config/sidebar-bash-config.service';
+import { IBashConfigEvent, SidebarBashConfigService } from '@shared/components/sidebar-bash-config/sidebar-bash-config.service';
 import { ToolsService } from '@shared/services/tools.service';
 
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { TerminalInputDirective, TerminalInputState } from '@shared/directives/terminal-input.directive';
+import { finalize, firstValueFrom } from 'rxjs';
 // import { BalanceFormatPipe, CryptoPrecisionPipe, StatusBadgePipe, TimestampToDatePipe } from '@shared/pipes/pipes';
 
 @Component({
@@ -148,6 +149,13 @@ export class AtkBashComponent implements OnInit {
     return output + cursor;
   });
 
+  public visibleColumns = computed(() => {
+    const cfg = this.currentConfig();
+    const sidebar = this.sidebarConfigService.state();
+    const ep = cfg?.endpoints.find(e => e.id === sidebar.currentEndpoint);
+    return ep?.columns.filter(c => c.visible !== false) || [];
+  });
+
   // ======================================================
   // CONSTRUCTOR
   // ======================================================
@@ -176,6 +184,42 @@ export class AtkBashComponent implements OnInit {
       }
     });
 
+    effect(() => {
+      const ev = this.sidebarConfigService.events();
+      const last = ev.at(-1);
+      if (!last) return;
+
+      switch (last.type) {
+        case 'endpoint-change':
+          // purge et info
+          this.data.set([]);
+          this.error.set(null);
+          this.addLog(`Switched to endpoint: ${last.payload.endpointId}`, 'info');
+          break;
+
+        case 'parameter-change':
+          this.terminalState.update(s => ({
+            ...s,
+            requestParams: { ...s.requestParams, ...last.payload.parameters }
+          }));
+          this.addLog(`Parameters updated: ${JSON.stringify(last.payload.parameters)}`, 'info');
+          break;
+
+        case 'load-data':
+          // déclenche le chargement via le service v03
+          this.loadData();
+          break;
+
+        case 'test-connection':
+          this.testConnection();
+          break;
+
+        case 'action-trigger':
+          this.handleActionTrigger(last.payload.actionId, last.payload.payload);
+          break;
+      }
+    });
+
     effect(() => this.updateTerminalContent());
 
     this.startCursorBlink();
@@ -186,82 +230,538 @@ export class AtkBashComponent implements OnInit {
   // ======================================================
 
   ngOnInit(): void {
-    this.addLog('ATK Bash Terminal initialized', 'info');
+    const id = this.configId();
+    let cfg = this.bashService.getConfig(id);
+    //  Si cfg absente et que l'id correspond, la créer via la factory
+    if (!cfg && id === 'binance-debug-v2') {
+      cfg = this.bashConfigFactory.createBinanceDebugConfig();
+      // Enregistrer la config dans le service (émettra un event)
+      this.bashService.registerConfig(cfg);
+    }
+    if (cfg) { // Alimenter le signal local pour que terminalText voie la config
+      this.currentConfig.set(cfg);
+      if (cfg.defaultEndpoint) { // Aligner l'endpoint de la sidebar avec la config
+        this.sidebarConfigService.updateEndpoint(cfg.defaultEndpoint);
+      }
+    }
+
     this.tools.consoleGroup({ // TAG AtkBashComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
       title: `AtkBashComponent -> ngOnInit() -> configId()`, tag: 'check', palette: 'in', collapsed: false,
       data: this.currentConfig()
     });
-  }
 
+    this.addLog('ATK Bash Terminal initialized', 'info');
+    this.sidebarConfigService.updateConnectionStatus('connected');
+    this.addLog('Service integration with sidebar completed', 'success');
+  }
 
   // ======================================================
   // PUBLIC METHODS
   // ======================================================
 
-  public async loadData(): Promise<void> {
-    const sidebar = this.sidebarConfigService.state();
-    const endpointId = sidebar.currentEndpoint;
-    const configId = this.currentConfig()?.id;
-
-    if (!configId || !endpointId) {
-      this.addLog('⚠️ No endpoint selected', 'warning');
-      return;
-    }
-
-    this.addLog(`🔄 Loading data from ${endpointId}...`, 'info');
-    const start = performance.now();
-
-    const result = await this.bashService.loadData(configId, endpointId, sidebar.parameters || {});
-    const time = Math.round(performance.now() - start);
-
-    this.terminalState.update(s => ({
-      ...s,
-      responseMetadata: { statusCode: 200, responseTime: time, dataCount: result.length }
-    }));
+  /**
+   * Handle terminal state changes from directive
+   */
+  public onTerminalStateChange(state: TerminalInputState): void {
+    this.terminalInputState.set(state);
   }
 
+  /**
+ * Clear cache
+ */
   public clearCache(): void {
     this.bashService.clearCache();
     this.addLog('🗑️ Cache cleared', 'info');
   }
 
+  /**
+   * Export data
+   */
   public exportData(): void {
-    const data = this.data();
-    if (data.length === 0) {
+    const currentData = this.data();
+    if (currentData.length === 0) {
       this.addLog('❌ No data to export', 'warning');
       return;
     }
-    const csv = this.convertToCSV(data);
+
+    // Simple CSV export logic
+    const csv = this.convertToCSV(currentData);
     this.downloadCSV(csv, 'bash-data-export.csv');
-    this.addLog(`📤 Exported ${data.length} records`, 'success');
+    this.addLog(`📤 Data exported (${currentData.length} records)`, 'success');
   }
 
-  public async testConnection(): Promise<void> {
-    const sidebar = this.sidebarConfigService.state();
-    const endpointId = sidebar.currentEndpoint;
-    const configId = this.currentConfig()?.id;
-    if (!configId || !endpointId) return;
+  /**
+   * Format cell value based on column configuration
+   */
+  public formatCellValue(value: any, column: any): string {
+    if (value === null || value === undefined) return '';
 
-    this.addLog(`🌐 Testing ${endpointId}...`, 'info');
-    const result = await this.bashService.testEndpoint(configId, endpointId);
-    if (result.success) {
-      this.addLog(`✅ Success (${result.responseTime}ms)`, 'success');
-    } else {
-      this.addLog(`❌ Failed (${result.error})`, 'error');
+    if (column.formatter) {
+      return column.formatter(value);
     }
+
+    switch (column.type) {
+      case 'number':
+        return typeof value === 'number' ? value.toLocaleString() : value.toString();
+      case 'currency':
+        return new Intl.NumberFormat('fr-FR', {
+          style: 'currency',
+          currency: 'EUR'
+        }).format(value);
+      case 'percentage':
+        return `${(value * 100).toFixed(2)}%`;
+      case 'date':
+        return new Date(value).toLocaleString('fr-FR');
+      case 'boolean':
+        return value ? '✅' : '❌';
+      default:
+        return value.toString();
+    }
+  }
+
+  /**
+   * Track by function for table rows
+   */
+  public trackByIndex(index: number, item: any): any {
+    return item.id || item.symbol || index;
+  }
+  // =========================================
+  // PRIVATE METHODS
+  // =========================================
+
+  /**
+   * Update terminal content via directive
+   */
+  private updateTerminalContent(): void {
+    const directive = this.terminalDirective();
+    if (!directive) return;
+
+    const newContent = this.terminalText();
+    directive.clearContent();
+    directive.insertAtCaret(newContent);
+  }
+
+  /**
+   * Handle events from sidebar config service
+   */
+  private handleSidebarEvent(event: IBashConfigEvent): void {
+    switch (event.type) {
+      case 'endpoint-change':
+        this.onEndpointChange(event.payload.endpointId);
+        break;
+      case 'parameter-change':
+        this.onParameterChange(event.payload.parameters);
+        break;
+      case 'load-data':
+        this.loadData(event.payload.parameters || {});
+        break;
+      case 'test-connection':
+        this.testConnection();
+        break;
+      case 'action-trigger':
+        this.handleActionTrigger(event.payload.actionId, event.payload.payload);
+        break;
+    }
+  }
+
+  /**
+   * Get endpoint name from current sidebar state
+   */
+  public getCurrentEndpointName(endpointId: string): string {
+    const config = this.currentConfig();
+    const endpoint = config?.endpoints.find(ep => ep.id === endpointId);
+    return endpoint?.name || '';
+  }
+
+  /**
+   * Handle endpoint change from sidebar
+   */
+  private onEndpointChange(endpointId: string): void {
+    this.data.set([]);
+    this.error.set(null);
+    this.addLog(`Switched to endpoint: ${endpointId}`, 'info');
+    this.updateTerminalContent();
+  }
+
+  /**
+   * Handle parameter change from sidebar
+   */
+  private onParameterChange(params: Record<string, any>): void {
+    this.terminalState.update(state => ({
+      ...state,
+      requestParams: { ...state.requestParams, ...params }
+    }));
+    this.addLog(`Parameters updated: ${JSON.stringify(params)}`, 'info');
+  }
+
+  /**
+   * Handle action triggers from sidebar
+   */
+  private handleActionTrigger(actionId: string, payload?: any): void {
+    switch (actionId) {
+      case 'test-direct-http':
+        this.testDirectHttp();
+        break;
+      case 'test-service-call':
+        this.testServiceCall();
+        break;
+      case 'clear-cache':
+        this.clearCache();
+        break;
+      case 'export-data':
+        this.exportData();
+        break;
+      default:
+        this.addLog(`Unknown action: ${actionId}`, 'warning');
+    }
+  }
+  // =========================================
+  // ASYNC OPERATIONS
+  // =========================================
+
+  /**
+   * Load data from current endpoint using existing services
+   *
+   * @date 08/10/2025
+   * @param [params={}]
+   * @return {*}
+   */
+  public async loadData(params: Record<string, any> = {}): Promise<void> {
+    const sidebarState = this.sidebarConfigService.state();
+    const endpointId = sidebarState.currentEndpoint;
+
+    if (!endpointId) {
+      this.addLog('No endpoint selected', 'error');
+      return;
+    }
+
+    this.addLog(`🔄 Loading data from ${endpointId}...`, 'info');
+    this.sidebarConfigService.updateLoadingState(true);
+
+    const startTime = performance.now();
+
+    try {
+      let data: BashData[] = [];
+
+      // Use existing services based on endpoint
+      switch (endpointId) {
+        case 'account':
+          data = await this.loadAccountData();
+          break;
+        case 'trades':
+          data = await this.loadTradesData(params);
+          break;
+        case 'orders':
+          data = await this.loadOrdersData(params);
+          break;
+        case 'ticker':
+          data = await this.loadTickerData(params);
+          break;
+        default:
+          throw new Error(`Unknown endpoint: ${endpointId}`);
+      }
+
+      const responseTime = Math.round(performance.now() - startTime);
+      this.data.set(data);
+      this.error.set(null);
+
+      this.terminalState.update(state => ({
+        ...state,
+        responseMetadata: {
+          statusCode: 200,
+          responseTime,
+          dataCount: data.length
+        }
+      }));
+
+      this.addLog(`✅ Data loaded successfully (${data.length} items, ${responseTime}ms)`, 'success');
+      this.dataLoaded.emit(data);
+
+    } catch (error: any) {
+      const responseTime = Math.round(performance.now() - startTime);
+      const errorMessage = this.errorHandler.formatUserFriendlyError(error);
+
+      this.error.set(errorMessage);
+      this.addLog(`❌ Error loading data: ${errorMessage}`, 'error');
+      this.errorOccurred.emit(errorMessage);
+
+      this.terminalState.update(state => ({
+        ...state,
+        responseMetadata: {
+          statusCode: error.status || 500,
+          responseTime
+        }
+      }));
+    } finally {
+      this.sidebarConfigService.updateLoadingState(false);
+    }
+  }
+
+  /**
+   * Test connection to current endpoint
+   *
+   * @date 08/10/2025
+   * @return {*}
+   */
+  async testConnection(): Promise<void> {
+    const sidebarState = this.sidebarConfigService.state();
+    const endpointId = sidebarState.currentEndpoint;
+
+    if (!endpointId) {
+      this.addLog('No endpoint to test', 'warning');
+      return;
+    }
+
+    this.addLog(`🌐 Testing connection to ${endpointId}...`, 'info');
+    this.sidebarConfigService.updateConnectionStatus('connecting');
+
+    try {
+      const startTime = performance.now();
+
+      if (endpointId === 'account') {
+        await firstValueFrom(this.binanceService.getAccount());
+      } else {
+        await firstValueFrom(this.binanceService.getTickerPrice('BTCUSDT'));
+      }
+
+      const responseTime = Math.round(performance.now() - startTime);
+      this.sidebarConfigService.updateConnectionStatus('connected');
+      this.addLog(`✅ Connection test successful (${responseTime}ms)`, 'success');
+
+    } catch (error: any) {
+      const errorMessage = this.errorHandler.formatUserFriendlyError(error);
+      this.sidebarConfigService.updateConnectionStatus('disconnected');
+      this.addLog(`❌ Connection test failed: ${errorMessage}`, 'error');
+    }
+  }
+
+  /**
+   * Test direct HTTP call (from binance-debug functionality)
+   *
+   * @date 08/10/2025
+   * @return {*}
+   */
+  public async testDirectHttp(): Promise<void> {
+    this.addLog('🌐 Starting direct HTTP test...', 'info');
+    const url = 'http://localhost:8000/api/v3/account';
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      this.addLog('✅ Direct HTTP SUCCESS', 'success');
+      this.addLog(`Response: ${JSON.stringify(data, null, 2)}`, 'info');
+
+    } catch (error: any) {
+      this.addLog(`❌ Direct HTTP ERROR: ${error.message}`, 'error');
+    }
+  }
+
+  /**
+   * Test service call (from binance-debug functionality)
+   *
+   * @date 08/10/2025
+   * @return {*}
+   */
+  public async testServiceCall(): Promise<void> {
+    this.addLog('🅰️ Starting service call test...', 'info');
+
+    try {
+      const account = await firstValueFrom(this.binanceService.getAccount());
+      this.addLog('✅ Service call SUCCESS', 'success');
+      this.addLog(`Account data received: ${JSON.stringify(account, null, 2)}`, 'info');
+
+    } catch (error: any) {
+      this.addLog(`❌ Service call ERROR: ${error.message}`, 'error');
+    }
+  }
+
+  // =========================================
+  // PRIVATE DATA LOADING METHODS
+  // =========================================
+
+  /**
+   * Load account data
+   *
+   * @date 08/10/2025
+   * @private
+   * @return {*}
+   */
+  private async loadAccountData(): Promise<BashData[]> {
+    const account = await firstValueFrom(
+      this.binanceService.getAccount()
+        .pipe(finalize(() => this.sidebarConfigService.updateLoadingState(false)))
+    );
+
+    if (!account?.balances) return [];
+
+    return account.balances
+      .filter(balance =>
+        parseFloat(balance.free.toString()) > 0 ||
+        parseFloat(balance.locked.toString()) > 0
+      )
+      .map(balance => ({
+        id: balance.asset,
+        asset: balance.asset,
+        free: parseFloat(balance.free.toString()),
+        locked: parseFloat(balance.locked.toString()),
+        total: parseFloat(balance.free.toString()) + parseFloat(balance.locked.toString()),
+        usdValue: 0
+      }));
+  }
+
+  /**
+   * Load trades data
+   *
+   * @date 08/10/2025
+   * @private
+   * @param params
+   * @return {*}
+   */
+  private async loadTradesData(params: Record<string, any>): Promise<BashData[]> {
+    const symbol = params.symbol || 'BTCUSDT';
+    const limit = params.limit || 100;
+
+    const trades = await firstValueFrom(
+      this.binanceService.getMyTrades(symbol, undefined, undefined, limit)
+        .pipe(finalize(() => this.sidebarConfigService.updateLoadingState(false)))
+    );
+
+    if (!Array.isArray(trades)) return [];
+
+    return trades.map((trade: any) => ({
+      id: trade.id || `${trade.symbol}-${trade.time}`,
+      symbol: trade.symbol,
+      side: trade.isBuyer ? 'BUY' : 'SELL',
+      price: parseFloat(trade.price),
+      qty: parseFloat(trade.qty),
+      quoteQty: parseFloat(trade.quoteQty),
+      commission: parseFloat(trade.commission),
+      commissionAsset: trade.commissionAsset,
+      time: trade.time,
+      isBuyer: trade.isBuyer,
+      isMaker: trade.isMaker
+    }));
+  }
+
+  /**
+   * Load orders data
+   *
+   * @date 08/10/2025
+   * @private
+   * @param params
+   * @return {*}
+   */
+  private async loadOrdersData(params: Record<string, any>): Promise<BashData[]> {
+    const symbol = params.symbol || 'BTCUSDT';
+    const limit = params.limit || 100;
+
+    const orders = await firstValueFrom(
+      this.binanceService.getAllOrders(symbol, undefined, undefined, limit)
+        .pipe(finalize(() => this.sidebarConfigService.updateLoadingState(false)))
+    );
+
+    if (!Array.isArray(orders)) return [];
+
+    return orders.map((order: any) => ({
+      id: order.orderId,
+      symbol: order.symbol,
+      side: order.side,
+      type: order.type,
+      origQty: parseFloat(order.origQty),
+      executedQty: parseFloat(order.executedQty),
+      cummulativeQuoteQty: parseFloat(order.cummulativeQuoteQty),
+      price: parseFloat(order.price),
+      status: order.status,
+      timeInForce: order.timeInForce,
+      time: order.time,
+      updateTime: order.updateTime
+    }));
+  }
+
+  /**
+   * Load ticker data
+   *
+   * @date 08/10/2025
+   * @private
+   * @param params
+   * @return {*}
+   */
+  private async loadTickerData(params: Record<string, any>): Promise<BashData[]> {
+    const symbol = params.symbol;
+
+    const ticker = await firstValueFrom(
+      this.binanceService.getTickerPrice(symbol)
+        .pipe(finalize(() => this.sidebarConfigService.updateLoadingState(false)))
+    );
+
+    if (!ticker) return [];
+
+    const tickers = Array.isArray(ticker) ? ticker : [ticker];
+
+    return tickers.map((t: any, index: number) => ({
+      id: t.symbol || index,
+      symbol: t.symbol,
+      price: parseFloat(t.price),
+      priceChange: Math.random() * 10 - 5,
+      priceChangePercent: Math.random() * 20 - 10
+    }));
+  }
+
+  /**
+   * Typewriter log effect
+   * Add log entry with typewriter effect
+   * @date 08/10/2025
+   * @param message
+   * @param [level='info']
+   * @return {*}
+   */
+  public async typeLog(message: string, level: IBashLogEntry['level'] = 'info'): Promise<void> {
+    this.typingActive.set(true);
+
+    // Add initial timestamp
+    const timestamp = new Date().toLocaleTimeString();
+    const initialEntry: IBashLogEntry = {
+      timestamp: new Date(),
+      message: `[${timestamp}] `,
+      level
+    };
+
+    this.logs.update(logs => [...logs, initialEntry]);
+    const logIndex = this.logs().length - 1;
+
+    // Type character by character
+    for (let i = 0; i < message.length; i++) {
+      const char = message[i];
+
+      this.logs.update(logs => {
+        const copy = [...logs];
+        copy[logIndex] = {
+          ...copy[logIndex],
+          message: copy[logIndex].message + char
+        };
+        return copy;
+      });
+
+      // Update terminal display
+      this.updateTerminalContent();
+      this.scheduleScroll();
+
+      // Typing delay with variations
+      const baseDelay = Math.random() * 15 + 10;
+      const extraDelay =
+        char === ' ' ? 40 + Math.random() * 80 :
+          /[.,;:!?)]/.test(char) ? 80 + Math.random() * 140 : 0;
+
+      await new Promise(resolve => setTimeout(resolve, baseDelay + extraDelay));
+    }
+
+    this.typingActive.set(false);
   }
 
   // ======================================================
   // PRIVATE / TERMINAL LOGIC
   // ======================================================
-
-  private updateTerminalContent(): void {
-    const directive = this.terminalDirective();
-    if (!directive) return;
-    const newContent = this.terminalText();
-    directive.clearContent();
-    directive.insertAtCaret(newContent);
-  }
 
   private addLog(message: string, level: IBashLogEntry['level']): void {
     const logEntry: IBashLogEntry = {
@@ -368,44 +868,5 @@ export class AtkBashComponent implements OnInit {
     return this.terminalInputState().selectionText;
   }
 
-  public onTerminalStateChange(state: TerminalInputState): void {
-    this.terminalInputState.set(state);
-  }
-
-  public formatCellValue(value: any, column: any): string {
-    if (value === null || value === undefined) return '';
-    if (column.formatter) return column.formatter(value);
-    switch (column.type) {
-      case 'number':
-        return typeof value === 'number' ? value.toLocaleString() : value.toString();
-      case 'currency':
-        return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value);
-      case 'percentage':
-        return `${(value * 100).toFixed(2)}%`;
-      case 'date':
-        return new Date(value).toLocaleString('fr-FR');
-      case 'boolean':
-        return value ? '✅' : '❌';
-      default:
-        return value.toString();
-    }
-  }
-
-  public visibleColumns = computed(() => {
-    const cfg = this.currentConfig();
-    const sidebar = this.sidebarConfigService.state();
-    const ep = cfg?.endpoints.find(e => e.id === sidebar.currentEndpoint);
-    return ep?.columns.filter(c => c.visible !== false) || [];
-  });
-
-  public getCurrentEndpointName(endpointId: string): string {
-    const cfg = this.currentConfig();
-    const ep = cfg?.endpoints.find(e => e.id === endpointId);
-    return ep?.name || '';
-  }
-
-  public trackByIndex(index: number, item: any): any {
-    return item.id || item.symbol || index;
-  }
 
 }

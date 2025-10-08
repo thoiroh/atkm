@@ -2,7 +2,7 @@
 // EXTENDED - Factory for creating bash configurations with sidebar/table separation
 
 import { Injectable } from '@angular/core';
-import { IBashConfig, IBashEndpointConfig, IBashSidebarField, IBashDataTransformResult } from './atk-bash.interfaces';
+import { IBashConfig, IBashDataTransformResult, IBashEndpointConfig } from './atk-bash.interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class AtkBashConfigFactory {
       defaultEndpoint: 'account',
       terminal: {
         editable: true,
-        height: '200px',
+        height: '300px',
         showControls: true,
         customCommands: [
           {

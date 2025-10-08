@@ -19,8 +19,8 @@
 }
 
 .bash-header h1 {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 1em;
+  font-weight: bold;
   color: var(--color-fg-default);
   margin: 0 0 0px 0;
 }
