@@ -25,12 +25,17 @@
     <section class="bash-section">
       <div class="bash-content">
 
-        <textarea class="bash-input" atkTerminalInput [value]="terminalText()"
-          [style.--input-min-height]="currentConfig()?.terminal.height || '600px'" [smoothScroll]="true"
-          [maxHeight]="currentConfig()?.terminal.height || '400px'" spellcheck="false" autocorrect="off"
-          autocomplete="off" autocapitalize="off" (stateChange)="onTerminalStateChange($event)">
-        </textarea>
-
+        <textarea class="bash-input" atkTerminalInput autocorrect="off" spellcheck="false"
+          (stateChange)="onTerminalStateChange($event)"></textarea>
+        <!-- spellcheck="false" -->
+        <!-- autocorrect="off" -->
+        <!-- autocomplete="off" -->
+        <!-- autocapitalize="off" -->
+        <!-- [autoScroll]="true" -->
+        <!-- [maxHeight]="'200px'" -->
+        <!-- ou [smoothScroll]="true" -->
+        <!-- (scrollChange)="onTerminalScroll($event)" -->
+        <!-- [autoResize]="true" -->
         <!-- readonly -->
 
         <!-- Terminal Status -->

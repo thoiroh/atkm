@@ -39,12 +39,16 @@ export class AtkBashComponent implements OnInit {
 
   private terminalDirective = viewChild(TerminalInputDirective);
   private readonly tools = inject(ToolsService);
+
   configId = input<string>('binance-debug-v2');
   autoLoad = input<boolean>(true);
+
   dataLoaded = output<BashData[]>();
   errorOccurred = output<string>();
+
   public sidebarConfigService = inject(SidebarBashConfigService);
   public bashService = inject(AtkBashService);
+
   private bashConfigFactory = inject(AtkBashConfigFactory);
   private binanceService = inject(BinanceService);
   private errorHandler = inject(BinanceErrorHandlerService);
@@ -88,13 +92,16 @@ export class AtkBashComponent implements OnInit {
     const config = this.currentConfig();
     const sidebarState = this.sidebarConfigService.state();
     const endpoint = sidebarState.currentEndpoint;
+
     let output = '';
+
     // Header section
     if (config) {
       output += `Configuration: ${config.title}\n`;
       output += `${config.subtitle}\n`;
       output += `-----------------------------------------\n`;
     }
+
     // Service injection status
     output += `Service Status:\n`;
     output += `BinanceService: ${this.binanceService ? '✅ OK' : '❌ FAILED'}\n`;
@@ -102,17 +109,20 @@ export class AtkBashComponent implements OnInit {
     output += `TransactionState: ${this.transactionState ? '✅ OK' : '❌ FAILED'}\n`;
     output += `SidebarConfigService: ${this.sidebarConfigService ? '✅ OK' : '❌ FAILED'}\n`;
     output += `-----------------------------------------\n`;
+
     // Connection status
     output += `Connection Status:\n`;
     output += `Status: ${this.getStatusIcon(sidebarState.connectionStatus)} ${sidebarState.connectionStatus}\n`;
     output += `Current Endpoint: ${endpoint || 'None selected'}\n`;
     output += `-----------------------------------------\n`;
+
     const termState = this.terminalState();
     if (termState.responseMetadata) {
       output += `Last Response: ${termState.responseMetadata.statusCode} (${termState.responseMetadata.responseTime}ms)\n`;
       output += `Data Count: ${termState.responseMetadata.dataCount || 0}\n`;
       output += `-----------------------------------------\n`;
     }
+
     // Parameters section
     if (sidebarState.parameters && Object.keys(sidebarState.parameters).length > 0) {
       output += 'Request Parameters:\n';
@@ -121,6 +131,7 @@ export class AtkBashComponent implements OnInit {
       });
       output += `-----------------------------------------\n`;
     }
+
     // Logs section with typewriter effect
     output += 'Terminal Log:\n';
     const logEntries = this.logs();
@@ -318,9 +329,9 @@ export class AtkBashComponent implements OnInit {
   /**
    * Handle terminal scroll state changes
    */
-  // onTerminalScrollChange(scrollState: TerminalScrollState): void {
-  //   // this.terminalScrollState.set(scrollState);
-  // }
+  onTerminalScrollChange(scrollState: TerminalScrollState): void {
+    this.terminalScrollState.set(scrollState);
+  }
   // =========================================
   // PRIVATE METHODS
   // =========================================

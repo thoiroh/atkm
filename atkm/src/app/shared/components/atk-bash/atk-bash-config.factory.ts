@@ -20,7 +20,7 @@ export class AtkBashConfigFactory {
       defaultEndpoint: 'account',
       terminal: {
         editable: true,
-        height: '300px',
+        height: '200px',
         showControls: true,
         customCommands: [
           {

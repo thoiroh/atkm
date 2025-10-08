@@ -25,6 +25,8 @@
   --color-btn-hover-border: #8b949e;
   --color-success-emphasis: #238636;
   --color-icon-fill-default: #656d76;
+  --input-min-height: 200px;
+
 }
 
 * {

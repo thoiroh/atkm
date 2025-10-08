@@ -1,8 +1,38 @@
 // src/app/shared/directives/terminal-input.directive.ts
-// Standalone directive for terminal textarea functionality with cursor tracking
+// Unified directive: cursor tracking + auto-resize + auto-scroll (Angular 20 signals API)
+//
+// Public API (backward-compatible):
+// Inputs:
+//   - autoResize?: boolean = false
+//   - autoScroll?: boolean = true
+//   - smoothScroll?: boolean = true   // alias of autoScroll (kept for compatibility)
+//   - maxHeight?: string = '800px'
+// Outputs:
+//   - stateChange: TerminalInputState
+//   - contentChange: string
+//   - scrollChange: TerminalScrollState
+// Methods:
+//   - insertAtCaret(text: string): void
+//   - appendText(text: string): void
+//   - setContent(content: string): void
+//   - clearContent(): void
+//   - getCurrentState(): TerminalInputState
+//   - getScrollState(): TerminalScrollState | null
+//   - performAutoResize(): void
+//   - scrollToBottom(): void
+//
+// Host events handled:
+//   input, scroll, keyup, click, select, focus
+//
+// Notes:
+// - When content is modified programmatically (setContent/insertAtCaret/appendText/clearContent),
+//   the directive emits contentChange and stateChange, triggers autoResize (if enabled) and
+//   scrolls to bottom (if autoScroll/smoothScroll enabled).
+// - This file merges features from the simplified auto-scroll version and the richer cursor-tracking version.
 
-import { Directive, ElementRef, inject, input, OnInit, output, signal } from '@angular/core';
+import { Directive, ElementRef, inject, input, OnInit, output } from '@angular/core';
 
+// ----- State types -----
 export interface TerminalInputState {
   caretIndex: number;
   selectionStart: number;
@@ -15,241 +45,255 @@ export interface TerminalInputState {
   textValue: string;
 }
 
+export interface TerminalScrollState {
+  scrollTop: number;
+  scrollLeft: number;
+  contentHeight: number;
+  visibleHeight: number;
+  textValue: string;
+}
+
 @Directive({
   selector: 'textarea[atkTerminalInput]',
   standalone: true,
   host: {
-    '(input)': 'onTextareaEvent()',
-    '(keyup)': 'onTextareaEvent()',
-    '(click)': 'onTextareaEvent()',
-    '(select)': 'onTextareaEvent()',
-    '(scroll)': 'onScrollEvent()'
+    '(input)': 'onContentChange()',
+    '(scroll)': 'onScrollEvent()',
+    '(keyup)': 'updateState()',
+    '(click)': 'updateState()',
+    '(select)': 'updateState()',
+    '(focus)': 'onScrollToBottom()'
   }
 })
 export class TerminalInputDirective implements OnInit {
 
-  // =========================================
+  // ======================================================
   // DEPENDENCIES & INPUTS / OUTPUTS
-  // =========================================
+  // ======================================================
 
   private elementRef = inject(ElementRef<HTMLTextAreaElement>);
 
+  // ----- Inputs (signals API) -----
   autoResize = input<boolean>(false);
-  smoothScroll = input<boolean>(true);
-  maxHeight = input<string>('800px');
-
-  // Output event for state changes
+  autoScroll = input<boolean>(true);
+  // Back-compat for existing templates using [smoothScroll]
+  smoothScroll = input<boolean | null>(null);
+  maxHeight = input<string>('200px');
+  // ----- Outputs -----
   stateChange = output<TerminalInputState>();
-  scrollChange = output<{ scrollTop: number; scrollLeft: number }>();
+  contentChange = output<string>();
+  scrollChange = output<TerminalScrollState>();
+  // ----- Element ref -----
 
-  // =========================================
-  // LOCAL STATE
-  // =========================================
-
-  private currentState = signal<TerminalInputState>({
-    caretIndex: 0,
-    selectionStart: 0,
-    selectionEnd: 0,
-    line: 1,
-    column: 1,
-    selectionText: '',
-    currentLineText: '',
-    currentWord: '',
-    textValue: ''
-  });
-
-  // =========================================
-  // CONSTRUCTOR & LIFECYCLE
-  // =========================================
-
+  // ----- Lifecycle -----
   ngOnInit(): void {
     const textarea = this.getTextarea();
     if (!textarea) {
-      throw new Error('atkTerminalInput directive can only be applied to textarea elements');
+      throw new Error('atkTerminalInput directive can only be applied to <textarea> elements');
     }
 
-    // Initialize state with current textarea content
+    // Initial resize/scroll
+    if (this.autoResize()) { this.performAutoResize(); }
+    // Defer to next frame to ensure layout is ready
+    if (this.isAutoScrollEnabled()) { this.raf(() => this.scrollToBottom()); }
+    // Emit initial state
     this.updateState();
   }
 
-  // =========================================
-  // PUBLIC METHODS
-  // =========================================
-
-  /**
-   * Handle all textarea events that affect cursor position and content
-   */
-  public onTextareaEvent(): void {
+  // ----- Host handlers -----
+  public onContentChange(): void {
+    const textarea = this.getTextarea();
+    if (!textarea) return;
+    // Emit textual change
+    this.contentChange.emit(textarea.value);
+    // Maintain resize/state/scroll
+    if (this.autoResize()) { this.performAutoResize(); }
     this.updateState();
-
-    if (this.autoResize()) {
-      this.performAutoResize();
+    // Slight delay to let DOM heights settle
+    if (this.isAutoScrollEnabled()) {
+      setTimeout(() => this.scrollToBottom(), 10);
     }
   }
 
-  /**
-   * Handle scroll events for synchronization
-   */
   public onScrollEvent(): void {
     const textarea = this.getTextarea();
     if (!textarea) return;
 
-    this.scrollChange.emit({
+    const payload: TerminalScrollState = {
       scrollTop: textarea.scrollTop,
-      scrollLeft: textarea.scrollLeft
-    });
+      scrollLeft: textarea.scrollLeft,
+      contentHeight: textarea.scrollHeight,
+      visibleHeight: textarea.clientHeight,
+      textValue: textarea.value
+    };
+    this.scrollChange.emit(payload);
   }
 
-  /**
-   * Public API: Set caret position
-   */
-  public setCaret(position: number): void {
-    const textarea = this.getTextarea();
-    if (!textarea) return;
-
-    const clampedPosition = Math.max(0, Math.min(position, textarea.value.length));
-    textarea.setSelectionRange(clampedPosition, clampedPosition);
-    textarea.focus();
-    this.updateState();
+  public onScrollToBottom(): void {
+    if (this.isAutoScrollEnabled()) { this.scrollToBottom(); }
   }
 
-  /**
-   * Public API: Insert text at current caret position
-   */
+  // ----- Public API -----
   public insertAtCaret(text: string): void {
     const textarea = this.getTextarea();
     if (!textarea) return;
-
-    const start = textarea.selectionStart ?? 0;
-    const end = textarea.selectionEnd ?? start;
-    const currentValue = textarea.value;
-
-    const newValue = currentValue.slice(0, start) + text + currentValue.slice(end);
-    const newPosition = start + text.length;
-
-    textarea.value = newValue;
-    textarea.setSelectionRange(newPosition, newPosition);
+    const { selectionStart = textarea.value.length, selectionEnd = textarea.value.length } = textarea;
+    const before = textarea.value.slice(0, selectionStart);
+    const after = textarea.value.slice(selectionEnd);
+    textarea.value = before + text + after;
+    // Place caret after inserted text
+    const newCaret = before.length + text.length;
+    textarea.selectionStart = textarea.selectionEnd = newCaret;
+    // Synthesize full pipeline
+    this.onContentChange();
     textarea.focus();
-
-    this.updateState();
-
-    if (this.smoothScroll()) {
-      this.scrollToBottom();
-    }
   }
 
-  /**
-   * Public API: Get current state
-   */
-  public getCurrentState(): TerminalInputState {
-    return this.currentState();
+  public appendText(text: string): void {
+    const textarea = this.getTextarea();
+    if (!textarea) return;
+    textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
+    this.insertAtCaret(text);
   }
 
-  /**
-   * Public API: Clear textarea content
-   */
+  public setContent(content: string): void {
+    const textarea = this.getTextarea();
+    if (!textarea) return;
+    textarea.value = content;
+    // Place caret at end
+    textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
+    this.onContentChange();
+  }
+
   public clearContent(): void {
-    const textarea = this.getTextarea();
-    if (!textarea) return;
-
-    textarea.value = '';
-    textarea.focus();
-    this.updateState();
+    this.setContent('');
   }
 
-  /**
-   * Public API: Scroll to bottom smoothly
-   */
-  public scrollToBottom(): void {
+  public getCurrentState(): TerminalInputState {
     const textarea = this.getTextarea();
-    if (!textarea) return;
-
-    const targetPosition = textarea.scrollHeight - textarea.clientHeight;
-    if (targetPosition <= 0) return;
-
-    if (this.smoothScroll()) {
-      try {
-        textarea.scrollTo({ top: targetPosition, behavior: 'smooth' });
-      } catch {
-        textarea.scrollTop = targetPosition;
-      }
-    } else {
-      textarea.scrollTop = targetPosition;
+    if (!textarea) {
+      // Return a neutral state if called too early
+      return {
+        caretIndex: 0,
+        selectionStart: 0,
+        selectionEnd: 0,
+        line: 1,
+        column: 1,
+        selectionText: '',
+        currentLineText: '',
+        currentWord: '',
+        textValue: ''
+      };
     }
-  }
 
-  /**
-   * Public API: Auto resize to fit content
-   */
-  public performAutoResize(): void {
-    const textarea = this.getTextarea();
-    if (!textarea) return;
-
-    textarea.style.height = 'auto';
-    const newHeight = Math.min(textarea.scrollHeight, this.parseMaxHeight());
-    textarea.style.height = `${newHeight}px`;
-
-    if (textarea.scrollHeight > newHeight) {
-      textarea.style.overflowY = 'auto';
-    } else {
-      textarea.style.overflowY = 'hidden';
-    }
-  }
-
-  // =========================================
-  // PRIVATE METHODS
-  // =========================================
-
-  private updateState(): void {
-    const textarea = this.getTextarea();
-    if (!textarea) return;
-
-    const value = textarea.value;
+    const value = textarea.value ?? '';
     const selectionStart = textarea.selectionStart ?? 0;
     const selectionEnd = textarea.selectionEnd ?? selectionStart;
+    // Compute line/column
+    const lines = value.split('\n');
+    let acc = 0;
+    let lineIndex = 0;
+    for (let i = 0; i < lines.length; i++) {
+      const lineLen = lines[i].length + (i < lines.length - 1 ? 1 : 0);
+      if (selectionStart <= acc + lineLen) {
+        lineIndex = i;
+        break;
+      }
+      acc += lineLen;
+    }
+    const lineStartPos = value.lastIndexOf('\n', selectionStart - 1) + 1;
+    const column = selectionStart - lineStartPos + 1;
+    const currentLineText = lines[lineIndex] ?? '';
+    const currentWord = this.extractWordAt(currentLineText, column - 1);
 
-    // Calculate line and column (1-based indexing)
-    const textUpToCaret = value.slice(0, selectionEnd);
-    const lines = textUpToCaret.split('\n');
-    const lineNumber = lines.length;
-    const columnNumber = lines[lines.length - 1].length + 1;
-
-    // Get current line text
-    const allLines = value.split('\n');
-    const currentLineText = allLines[lineNumber - 1] ?? '';
-
-    // Extract current word around caret position
-    const leftPart = currentLineText.slice(0, columnNumber - 1);
-    const rightPart = currentLineText.slice(columnNumber - 1);
-    const leftWord = leftPart.match(/[A-Za-z0-9_\-]+$/)?.[0] ?? '';
-    const rightWord = rightPart.match(/^[A-Za-z0-9_\-]+/)?.[0] ?? '';
-    const currentWord = leftWord + rightWord;
-
-    // Create new state
-    const newState: TerminalInputState = {
-      caretIndex: selectionEnd,
+    return {
+      caretIndex: selectionStart,
       selectionStart,
       selectionEnd,
-      line: lineNumber,
-      column: columnNumber,
-      selectionText: selectionStart !== selectionEnd ? value.slice(selectionStart, selectionEnd) : '',
+      line: lineIndex + 1,
+      column,
+      selectionText: value.slice(selectionStart, selectionEnd),
       currentLineText,
       currentWord,
       textValue: value
     };
+  }
 
-    this.currentState.set(newState);
-    this.stateChange.emit(newState);
+  public getScrollState(): TerminalScrollState | null {
+    const textarea = this.getTextarea();
+    if (!textarea) return null;
+    return {
+      scrollTop: textarea.scrollTop,
+      scrollLeft: textarea.scrollLeft,
+      contentHeight: textarea.scrollHeight,
+      visibleHeight: textarea.clientHeight,
+      textValue: textarea.value
+    };
+  }
+
+  public performAutoResize(): void {
+    const textarea = this.getTextarea();
+    if (!textarea) return;
+    // Reset height to compute scrollHeight precisely
+    textarea.style.height = 'auto';
+    const max = this.parseMaxHeight();
+    const next = Math.min(textarea.scrollHeight, max);
+    textarea.style.height = `${next}px`;
+    // Overflow handling
+    textarea.style.overflowY = textarea.scrollHeight > next ? 'auto' : 'hidden';
+  }
+
+  public scrollToBottom(): void {
+    const textarea = this.getTextarea();
+    if (!textarea) return;
+    const target = textarea.scrollHeight - textarea.clientHeight;
+    if (target <= 0) return;
+    // Try smooth scroll, fallback to assignment
+    try {
+      textarea.scrollTo({ top: target, behavior: 'smooth' });
+    } catch {
+      textarea.scrollTop = target;
+    }
+  }
+
+  // ----- Internal helpers -----
+  private updateState(): void {
+    this.stateChange.emit(this.getCurrentState());
   }
 
   private getTextarea(): HTMLTextAreaElement | null {
-    const element = this.elementRef.nativeElement;
-    return element?.tagName?.toLowerCase() === 'textarea' ? element : null;
+    const el = this.elementRef.nativeElement;
+    return el?.tagName?.toLowerCase() === 'textarea' ? el : null;
   }
 
   private parseMaxHeight(): number {
-    const maxHeightStr = this.maxHeight();
-    const match = maxHeightStr.match(/^(\d+)px?$/);
-    return match ? parseInt(match[1], 10) : 800;
+    const str = this.maxHeight();
+    const m = str?.match(/^(\d+)px?$/);
+    return m ? parseInt(m[1], 10) : 800;
+  }
+
+  private isAutoScrollEnabled(): boolean {
+    // smoothScroll is an alias/override if provided
+    const smooth = this.smoothScroll();
+    return smooth === null ? !!this.autoScroll() : !!smooth;
+  }
+
+  private extractWordAt(lineText: string, colZeroBased: number): string {
+    if (colZeroBased < 0) return '';
+    const isWord = (ch: string) => /[\w-]/.test(ch);
+    let start = colZeroBased;
+    let end = colZeroBased;
+    while (start > 0 && isWord(lineText[start - 1])) start--;
+    while (end < lineText.length && isWord(lineText[end])) end++;
+    return lineText.slice(start, end);
+  }
+
+  private raf(cb: () => void): void {
+    // Fallback in environments without RAF
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => requestAnimationFrame(cb));
+    } else {
+      setTimeout(cb, 16);
+    }
   }
 }
