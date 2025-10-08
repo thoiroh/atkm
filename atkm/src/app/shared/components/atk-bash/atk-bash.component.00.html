@@ -1,24 +1,215 @@
-<div class="terminal-status">
-  <span class="status-indicator" [class]="terminalState().connectionStatus">
-    {{ getStatusIcon(terminalState().connectionStatus) }}
-    {{ terminalState().connectionStatus | titlecase }}
-  </span>
+<!-- atk-bash.component.html (Updated) -->
+<!-- Simplified terminal component focused on display only -->
 
-  @if (loading()) {
-  <span class="loading-indicator">
-    <span class="spinner"></span>
-    Loading...
-  </span>
-  }
+<div class="bash-wrapper">
+  @let sidebarState = sidebarConfigService.state();
+  <!-- Terminal Header -->
+  <header class="bash-header">
+    @if (currentConfig(); as config) {
+    <h1>{{ config.title }}</h1>
+    <div class="bash-details">
+      <h2>{{ config.subtitle }}</h2>
+    </div>
+    }
+  </header>
 
-  @if (terminalState().connectionStatus) {
-  <span class="scroll-info">
-    Content: {{ scrollStateDisplay().contentHeight }}px / Visible: {{ scrollStateDisplay().visibleHeight }}px </span>
-  }
+  <main class="bash-main">
+    <!-- Terminal Display Section -->
+    <div class="bash-section">
+      <div class="bash-content">
+
+        <!-- Terminal Textarea with directive -->
+        <textarea class="bash-input" atkTerminalInput [value]="terminalText()" [autoResize]="false"
+          [smoothScroll]="true" [style.--input-min-height]="currentConfig()?.terminal.height || '500px'"
+          [maxHeight]="currentConfig()?.terminal.height || '500px'" spellcheck="false" autocorrect="off"
+          autocomplete="off" autocapitalize="off" placeholder="Terminal output display"
+          (stateChange)="onTerminalStateChange($event)" readonly>
+        </textarea>
+
+        <!-- Terminal Status Bar -->
+        <div class="bash-status">
+          <span>Ln {{ line() }},</span>
+          <span>Col {{ column() }} · Idx {{ caretIndex() }}</span>
+          @if (selectionText(); as text) {
+          <span class="bash-selection"> · Sel "{{ text }}"</span>
+          }
+
+          <!-- Connection Status -->
+          <span class="bash-connection" [class]="'status-' + sidebarState.connectionStatus">
+            {{ sidebarState.connectionStatus | titlecase }}
+          </span>
+
+          <!-- Loading Indicator -->
+          @if (sidebarState.loading) {
+          <span class="bash-loading">Loading...</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table Section -->
+    @if (data().length > 0 && visibleColumns().length > 0) {
+    <div class="bash-section">
+      <div class="bash-content">
+        <atk-icon class="bash-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
+
+        <!-- Table Header -->
+        <div class="bash-table-header">
+          <div class="bash-table-title">
+            <h2>{{ getCurrentEndpointName(sidebarState.currentEndpoint) || 'Data Results' }}</h2>
+            <div class="table-meta">
+              <span class="data-count">{{ data().length }} items</span>
+              @if (terminalState().responseMetadata?.responseTime) {
+              <span class="response-time">{{ terminalState().responseMetadata.responseTime }}ms</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Enhanced Data Table -->
+        <div class="bash-table">
+          <!-- Table Header Row -->
+          <div class="table-header-row">
+            @for (column of visibleColumns(); track column.key) {
+            <div class="table-header-cell" [style.width]="column.width" [class]="'align-' + (column.align || 'left')">
+              {{ column.label }}
+              @if (column.sortable) {
+              <atk-icon name="chevron-up-down" [size]="12" color="var(--color-fg-muted)" />
+              }
+            </div>
+            }
+          </div>
+
+          <!-- Table Data Rows -->
+          @for (row of data(); track trackByIndex($index, row)) {
+          <div class="table-row">
+            @for (column of visibleColumns(); track column.key) {
+            <div class="table-cell" [style.width]="column.width" [class]="'align-' + (column.align || 'left')"
+              [ngClass]="column.cssClass">
+
+              @if (column.template) {
+              <!-- Custom template -->
+              <ng-container [ngTemplateOutlet]="column.template"
+                [ngTemplateOutletContext]="{ $implicit: row[column.key], row: row, column: column }">
+              </ng-container>
+              } @else {
+              <!-- Enhanced formatting with pipes -->
+              @switch (column.type) {
+              @case ('custom') {
+              <span class="cell-content">
+                {{ formatCellValue(row[column.key], column) }}
+              </span>
+              }
+              @case ('badge') {
+              @if (column.key === 'side') {
+              <span class="badge" [ngClass]="(row[column.key] | statusBadge:'trade-side').cssClass">
+                {{ (row[column.key] | statusBadge:'trade-side').text }}
+              </span>
+              } @else if (column.key === 'status') {
+              <span class="badge" [ngClass]="(row[column.key] | statusBadge:'order-status').cssClass">
+                {{ (row[column.key] | statusBadge:'order-status').text }}
+              </span>
+              } @else {
+              <span class="badge badge-default">
+                {{ row[column.key] | uppercase }}
+              </span>
+              }
+              }
+              @case ('date') {
+              <span class="cell-content date-cell">
+                {{ row[column.key] | timestampToDate }}
+              </span>
+              }
+              @case ('currency') {
+              <span class="cell-content currency-cell">
+                {{ row[column.key] | currency:'EUR':'symbol':'1.2-2' }}
+              </span>
+              }
+              @case ('percentage') {
+              <span class="cell-content percentage-cell"
+                [ngClass]="row[column.key] > 0 ? 'text-success' : row[column.key] < 0 ? 'text-danger' : 'text-muted'">
+                {{ row[column.key] | number:'1.2-2' }}%
+              </span>
+              }
+              @case ('boolean') {
+              <span class="cell-content boolean-cell">
+                {{ row[column.key] ? '✅' : '❌' }}
+              </span>
+              }
+              @default {
+              <span class="cell-content">
+                @if (column.key === 'free' || column.key === 'locked' || column.key === 'total') {
+                {{ row[column.key] | balanceFormat }}
+                } @else if (column.key === 'price' || column.key === 'qty' || column.key === 'quoteQty') {
+                {{ row[column.key] | cryptoPrecision:(column.key === 'qty' ? 'quantity' : 'price') }}
+                } @else if (column.key === 'commission') {
+                {{ row[column.key] | cryptoPrecision:'fee' }}
+                } @else {
+                {{ row[column.key] }}
+                }
+              </span>
+              }
+              }
+              }
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    }
+
+    <!-- Empty State -->
+    @if (data().length === 0 && !terminalState().loading && !error()) {
+    @if (currentConfig()?.table.showEmptyState !== false) {
+    <div class="bash-section">
+      <div class="empty-state">
+        <atk-icon name="database" color="var(--color-fg-muted)" [size]="48" />
+        <h3>No Data Available</h3>
+        <p>Use the sidebar configuration panel to select an endpoint and load data.</p>
+        @if (sidebarState.currentEndpoint === 'trades' || sidebarState.currentEndpoint === 'orders') {
+        <p class="empty-hint">
+          <strong>Tip:</strong> Enter a trading symbol (e.g., BTCUSDT) in the sidebar configuration panel.
+        </p>
+        }
+      </div>
+    </div>
+    }
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+    <div class="bash-section">
+      <div class="error-state">
+        <atk-icon name="alert-circle" color="#ef4444" [size]="24" />
+        <h3>Error Loading Data</h3>
+        <p class="error-message">{{ error() }}</p>
+        <div class="error-actions">
+          <button class="cmd-btn retry-btn" (click)="loadData()">
+            <atk-icon name="refresh-cw" />
+            Retry
+          </button>
+          <button class="cmd-btn" (click)="testConnection()">
+            <atk-icon name="wifi" />
+            Test Connection
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+
+    <!-- Loading State -->
+    @if (sidebarState.loading) {
+    <div class="bash-section">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading data from <strong>{{ sidebarState.currentEndpoint }}</strong> endpoint...</p>
+        @if (sidebarState.parameters?.symbol) {
+        <p class="loading-detail">Symbol: {{ sidebarState.parameters.symbol }}</p>
+        }
+      </div>
+    </div>
+    }
+  </main>
 </div>
-
-<!-- Terminal textarea with simplified directive -->
-<textarea [style.--terminal-min-height]="currentConfig()?.terminal.height || '500px'"
-  [style.max-height]="currentConfig()?.terminal.height || '500px'" (input)="onTerminalContentChange($event)"
-  (scroll)="onTerminalScroll($event)">
-</textarea>

@@ -1,99 +1,117 @@
-// atk-bash.service.ts
-// Service for managing bash configurations and data loading
+// atk-bash.service.v03.ts
+// ======================================================
+// FULL SIGNALS VERSION (Angular 20+)
+// ------------------------------------------------------
+// Service de gestion du terminal Bash ATK, version 3
+// - Basé sur Signals Angular
+// - Suppression complète de RxJS réactif (plus de Subject/Observable)
+// - Utilisation ponctuelle de firstValueFrom() pour HttpClient
+// ======================================================
 
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, map, of, tap, throwError } from 'rxjs';
-import {
-  BashData,
-  BashDataLoader,
-  IBashConfig,
-  IBashEndpointConfig,
-  IBashEvent
-} from './atk-bash.interfaces';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { effect, Injectable, signal } from '@angular/core';
+import { BashData, IBashConfig, IBashEndpointConfig, IBashEvent } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class AtkBashService {
-  // Configuration storage
-  private configs = new Map<string, IBashConfig>();
-  private configsSubject = new BehaviorSubject<Map<string, IBashConfig>>(new Map());
-  public configs$ = this.configsSubject.asObservable();
 
-  // Global events stream
-  private eventsSubject = new BehaviorSubject<IBashEvent[]>([]);
-  public events$ = this.eventsSubject.asObservable();
+  // ======================================================
+  // SIGNALS PUBLICS
+  // ======================================================
 
-  // Cache for API responses
+  /** Toutes les configurations enregistrées */
+  configs = signal<Map<string, IBashConfig>>(new Map());
+  /** Liste des événements récents (max 100) */
+  events = signal<IBashEvent[]>([]);
+  /** Dernières données chargées */
+  lastData = signal<BashData[]>([]);
+  /** Dernière erreur rencontrée */
+  lastError = signal<string | null>(null);
+  /** Indicateur global de chargement */
+  loading = signal<boolean>(false);
+
+  // ======================================================
+  // CACHE LOCAL
+  // ======================================================
+
   private cache = new Map<string, { data: any; timestamp: number; duration: number }>();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    // Nettoyage automatique du cache via effect
+    effect(() => {
+      const now = Date.now();
+      this.cache.forEach((value, key) => {
+        if (now - value.timestamp > value.duration) {
+          this.cache.delete(key);
+        }
+      });
+    });
+  }
 
-  /**
-   * Register a new bash configuration
-   */
+  // ======================================================
+  // MÉTHODES DE CONFIGURATION
+  // ======================================================
+
+  /** Enregistre une nouvelle configuration */
   registerConfig(config: IBashConfig): void {
-    this.configs.set(config.id, config);
-    this.configsSubject.next(new Map(this.configs));
+    const updated = new Map(this.configs());
+    updated.set(config.id, config);
+    this.configs.set(updated);
     this.emitEvent('endpoint-changed', { configId: config.id, config });
   }
 
-  /**
-   * Get configuration by ID
-   */
+  /** Récupère une configuration */
   getConfig(configId: string): IBashConfig | undefined {
-    return this.configs.get(configId);
+    return this.configs().get(configId);
   }
 
-  /**
-   * Update configuration
-   */
+  /** Met à jour une configuration existante */
   updateConfig(configId: string, updates: Partial<IBashConfig>): void {
-    const existing = this.configs.get(configId);
+    const existing = this.configs().get(configId);
     if (existing) {
       const updated = { ...existing, ...updates };
-      this.configs.set(configId, updated);
-      this.configsSubject.next(new Map(this.configs));
+      const configsCopy = new Map(this.configs());
+      configsCopy.set(configId, updated);
+      this.configs.set(configsCopy);
     }
   }
 
-  /**
-   * Load configurations from JSON file
-   */
-  loadConfigsFromFile(filePath: string): Observable<IBashConfig[]> {
-    return this.http.get<IBashConfig[]>(filePath).pipe(
-      tap(configs => {
-        configs.forEach(config => this.registerConfig(config));
-      }),
-      catchError(error => {
-        console.error('Error loading bash configs:', error);
-        return throwError(() => error);
-      })
-    );
-  }
+  // ======================================================
+  // MÉTHODES DE DONNÉES
+  // ======================================================
 
   /**
-   * Generic data loader method
+   * Charge les données depuis un endpoint spécifique.
+   * Typage strict : T doit hériter de BashData.
    */
-  loadData<T = BashData>(
+  async loadData<T extends BashData = BashData>(
     configId: string,
     endpointId: string,
     params: Record<string, any> = {}
-  ): Observable<T[]> {
+  ): Promise<T[]> {
     const config = this.getConfig(configId);
     if (!config) {
-      return throwError(() => new Error(`Configuration ${configId} not found`));
+      const errorMsg = `Configuration ${configId} not found`;
+      this.lastError.set(errorMsg);
+      this.emitEvent('error', { configId, error: errorMsg });
+      return [];
     }
 
     const endpoint = config.endpoints.find(ep => ep.id === endpointId);
     if (!endpoint) {
-      return throwError(() => new Error(`Endpoint ${endpointId} not found in config ${configId}`));
+      const errorMsg = `Endpoint ${endpointId} not found in config ${configId}`;
+      this.lastError.set(errorMsg);
+      this.emitEvent('error', { configId, error: errorMsg });
+      return [];
     }
 
-    // Check cache first
     const cacheKey = this.getCacheKey(endpoint, params);
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<T>(cacheKey);
+
     if (cached) {
       this.emitEvent('data-loaded', {
         configId,
@@ -101,115 +119,108 @@ export class AtkBashService {
         data: cached,
         fromCache: true
       });
-      // return of(cached as T[]);
-      return of(cached) as Observable<T[]>;
+      this.lastData.set(cached as BashData[]);
+      return cached;
     }
 
-    // Make HTTP request
-    return this.makeRequest<T>(endpoint, params).pipe(
-      map(responseData => {
-        // Apply data transformer if available
-        const transformedData = endpoint.dataTransformer
-          ? endpoint.dataTransformer(responseData)
-          : Array.isArray(responseData) ? responseData : [responseData];
+    this.loading.set(true);
 
-        // Cache the result if cacheable
-        if (endpoint.cacheable) {
-          this.setCache(cacheKey, Array.isArray(transformedData) ? transformedData : [transformedData], endpoint.cacheDuration || 300000);
-        }
+    try {
+      const rawData = await this.makeRequest<T>(endpoint, params);
 
-        return transformedData as T[];
-      }),
-      tap(data => {
-        this.emitEvent('data-loaded', {
-          configId,
-          endpointId,
-          data,
-          fromCache: false
-        });
-      }),
-      catchError(error => {
-        this.emitEvent('error', {
-          configId,
-          endpointId,
-          error: error.message
-        });
-        return throwError(() => error);
-      })
-    );
+      // --- Normalisation du résultat ---
+      let transformed: BashData[] = [];
+
+      if (endpoint.dataTransformer) {
+        // On suppose un IBashDataTransformResult
+        const output = endpoint.dataTransformer(rawData);
+        transformed = output.tableData || [];
+      } else if (Array.isArray(rawData)) {
+        transformed = rawData as BashData[];
+      } else {
+        transformed = [rawData as BashData];
+      }
+
+      // --- Caching ---
+      if (endpoint.cacheable) {
+        this.setCache(cacheKey, transformed, endpoint.cacheDuration || 300000);
+      }
+
+      // --- Mise à jour des signaux ---
+      this.lastData.set(transformed);
+      this.lastError.set(null);
+
+      this.emitEvent('data-loaded', {
+        configId,
+        endpointId,
+        data: transformed,
+        fromCache: false
+      });
+
+      return transformed as T[];
+    } catch (error: any) {
+      const message = error.message || 'Unknown error while loading data';
+      this.lastError.set(message);
+      this.emitEvent('error', { configId, endpointId, error: message });
+      return [];
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  /**
-   * Test endpoint connection
-   */
-  testEndpoint(
+  /** Teste un endpoint (latence + succès) */
+  async testEndpoint(
     configId: string,
     endpointId: string,
     params: Record<string, any> = {}
-  ): Observable<{ success: boolean; responseTime: number; statusCode?: number; error?: string }> {
-    const startTime = performance.now();
-
-    return this.loadData(configId, endpointId, params).pipe(
-      map(data => ({
+  ): Promise<{ success: boolean; responseTime: number; error?: string }> {
+    const start = performance.now();
+    try {
+      await this.loadData(configId, endpointId, params);
+      return {
         success: true,
-        responseTime: Math.round(performance.now() - startTime),
-        dataCount: data.length
-      })),
-      catchError((error: HttpErrorResponse) => {
-        return of({
-          success: false,
-          responseTime: Math.round(performance.now() - startTime),
-          statusCode: error.status,
-          error: error.message
-        });
-      })
-    );
+        responseTime: Math.round(performance.now() - start)
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        responseTime: Math.round(performance.now() - start),
+        error: error.message
+      };
+    }
   }
 
-  /**
-   * Get available endpoints for a configuration
-   */
+  /** Retourne les endpoints disponibles */
   getEndpoints(configId: string): IBashEndpointConfig[] {
-    const config = this.getConfig(configId);
-    return config?.endpoints || [];
+    return this.getConfig(configId)?.endpoints || [];
   }
 
-  /**
-   * Clear cache for specific endpoint or all
-   */
+  /** Vide le cache (global ou partiel) */
   clearCache(endpointId?: string): void {
     if (endpointId) {
-      // Clear cache for specific endpoint
-      const keysToDelete = Array.from(this.cache.keys()).filter(key =>
-        key.includes(endpointId)
-      );
-      keysToDelete.forEach(key => this.cache.delete(key));
+      Array.from(this.cache.keys())
+        .filter(key => key.includes(endpointId))
+        .forEach(key => this.cache.delete(key));
     } else {
-      // Clear all cache
       this.cache.clear();
     }
   }
 
-  /**
-   * Create a custom data loader for specific use cases
-   */
-  createDataLoader<T = BashData>(
-    customLoader: (endpoint: IBashEndpointConfig, params?: Record<string, any>) => Observable<T[]>
-  ): BashDataLoader<T> {
-    return customLoader;
-  }
+  // ======================================================
+  // MÉTHODES PRIVÉES
+  // ======================================================
 
-  // Private helper methods
-
-  private makeRequest<T>(
+  /** Requête HTTP utilisant firstValueFrom() */
+  private async makeRequest<T>(
     endpoint: IBashEndpointConfig,
     params: Record<string, any>
-  ): Observable<T> {
+  ): Promise<T> {
     const url = this.buildUrl(endpoint.url, params);
     const headers = new HttpHeaders(endpoint.headers || {});
 
     let httpParams = new HttpParams();
     const queryParams = { ...endpoint.params, ...params };
+
     Object.keys(queryParams).forEach(key => {
       if (queryParams[key] !== undefined && queryParams[key] !== null) {
         httpParams = httpParams.set(key, queryParams[key].toString());
@@ -217,79 +228,67 @@ export class AtkBashService {
     });
 
     const options = { headers, params: httpParams };
+    const method = endpoint.method.toUpperCase();
 
-    switch (endpoint.method) {
+    // --- HttpClient toujours Observable => conversion par firstValueFrom() ---
+    switch (method) {
       case 'GET':
-        return this.http.get<T>(url, options);
+        return await firstValueFrom(this.http.get<T>(url, options));
       case 'POST':
-        return this.http.post<T>(url, endpoint.body, options);
+        return await firstValueFrom(this.http.post<T>(url, endpoint.body, options));
       case 'PUT':
-        return this.http.put<T>(url, endpoint.body, options);
+        return await firstValueFrom(this.http.put<T>(url, endpoint.body, options));
       case 'DELETE':
-        return this.http.delete<T>(url, options);
+        return await firstValueFrom(this.http.delete<T>(url, options));
       case 'PATCH':
-        return this.http.patch<T>(url, endpoint.body, options);
+        return await firstValueFrom(this.http.patch<T>(url, endpoint.body, options));
       default:
-        throw new Error(`Unsupported HTTP method: ${endpoint.method}`);
+        throw new Error(`Unsupported HTTP method: ${method}`);
     }
   }
 
+  /** Construit l’URL avec remplacement de paramètres {id} */
   private buildUrl(baseUrl: string, params: Record<string, any>): string {
     let url = baseUrl;
-
-    // Replace path parameters (e.g., /users/{userId} -> /users/123)
     Object.keys(params).forEach(key => {
       const placeholder = `{${key}}`;
       if (url.includes(placeholder)) {
         url = url.replace(placeholder, params[key].toString());
-        delete params[key]; // Remove from query params
+        delete params[key];
       }
     });
-
     return url;
   }
 
+  /** Clé de cache unique */
   private getCacheKey(endpoint: IBashEndpointConfig, params: Record<string, any>): string {
     const paramString = JSON.stringify(params, Object.keys(params).sort());
     return `${endpoint.id}_${endpoint.url}_${paramString}`;
   }
 
+  /** Lecture du cache */
   private getFromCache<T>(key: string): T[] | null {
     const cached = this.cache.get(key);
     if (!cached) return null;
-
     const now = Date.now();
     if (now - cached.timestamp > cached.duration) {
       this.cache.delete(key);
       return null;
     }
-
     return cached.data as T[];
   }
 
+  /** Écriture du cache */
   private setCache<T>(key: string, data: T[], duration: number): void {
-    this.cache.set(key, {
-      data,
-      timestamp: Date.now(),
-      duration
-    });
+    this.cache.set(key, { data, timestamp: Date.now(), duration });
   }
 
+  /** Ajoute un événement dans le signal global */
   private emitEvent(type: IBashEvent['type'], payload: any): void {
-    const event: IBashEvent = {
-      type,
-      payload,
-      timestamp: new Date()
-    };
-
-    const currentEvents = this.eventsSubject.value;
-    const updatedEvents = [...currentEvents, event];
-
-    // Keep only last 100 events to prevent memory issues
-    if (updatedEvents.length > 100) {
-      updatedEvents.splice(0, updatedEvents.length - 100);
-    }
-
-    this.eventsSubject.next(updatedEvents);
+    const event: IBashEvent = { type, payload, timestamp: new Date() };
+    this.events.update(list => {
+      const updated = [...list, event];
+      return updated.length > 100 ? updated.slice(-100) : updated;
+    });
   }
 }
