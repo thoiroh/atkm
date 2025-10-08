@@ -1,6 +1,5 @@
 // src/app/shared/components/home.content/home.content.component.ts
 // Home content component using centralized ConfigStore
-// Angular 20 - Signal-based approach
 
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';

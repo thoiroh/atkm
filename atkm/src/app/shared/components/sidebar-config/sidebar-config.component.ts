@@ -1,6 +1,5 @@
 // src/app/shared/components/sidebar-config/sidebar-config.component.ts
 // Configuration sidebar component using ConfigStore
-// Angular 20 - Modern signal-based approach
 
 import { Component, inject } from '@angular/core';
 import { ConfigStore } from '@core/store/config.store';
