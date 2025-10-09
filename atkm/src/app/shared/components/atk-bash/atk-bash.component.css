@@ -27,7 +27,7 @@
 
 .bash-details {
   position: absolute;
-  top: 44px;
+  top: 40px;
   left: 24px;
 }
 
@@ -66,7 +66,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 12px;
+  gap: 0;
   position: relative;
 }
 
@@ -84,8 +84,9 @@
 .bash-status {
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 12px;
+  gap: 12px;
+  font-size: .6em;
+  margin: 6px 0 0 2px;
   font-family: var(--fontStack-monospace);
   color: var(--color-fg-subtle);
   flex-wrap: wrap;
@@ -94,6 +95,9 @@
 .bash-selection {
   color: var(--color-accent-fg);
   font-weight: 500;
+  max-width: 100px;
+  text-wrap: nowrap;
+  overflow: hidden;
 }
 
 .bash-loading {
