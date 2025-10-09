@@ -10,6 +10,7 @@ import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance
 import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
 import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 import { ToolsService } from '@shared/services/tools.service';
 import { IBashConfig } from '../atk-bash/atk-bash.interfaces';
@@ -21,7 +22,8 @@ import { IBashConfig } from '../atk-bash/atk-bash.interfaces';
     CommonModule,
     AtkIconComponent,
     AtkBashComponent,
-    SidebarConfigComponent
+    SidebarConfigComponent,
+    SidebarBashConfigComponent
   ],
   templateUrl: './home-content.component.html',
   styles: []

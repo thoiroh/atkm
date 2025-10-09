@@ -6,6 +6,13 @@
   </div>
 
   <div class="user-actions">
+    <div class="user-menu">
+      <button class="user-btn" (click)="toggleUserMenu()">
+        <img src="https://avatars.githubusercontent.com/u/211126773?v=4" alt="@user" class="user-avatar" width="16"
+          height="16" />
+      </button>
+    </div>
+
     <button class="navbar-btn" aria-label="Créer quelque chose de nouveau" (click)="handleAction('create')">
       <atk-icon name="cross" color="white" />
     </button>
@@ -18,6 +25,7 @@
     <button class="navbar-btn" aria-label="Notifications" (click)="handleAction('notifications')">
       <atk-icon name="bell" [size]="16" color="white" />
     </button>
+
     <div class="user-menu">
       <button class="user-btn" (click)="toggleUserMenu()">
         <img src="https://avatars.githubusercontent.com/u/32144309?v=4" alt="@user" class="user-avatar" width="16"

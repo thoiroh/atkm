@@ -227,3 +227,370 @@
     text-align: left;
   }
 }
+
+/* ========================================
+   BASH CONFIG SPECIFIC STYLES
+   ======================================== */
+
+.bash-config-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 100vh;
+  background: var(--color-canvas-subtle);
+  border-left: 1px solid var(--color-border-default);
+  transition: transform 0.3s ease;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.bash-config-panel.collapsed {
+  transform: translateX(320px);
+}
+
+.bash-config-panel.expanded {
+  transform: translateX(0);
+}
+
+.bash-config-toggle {
+  position: absolute;
+  left: -32px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 64px;
+  background: var(--color-canvas-subtle);
+  border: 1px solid var(--color-border-default);
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.bash-config-toggle:hover {
+  background: var(--color-canvas-default);
+}
+
+.bash-config-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.bash-config-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Header */
+.bash-config-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.bash-config-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bash-config-title h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+}
+
+.bash-connection-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.bash-connection-status.status-connected {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--color-success-fg);
+}
+
+.bash-connection-status.status-connecting {
+  background: rgba(255, 166, 0, 0.1);
+  color: var(--color-attention-fg);
+}
+
+.bash-connection-status.status-disconnected {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger-fg);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-text {
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Tabs */
+.bash-config-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  background: var(--color-canvas-default);
+  color: var(--color-fg-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  background: var(--color-canvas-subtle);
+  border-color: var(--color-border-muted);
+}
+
+.tab-button.active {
+  background: var(--color-accent-subtle);
+  border-color: var(--color-accent-muted);
+  color: var(--color-accent-emphasis);
+}
+
+/* Sections */
+.bash-config-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Parameters */
+.params-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.param-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.param-item label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.param-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  background: var(--color-canvas-subtle);
+  font-size: 13px;
+  color: var(--color-fg-default);
+  font-family: var(--fontStack-monospace);
+  transition: all 0.2s ease;
+}
+
+.param-input:focus {
+  outline: none;
+  border-color: var(--color-accent-emphasis);
+  box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
+}
+
+/* Parameters Display */
+.params-display {
+  background: var(--color-canvas-subtle);
+  border: 1px solid var(--color-border-muted);
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 11px;
+}
+
+.params-display-title {
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.param-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.param-key {
+  font-weight: 500;
+  color: var(--color-fg-muted);
+}
+
+.param-value {
+  font-family: var(--fontStack-monospace);
+  color: var(--color-fg-default);
+  font-size: 10px;
+}
+
+/* Actions */
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  background: var(--color-canvas-default);
+  color: var(--color-fg-default);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover:not(:disabled) {
+  background: var(--color-btn-hover-bg);
+  border-color: var(--color-btn-hover-border);
+  transform: translateY(-1px);
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-btn.primary {
+  grid-column: 1 / -1;
+  background: var(--color-accent-emphasis);
+  border-color: var(--color-accent-emphasis);
+  color: white;
+}
+
+.action-btn.primary:hover:not(:disabled) {
+  background: var(--color-accent-muted);
+  border-color: var(--color-accent-muted);
+}
+
+/* Status */
+.status-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border-muted);
+}
+
+.status-item:last-child {
+  border-bottom: none;
+}
+
+.status-item.loading {
+  justify-content: center;
+  gap: 8px;
+}
+
+.status-label {
+  font-size: 11px;
+  color: var(--color-fg-muted);
+  font-weight: 500;
+}
+
+.status-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  font-family: var(--fontStack-monospace);
+}
+
+.status-value.success {
+  color: var(--color-success-emphasis);
+}
+
+/* Small Spinner */
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border-muted);
+  border-top: 2px solid var(--color-accent-emphasis);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bash-config-panel {
+    width: 280px;
+  }
+
+  .bash-config-panel.collapsed {
+    transform: translateX(280px);
+  }
+}

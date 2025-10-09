@@ -111,6 +111,9 @@
   </div>
 </div>
 
-<atk-sidebar-config />
+<!-- <atk-sidebar-config /> -->
+
 <!-- <atk-sidebar-config [sections]="config().configPanel.sections" [isCollapsed]="config().configPanel.isCollapsed"
   (togglePanel)="toggleConfigPanel()" /> -->
+
+<atk-sidebar-bash-config [isCollapsed]="configPanelCollapsed()" (togglePanel)="toggleConfigPanel()" />

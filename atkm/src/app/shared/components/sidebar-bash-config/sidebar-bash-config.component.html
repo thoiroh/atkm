@@ -1,37 +1,150 @@
-<aside class="config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
-  <button class="config-toggle" (click)="onToggle()"
-    [attr.aria-label]="isCollapsed() ? 'Open configuration' : 'Close configuration'">
+<aside class="bash-config-panel" [class.collapsed]="isCollapsed()" [class.expanded]="!isCollapsed()">
+
+  <!-- Toggle Button -->
+  <button class="bash-config-toggle" (click)="onToggle()"
+    [attr.aria-label]="isCollapsed() ? 'Open bash configuration' : 'Close bash configuration'">
     @if (!isCollapsed()) {
-    <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76"></atk-icon>
+    <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76" />
     } @else {
-    <atk-icon class="toggle-arrow left" name="triangle-left" [size]="16" color="#656d76"></atk-icon>
+    <atk-icon class="toggle-arrow left" name="triangle-left" [size]="16" color="#656d76" />
     }
   </button>
 
-  <div class="config-wrapper">
-    <div class="config-content">
-      @for (section of sections(); track section.title) {
-      <div class="config-section">
-        <div class="config-title has-hover-dot" data-hover-color="red" hoverDot icon="radio-dot">
-          <div class="config-title-text"> {{ section.title }}</div>
+  <div class="bash-config-wrapper">
+    <div class="bash-config-content">
+
+      <!-- Header -->
+      <div class="bash-config-header">
+        <div class="bash-config-title">
+          <atk-icon name="terminal" [size]="16" color="var(--color-accent-fg)" />
+          <h3>Bash Configuration</h3>
         </div>
-        @for (item of section.items; track item.title) {
-        <div class="config-item">
-          @let ic = (item.icon | icon: { defaultName: 'default', defaultColor: '#656d76', size: 16 });
-          <!-- <span class="icon-name">{{ ic.name }}</span> -->
-          <atk-icon class="config-item-icon" [name]="ic.name" [variant]="ic.variant" [color]="ic.color"
-            [size]="ic.size">
-          </atk-icon>
-          <div class="config-item-content">
-            <a [href]="item.link" class="config-item-title" (click)="navigateToConfig($event, item.link)">
-              {{ item.title }}
-            </a>
-            <div class="config-item-desc">{{ item.description }}</div>
+        <div class="bash-connection-status" [class]="'status-' + state().connectionStatus">
+          <span class="status-dot"></span>
+          <span class="status-text">{{ state().connectionStatus }}</span>
+        </div>
+      </div>
+
+      <!-- Endpoint Tabs -->
+      <div class="bash-config-tabs">
+        @for (endpoint of endpoints; track endpoint.id) {
+        <button class="tab-button" [class.active]="state().currentEndpoint === endpoint.id"
+          (click)="selectEndpoint(endpoint.id)">
+          <atk-icon [name]="endpoint.icon" [size]="14" />
+          <span>{{ endpoint.name }}</span>
+        </button>
+        }
+      </div>
+
+      <!-- Parameters Section -->
+      @if (currentEndpointConfig(); as endpoint) {
+      <div class="bash-config-section">
+        <div class="section-title">
+          <atk-icon name="settings" [size]="14" color="var(--color-fg-muted)" />
+          <span>Parameters</span>
+        </div>
+
+        <div class="params-grid">
+          <!-- Symbol Parameter (for trades/orders/ticker) -->
+          @if (endpoint.id !== 'account') {
+          <div class="param-item">
+            <label for="symbol-input">Symbol</label>
+            <input id="symbol-input" type="text" class="param-input" [value]="state().parameters['symbol'] || 'BTCUSDT'"
+              (input)="updateParameter('symbol', $any($event.target).value)" placeholder="BTCUSDT">
           </div>
+          }
+
+          <!-- Limit Parameter (for trades/orders) -->
+          @if (endpoint.id === 'trades' || endpoint.id === 'orders') {
+          <div class="param-item">
+            <label for="limit-input">Limit</label>
+            <input id="limit-input" type="number" class="param-input" [value]="state().parameters['limit'] || 100"
+              (input)="updateParameter('limit', +$any($event.target).value)" min="1" max="1000" placeholder="100">
+          </div>
+          }
+        </div>
+
+        <!-- Current Parameters Display -->
+        @if (Object.keys(state().parameters).length > 0) {
+        <div class="params-display">
+          <div class="params-display-title">Current Parameters:</div>
+          @for (param of Object.entries(state().parameters); track param[0]) {
+          <div class="param-row">
+            <span class="param-key">{{ param[0] }}</span>
+            <span class="param-value">{{ param[1] }}</span>
+          </div>
+          }
         </div>
         }
       </div>
       }
+
+      <!-- Actions Section -->
+      <div class="bash-config-section">
+        <div class="section-title">
+          <atk-icon name="zap" [size]="14" color="var(--color-fg-muted)" />
+          <span>Actions</span>
+        </div>
+
+        <div class="actions-grid">
+          <button class="action-btn primary" [disabled]="state().loading" (click)="triggerLoadData()">
+            <atk-icon name="download" [size]="14" />
+            <span>{{ state().loading ? 'Loading...' : 'Load Data' }}</span>
+          </button>
+
+          <button class="action-btn" [disabled]="state().connectionStatus === 'connecting'" (click)="testConnection()">
+            <atk-icon name="wifi" [size]="14" />
+            <span>Test Connection</span>
+          </button>
+
+          <button class="action-btn" (click)="clearCache()">
+            <atk-icon name="trash-2" [size]="14" />
+            <span>Clear Cache</span>
+          </button>
+
+          <button class="action-btn" (click)="exportData()">
+            <atk-icon name="file-text" [size]="14" />
+            <span>Export Data</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Status Section -->
+      @if (state().loading || lastResponse()) {
+      <div class="bash-config-section">
+        <div class="section-title">
+          <atk-icon name="activity" [size]="14" color="var(--color-fg-muted)" />
+          <span>Status</span>
+        </div>
+
+        <div class="status-grid">
+          @if (state().loading) {
+          <div class="status-item loading">
+            <span class="status-label">Loading...</span>
+            <div class="spinner-small"></div>
+          </div>
+          }
+
+          @if (lastResponse(); as response) {
+          <div class="status-item">
+            <span class="status-label">Response Time</span>
+            <span class="status-value">{{ response.responseTime }}ms</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Data Count</span>
+            <span class="status-value">{{ response.dataCount }} items</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Status Code</span>
+            <span class="status-value" [class.success]="response.statusCode === 200">
+              {{ response.statusCode }}
+            </span>
+          </div>
+          }
+        </div>
+      </div>
+      }
+
     </div>
   </div>
 </aside>
