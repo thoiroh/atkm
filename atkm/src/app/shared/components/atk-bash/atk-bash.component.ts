@@ -1,7 +1,7 @@
 // atk-bash.component.v02.ts
 
 import { CommonModule } from '@angular/common';
-import { Component, computed, DestroyRef, effect, inject, input, NgZone, OnInit, output, signal, viewChild } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, NgZone, OnInit, output, signal, untracked, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize, firstValueFrom } from 'rxjs';
 
@@ -42,6 +42,7 @@ export class AtkBashComponent implements OnInit {
 
   private terminalDirective = viewChild(TerminalInputDirective);
   private readonly tools = inject(ToolsService);
+
   configId = input<string>('binance-debug-v2');
   autoLoad = input<boolean>(true);
   dataLoaded = output<BashData[]>();
@@ -59,6 +60,7 @@ export class AtkBashComponent implements OnInit {
   // LOCAL STATE
   // ======================================================
 
+  private _isProcessingEvent = false; // Anti-loop flag
   currentConfig = signal<IBashConfig | null>(null);
   terminalState = signal<IBashTerminalState>({
     loading: false,
@@ -156,65 +158,84 @@ export class AtkBashComponent implements OnInit {
     effect(() => {
       const events = this.bashService.events();
       const latest = events.at(-1);
-      if (!latest) return;
+      if (!latest || this._isProcessingEvent) return;
 
-      switch (latest.type) {
-        case 'data-loaded':
-          this.data.set(latest.payload.data);
-          this.addLog(`✅ Data loaded (${latest.payload.data.length})`, 'success');
-          this.dataLoaded.emit(latest.payload.data);
-          break;
-        case 'error':
-          const err = latest.payload.error || 'Unknown error';
-          this.error.set(err);
-          this.addLog(`❌ ${err}`, 'error');
-          this.errorOccurred.emit(err);
-          break;
-        case 'endpoint-changed':
-          this.addLog(`Endpoint changed: ${latest.payload.configId}`, 'info');
-          break;
-      }
+      // this.tools.consoleGroup({ // TAG AtkBashComponent -> effect(bashService.events)
+      //   title: `AtkBashComponent -> effect(bashService.events) -> configId()`, tag: 'check', palette: 'ac', collapsed: false,
+      //   data: { latestEv: latest, curcfg: this.currentConfig() }
+      // });
+
+      this._isProcessingEvent = true;
+      untracked(() => {
+        switch (latest.type) {
+          case 'data-loaded':
+            this.data.set(latest.payload.data);
+            this.addLog(`✅ Data loaded (${latest.payload.data.length})`, 'success');
+            this.dataLoaded.emit(latest.payload.data);
+            break;
+          case 'error':
+            const err = latest.payload.error || 'Unknown error';
+            this.error.set(err);
+            this.addLog(`❌ ${err}`, 'error');
+            this.errorOccurred.emit(err);
+            break;
+          case 'endpoint-changed':
+            this.addLog(`Endpoint changed: ${latest.payload.configId}`, 'info');
+            break;
+        }
+        this._isProcessingEvent = false;
+      });
     });
 
     effect(() => {
       const ev = this.sidebarConfigService.events();
       const last = ev.at(-1);
-      if (!last) return;
+      if (!last || this._isProcessingEvent) return;
 
-      switch (last.type) {
-        case 'endpoint-change':
-          // purge et info
-          this.data.set([]);
-          this.error.set(null);
-          this.addLog(`Switched to endpoint: ${last.payload.endpointId}`, 'info');
-          break;
+      // this.tools.consoleGroup({ // TAG AtkBashComponent -> effect(sidebarConfigService.events)
+      //   title: `AtkBashComponent -> effect(sidebarConfigService.events) -> configId()`, tag: 'check', palette: 'ac', collapsed: false,
+      //   data: { latestEv: last, curcfg: this.currentConfig() }
+      // });
 
-        case 'parameter-change':
-          this.terminalState.update(s => ({
-            ...s,
-            requestParams: { ...s.requestParams, ...last.payload.parameters }
-          }));
-          this.addLog(`Parameters updated: ${JSON.stringify(last.payload.parameters)}`, 'info');
-          break;
+      this._isProcessingEvent = true;
+      untracked(() => {
+        switch (last.type) {
+          case 'endpoint-change':
+            this.data.set([]);
+            this.error.set(null);
+            this.addLog(`Switched to endpoint: ${last.payload.endpointId}`, 'info');
+            break;
 
-        case 'load-data':
-          // déclenche le chargement via le service v03
-          this.loadData();
-          break;
+          case 'parameter-change':
+            this.terminalState.update(s => ({
+              ...s,
+              requestParams: { ...s.requestParams, ...last.payload.parameters }
+            }));
+            this.addLog(`Parameters updated: ${JSON.stringify(last.payload.parameters)}`, 'info');
+            break;
 
-        case 'test-connection':
-          this.testConnection();
-          break;
+          case 'load-data':
+            this.addLog(`🔄 Loading data from ${last.payload.endpoint}...`, 'info');
+            this.loadData(last.payload.parameters || {});
+            break;
 
-        case 'action-trigger':
-          this.handleActionTrigger(last.payload.actionId, last.payload.payload);
-          break;
-      }
+          case 'test-connection':
+            this.testConnection();
+            break;
+
+          case 'action-trigger':
+            this.handleActionTrigger(last.payload.actionId, last.payload.payload);
+            break;
+        }
+        this._isProcessingEvent = false;
+      });
     });
 
-    effect(() => this.updateTerminalContent());
+    effect(() => {
+      this.updateTerminalContent();
+    });
 
-    this.startCursorBlink();
+    // this.startCursorBlink();
   }
 
   // ======================================================
@@ -237,10 +258,10 @@ export class AtkBashComponent implements OnInit {
       }
     }
 
-    this.tools.consoleGroup({ // TAG AtkBashComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-      title: `AtkBashComponent -> ngOnInit() -> configId()`, tag: 'check', palette: 'in', collapsed: false,
-      data: this.currentConfig()
-    });
+    // this.tools.consoleGroup({ // TAG AtkBashComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+    //   title: `AtkBashComponent -> ngOnInit() -> configId()`, tag: 'check', palette: 'in', collapsed: true,
+    //   data: this.currentConfig()
+    // });
 
     this.addLog('ATK Bash Terminal initialized', 'info');
     this.sidebarConfigService.updateConnectionStatus('connected');
@@ -485,7 +506,7 @@ export class AtkBashComponent implements OnInit {
     const endpointId = sidebarState.currentEndpoint;
 
     if (!endpointId) {
-      this.addLog('No endpoint to test', 'warning');
+      this.addLog('⚠️ No endpoint to test', 'warning');
       return;
     }
 
@@ -495,10 +516,25 @@ export class AtkBashComponent implements OnInit {
     try {
       const startTime = performance.now();
 
-      if (endpointId === 'account') {
-        await firstValueFrom(this.binanceService.getAccount());
-      } else {
-        await firstValueFrom(this.binanceService.getTickerPrice('BTCUSDT'));
+      // Test the actual selected endpoint
+      switch (endpointId) {
+        case 'account':
+          await firstValueFrom(this.binanceService.getAccount());
+          break;
+        case 'trades':
+          const tradeSymbol = sidebarState.parameters.symbol || 'BTCUSDT';
+          await firstValueFrom(this.binanceService.getMyTrades(tradeSymbol, undefined, undefined, 1));
+          break;
+        case 'orders':
+          const orderSymbol = sidebarState.parameters.symbol || 'BTCUSDT';
+          await firstValueFrom(this.binanceService.getAllOrders(orderSymbol, undefined, undefined, 1));
+          break;
+        case 'ticker':
+          const tickerSymbol = sidebarState.parameters.symbol || 'BTCUSDT';
+          await firstValueFrom(this.binanceService.getTickerPrice(tickerSymbol));
+          break;
+        default:
+          throw new Error(`Unknown endpoint: ${endpointId}`);
       }
 
       const responseTime = Math.round(performance.now() - startTime);
@@ -741,18 +777,19 @@ export class AtkBashComponent implements OnInit {
   // ======================================================
 
   private addLog(message: string, level: IBashLogEntry['level']): void {
-    const logEntry: IBashLogEntry = {
-      timestamp: new Date(),
-      message,
-      level
-    };
+    untracked(() => {
+      const logEntry: IBashLogEntry = {
+        timestamp: new Date(),
+        message,
+        level
+      };
 
-    this.logs.update(logs => {
-      const newLogs = [...logs, logEntry];
-      return newLogs.slice(-50); // Keep only last 50 logs
+      this.logs.update(logs => {
+        const newLogs = [...logs, logEntry];
+        return newLogs.slice(-50); // Keep only last 50 logs
+      });
     });
   }
-
   private scheduleScroll(): void {
     const directive = this.terminalDirective();
     if (!directive) return;

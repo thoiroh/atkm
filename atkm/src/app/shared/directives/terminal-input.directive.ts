@@ -31,6 +31,7 @@
 // - This file merges features from the simplified auto-scroll version and the richer cursor-tracking version.
 
 import { Directive, ElementRef, inject, input, OnInit, output } from '@angular/core';
+// import { ToolsService } from '../services/tools.service';
 
 // ----- State types -----
 export interface TerminalInputState {
@@ -72,6 +73,7 @@ export class TerminalInputDirective implements OnInit {
   // ======================================================
 
   private elementRef = inject(ElementRef<HTMLTextAreaElement>);
+  // private readonly tools = inject(ToolsService);
 
   // ----- Inputs (signals API) -----
   autoResize = input<boolean>(false);
@@ -85,7 +87,10 @@ export class TerminalInputDirective implements OnInit {
   scrollChange = output<TerminalScrollState>();
   // ----- Element ref -----
 
-  // ----- Lifecycle -----
+  // ======================================================
+  // LIFECYCLE
+  // ======================================================
+
   ngOnInit(): void {
     const textarea = this.getTextarea();
     if (!textarea) {
@@ -98,12 +103,22 @@ export class TerminalInputDirective implements OnInit {
     if (this.isAutoScrollEnabled()) { this.raf(() => this.scrollToBottom()); }
     // Emit initial state
     this.updateState();
+    // this.tools.consoleGroup({ // OFF TerminalInputDirective -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+    //   title: `TerminalInputDirective -> ngOnInit()`, tag: 'check', palette: 'wa', collapsed: true,
+    //   data: textarea
+    // });
+
   }
 
-  // ----- Host handlers -----
+  // ======================================================
+  // PUBLIC METHODS
+  // ======================================================
+
   public onContentChange(): void {
     const textarea = this.getTextarea();
+
     if (!textarea) return;
+
     // Emit textual change
     this.contentChange.emit(textarea.value);
     // Maintain resize/state/scroll
@@ -133,7 +148,10 @@ export class TerminalInputDirective implements OnInit {
     if (this.isAutoScrollEnabled()) { this.scrollToBottom(); }
   }
 
-  // ----- Public API -----
+  // ======================================================
+  // PUBLIC API
+  // ======================================================
+
   public insertAtCaret(text: string): void {
     const textarea = this.getTextarea();
     if (!textarea) return;
@@ -169,6 +187,12 @@ export class TerminalInputDirective implements OnInit {
     this.setContent('');
   }
 
+  /**
+   * Get current state of the terminal input.
+   *
+   * @date 09/10/2025
+   * @return {*}
+   */
   public getCurrentState(): TerminalInputState {
     const textarea = this.getTextarea();
     if (!textarea) {
