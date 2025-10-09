@@ -3,6 +3,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, effect, inject, input, NgZone, OnInit, output, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { finalize, firstValueFrom } from 'rxjs';
 
 import { BashData, IBashConfig, IBashLogEntry, IBashTerminalState } from '@shared/components/atk-bash/atk-bash.interfaces';
 
@@ -16,7 +17,8 @@ import { ToolsService } from '@shared/services/tools.service';
 
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { TerminalInputDirective, TerminalInputState } from '@shared/directives/terminal-input.directive';
-import { finalize, firstValueFrom } from 'rxjs';
+
+import { AtkDatatableComponent } from '@shared/components/atk-datatable/atk-datatable.component';
 // import { BalanceFormatPipe, CryptoPrecisionPipe, StatusBadgePipe, TimestampToDatePipe } from '@shared/pipes/pipes';
 
 @Component({
@@ -26,7 +28,8 @@ import { finalize, firstValueFrom } from 'rxjs';
     CommonModule,
     FormsModule,
     AtkIconComponent,
-    TerminalInputDirective
+    TerminalInputDirective,
+    AtkDatatableComponent
   ],
   templateUrl: './atk-bash.component.html',
   styleUrls: ['./atk-bash.component.css']
@@ -248,6 +251,9 @@ export class AtkBashComponent implements OnInit {
   // PUBLIC METHODS
   // ======================================================
 
+  testLoadData(): void {
+    this.loadData({ symbol: 'BTCUSDT' });
+  }
   /**
    * Handle terminal state changes from directive
    */
@@ -279,34 +285,7 @@ export class AtkBashComponent implements OnInit {
     this.addLog(`📤 Data exported (${currentData.length} records)`, 'success');
   }
 
-  /**
-   * Format cell value based on column configuration
-   */
-  public formatCellValue(value: any, column: any): string {
-    if (value === null || value === undefined) return '';
 
-    if (column.formatter) {
-      return column.formatter(value);
-    }
-
-    switch (column.type) {
-      case 'number':
-        return typeof value === 'number' ? value.toLocaleString() : value.toString();
-      case 'currency':
-        return new Intl.NumberFormat('fr-FR', {
-          style: 'currency',
-          currency: 'EUR'
-        }).format(value);
-      case 'percentage':
-        return `${(value * 100).toFixed(2)}%`;
-      case 'date':
-        return new Date(value).toLocaleString('fr-FR');
-      case 'boolean':
-        return value ? '✅' : '❌';
-      default:
-        return value.toString();
-    }
-  }
 
   /**
    * Track by function for table rows

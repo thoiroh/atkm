@@ -54,7 +54,7 @@
         </div>
       </div>
     </section>
-
+    <button (click)="testLoadData()">🧪 Test Load Account Data</button>
     <!-- ======================= -->
     <!-- TABLE SECTION -->
     <!-- ======================= -->
@@ -71,26 +71,9 @@
           </div>
         </div>
 
-        <!-- Table -->
-        <div class="bash-table">
-          <div class="table-header-row">
-            @for (col of visibleColumns(); track col.key) {
-            <div class="table-header-cell" [style.width]="col.width" [class]="'align-' + (col.align || 'left')">
-              {{ col.label }}
-            </div>
-            }
-          </div>
-
-          @for (row of data(); track trackByIndex($index, row)) {
-          <div class="table-row">
-            @for (col of visibleColumns(); track col.key) {
-            <div class="table-cell" [style.width]="col.width" [class]="'align-' + (col.align || 'left')">
-              {{ formatCellValue(row[col.key], col) }}
-            </div>
-            }
-          </div>
-          }
-        </div>
+        <!-- Datatable Component -->
+        <atk-datatable [columns]="visibleColumns()" [data]="data()" [loading]="bashService.loading()"
+          [error]="error()" />
       </div>
     </section>
     }

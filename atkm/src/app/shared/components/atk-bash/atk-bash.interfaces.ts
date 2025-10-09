@@ -33,6 +33,7 @@ export interface IBashSidebarField {
 
 /**
  * Configuration for a data column in the bash table
+ * UNIFIED with datatable column interface
  */
 export interface IBashColumn<T = BashData> {
   /** Unique identifier for the column */
@@ -48,7 +49,7 @@ export interface IBashColumn<T = BashData> {
   /** Whether the column is sortable */
   sortable?: boolean;
   /** Custom formatter function */
-  formatter?: (value: any, row: T) => string;
+  formatter?: (value: any, row?: T) => string;
   /** Custom template for the cell */
   template?: TemplateRef<any>;
   /** CSS class for styling */

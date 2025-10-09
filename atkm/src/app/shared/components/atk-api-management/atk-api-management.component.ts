@@ -7,12 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkBashConfigFactory } from '@shared/components/atk-bash/atk-bash-config.factory';
 import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
-import { AtkDatatableComponent, IDatatableColumn } from '@shared/components/atk-datatable/atk-datatable.component';
+import { AtkDatatableComponent } from '@shared/components/atk-datatable/atk-datatable.component';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 import { ToolsService } from '@shared/services/tools.service';
 import { firstValueFrom } from 'rxjs';
-import { BashData, IBashEndpointConfig, IBashEvent } from '../atk-bash/atk-bash.interfaces';
+import { BashData, IBashColumn, IBashEndpointConfig, IBashEvent } from '../atk-bash/atk-bash.interfaces';
 
 /**
  * Configuration event from sidebar
@@ -71,7 +71,7 @@ export class AtkApiManagementComponent implements OnInit {
 
   private currentEndpoint = computed(() => this.apiStateService.currentEndpoint());
 
-  currentEndpointColumns(): IDatatableColumn[] {
+  currentEndpointColumns(): IBashColumn[] {
     // Return your columns array here
     return [
       { key: 'id', label: 'ID', type: 'text', width: '80px' },
@@ -79,7 +79,9 @@ export class AtkApiManagementComponent implements OnInit {
       { key: 'status', label: 'Status', type: 'badge', width: '100px' }
       // Add more columns as needed
     ];
-  }  // =========================================
+  }
+
+  // =========================================
   // CONSTRUCTOR & LIFECYCLE
   // =========================================
 
