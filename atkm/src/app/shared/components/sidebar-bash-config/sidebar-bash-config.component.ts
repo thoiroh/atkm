@@ -2,7 +2,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { AtkBashService } from '../atk-bash/atk-bash.service';
 import { SidebarBashConfigService } from './sidebar-bash-config.service';
+import { IBashSidebarField } from '../atk-bash/atk-bash.interfaces';
 
 interface EndpointConfig {
   id: string;
@@ -23,6 +25,7 @@ export class SidebarBashConfigComponent {
   // DEPENDENCIES
   // ======================================================
 
+  private readonly bashService = inject(AtkBashService);
   private readonly sidebarService = inject(SidebarBashConfigService);
 
   // ======================================================
@@ -58,6 +61,30 @@ export class SidebarBashConfigComponent {
   currentEndpointConfig = computed(() => {
     const currentId = this.state().currentEndpoint;
     return this.endpoints.find(ep => ep.id === currentId) || this.endpoints[0];
+  });
+
+  /**
+   * Get selected row data
+   */
+  selectedRowData = computed(() => {
+    return this.state().selectedRowData;
+  });
+
+  /**
+   * Get row detail fields configuration from bash config
+   */
+  rowDetailFields = computed(() => {
+    const currentEndpoint = this.state().currentEndpoint;
+    const config = this.bashService.getConfig('binance-debug-v2');
+    const endpoint = config?.endpoints.find(ep => ep.id === currentEndpoint);
+    return endpoint?.rowDetailFields || [];
+  });
+
+  /**
+   * Check if we have a selected row
+   */
+  hasSelectedRow = computed(() => {
+    return this.selectedRowData() !== null;
   });
 
   // Expose Object for template
@@ -101,5 +128,34 @@ export class SidebarBashConfigComponent {
 
   exportData(): void {
     this.sidebarService.triggerAction('export-data');
+  }
+
+  /**
+ * Format field value based on type
+ */
+  formatFieldValue(value: any, field: IBashSidebarField): string {
+    if (value === null || value === undefined) return '-';
+
+    if (field.formatter) {
+      return field.formatter(value);
+    }
+
+    switch (field.type) {
+      case 'boolean':
+        return value ? 'Yes' : 'No';
+      case 'date':
+        return new Date(value).toLocaleString('fr-FR');
+      case 'number':
+        return typeof value === 'number' ? value.toLocaleString('fr-FR') : value;
+      default:
+        return value.toString();
+    }
+  }
+
+  /**
+   * Clear selected row
+   */
+  clearSelection(): void {
+    this.sidebarService.clearSelectedRow();
   }
 }

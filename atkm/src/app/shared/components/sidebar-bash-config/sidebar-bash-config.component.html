@@ -145,6 +145,66 @@
       </div>
       }
 
+      <!-- Selected Row Details Section -->
+      @if (hasSelectedRow() && selectedRowData(); as rowData) {
+      <div class="bash-config-section selected-row-section">
+        <div class="section-title">
+          <atk-icon name="file-text" [size]="14" color="var(--color-accent-fg)" />
+          <span>Selected Row Details</span>
+          <button class="clear-selection-btn" (click)="clearSelection()" title="Clear selection">
+            <atk-icon name="x" [size]="12" />
+          </button>
+        </div>
+
+        @if (rowDetailFields().length > 0) {
+        <div class="row-details-grid">
+          @for (field of rowDetailFields(); track field.key) {
+          @if (field.visible !== false) {
+          <div class="detail-field-row" [attr.data-group]="field.group">
+            <div class="detail-field-label">
+              @if (field.icon) {
+              <atk-icon [name]="field.icon" [size]="12" color="var(--color-fg-muted)" />
+              }
+              <span>{{ field.label }}</span>
+            </div>
+            <div class="detail-field-value" [ngClass]="'type-' + (field.type || 'text')">
+              @switch (field.type) {
+              @case ('boolean') {
+              <span class="boolean-badge" [class]="rowData[field.key] ? 'true' : 'false'">
+                {{ formatFieldValue(rowData[field.key], field) }}
+              </span>
+              }
+              @case ('status') {
+              <span class="status-badge status-{{ rowData[field.key]?.toLowerCase() }}">
+                {{ formatFieldValue(rowData[field.key], field) }}
+              </span>
+              }
+              @default {
+              <span [ngClass]="field.cssClass">
+                {{ formatFieldValue(rowData[field.key], field) }}
+              </span>
+              }
+              }
+            </div>
+          </div>
+          }
+          }
+        </div>
+        } @else {
+        <div class="no-fields-message">
+          <atk-icon name="info" [size]="16" color="var(--color-fg-muted)" />
+          <span>No detail fields configured for this endpoint</span>
+        </div>
+        }
+
+        <!-- Raw data debug (optionnel) -->
+        <details class="raw-data-details">
+          <summary>View Raw Data</summary>
+          <pre class="raw-data-pre">{{ rowData | json }}</pre>
+        </details>
+      </div>
+      }
+
     </div>
   </div>
 </aside>

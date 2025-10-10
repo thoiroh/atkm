@@ -77,8 +77,8 @@
         </header>
 
         <!-- Datatable Component -->
-        <atk-datatable [columns]="visibleColumns()" [data]="data()" [loading]="bashService.loading()"
-          [error]="error()" />
+        <atk-datatable [columns]="visibleColumns()" [data]="data()" [loading]="bashService.loading()" [error]="error()"
+          (selectedRow)="onRowSelected($event)" />
       </div>
     </section>
     }

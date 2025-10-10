@@ -73,6 +73,49 @@ export class AtkBashConfigFactory {
       cacheDuration: 30000,
 
       // SIDEBAR FIELDS CONFIGURATION
+      rowDetailFields: [
+        {
+          key: 'asset',
+          label: 'Asset Symbol',
+          type: 'text',
+          group: 'identity',
+          icon: 'coins'
+        },
+        {
+          key: 'free',
+          label: 'Available Balance',
+          type: 'custom',
+          group: 'balances',
+          icon: 'circle',
+          formatter: (value: number) => this.formatBalance(value)
+        },
+        {
+          key: 'locked',
+          label: 'Locked Balance',
+          type: 'custom',
+          group: 'balances',
+          icon: 'lock',
+          formatter: (value: number) => this.formatBalance(value)
+        },
+        {
+          key: 'total',
+          label: 'Total Balance',
+          type: 'custom',
+          group: 'balances',
+          icon: 'trending-up',
+          formatter: (value: number) => this.formatBalance(value)
+        },
+        {
+          key: 'usdValue',
+          label: 'USD Value (est.)',
+          type: 'custom',
+          group: 'valuation',
+          icon: 'dollar-sign',
+          visible: true,
+          formatter: (value: number) => this.formatPrice(value)
+
+        }
+      ],
       sidebarFields: [
         {
           key: 'canTrade',
