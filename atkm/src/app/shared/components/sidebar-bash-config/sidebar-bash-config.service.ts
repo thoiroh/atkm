@@ -8,6 +8,7 @@
 // ======================================================
 
 import { inject, Injectable, signal } from '@angular/core';
+import type { BashData } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { ToolsService } from '@shared/services/tools.service';
 
 export interface IBashConfigState {
@@ -15,10 +16,18 @@ export interface IBashConfigState {
   parameters: Record<string, any>;
   loading: boolean;
   connectionStatus: 'connected' | 'disconnected' | 'connecting';
+  selectedRowData: BashData | null; // NEW
 }
 
 export interface IBashConfigEvent {
-  type: 'endpoint-change' | 'parameter-change' | 'action-trigger' | 'load-data' | 'test-connection';
+  type: 'endpoint-change'
+  | 'parameter-change'
+  | 'action-trigger'
+  | 'load-data'
+  | 'test-connection'
+  | 'row-selected'
+  | 'row-deselected'
+  | 'request-sidebar-open';
   payload: any;
   timestamp: Date;
 }
@@ -41,10 +50,11 @@ export class SidebarBashConfigService {
     currentEndpoint: 'account',
     parameters: {},
     loading: false,
-    connectionStatus: 'disconnected'
+    connectionStatus: 'disconnected',
+    selectedRowData: null
   });
 
-  // Bus d’événements 100% signals
+  // 100% signals event bus
   private _events = signal<IBashConfigEvent[]>([]);
 
   // =========================
@@ -65,20 +75,21 @@ export class SidebarBashConfigService {
   }
 
   // =========================
-  // MUTATIONS D’ÉTAT
+  // STATE MUTATIONS
   // =========================
 
-  /** Changer d’endpoint (réinitialise les paramètres) */
+  /** Change endpoint (reset parameters and selection) */
   updateEndpoint(endpointId: string): void {
     this._state.update(s => ({
       ...s,
       currentEndpoint: endpointId,
-      parameters: {}
+      parameters: {},
+      selectedRowData: null
     }));
     this.emitEvent('endpoint-change', { endpointId });
   }
 
-  /** Fusionner des paramètres */
+  /** Merge parameters */
   updateParameters(params: Record<string, any>): void {
     this._state.update(s => ({
       ...s,
@@ -87,24 +98,55 @@ export class SidebarBashConfigService {
     this.emitEvent('parameter-change', { parameters: params });
   }
 
-  /** Statut de connexion */
+  /** connection status */
   updateConnectionStatus(status: IBashConfigState['connectionStatus']): void {
     this._state.update(s => ({ ...s, connectionStatus: status }));
   }
 
-  /** Indicateur de chargement */
+  /** loading spinner */
   updateLoadingState(loading: boolean): void {
     this._state.update(s => ({ ...s, loading }));
   }
 
   // =========================
-  // TRIGGERS (événements)
+  // ROW SELECTION
+  // =========================
+
+  /**
+   * Update selected row data
+   */
+  updateSelectedRow(rowData: BashData | null): void {
+    this._state.update(s => ({ ...s, selectedRowData: rowData }));
+
+    if (rowData) {
+      this.emitEvent('row-selected', { rowData });
+    } else {
+      this.emitEvent('row-deselected', {});
+    }
+  }
+
+  /**
+   * Clear selected row
+   */
+  clearSelectedRow(): void {
+    this.updateSelectedRow(null);
+  }
+
+  /**
+   * Request sidebar to open (triggered by row selection)
+   */
+  requestSidebarOpen(): void {
+    this.emitEvent('request-sidebar-open', {});
+  }
+
+  // =========================
+  // TRIGGERS (events)
   // =========================
 
   triggerDataLoad(params?: Record<string, any>): void {
     if (params) this.updateParameters(params);
     this.updateLoadingState(true);
-
+    this.clearSelectedRow();
     this.emitEvent('load-data', {
       endpoint: this._state().currentEndpoint,
       parameters: this._state().parameters
@@ -139,7 +181,9 @@ export class SidebarBashConfigService {
       currentEndpoint: 'account',
       parameters: {},
       loading: false,
-      connectionStatus: 'disconnected'
+      connectionStatus: 'disconnected',
+      selectedRowData: null
+
     });
   }
 

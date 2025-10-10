@@ -90,6 +90,8 @@ export interface IBashEndpointConfig {
   columns: IBashColumn[];
   /** Sidebar fields configuration */
   sidebarFields?: IBashSidebarField[];
+  /** Row detail fields configuration - displayed when row is selected */ // NEW
+  rowDetailFields?: IBashSidebarField[]; // NEW
   /** Whether to enable caching */
   cacheable?: boolean;
   /** Cache duration in milliseconds */

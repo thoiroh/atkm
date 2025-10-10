@@ -6,36 +6,8 @@
   flex-direction: column;
   width: 100%;
   min-height: 100%;
-  border-radius: 8px;
   overflow: hidden;
   font-family: var(--fontStack-system);
-}
-
-.bash-header {
-  display: flex;
-  flex-direction: column;
-  padding: 0px 0px 22px 2px;
-  background: var(--color-canvas-subtle);
-}
-
-.bash-header h1 {
-  font-size: 1em;
-  font-weight: bold;
-  color: var(--color-fg-default);
-  margin: 0 0 0px 0;
-}
-
-.bash-details {
-  position: absolute;
-  top: 40px;
-  left: 24px;
-}
-
-.bash-details h2 {
-  font-size: .8em;
-  font-weight: normal;
-  color: var(--color-fg-subtle);
-  margin: 0;
 }
 
 .bash-main {
@@ -70,6 +42,33 @@
   position: relative;
 }
 
+.bash-header {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 0px 22px 2px;
+  background: var(--color-canvas-subtle);
+}
+
+.bash-header h1 {
+  font-size: 1em;
+  font-weight: bold;
+  color: var(--color-fg-default);
+  margin: 0 0 0px 0;
+}
+
+.bash-details {
+  position: absolute;
+  top: 40px;
+  left: 24px;
+}
+
+.bash-details h2 {
+  font-size: .8em;
+  font-weight: normal;
+  color: var(--color-fg-subtle);
+  margin: 0;
+}
+
 .bash-toggle {
   position: absolute;
   top: 10px;
@@ -84,12 +83,17 @@
 .bash-status {
   display: flex;
   align-items: center;
-  gap: 12px;
+  /* gap: 12px; */
   font-size: .6em;
   margin: 6px 0 0 2px;
   font-family: var(--fontStack-monospace);
   color: var(--color-fg-subtle);
   flex-wrap: wrap;
+}
+
+.bash-status>span:not(:last-child)::after {
+  content: "-";
+  margin: 0 8px;
 }
 
 .bash-selection {
@@ -141,32 +145,95 @@
 
 .bash-input {
   width: 100%;
-  min-height: var(--input-min-height);
+  /* min-height: var(--input-min-height); */
   padding: 16px;
-  /* border: 1px solid var(--color-border-default); */
-  border-radius: 6px;
+  border-radius: 6px 0 0 6px;
   background: var(--color-canvas-subtle);
   font-family: var(--fontStack-monospace);
   font-size: 13px;
   line-height: 1.5;
   color: var(--color-fg-default);
-  resize: vertical;
+  resize: none;
   white-space: pre;
   overflow-wrap: normal;
   overflow-x: auto;
+  overflow-y: auto;
+  /* Enable vertical scroll when content exceeds height */
   transition: all 0.2s ease;
 }
 
 .bash-input:focus {
   outline: none;
-  /* border-color: var(--color-accent-emphasis); */
-  box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
+  border-color: var(--color-accent-fg);
 }
 
 .bash-input[readonly] {
   background: var(--color-canvas-subtle);
   cursor: not-allowed;
   opacity: 0.8;
+}
+
+/* ========================================
+   Bash Data-Section
+   ======================================== */
+
+.bash-data-section {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.bash-data-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.bash-data-header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 0px 0px 16px 2px;
+  background: var(--color-canvas-subtle);
+}
+
+.bash-data-label {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  font-size: .8em;
+  font-weight: normal;
+  color: var(--color-fg-muted);
+  margin: 0;
+}
+
+.bash-data-header h1 {
+  font-size: 1em;
+  font-weight: bold;
+  color: var(--color-fg-default);
+  margin: 0;
+}
+
+.bash-data-meta {
+  position: absolute;
+  top: 40px;
+  left: 4px;
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.bash-data-meta span {
+  font-size: .6em;
+  font-weight: normal;
+  color: var(--color-fg-subtle);
+  margin: 0;
 }
 
 /* ========================================

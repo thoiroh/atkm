@@ -2,7 +2,7 @@
 // Home content component using centralized ConfigStore
 
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ConfigStore } from '@core/store/config.store';
@@ -14,6 +14,7 @@ import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-conf
 import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 import { ToolsService } from '@shared/services/tools.service';
 import { IBashConfig } from '../atk-bash/atk-bash.interfaces';
+import { SidebarBashConfigService } from '../sidebar-bash-config/sidebar-bash-config.service';
 
 @Component({
   selector: 'atk-home-content',
@@ -36,6 +37,7 @@ export class HomeContentComponent implements OnInit {
 
   private readonly configStore = inject(ConfigStore);
   private readonly binanceService = inject(BinanceService);
+  private readonly sidebarConfigService = inject(SidebarBashConfigService);
   private readonly tools = inject(ToolsService);
 
   config = this.configStore.config;
@@ -52,6 +54,24 @@ export class HomeContentComponent implements OnInit {
 
   private destroy$ = new Subject<void>();
 
+  // ======================================================
+  // CONSTRUCTOR
+  // ======================================================
+
+  constructor() {
+    effect(() => {
+      const events = this.sidebarConfigService.events();
+      const latestEvent = events.at(-1);
+
+      if (latestEvent?.type === 'request-sidebar-open') {
+        // Open sidebar if it's collapsed
+        if (this.configPanelCollapsed()) {
+          this.toggleConfigPanel();
+        }
+      }
+    });
+  }
+
   // =========================================
   // LIFECYCLE
   // =========================================
@@ -61,6 +81,7 @@ export class HomeContentComponent implements OnInit {
     //   title: `HomeContentComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
     //   data: this.config()
     // });
+
   }
 
   ngOnDestroy(): void {
@@ -108,6 +129,7 @@ export class HomeContentComponent implements OnInit {
   onBashError(error: string): void {
     console.error('Bash error occurred:', error);
   }
+
 
   /**
    * Load Binance account information

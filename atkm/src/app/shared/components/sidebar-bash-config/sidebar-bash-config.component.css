@@ -233,21 +233,22 @@
    ======================================== */
 
 .bash-config-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 320px;
-  height: 100vh;
-  background: var(--color-canvas-subtle);
-  border-left: 1px solid var(--color-border-default);
-  transition: transform 0.3s ease;
-  z-index: 100;
+  position: relative;
   display: flex;
   flex-direction: column;
+  flex: 0 0 30%;
+  min-width: 0;
+  background-color: var(--color-canvas-default);
+  border-left: 2px solid var(--color-border-default);
+  transition: all 0.3s ease-in-out;
+  overflow: visible;
+  z-index: 20;
 }
 
 .bash-config-panel.collapsed {
-  transform: translateX(320px);
+  flex-basis: 0;
+  transition: all 0.3s ease-in-out;
+  /* transform: translateX(320px); */
 }
 
 .bash-config-panel.expanded {
@@ -256,20 +257,21 @@
 
 .bash-config-toggle {
   position: absolute;
-  left: -32px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 32px;
-  height: 64px;
-  background: var(--color-canvas-subtle);
-  border: 1px solid var(--color-border-default);
-  border-right: none;
-  border-radius: 6px 0 0 6px;
-  cursor: pointer;
+  top: 78px;
+  left: -30px;
+  width: 30px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  background: var(--color-canvas-subtle);
+  border: 2px solid var(--color-border-default);
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  color: var(--color-fg-muted);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  z-index: 21;
 }
 
 .bash-config-toggle:hover {

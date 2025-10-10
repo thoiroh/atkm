@@ -68,8 +68,8 @@ export class AtkBashComponent implements OnInit {
     requestParams: {}
   });
   data = signal<BashData[]>([]);
+  selectedRowData = signal<BashData | null>(null); // NEW
   error = signal<string | null>(null);
-
   logs = signal<IBashLogEntry[]>([]);
   cursorVisible = signal<boolean>(true);
   typingActive = signal<boolean>(false);
@@ -150,6 +150,14 @@ export class AtkBashComponent implements OnInit {
     return ep?.columns.filter(c => c.visible !== false) || [];
   });
 
+  /**
+ * Get terminal height from config
+ */
+  public terminalHeight = computed(() => {
+    const cfg = this.currentConfig();
+    return cfg?.terminal.height || '100px';
+  });
+
   // ======================================================
   // CONSTRUCTOR
   // ======================================================
@@ -184,6 +192,14 @@ export class AtkBashComponent implements OnInit {
             break;
         }
         this._isProcessingEvent = false;
+      });
+    });
+
+    // Effect to sync selected row with sidebar service
+    effect(() => {
+      const selected = this.selectedRowData();
+      untracked(() => {
+        this.sidebarConfigService.updateSelectedRow(selected);
       });
     });
 
@@ -245,27 +261,35 @@ export class AtkBashComponent implements OnInit {
   ngOnInit(): void {
     const id = this.configId();
     let cfg = this.bashService.getConfig(id);
-    //  Si cfg absente et que l'id correspond, la créer via la factory
+
+    // If config absent and id matches, create it via factory
     if (!cfg && id === 'binance-debug-v2') {
       cfg = this.bashConfigFactory.createBinanceDebugConfig();
-      // Enregistrer la config dans le service (émettra un event)
       this.bashService.registerConfig(cfg);
     }
-    if (cfg) { // Alimenter le signal local pour que terminalText voie la config
+
+    if (cfg) {
       this.currentConfig.set(cfg);
-      if (cfg.defaultEndpoint) { // Aligner l'endpoint de la sidebar avec la config
+      if (cfg.defaultEndpoint) {
         this.sidebarConfigService.updateEndpoint(cfg.defaultEndpoint);
       }
     }
 
-    // this.tools.consoleGroup({ // TAG AtkBashComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-    //   title: `AtkBashComponent -> ngOnInit() -> configId()`, tag: 'check', palette: 'in', collapsed: true,
-    //   data: this.currentConfig()
-    // });
-
     this.addLog('ATK Bash Terminal initialized', 'info');
     this.sidebarConfigService.updateConnectionStatus('connected');
-    this.addLog('Service integration with sidebar completed', 'success');
+
+    // Auto-load data if enabled and connected
+    if (this.autoLoad() && this.sidebarConfigService.state().connectionStatus === 'connected') {
+      const sidebarState = this.sidebarConfigService.state();
+
+      if (sidebarState.currentEndpoint) {
+        this.addLog(`🔄 Auto-loading data from ${sidebarState.currentEndpoint}...`, 'info');
+        const defaultParams = this.getDefaultParameters();
+        this.loadData(defaultParams);
+      } else {
+        this.addLog('⚠️ No endpoint selected for auto-load', 'warning');
+      }
+    }
   }
 
   // ======================================================
@@ -283,11 +307,31 @@ export class AtkBashComponent implements OnInit {
   }
 
   /**
- * Clear cache
- */
+   * Clear cache
+   */
   public clearCache(): void {
     this.bashService.clearCache();
     this.addLog('🗑️ Cache cleared', 'info');
+  }
+
+  /**
+   * Handle row selection from datatable
+   */
+  public onRowSelected(row: BashData): void {
+    this.selectedRowData.set(row);
+
+    // Request sidebar to open via service event
+    this.sidebarConfigService.requestSidebarOpen();
+
+    this.addLog(`📋 Row selected: ${row.asset || row.symbol || row.id}`, 'info');
+
+    this.tools.consoleGroup({
+      title: `Row selected in bash component`,
+      tag: 'check',
+      palette: 'su',
+      collapsed: false,
+      data: row
+    });
   }
 
   /**
@@ -306,8 +350,6 @@ export class AtkBashComponent implements OnInit {
     this.addLog(`📤 Data exported (${currentData.length} records)`, 'success');
   }
 
-
-
   /**
    * Track by function for table rows
    */
@@ -321,6 +363,7 @@ export class AtkBashComponent implements OnInit {
   // onTerminalScrollChange(scrollState: TerminalScrollState): void {
   //   // this.terminalScrollState.set(scrollState);
   // }
+
   // =========================================
   // PRIVATE METHODS
   // =========================================
@@ -411,6 +454,31 @@ export class AtkBashComponent implements OnInit {
         break;
       default:
         this.addLog(`Unknown action: ${actionId}`, 'warning');
+    }
+  }
+
+  /**
+   * Get default parameters based on current endpoint
+   */
+  private getDefaultParameters(): Record<string, any> {
+    const sidebarState = this.sidebarConfigService.state();
+    const endpointId = sidebarState.currentEndpoint;
+
+    // Return existing sidebar parameters if any
+    if (Object.keys(sidebarState.parameters).length > 0) {
+      return sidebarState.parameters;
+    }
+
+    // Otherwise return endpoint-specific defaults
+    switch (endpointId) {
+      case 'trades':
+      case 'orders':
+        return { symbol: 'BTCUSDT', limit: 100 };
+      case 'ticker':
+        return { symbol: 'BTCUSDT' };
+      case 'account':
+      default:
+        return {};
     }
   }
   // =========================================

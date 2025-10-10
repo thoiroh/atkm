@@ -7,10 +7,39 @@
   font-family: var(--fontStack-monospace);
 }
 
+.atk-datatable *,
+.atk-datatable *::before,
+.atk-datatable *::after {
+  box-sizing: border-box;
+}
+
 .datatable-header {
   display: flex;
   background: var(--color-canvas-subtle);
   border-bottom: 1px solid var(--color-border-default);
+  overflow-y: scroll;
+  /* Force scrollbar space */
+}
+
+/* Hide scrollbar but keep the space */
+.datatable-header::-webkit-scrollbar {
+  /* width: 17px; */
+  /* Keep scrollbar width */
+  background: transparent;
+}
+
+.datatable-header::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.datatable-header::-webkit-scrollbar-track {
+  background: var(--color-canvas-subtle);
+  /* Match header background */
+}
+
+/* Firefox */
+.datatable-header {
+  scrollbar-color: var(--color-canvas-subtle) var(--color-canvas-subtle);
 }
 
 .column-header {
@@ -19,14 +48,12 @@
   font-size: 12px;
   color: var(--color-fg-default);
   border-right: 1px solid var(--color-border-default);
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.column-header:last-child {
-  border-right: none;
+  flex-shrink: 0;
+  background: var(--color-canvas-subtle);
+  /* Important for sticky */
 }
 
 .column-header.align-center {
@@ -37,8 +64,17 @@
   justify-content: flex-end;
 }
 
+.datatable-header .column-header:last-child,
+.datatable-header .column-header:last-of-type {
+  border-right: none !important;
+}
+
+/* .column-header:last-child {
+  border-right: 1px solid red;
+} */
+
 .sort-indicator {
-  margin-left: 4px;
+  margin-left: 8px;
   color: var(--color-fg-muted);
   font-size: 10px;
 }
@@ -46,6 +82,7 @@
 .datatable-body {
   max-height: 400px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .datatable-row {
@@ -55,6 +92,17 @@
 }
 
 .datatable-row:hover {
+  background: var(--color-canvas-subtle);
+  border-color: var(--color-accent-fg);
+}
+
+.datatable-row.selected {
+  background: var(--color-canvas-subtle);
+  border-left: 3px solid var(--color-accent-fg);
+  transition: all 0.2s ease;
+}
+
+.datatable-row.selected:hover {
   background: var(--color-canvas-subtle);
 }
 
@@ -67,14 +115,10 @@
   font-size: 13px;
   color: var(--color-fg-default);
   border-right: 1px solid var(--color-border-muted);
-  flex: 1;
   display: flex;
   align-items: center;
 }
 
-.datatable-cell:last-child {
-  border-right: none;
-}
 
 .datatable-cell.align-center {
   justify-content: center;

@@ -20,7 +20,7 @@ export class AtkBashConfigFactory {
       defaultEndpoint: 'account',
       terminal: {
         editable: true,
-        height: '200px',
+        height: '100px',
         showControls: true,
         customCommands: [
           {
@@ -139,7 +139,7 @@ export class AtkBashConfigFactory {
         {
           key: 'asset',
           label: 'Asset',
-          width: '20%',
+          width: '15%',
           align: 'left',
           type: 'text',
           sortable: true,
@@ -160,7 +160,7 @@ export class AtkBashConfigFactory {
           width: '25%',
           align: 'right',
           type: 'custom',
-          sortable: true,
+          sortable: false,
           formatter: (value: number) => this.formatBalance(value),
           cssClass: 'locked-balance'
         },
@@ -176,12 +176,12 @@ export class AtkBashConfigFactory {
         },
         {
           key: 'usdValue',
-          label: 'USD Value',
-          width: '5%',
+          label: 'USD',
+          width: '10%',
           align: 'right',
           type: 'currency',
           sortable: true,
-          visible: false // Hidden for now
+          visible: true // Hidden for now
         }
       ],
 

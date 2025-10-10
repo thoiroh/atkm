@@ -26,7 +26,7 @@
       <div class="bash-content">
 
         <textarea class="bash-input" atkTerminalInput autocorrect="off" spellcheck="false"
-          (stateChange)="onTerminalStateChange($event)"></textarea>
+          (stateChange)="onTerminalStateChange($event)" [style.height]="terminalHeight()"></textarea>
         <!-- spellcheck="false" -->
         <!-- autocorrect="off" -->
         <!-- autocomplete="off" -->
@@ -41,9 +41,10 @@
         <!-- Terminal Status -->
         <div class="bash-status">
           <span>Ln {{ line() }}</span>
-          <span>Col {{ column() }} · Idx {{ caretIndex() }}</span>
+          <span>Col {{ column() }}</span>
+          <span>Idx {{ caretIndex() }}</span>
           @if (selectionText(); as text) {
-          <span class="bash-selection"> · Sel "{{ text }}"</span>
+          <span class="bash-selection">Sel "{{ text }}"</span>
           }
           <span class="bash-connection" [class]="'status-' + sidebarState.connectionStatus">
             {{ sidebarState.connectionStatus | titlecase }}
@@ -55,23 +56,25 @@
       </div>
     </section>
 
-    <button (click)="testLoadData()">🧪 Test Load Account Data</button>
+    <!-- <button (click)="testLoadData()">🧪 Test Load Account Data</button> -->
 
     <!-- ======================= -->
     <!-- TABLE SECTION -->
     <!-- ======================= -->
     @if (data().length > 0 && visibleColumns().length > 0) {
-    <section class="bash-section data-section">
-      <div class="bash-content">
-        <div class="bash-table-header">
-          <h2>{{ getCurrentEndpointName(sidebarState.currentEndpoint) || 'Data Results' }}</h2>
-          <div class="table-meta">
-            <span>{{ data().length }} items</span>
+    <section class="bash-data-section">
+      <div class="bash-data-content">
+        <span class="bash-data-label">current endpoint</span>
+        <header class="bash-data-header">
+          <h1>{{ getCurrentEndpointName(sidebarState.currentEndpoint) || 'Data Results' }}</h1>
+          <div class="bash-data-meta">
+            <span>records: {{ data().length }} items</span>
             @if (terminalState().responseMetadata?.responseTime) {
-            <span>{{ terminalState().responseMetadata.responseTime }}ms</span>
+            <span>-</span>
+            <span>responseTime: {{ terminalState().responseMetadata.responseTime }}ms</span>
             }
           </div>
-        </div>
+        </header>
 
         <!-- Datatable Component -->
         <atk-datatable [columns]="visibleColumns()" [data]="data()" [loading]="bashService.loading()"

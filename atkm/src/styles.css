@@ -25,7 +25,7 @@
   --color-btn-hover-border: #8b949e;
   --color-success-emphasis: #238636;
   --color-icon-fill-default: #656d76;
-  --input-min-height: 200px;
+  --input-min-height: 100px;
 
 }
 
@@ -58,12 +58,13 @@ router-outlet,
 /* atk-icon, */
 atk-bash,
 atk-landing,
+atk-datatable,
 atk-home-content,
 atk-bash-debug-template,
 atk-dev-integration,
 
-atk-binance-api-management,
 atk-binance-debug,
+atk-binance-api-management,
 atk-binance-account-info,
 atk-binance-account-snapshot,
 atk-binance-market-data,
@@ -1343,7 +1344,7 @@ li,
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-canvas-default);
+  background: var(--color-canvas-subtle);
   border: 2px solid var(--color-border-default);
   border-right: none;
   border-radius: 8px 0 0 8px;
@@ -1528,6 +1529,7 @@ li,
   }
 
   .config-panel {
+
     display: none;
   }
 
