@@ -19,6 +19,7 @@ export interface IconRegistry {
 }
 
 @Injectable({ providedIn: 'root' })
+
 export class IconRegistryService {
   private http = inject(HttpClient);
   private url = '/assets/config/icons.json';

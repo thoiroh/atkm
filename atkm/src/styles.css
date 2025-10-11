@@ -11,9 +11,11 @@
   --color-canvas-inset: #30363d;
   --color-border-default: #30363d;
   --color-border-muted: #21262d;
+  --color-border-subtle: #656d76ad;
+  --color-border-emphasis: #1f6feb;
   --color-fg-default: #e6edf3;
   --color-fg-muted: #343e4b;
-  --color-fg-subtle: #656d76;
+  --color-fg-subtle: #656d76ad;
   --color-accent-emphasis: #1f6feb;
   --color-accent-fg: #58a6ff;
   --color-btn-bg: #21262d;

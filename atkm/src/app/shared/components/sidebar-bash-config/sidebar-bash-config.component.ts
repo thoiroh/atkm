@@ -1,10 +1,10 @@
 // sidebar-bash-config.component.ts
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, input, output, signal } from '@angular/core';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { IBashSidebarField } from '../atk-bash/atk-bash.interfaces';
 import { AtkBashService } from '../atk-bash/atk-bash.service';
 import { SidebarBashConfigService } from './sidebar-bash-config.service';
-import { IBashSidebarField } from '../atk-bash/atk-bash.interfaces';
 
 interface EndpointConfig {
   id: string;
@@ -48,11 +48,33 @@ export class SidebarBashConfigComponent {
   } | null>(null);
 
   endpoints: EndpointConfig[] = [
-    { id: 'account', name: 'Account', icon: 'user' },
-    { id: 'trades', name: 'Trades', icon: 'trending-up' },
-    { id: 'orders', name: 'Orders', icon: 'list' },
-    { id: 'ticker', name: 'Ticker', icon: 'activity' }
+    { id: 'account', name: 'Account', icon: 'users' },
+    { id: 'trades', name: 'Trades', icon: 'insights' },
+    { id: 'orders', name: 'Orders', icon: 'upload' },
+    { id: 'ticker', name: 'Ticker', icon: 'star' }
   ];
+
+  // ======================================================
+  // HOST LISTENERS FOR AUTO-COLLAPSE
+  // ======================================================
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const sidebar = target.closest('.bash-config-panel');
+    const toggleBtn = target.closest('.bash-config-toggle');
+
+    // Don't collapse if:
+    // 1. Sidebar is collapsed
+    // 2. Sidebar is pinned
+    // 3. Click is inside sidebar or on toggle button
+    if (this.isCollapsed() || this.state().isPinned || sidebar || toggleBtn) {
+      return;
+    }
+
+    // Collapse sidebar on outside click
+    this.togglePanel.emit();
+  }
 
   // ======================================================
   // COMPUTED
@@ -131,8 +153,8 @@ export class SidebarBashConfigComponent {
   }
 
   /**
- * Format field value based on type
- */
+   * Format field value based on type
+   */
   formatFieldValue(value: any, field: IBashSidebarField): string {
     if (value === null || value === undefined) return '-';
 
@@ -157,5 +179,12 @@ export class SidebarBashConfigComponent {
    */
   clearSelection(): void {
     this.sidebarService.clearSelectedRow();
+  }
+
+  /**
+   * Toggle pin state
+   */
+  togglePin(): void {
+    this.sidebarService.togglePinned();
   }
 }

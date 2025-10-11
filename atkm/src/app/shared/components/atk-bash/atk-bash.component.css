@@ -45,7 +45,7 @@
 .bash-header {
   display: flex;
   flex-direction: column;
-  padding: 0px 0px 22px 2px;
+  padding: 0px 0px 2px 2px;
   background: var(--color-canvas-subtle);
 }
 
@@ -60,9 +60,12 @@
   position: absolute;
   top: 40px;
   left: 24px;
+  display: flex;
+  gap: 12px;
 }
 
-.bash-details h2 {
+.bash-details h2,
+.bash-details span {
   font-size: .8em;
   font-weight: normal;
   color: var(--color-fg-subtle);
@@ -199,7 +202,6 @@
   flex-direction: row;
   width: 100%;
   padding: 0px 0px 16px 2px;
-  background: var(--color-canvas-subtle);
 }
 
 .bash-data-label {

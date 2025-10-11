@@ -16,7 +16,8 @@ export interface IBashConfigState {
   parameters: Record<string, any>;
   loading: boolean;
   connectionStatus: 'connected' | 'disconnected' | 'connecting';
-  selectedRowData: BashData | null; // NEW
+  selectedRowData: BashData | null;
+  isPinned: boolean;
 }
 
 export interface IBashConfigEvent {
@@ -51,7 +52,8 @@ export class SidebarBashConfigService {
     parameters: {},
     loading: false,
     connectionStatus: 'disconnected',
-    selectedRowData: null
+    selectedRowData: null,
+    isPinned: false
   });
 
   // 100% signals event bus
@@ -139,6 +141,19 @@ export class SidebarBashConfigService {
     this.emitEvent('request-sidebar-open', {});
   }
 
+  /**
+   * Toggle pin state
+   */
+  togglePinned(): void {
+    this._state.update(s => ({ ...s, isPinned: !s.isPinned }));
+  }
+
+  /**
+   * Set pin state
+   */
+  setPinned(pinned: boolean): void {
+    this._state.update(s => ({ ...s, isPinned: pinned }));
+  }
   // =========================
   // TRIGGERS (events)
   // =========================
@@ -182,8 +197,8 @@ export class SidebarBashConfigService {
       parameters: {},
       loading: false,
       connectionStatus: 'disconnected',
-      selectedRowData: null
-
+      selectedRowData: null,
+      isPinned: false
     });
   }
 

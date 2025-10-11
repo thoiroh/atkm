@@ -151,11 +151,19 @@ export class AtkBashComponent implements OnInit {
   });
 
   /**
- * Get terminal height from config
- */
+   * Get terminal height from config
+   */
   public terminalHeight = computed(() => {
     const cfg = this.currentConfig();
     return cfg?.terminal.height || '100px';
+  });
+
+  /**
+   * Get last log entry
+   */
+  lastLog = computed(() => {
+    const logList = this.logs();
+    return logList.length > 0 ? logList[logList.length - 1] : null;
   });
 
   // ======================================================

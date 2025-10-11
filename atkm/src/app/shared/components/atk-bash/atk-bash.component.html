@@ -10,10 +10,13 @@
   <!-- Header -->
   <header class="bash-header">
     @if (currentConfig(); as config) {
-    <h1>{{ config.title }}</h1>
-    <div class="bash-details">
-      <h2>{{ config.subtitle }}</h2>
-    </div>
+    <h1>Bash</h1>
+    <!-- <h1>{{ config.title }}</h1> -->
+    <!-- <div class="bash-details">
+      @if (lastLog(); as log) {
+      <span class="message">{{ log.message }}</span>
+      }
+    </div> -->
     }
   </header>
 

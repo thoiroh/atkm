@@ -176,7 +176,6 @@ export class AtkBashConfigFactory {
           cssClass: 'account-type-badge'
         }
       ],
-
       // TABLE COLUMNS CONFIGURATION (balances)
       columns: [
         {
@@ -227,7 +226,6 @@ export class AtkBashConfigFactory {
           visible: true // Hidden for now
         }
       ],
-
       // DATA TRANSFORMER - EXTENDED
       dataTransformer: (apiResponse: any): IBashDataTransformResult => {
         if (!apiResponse?.data) {

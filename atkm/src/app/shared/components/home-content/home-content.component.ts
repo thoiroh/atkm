@@ -2,7 +2,7 @@
 // Home content component using centralized ConfigStore
 
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ConfigStore } from '@core/store/config.store';
@@ -14,6 +14,7 @@ import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-conf
 import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 import { ToolsService } from '@shared/services/tools.service';
 import { IBashConfig } from '../atk-bash/atk-bash.interfaces';
+import { AtkBashService } from '../atk-bash/atk-bash.service';
 import { SidebarBashConfigService } from '../sidebar-bash-config/sidebar-bash-config.service';
 
 @Component({
@@ -36,6 +37,7 @@ export class HomeContentComponent implements OnInit {
   // =========================================
 
   private readonly configStore = inject(ConfigStore);
+  private readonly bashService = inject(AtkBashService); // NEW
   private readonly binanceService = inject(BinanceService);
   private readonly sidebarConfigService = inject(SidebarBashConfigService);
   private readonly tools = inject(ToolsService);
@@ -43,7 +45,7 @@ export class HomeContentComponent implements OnInit {
   config = this.configStore.config;
   sidebar = this.configStore.sidebar;
   configPanelCollapsed = this.configStore.configPanelCollapsed;
-
+  bashConfig = computed(() => this.bashService.getConfig('binance-debug-v2')); // NEW
   // =========================================
   // LOCAL STATE
   // =========================================
@@ -129,7 +131,6 @@ export class HomeContentComponent implements OnInit {
   onBashError(error: string): void {
     console.error('Bash error occurred:', error);
   }
-
 
   /**
    * Load Binance account information
