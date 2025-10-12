@@ -17,6 +17,7 @@ export interface IBashConfigState {
   loading: boolean;
   connectionStatus: 'connected' | 'disconnected' | 'connecting';
   selectedRowData: BashData | null;
+  sidebarData: Record<string, any> | null;
   isPinned: boolean;
 }
 
@@ -28,7 +29,8 @@ export interface IBashConfigEvent {
   | 'test-connection'
   | 'row-selected'
   | 'row-deselected'
-  | 'request-sidebar-open';
+  | 'request-sidebar-open'
+  | 'sidebar-data-updated';
   payload: any;
   timestamp: Date;
 }
@@ -53,6 +55,7 @@ export class SidebarBashConfigService {
     loading: false,
     connectionStatus: 'disconnected',
     selectedRowData: null,
+    sidebarData: null, // NEW
     isPinned: false
   });
 
@@ -67,7 +70,7 @@ export class SidebarBashConfigService {
   public readonly events = this._events.asReadonly();
 
   constructor() {
-    this.tools.consoleGroup({
+    this.tools.consoleGroup({ // TAG SidebarBashConfigService -> constructor() ================= CONSOLE LOG IN PROGRESS
       title: 'SidebarBashConfigService -> constructor()',
       tag: 'check',
       palette: 'in',
@@ -86,7 +89,8 @@ export class SidebarBashConfigService {
       ...s,
       currentEndpoint: endpointId,
       parameters: {},
-      selectedRowData: null
+      selectedRowData: null,
+      sidebarData: null // NEW - Reset sidebar data on endpoint change
     }));
     this.emitEvent('endpoint-change', { endpointId });
   }
@@ -110,6 +114,20 @@ export class SidebarBashConfigService {
     this._state.update(s => ({ ...s, loading }));
   }
 
+  /**
+   * Update global sidebar data from API response
+   */
+  updateSidebarData(data: Record<string, any> | null): void {
+    this._state.update(s => ({ ...s, sidebarData: data }));
+    this.emitEvent('sidebar-data-updated', { sidebarData: data });
+    this.tools.consoleGroup({ // TAG SidebarBashConfigService -> updateSidebarData() ================= CONSOLE LOG IN PROGRESS
+      title: 'SidebarBashConfigService -> updateSidebarData()',
+      tag: 'check',
+      palette: 'in',
+      collapsed: true,
+      data: this._state()
+    });
+  }
   // =========================
   // ROW SELECTION
   // =========================
@@ -198,6 +216,7 @@ export class SidebarBashConfigService {
       loading: false,
       connectionStatus: 'disconnected',
       selectedRowData: null,
+      sidebarData: null, // NEW
       isPinned: false
     });
   }

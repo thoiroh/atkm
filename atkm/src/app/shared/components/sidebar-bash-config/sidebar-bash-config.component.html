@@ -152,6 +152,60 @@
       </div>
       }
 
+      <!-- DEBUG SECTION - À RETIRER APRÈS TEST -->
+      <!-- <div class="bash-config-section" style="background: #000000; border-color: #ffc107;">
+        <div class="section-title">🔍 DEBUG Sidebar Data</div>
+        <pre style="font-size: 10px; max-height: 150px; overflow: auto;">
+            isAccountEndpoint: {{ isAccountEndpoint() }}
+            hasSidebarData: {{ hasSidebarData() }}
+            sidebarFields count: {{ sidebarFields().length }}
+            sidebarData: {{ sidebarData() | json }}
+            currentEndpoint: {{ state().currentEndpoint }}
+        </pre>
+      </div> -->
+
+      <!-- Sidebar Data Section (Account Info) -->
+      @if (isAccountEndpoint() && hasSidebarData() && sidebarFields().length > 0) {
+      <div class="bash-config-section sidebar-data-section">
+        <div class="section-title">
+          <span>Account Information</span>
+        </div>
+
+        <div class="row-details-grid">
+          @for (field of sidebarFields(); track field.key) {
+          @if (field.visible !== false && sidebarData(); as data) {
+          <div class="detail-field-row" [attr.data-group]="field.group">
+            <div class="detail-field-label">
+              @if (field.icon) {
+              <!-- <atk-icon [name]="field.icon" [size]="12" color="var(--color-fg-muted)" /> -->
+              }
+              <span>{{ field.label }}</span>
+            </div>
+            <div class="detail-field-value" [ngClass]="'type-' + (field.type || 'text')">
+              @switch (field.type) {
+              @case ('boolean') {
+              <span class="boolean-badge" [class]="data[field.key] ? 'true' : 'false'">
+                {{ formatFieldValue(data[field.key], field) }}
+              </span>
+              }
+              @case ('status') {
+              <span class="status-badge status-{{ data[field.key]?.toLowerCase() }}">
+                {{ formatFieldValue(data[field.key], field) }}
+              </span>
+              }
+              @default {
+              <span [ngClass]="field.cssClass">
+                {{ formatFieldValue(data[field.key], field) }}
+              </span>
+              }
+              }
+            </div>
+          </div>
+          }
+          }
+        </div>
+      </div>
+      }
       <!-- Selected Row Details Section -->
       @if (hasSelectedRow() && selectedRowData(); as rowData) {
       <div class="bash-config-section selected-row-section">

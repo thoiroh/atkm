@@ -60,6 +60,18 @@
   overflow: hidden;
 }
 
+/* Sidebar Data Section (Account Info) specific styling */
+.sidebar-data-section {
+  background: linear-gradient(135deg,
+      rgba(79, 172, 254, 0.03) 0%,
+      rgba(79, 172, 254, 0.01) 100%);
+  border: 1px solid var(--color-accent-muted);
+}
+
+.sidebar-data-section .section-title {
+  color: var(--color-accent-fg);
+}
+
 .section-header {
   display: flex;
   align-items: center;
@@ -236,14 +248,21 @@
   position: fixed;
   top: 81px;
   right: 0;
+  bottom: 0;
+  /* NEW - Pour que la hauteur soit calculée automatiquement */
   width: 35%;
-  height: 100%;
+  /* CHANGED - Utiliser width au lieu de flex car position: fixed */
+  min-width: 320px;
+  /* NEW - Largeur minimum */
+  max-width: 500px;
+  /* NEW - Largeur maximum */
   background-color: var(--color-canvas-default);
   border-left: 1px solid var(--color-border-subtle);
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
   transition: transform 0.3s ease-in-out;
   overflow: visible;
+  /* CHANGED - Pour que le scroll interne fonctionne */
   z-index: 50;
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
 }
@@ -256,6 +275,25 @@
   transform: translateX(0);
 }
 
+.bash-config-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* NEW - Prendre toute la hauteur du parent */
+  overflow-y: auto;
+  /* Scroll vertical si nécessaire */
+  overflow-x: hidden;
+  padding: 20px;
+}
+
+.bash-config-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* NEW - Espacement entre les sections */
+  flex: 1 1 auto;
+}
+
 .bash-config-toggle {
   position: absolute;
   top: 78px;
@@ -263,6 +301,7 @@
   width: 30px;
   height: 50px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background: var(--color-canvas-subtle);
@@ -272,7 +311,7 @@
   color: var(--color-fg-muted);
   cursor: pointer;
   transition: all 0.3s ease-in-out;
-  z-index: 51;
+  z-index: 60;
 }
 
 .bash-config-toggle:hover {
@@ -280,18 +319,6 @@
   color: var(--color-accent-fg);
 }
 
-.bash-config-wrapper {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.bash-config-content {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
 
 /* Header */
 .bash-config-header {
@@ -459,7 +486,7 @@
   flex-direction: column;
   gap: 12px;
   padding: 12px;
-  background: var(--color-canvas-default);
+  background: var(--color-canvas-subtle);
   border: 1px solid var(--color-border-default);
   border-radius: 6px;
 }
@@ -667,6 +694,27 @@
   }
 }
 
+/* Responsive */
+@media (max-width: 1200px) {
+  .bash-config-panel {
+    width: 40%;
+    /* Plus large sur écrans moyens */
+  }
+}
+
+@media (max-width: 768px) {
+  .bash-config-panel {
+    width: 100%;
+    /* Plein écran sur mobile */
+    min-width: auto;
+    max-width: none;
+  }
+
+  .bash-config-panel.collapsed {
+    transform: translateX(100%);
+  }
+}
+
 /* ========================================
    SELECTED ROW DETAILS SECTION
    ======================================== */
@@ -733,14 +781,27 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  width: 200px;
+  width: calc(50% - 4px);
+  /* NEW - Force 2 colonnes */
+  min-width: 180px;
+  /* NEW - Minimum width */
   flex-shrink: 0;
-  flex-grow: 1;
   padding: 8px;
   background: var(--color-canvas-default);
   border-radius: 4px;
   border: 1px solid var(--color-border-muted);
   transition: all 0.2s ease;
+}
+
+/* NEW - Si c'est le dernier élément ET qu'il est impair, prendre toute la largeur */
+.detail-field-row:last-child:nth-child(odd) {
+  width: calc(50% - 4px);
+  /* Garde la même largeur que les autres */
+}
+
+.detail-field-row:hover {
+  background: var(--color-canvas-subtle);
+  border-color: var(--color-border-default);
 }
 
 .detail-field-row:last-child {
@@ -826,7 +887,7 @@
 .raw-data-pre {
   margin: 8px 0 0 0;
   padding: 8px;
-  background: var(--color-canvas-inset);
+  background: var(--color-canvas-subtle);
   border: 1px solid var(--color-border-muted);
   border-radius: 4px;
   font-family: var(--fontStack-monospace);

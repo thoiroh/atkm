@@ -91,25 +91,16 @@ export class AtkDatatableComponent {
    * Handle row double-click for selection
    */
   onRowDoubleClick(row: BashData): void {
-    console.log('🔥🔥🔥 DATATABLE: Double click detected!', row);
-    console.log('🔥🔥🔥 DATATABLE: Row data:', JSON.stringify(row, null, 2));
-
     const rowId = row.id || row.symbol || row.asset;
-    console.log('🔥🔥🔥 DATATABLE: Row ID:', rowId);
 
     // Toggle selection
     if (this.selectedRowId() === rowId) {
-      console.log('🔥🔥🔥 DATATABLE: Deselecting row');
       this.selectedRowId.set(null);
     } else {
-      console.log('🔥🔥🔥 DATATABLE: Selecting row');
       this.selectedRowId.set(rowId);
-      console.log('🔥🔥🔥 DATATABLE: Emitting selectedRow event');
       this.selectedRow.emit(row);
-      console.log('🔥🔥🔥 DATATABLE: Event emitted!');
     }
 
-    console.log('🔥🔥🔥 DATATABLE: Current selectedRowId:', this.selectedRowId());
   }
 
   /**

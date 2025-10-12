@@ -161,7 +161,7 @@ export class AtkBashComponent implements OnInit {
   /**
    * Get last log entry
    */
-  lastLog = computed(() => {
+  public lastLog = computed(() => {
     const logList = this.logs();
     return logList.length > 0 ? logList[logList.length - 1] : null;
   });
@@ -216,7 +216,7 @@ export class AtkBashComponent implements OnInit {
       const last = ev.at(-1);
       if (!last || this._isProcessingEvent) return;
 
-      // this.tools.consoleGroup({ // TAG AtkBashComponent -> effect(sidebarConfigService.events)
+      // this.tools.consoleGroup({ // OFF AtkBashComponent -> effect(sidebarConfigService.events) ================= CONSOLE LOG IN PROGRESS
       //   title: `AtkBashComponent -> effect(sidebarConfigService.events) -> configId()`, tag: 'check', palette: 'ac', collapsed: false,
       //   data: { latestEv: last, curcfg: this.currentConfig() }
       // });
@@ -259,6 +259,28 @@ export class AtkBashComponent implements OnInit {
       this.updateTerminalContent();
     });
 
+    // Effect to update sidebar data when data is loaded
+    effect(() => {
+      const events = this.bashService.events();
+      const latestEvent = events.at(-1);
+
+      if (!latestEvent || latestEvent.type !== 'data-loaded') return;
+
+      untracked(() => {
+        const config = this.currentConfig();
+        const endpoint = config?.endpoints.find(ep => ep.id === latestEvent.payload.endpointId);
+
+        // Extract sidebarData from dataTransformer result
+        if (endpoint?.dataTransformer && latestEvent.payload.data) {
+          const transformResult = endpoint.dataTransformer(latestEvent.payload);
+
+          // Update sidebar config service with sidebarData
+          if (transformResult?.sidebarData) {
+            this.sidebarConfigService.updateSidebarData(transformResult.sidebarData);
+          }
+        }
+      });
+    });
     // this.startCursorBlink();
   }
 
@@ -307,6 +329,7 @@ export class AtkBashComponent implements OnInit {
   testLoadData(): void {
     this.loadData({ symbol: 'BTCUSDT' });
   }
+
   /**
    * Handle terminal state changes from directive
    */
@@ -490,6 +513,7 @@ export class AtkBashComponent implements OnInit {
         return {};
     }
   }
+
   // =========================================
   // ASYNC OPERATIONS
   // =========================================
@@ -571,6 +595,7 @@ export class AtkBashComponent implements OnInit {
       this.sidebarConfigService.updateLoadingState(false);
     }
   }
+
 
   /**
    * Test connection to current endpoint
@@ -677,6 +702,12 @@ export class AtkBashComponent implements OnInit {
    * @private
    * @return {*}
    */
+  // atk-bash.component.ts
+  // MODIFICATION DE LA MÉTHODE loadAccountData() pour extraire sidebarData
+
+  /**
+   * Load account data
+   */
   private async loadAccountData(): Promise<BashData[]> {
     const account = await firstValueFrom(
       this.binanceService.getAccount()
@@ -685,6 +716,36 @@ export class AtkBashComponent implements OnInit {
 
     if (!account?.balances) return [];
 
+    // ====================================
+    // EXTRACT SIDEBAR DATA - NEW
+    // ====================================
+    const sidebarData = {
+      canTrade: account.canTrade || false,
+      canWithdraw: account.canWithdraw || false,
+      canDeposit: account.canDeposit || false,
+      updateTime: account.updateTime || Date.now(),
+      accountType: account.accountType || 'SPOT',
+      // Additional properties from BinanceAccount
+      makerCommission: account.makerCommission || 0,
+      takerCommission: account.takerCommission || 0,
+      buyerCommission: account.buyerCommission || 0,
+      sellerCommission: account.sellerCommission || 0,
+      permissions: account.permissions || []
+    };
+
+    // Update sidebar config service with extracted data
+    this.sidebarConfigService.updateSidebarData(sidebarData);
+
+    this.tools.consoleGroup({
+      title: `🔍 Sidebar Data Extracted`,
+      tag: 'check',
+      palette: 'su',
+      collapsed: false,
+      data: { sidebarData, accountType: account.accountType }
+    });
+    // ====================================
+
+    // Return table data (balances)
     return account.balances
       .filter(balance =>
         parseFloat(balance.free.toString()) > 0 ||

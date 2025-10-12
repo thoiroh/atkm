@@ -139,25 +139,12 @@ export class AtkBashConfigFactory {
           icon: 'arrow-down-circle'
         },
         {
-          key: 'brokered',
-          label: 'Brokered',
-          type: 'boolean',
-          group: 'account',
-          icon: 'briefcase'
-        },
-        {
-          key: 'requireSelfTradePrevention',
-          label: 'Self Trade Prevention',
-          type: 'boolean',
-          group: 'settings',
-          icon: 'shield-check'
-        },
-        {
-          key: 'preventSor',
-          label: 'Prevent SOR',
-          type: 'boolean',
-          group: 'settings',
-          icon: 'shield-x'
+          key: 'accountType',
+          label: 'Account Type',
+          type: 'status',
+          group: 'info',
+          icon: 'user',
+          cssClass: 'account-type-badge'
         },
         {
           key: 'updateTime',
@@ -168,12 +155,32 @@ export class AtkBashConfigFactory {
           formatter: (value: number) => new Date(value).toLocaleString('fr-FR')
         },
         {
-          key: 'accountType',
-          label: 'Account Type',
-          type: 'status',
-          group: 'info',
-          icon: 'user',
-          cssClass: 'account-type-badge'
+          key: 'makerCommission',
+          label: 'Maker Commission',
+          type: 'number',
+          group: 'commissions',
+          icon: 'percent'
+        },
+        {
+          key: 'takerCommission',
+          label: 'Taker Commission',
+          type: 'number',
+          group: 'commissions',
+          icon: 'percent'
+        },
+        {
+          key: 'buyerCommission',
+          label: 'Buyer Commission',
+          type: 'number',
+          group: 'commissions',
+          icon: 'percent'
+        },
+        {
+          key: 'sellerCommission',
+          label: 'Seller Commission',
+          type: 'number',
+          group: 'commissions',
+          icon: 'percent'
         }
       ],
       // TABLE COLUMNS CONFIGURATION (balances)
@@ -234,16 +241,18 @@ export class AtkBashConfigFactory {
 
         const accountData = apiResponse.data;
 
-        // SIDEBAR DATA - Account info fields
+        // SIDEBAR DATA - Account info fields (UPDATED)
         const sidebarData = {
           canTrade: accountData.canTrade || false,
           canWithdraw: accountData.canWithdraw || false,
           canDeposit: accountData.canDeposit || false,
-          brokered: accountData.brokered || false,
-          requireSelfTradePrevention: accountData.requireSelfTradePrevention || false,
-          preventSor: accountData.preventSor || false,
+          accountType: accountData.accountType || 'SPOT',
           updateTime: accountData.updateTime || Date.now(),
-          accountType: accountData.accountType || 'UNKNOWN'
+          makerCommission: accountData.makerCommission || 0,
+          takerCommission: accountData.takerCommission || 0,
+          buyerCommission: accountData.buyerCommission || 0,
+          sellerCommission: accountData.sellerCommission || 0,
+          permissions: accountData.permissions || []
         };
 
         // TABLE DATA - Balances with significant amounts only

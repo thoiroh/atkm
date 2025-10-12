@@ -103,6 +103,38 @@ export class SidebarBashConfigComponent {
   });
 
   /**
+ * Get sidebar fields configuration from bash config
+ */
+  sidebarFields = computed(() => {
+    const currentEndpoint = this.state().currentEndpoint;
+    const config = this.bashService.getConfig('binance-debug-v2');
+    const endpoint = config?.endpoints.find(ep => ep.id === currentEndpoint);
+    return endpoint?.sidebarFields || [];
+  });
+
+  /**
+   * Get sidebar data from state
+   */
+  sidebarData = computed(() => {
+    return this.state().sidebarData;
+  });
+
+  /**
+   * Check if we have sidebar data to display
+   */
+  hasSidebarData = computed(() => {
+    const data = this.sidebarData();
+    return data !== null && Object.keys(data).length > 0;
+  });
+
+  /**
+   * Check if current endpoint is 'account' (only endpoint with sidebarFields)
+   */
+  isAccountEndpoint = computed(() => {
+    return this.state().currentEndpoint === 'account';
+  });
+
+  /**
    * Check if we have a selected row
    */
   hasSelectedRow = computed(() => {
