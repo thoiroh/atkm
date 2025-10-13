@@ -349,7 +349,6 @@ export class AtkBashComponent implements OnInit {
    * Handle row selection from datatable
    */
   public onRowSelected(row: BashData): void {
-    console.log('🔥 BASH RECEIVED ROW', row); // DEBUG
     this.selectedRowData.set(row);
 
     // Request sidebar to open via service event

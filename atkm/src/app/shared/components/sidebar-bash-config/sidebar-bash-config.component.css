@@ -61,7 +61,8 @@
 }
 
 /* Sidebar Data Section (Account Info) specific styling */
-.sidebar-data-section {
+.sidebar-data-section,
+.selected-row-section {
   background: linear-gradient(135deg,
       rgba(79, 172, 254, 0.03) 0%,
       rgba(79, 172, 254, 0.01) 100%);
@@ -257,7 +258,7 @@
   max-width: 500px;
   /* NEW - Largeur maximum */
   background-color: var(--color-canvas-default);
-  border-left: 1px solid var(--color-border-subtle);
+  border-left: 2px solid var(--color-border-default);
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
   transition: transform 0.3s ease-in-out;
@@ -296,7 +297,7 @@
 
 .bash-config-toggle {
   position: absolute;
-  top: 78px;
+  top: 80px;
   left: -30px;
   width: 30px;
   height: 50px;
@@ -304,8 +305,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--color-canvas-subtle);
-  border: 1px solid var(--color-border-subtle);
+  background: var(--color-canvas-default);
+  border: 2px solid var(--color-border-default);
   border-right: none;
   border-radius: 8px 0 0 8px;
   color: var(--color-fg-muted);
@@ -326,6 +327,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: start;
+  margin-bottom: 12px;
   gap: 8px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--color-border-default);
@@ -347,7 +349,7 @@
 
 .pin-button {
   position: absolute;
-  right: 16px;
+  right: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -420,8 +422,8 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
+  margin-bottom: 12px;
   border-bottom: 1px solid var(--color-border-subtle);
-  padding: 0 4px 0 4px;
 }
 
 .tab-button {
@@ -587,16 +589,20 @@
   align-items: center;
   justify-content: flex-start;
   gap: 12px;
-  padding: 8px 12px;
+  padding: 12px;
   padding-left: 16px;
   border: 1px solid var(--color-border-default);
   border-radius: 4px;
   background: var(--color-canvas-default);
   color: var(--color-fg-default);
-  font-size: 11px;
+  font-size: .8em;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.action-btn span {
+  padding-top: 2px;
 }
 
 .action-btn:hover:not(:disabled) {
@@ -785,7 +791,8 @@
   /* NEW - Force 2 colonnes */
   min-width: 180px;
   /* NEW - Minimum width */
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  /* flex-shrink: 0; */
   padding: 8px;
   background: var(--color-canvas-default);
   border-radius: 4px;

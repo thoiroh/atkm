@@ -11,41 +11,41 @@
   </button>
 
   <div class="bash-config-wrapper">
+
+    <!-- Header -->
+    <div class="bash-config-header">
+      <div class="bash-config-title">
+        <atk-icon name="terminalpc" [size]="16" color="var(--color-accent-fg)" />
+        <h3>Bash Configuration</h3>
+      </div>
+
+      <!-- Pin button -->
+      <button class="pin-button" [class.pinned]="state().isPinned" (click)="togglePin()"
+        [title]="state().isPinned ? 'Unpin sidebar' : 'Pin sidebar open'">
+        <atk-icon [name]="state().isPinned ? 'dot-point' : 'cross'" [size]="14" />
+      </button>
+
+      <!-- <div class="bash-connection-status" [class]="'status-' + state().connectionStatus">
+              <span class="status-dot"></span>
+              <span class="status-text">{{ state().connectionStatus }}</span>
+            </div> -->
+    </div>
+
+    <!-- Endpoint Tabs -->
+    <div class="bash-config-tabs">
+      @for (endpoint of endpoints; track endpoint.id) {
+      <button class="tab-button" [class.active]="state().currentEndpoint === endpoint.id"
+        (click)="selectEndpoint(endpoint.id)">
+        <atk-icon [name]="endpoint.icon" [size]="14" />
+        <span>{{ endpoint.name }}</span>
+      </button>
+      }
+    </div>
     <div class="bash-config-content">
-
-      <!-- Header -->
-      <div class="bash-config-header">
-        <div class="bash-config-title">
-          <atk-icon name="terminalpc" [size]="16" color="var(--color-accent-fg)" />
-          <h3>Bash Configuration</h3>
-        </div>
-
-        <!-- Pin button -->
-        <button class="pin-button" [class.pinned]="state().isPinned" (click)="togglePin()"
-          [title]="state().isPinned ? 'Unpin sidebar' : 'Pin sidebar open'">
-          <atk-icon [name]="state().isPinned ? 'dot-point' : 'cross'" [size]="14" />
-        </button>
-
-        <!-- <div class="bash-connection-status" [class]="'status-' + state().connectionStatus">
-          <span class="status-dot"></span>
-          <span class="status-text">{{ state().connectionStatus }}</span>
-        </div> -->
-      </div>
-
-      <!-- Endpoint Tabs -->
-      <div class="bash-config-tabs">
-        @for (endpoint of endpoints; track endpoint.id) {
-        <button class="tab-button" [class.active]="state().currentEndpoint === endpoint.id"
-          (click)="selectEndpoint(endpoint.id)">
-          <atk-icon [name]="endpoint.icon" [size]="14" />
-          <span>{{ endpoint.name }}</span>
-        </button>
-        }
-      </div>
 
       <!-- Parameters Section -->
       @if (currentEndpointConfig(); as endpoint) {
-      <div class="bash-config-section">
+      <div class="bash-config-section sidebar-data-section">
         <div class="section-title">
           <!-- <atk-icon name="settings" [size]="14" color="var(--color-fg-muted)" /> -->
           <span>Parameters</span>
@@ -87,7 +87,7 @@
       }
 
       <!-- Actions Section -->
-      <div class="bash-config-section">
+      <div class="bash-config-section sidebar-data-section">
         <div class="section-title">
           <!-- <atk-icon name="action" [size]="14" color="var(--color-fg-muted)" /> -->
           <span>Actions</span>
@@ -118,7 +118,7 @@
 
       <!-- Status Section -->
       @if (state().loading || lastResponse()) {
-      <div class="bash-config-section">
+      <div class="bash-config-section sidebar-data-section">
         <div class="section-title">
           <atk-icon name="activity" [size]="14" color="var(--color-fg-muted)" />
           <span>Status</span>
@@ -208,7 +208,7 @@
       }
       <!-- Selected Row Details Section -->
       @if (hasSelectedRow() && selectedRowData(); as rowData) {
-      <div class="bash-config-section selected-row-section">
+      <div class="bash-config-section sidebar-data-section">
         <div class="section-title">
           <!-- <atk-icon name="file-text" [size]="14" color="var(--color-accent-fg)" /> -->
           <span>Selected Row Details</span>
