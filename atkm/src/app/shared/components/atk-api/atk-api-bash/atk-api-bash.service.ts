@@ -11,14 +11,14 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { BashData, IBashConfig, IBashEndpointConfig, IBashEvent } from '@shared/components/atk-bash/atk-bash.interfaces';
-import { firstValueFrom } from 'rxjs';
 import { ToolsService } from '@shared/services/tools.service';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class AtkBashService {
+export class AtkApiBashService {
 
   private readonly tools = inject(ToolsService);
 

@@ -58,9 +58,13 @@ body {
 router-outlet,
 
 /* atk-icon, */
+atk-api,
+atk-api-bash,
+atk-api-datatable atk-api-sidebar-bash-config,
+
+atk-icon,
 atk-bash,
 atk-landing,
-atk-icon,
 atk-datatable,
 atk-home-content,
 atk-bash-debug-template,

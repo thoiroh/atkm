@@ -46,8 +46,8 @@
             },
             {
               "icon": "dot",
-              "label": "[dev] AtkDevIntegrationComponent",
-              "link": "/dashboard/bash",
+              "label": "[dev] AtkApiComponent",
+              "link": "/dashboard/atkpi",
               "action": false,
               "isExpanded": false,
               "subMenu": []

@@ -1,12 +1,14 @@
 <div class="content-wrapper">
+
   <!-- [class.config-collapsed]="configPanelCollapsed()" -->
+  <!-- {{ configPanelCollapsed() }} / {{ sidebar().userContext.username }} -->
 
   <!-- ======================= -->
   <!-- HEADER  -->
   <!-- ======================= -->
 
   <header class="content-header">
-    <h1>home-content {{ configPanelCollapsed() }} / {{ sidebar().userContext.username }}</h1>
+    <h1>atk-api </h1>
   </header>
   <div class="terminal-wrapper">
     <header class="terminal-header">
@@ -53,7 +55,7 @@
 
         <div class="section-content">
           <atk-icon class="terminal-toggle" name="triangle-down" color="var(--color-btn-bg-default)" />
-          <atk-bash configId="binance-debug-v2" [autoLoad]="true" />
+          <atk-api-bash configId="binance-debug-v2" [autoLoad]="true" />
           <!-- <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
             (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" /> -->
         </div>
@@ -135,4 +137,4 @@
 <!-- <atk-sidebar-config [sections]="config().configPanel.sections" [isCollapsed]="config().configPanel.isCollapsed"
   (togglePanel)="toggleConfigPanel()" /> -->
 
-<atk-sidebar-bash-config [isCollapsed]="configPanelCollapsed()" (togglePanel)="toggleConfigPanel()" />
+<atk-api-sidebar-config [isCollapsed]="configPanelCollapsed()" (togglePanel)="toggleConfigPanel()" />

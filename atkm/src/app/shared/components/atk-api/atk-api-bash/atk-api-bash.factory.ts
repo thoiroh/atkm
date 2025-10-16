@@ -1,18 +1,16 @@
 // atk-bash-config.factory.ts
-// EXTENDED - Factory with enhanced crypto formatters
-import { Injectable, inject } from '@angular/core';
-import { IBashConfig, IBashDataTransformResult, IBashEndpointConfig } from '@shared/components/atk-bash/atk-bash.interfaces';
-import { CryptoTradingFormatters } from '@shared/formatters/crypto-trading.formatters';
+// EXTENDED - Factory for creating bash configurations with sidebar/table separation
+
+import { Injectable } from '@angular/core';
+import { IBashConfig, IBashDataTransformResult, IBashEndpointConfig } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AtkBashConfigFactory {
-
-  private cryptoFormatters = inject(CryptoTradingFormatters);
+export class AtkApiBashConfigFactory {
 
   /**
-   * Create Binance debug configuration - ENHANCED with crypto formatters
+   * Create Binance debug configuration - EXTENDED
    */
   createBinanceDebugConfig(): IBashConfig {
     return {
@@ -22,7 +20,7 @@ export class AtkBashConfigFactory {
       defaultEndpoint: 'account',
       terminal: {
         editable: true,
-        height: '200px',
+        height: '100px',
         showControls: true,
         customCommands: [
           {
@@ -39,11 +37,6 @@ export class AtkBashConfigFactory {
             name: 'symbol',
             description: 'Set trading symbol for queries',
             handler: (args: string[]) => console.log(`Setting symbol: ${args[0]}`)
-          },
-          {
-            name: 'balance',
-            description: 'Show balance for specific asset',
-            handler: (args: string[]) => console.log(`Checking balance for: ${args[0]}`)
           }
         ]
       },
@@ -63,7 +56,7 @@ export class AtkBashConfigFactory {
   }
 
   // =========================================
-  // PRIVATE ENDPOINT CREATORS - ENHANCED
+  // PRIVATE ENDPOINT CREATORS - EXTENDED
   // =========================================
 
   private createAccountEndpoint(): IBashEndpointConfig {
@@ -79,55 +72,59 @@ export class AtkBashConfigFactory {
       cacheable: true,
       cacheDuration: 30000,
 
-      // ENHANCED SIDEBAR FIELDS with formatters
+      // ROW DETAILS FIELDS CONFIGURATION
+      rowDetailFields: [
+        {
+          key: 'asset',
+          label: 'Asset Symbol',
+          type: 'text',
+          group: 'identity',
+          icon: 'coins'
+        },
+        {
+          key: 'free',
+          label: 'Available Balance',
+          type: 'custom',
+          group: 'balances',
+          icon: 'circle',
+          formatter: (value: number) => this.formatBalance(value)
+        },
+        {
+          key: 'locked',
+          label: 'Locked Balance',
+          type: 'custom',
+          group: 'balances',
+          icon: 'lock',
+          formatter: (value: number) => this.formatBalance(value)
+        },
+        {
+          key: 'total',
+          label: 'Total Balance',
+          type: 'custom',
+          group: 'balances',
+          icon: 'trending-up',
+          formatter: (value: number) => this.formatBalance(value)
+        },
+        {
+          key: 'usdValue',
+          label: 'USD Value (est.)',
+          type: 'custom',
+          group: 'valuation',
+          icon: 'dollar-sign',
+          visible: true,
+          formatter: (value: number) => this.formatPrice(value)
+
+        }
+      ],
+      // SIDEBAR FIELDS CONFIGURATION
       sidebarFields: [
         {
-          key: 'canTrade',
-          label: 'Trading Permission',
-          type: 'boolean',
-          group: 'permissions',
-          icon: 'trending-up',
-          formatter: (value: boolean) => this.cryptoFormatters.formatSidebarBoolean(value).text
-        },
-        {
-          key: 'canWithdraw',
-          label: 'Withdrawal Permission',
-          type: 'boolean',
-          group: 'permissions',
-          icon: 'arrow-up-circle',
-          formatter: (value: boolean) => this.cryptoFormatters.formatSidebarBoolean(value).text
-        },
-        {
-          key: 'canDeposit',
-          label: 'Deposit Permission',
-          type: 'boolean',
-          group: 'permissions',
-          icon: 'arrow-down-circle',
-          formatter: (value: boolean) => this.cryptoFormatters.formatSidebarBoolean(value).text
-        },
-        {
-          key: 'brokered',
-          label: 'Brokered Account',
-          type: 'boolean',
-          group: 'account',
-          icon: 'briefcase',
-          formatter: (value: boolean) => this.cryptoFormatters.formatSidebarBoolean(value).text
-        },
-        {
-          key: 'requireSelfTradePrevention',
-          label: 'Self Trade Prevention',
-          type: 'boolean',
-          group: 'settings',
-          icon: 'shield-check',
-          formatter: (value: boolean) => this.cryptoFormatters.formatSidebarBoolean(value).text
-        },
-        {
-          key: 'preventSor',
-          label: 'Prevent SOR',
-          type: 'boolean',
-          group: 'settings',
-          icon: 'shield-x',
-          formatter: (value: boolean) => this.cryptoFormatters.formatSidebarBoolean(value).text
+          key: 'accountType',
+          label: 'Account Type',
+          type: 'status',
+          group: 'info',
+          icon: 'user',
+          cssClass: 'account-type-badge'
         },
         {
           key: 'updateTime',
@@ -135,37 +132,59 @@ export class AtkBashConfigFactory {
           type: 'date',
           group: 'info',
           icon: 'clock',
-          formatter: (value: number) => this.cryptoFormatters.formatUpdateTime(value)
+          formatter: (value: number) => new Date(value).toLocaleString('fr-FR')
         },
         {
-          key: 'accountType',
-          label: 'Account Type',
-          type: 'status',
-          group: 'info',
-          icon: 'user',
-          cssClass: 'account-type-badge',
-          formatter: (value: string) => this.cryptoFormatters.formatAccountType(value).text
+          key: 'canTrade',
+          label: 'Can Trade',
+          type: 'boolean',
+          group: 'permissions',
+          icon: 'trending-up'
         },
-        // NEW: Commission info
+        {
+          key: 'canWithdraw',
+          label: 'Can Withdraw',
+          type: 'boolean',
+          group: 'permissions',
+          icon: 'arrow-up-circle'
+        },
+        {
+          key: 'canDeposit',
+          label: 'Can Deposit',
+          type: 'boolean',
+          group: 'permissions',
+          icon: 'arrow-down-circle'
+        },
         {
           key: 'makerCommission',
           label: 'Maker Commission',
-          type: 'custom',
-          group: 'fees',
-          icon: 'percent',
-          formatter: (value: number) => `${(value / 100).toFixed(4)}%`
+          type: 'number',
+          group: 'commissions',
+          icon: 'percent'
         },
         {
           key: 'takerCommission',
           label: 'Taker Commission',
-          type: 'custom',
-          group: 'fees',
-          icon: 'percent',
-          formatter: (value: number) => `${(value / 100).toFixed(4)}%`
+          type: 'number',
+          group: 'commissions',
+          icon: 'percent'
+        },
+        {
+          key: 'buyerCommission',
+          label: 'Buyer Commission',
+          type: 'number',
+          group: 'commissions',
+          icon: 'percent'
+        },
+        {
+          key: 'sellerCommission',
+          label: 'Seller Commission',
+          type: 'number',
+          group: 'commissions',
+          icon: 'percent'
         }
       ],
-
-      // ENHANCED TABLE COLUMNS with crypto formatters
+      // TABLE COLUMNS CONFIGURATION (balances)
       columns: [
         {
           key: 'asset',
@@ -183,16 +202,16 @@ export class AtkBashConfigFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number, row: any) => this.cryptoFormatters.formatBalance(value, row.asset)
+          formatter: (value: number) => this.formatBalance(value)
         },
         {
           key: 'locked',
-          label: 'In Orders',
+          label: 'Locked',
           width: '25%',
           align: 'right',
           type: 'custom',
-          sortable: true,
-          formatter: (value: number, row: any) => this.cryptoFormatters.formatBalance(value, row.asset),
+          sortable: false,
+          formatter: (value: number) => this.formatBalance(value),
           cssClass: 'locked-balance'
         },
         {
@@ -202,22 +221,20 @@ export class AtkBashConfigFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number, row: any) => this.cryptoFormatters.formatBalance(value, row.asset),
+          formatter: (value: number) => this.formatBalance(value),
           cssClass: 'total-balance font-weight-bold'
         },
         {
           key: 'usdValue',
-          label: 'USD Value',
+          label: 'USD',
           width: '10%',
           align: 'right',
-          type: 'custom',
+          type: 'currency',
           sortable: true,
-          visible: false, // Hidden for now
-          formatter: (value: number) => this.cryptoFormatters.formatPrice(value, 'USDT')
+          visible: true // Hidden for now
         }
       ],
-
-      // ENHANCED DATA TRANSFORMER
+      // DATA TRANSFORMER - EXTENDED
       dataTransformer: (apiResponse: any): IBashDataTransformResult => {
         if (!apiResponse?.data) {
           return { sidebarData: {}, tableData: [] };
@@ -225,43 +242,34 @@ export class AtkBashConfigFactory {
 
         const accountData = apiResponse.data;
 
-        // SIDEBAR DATA - Account info fields
+        // SIDEBAR DATA - Account info fields (UPDATED)
         const sidebarData = {
           canTrade: accountData.canTrade || false,
           canWithdraw: accountData.canWithdraw || false,
           canDeposit: accountData.canDeposit || false,
-          brokered: accountData.brokered || false,
-          requireSelfTradePrevention: accountData.requireSelfTradePrevention || false,
-          preventSor: accountData.preventSor || false,
+          accountType: accountData.accountType || 'SPOT',
           updateTime: accountData.updateTime || Date.now(),
-          accountType: accountData.accountType || 'UNKNOWN',
           makerCommission: accountData.makerCommission || 0,
-          takerCommission: accountData.takerCommission || 0
+          takerCommission: accountData.takerCommission || 0,
+          buyerCommission: accountData.buyerCommission || 0,
+          sellerCommission: accountData.sellerCommission || 0,
+          permissions: accountData.permissions || []
         };
 
-        // ENHANCED TABLE DATA - Balances with improved filtering
+        // TABLE DATA - Balances with significant amounts only
         const tableData = (accountData.balances || [])
-          .filter((balance: any) => {
-            const free = parseFloat(balance.free || '0');
-            const locked = parseFloat(balance.locked || '0');
-            // Only show balances with meaningful amounts (> 0.00000001)
-            return (free + locked) > 0.00000001;
-          })
-          .map((balance: any) => {
-            const free = parseFloat(balance.free || '0');
-            const locked = parseFloat(balance.locked || '0');
-            const total = free + locked;
-
-            return {
-              id: balance.asset,
-              asset: balance.asset,
-              free,
-              locked,
-              total,
-              usdValue: 0 // Would need price conversion API
-            };
-          })
-          .sort((a: any, b: any) => b.total - a.total); // Sort by total balance descending
+          .filter((balance: any) =>
+            parseFloat(balance.free || '0') > 0 ||
+            parseFloat(balance.locked || '0') > 0
+          )
+          .map((balance: any) => ({
+            id: balance.asset,
+            asset: balance.asset,
+            free: parseFloat(balance.free || '0'),
+            locked: parseFloat(balance.locked || '0'),
+            total: parseFloat(balance.free || '0') + parseFloat(balance.locked || '0'),
+            usdValue: 0 // Would need price conversion
+          }));
 
         return { sidebarData, tableData };
       }
@@ -284,87 +292,59 @@ export class AtkBashConfigFactory {
       // NO SIDEBAR DATA FOR TRADES
       sidebarFields: [],
 
-      // ENHANCED TABLE COLUMNS FOR TRADES
+      // TABLE COLUMNS FOR TRADES
       columns: [
         {
           key: 'symbol',
           label: 'Symbol',
-          width: '12%',
+          width: '15%',
           align: 'left',
           type: 'text',
-          sortable: true,
-          cssClass: 'symbol-cell'
+          sortable: true
         },
         {
           key: 'side',
           label: 'Side',
-          width: '8%',
+          width: '10%',
           align: 'center',
-          type: 'custom',
-          sortable: true,
-          formatter: (value: string) => this.cryptoFormatters.formatTradeSide(value).text,
-          cssClass: 'side-cell'
+          type: 'badge',
+          sortable: true
         },
         {
           key: 'quantity',
           label: 'Quantity',
-          width: '15%',
+          width: '20%',
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number, row: any) => {
-            const baseAsset = row.symbol?.replace(/USDT|BTC|ETH|BNB$/, '') || 'Unknown';
-            return this.cryptoFormatters.formatQuantity(value, baseAsset);
-          }
+          formatter: (value: number) => this.formatQuantity(value)
         },
         {
           key: 'price',
           label: 'Price',
-          width: '15%',
+          width: '20%',
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number, row: any) => this.cryptoFormatters.formatPrice(value, row.symbol)
+          formatter: (value: number) => this.formatPrice(value)
         },
         {
           key: 'quoteQuantity',
           label: 'Total',
-          width: '15%',
+          width: '20%',
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number, row: any) => {
-            const quoteAsset = this.extractQuoteAsset(row.symbol);
-            return this.cryptoFormatters.formatPrice(value, quoteAsset);
-          }
+          formatter: (value: number) => this.formatPrice(value)
         },
         {
           key: 'commission',
           label: 'Fee',
-          width: '12%',
+          width: '15%',
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number, row: any) => this.cryptoFormatters.formatFee(value, row.commissionAsset || 'BNB')
-        },
-        {
-          key: 'time',
-          label: 'Time',
-          width: '13%',
-          align: 'right',
-          type: 'custom',
-          sortable: true,
-          formatter: (value: number) => this.cryptoFormatters.formatTradingTimestamp(value, { showDate: false })
-        },
-        {
-          key: 'isMaker',
-          label: 'Type',
-          width: '10%',
-          align: 'center',
-          type: 'custom',
-          sortable: true,
-          formatter: (value: boolean) => value ? 'Maker' : 'Taker',
-          cssClass: 'maker-taker-cell'
+          formatter: (value: number) => this.formatFee(value)
         }
       ],
 
@@ -381,9 +361,7 @@ export class AtkBashConfigFactory {
           price: parseFloat(trade.price || '0'),
           quoteQuantity: parseFloat(trade.quoteQty || '0'),
           commission: parseFloat(trade.commission || '0'),
-          commissionAsset: trade.commissionAsset,
-          time: trade.time,
-          isMaker: trade.isMaker || false
+          time: trade.time
         }));
 
         return { sidebarData: {}, tableData };
@@ -407,12 +385,11 @@ export class AtkBashConfigFactory {
       // NO SIDEBAR DATA FOR ORDERS
       sidebarFields: [],
 
-      // ENHANCED COLUMNS FOR ORDERS
       columns: [
         {
           key: 'symbol',
           label: 'Symbol',
-          width: '12%',
+          width: '15%',
           align: 'left',
           type: 'text',
           sortable: true
@@ -420,11 +397,10 @@ export class AtkBashConfigFactory {
         {
           key: 'side',
           label: 'Side',
-          width: '8%',
+          width: '10%',
           align: 'center',
-          type: 'custom',
-          sortable: true,
-          formatter: (value: string) => this.cryptoFormatters.formatTradeSide(value).text
+          type: 'badge',
+          sortable: true
         },
         {
           key: 'type',
@@ -432,62 +408,42 @@ export class AtkBashConfigFactory {
           width: '10%',
           align: 'center',
           type: 'text',
-          sortable: true,
-          cssClass: 'order-type-cell'
+          sortable: true
         },
         {
           key: 'quantity',
           label: 'Quantity',
-          width: '15%',
+          width: '20%',
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number, row: any) => {
-            const baseAsset = row.symbol?.replace(/USDT|BTC|ETH|BNB$/, '') || 'Unknown';
-            return this.cryptoFormatters.formatQuantity(value, baseAsset);
-          }
+          formatter: (value: number) => this.formatQuantity(value)
         },
         {
           key: 'price',
           label: 'Price',
-          width: '15%',
+          width: '20%',
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number, row: any) => {
-            if (value === 0 && row.type === 'MARKET') return 'Market';
-            return this.cryptoFormatters.formatPrice(value, row.symbol);
-          }
+          formatter: (value: number) => this.formatPrice(value)
         },
         {
           key: 'status',
           label: 'Status',
-          width: '10%',
+          width: '15%',
           align: 'center',
-          type: 'custom',
-          sortable: true,
-          formatter: (value: string) => this.cryptoFormatters.formatOrderStatus(value).text
+          type: 'badge',
+          sortable: true
         },
         {
           key: 'executedQty',
           label: 'Filled',
-          width: '15%',
+          width: '10%',
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number, row: any) => {
-            const baseAsset = row.symbol?.replace(/USDT|BTC|ETH|BNB$/, '') || 'Unknown';
-            return this.cryptoFormatters.formatQuantity(value, baseAsset);
-          }
-        },
-        {
-          key: 'time',
-          label: 'Time',
-          width: '15%',
-          align: 'right',
-          type: 'custom',
-          sortable: true,
-          formatter: (value: number) => this.cryptoFormatters.formatTradingTimestamp(value)
+          formatter: (value: number) => this.formatQuantity(value)
         }
       ],
 
@@ -528,58 +484,32 @@ export class AtkBashConfigFactory {
       // NO SIDEBAR DATA FOR TICKER
       sidebarFields: [],
 
-      // ENHANCED TICKER COLUMNS
       columns: [
         {
           key: 'symbol',
           label: 'Symbol',
-          width: '25%',
+          width: '40%',
           align: 'left',
           type: 'text',
-          sortable: true,
-          cssClass: 'symbol-cell'
+          sortable: true
         },
         {
           key: 'price',
           label: 'Price',
-          width: '25%',
+          width: '30%',
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number, row: any) => this.cryptoFormatters.formatPrice(value, row.symbol),
-          cssClass: 'price-cell'
-        },
-        {
-          key: 'priceChange',
-          label: '24h Change',
-          width: '20%',
-          align: 'right',
-          type: 'custom',
-          sortable: true,
-          formatter: (value: number, row: any) => {
-            const change = this.cryptoFormatters.formatPriceChange(value, this.extractQuoteAsset(row.symbol));
-            return change.text;
-          }
+          formatter: (value: number) => this.formatPrice(value)
         },
         {
           key: 'priceChangePercent',
           label: '24h Change %',
-          width: '20%',
+          width: '30%',
           align: 'right',
-          type: 'custom',
+          type: 'percentage',
           sortable: true,
-          formatter: (value: number) => this.cryptoFormatters.formatPercentageChange(value).text,
           cssClass: 'price-change-cell'
-        },
-        {
-          key: 'volume',
-          label: '24h Volume',
-          width: '10%',
-          align: 'right',
-          type: 'custom',
-          sortable: true,
-          visible: false,
-          formatter: (value: number) => this.cryptoFormatters.formatVolume(value)
         }
       ],
 
@@ -593,9 +523,8 @@ export class AtkBashConfigFactory {
           symbol: ticker.symbol,
           price: parseFloat(ticker.price || '0'),
           // Add fake change data (would come from 24hr ticker in real implementation)
-          priceChange: Math.random() * 100 - 50,
-          priceChangePercent: Math.random() * 20 - 10,
-          volume: Math.random() * 1000000
+          priceChange: Math.random() * 10 - 5,
+          priceChangePercent: Math.random() * 20 - 10
         }));
 
         return { sidebarData: {}, tableData };
@@ -604,45 +533,42 @@ export class AtkBashConfigFactory {
   }
 
   // =========================================
-  // UTILITY METHODS
-  // =========================================
-
-  /**
-   * Extract quote asset from trading pair symbol
-   */
-  private extractQuoteAsset(symbol: string): string {
-    if (!symbol) return 'USDT';
-
-    const upperSymbol = symbol.toUpperCase();
-
-    if (upperSymbol.endsWith('USDT')) return 'USDT';
-    if (upperSymbol.endsWith('USDC')) return 'USDC';
-    if (upperSymbol.endsWith('BTC')) return 'BTC';
-    if (upperSymbol.endsWith('ETH')) return 'ETH';
-    if (upperSymbol.endsWith('BNB')) return 'BNB';
-    if (upperSymbol.endsWith('BUSD')) return 'BUSD';
-
-    return 'USDT'; // Default fallback
-  }
-
-  // =========================================
-  // LEGACY FORMATTERS (kept for compatibility)
+  // FORMATTERS - Existing logic maintained
   // =========================================
 
   private formatBalance(value: number): string {
-    return this.cryptoFormatters.formatBalance(value);
+    if (value === 0 || !value) return '0';
+    if (value < 0.00001) return value.toExponential(2);
+    if (value < 1) return value.toFixed(8);
+
+    return value.toLocaleString('fr-FR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 8
+    });
   }
 
   private formatPrice(value: number): string {
-    return this.cryptoFormatters.formatPrice(value);
+    if (!value) return '0';
+
+    if (value < 0.01) return value.toFixed(8);
+    if (value < 1) return value.toFixed(6);
+    if (value < 100) return value.toFixed(4);
+
+    return value.toFixed(2);
   }
 
   private formatQuantity(value: number): string {
-    return this.cryptoFormatters.formatQuantity(value);
+    if (!value) return '0';
+
+    return value.toLocaleString('fr-FR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 8
+    });
   }
 
   private formatFee(value: number): string {
-    return this.cryptoFormatters.formatFee(value);
+    if (!value) return '0';
+    return value.toFixed(8);
   }
 
   // =========================================
@@ -650,7 +576,7 @@ export class AtkBashConfigFactory {
   // =========================================
 
   /**
-   * Create IBKR configuration (future use) - ENHANCED
+   * Create IBKR configuration (future use)
    */
   createIbkrConfig(): IBashConfig {
     return {
@@ -661,19 +587,7 @@ export class AtkBashConfigFactory {
       terminal: {
         editable: true,
         height: '450px',
-        showControls: true,
-        customCommands: [
-          {
-            name: 'portfolio',
-            description: 'Show portfolio summary',
-            handler: () => console.log('Portfolio summary...')
-          },
-          {
-            name: 'positions',
-            description: 'Show current positions',
-            handler: () => console.log('Current positions...')
-          }
-        ]
+        showControls: true
       },
       table: {
         showEmptyState: true,
@@ -681,16 +595,20 @@ export class AtkBashConfigFactory {
         searchEnabled: true
       },
       endpoints: [
-        // Will be implemented later with same enhanced structure
+        // Will be implemented later with same structure
       ],
       actions: []
     };
   }
 
   /**
-   * Enhanced generic API configuration creator
+   * Generic API configuration creator
    */
-  createGenericApiConfig(id: string, title: string, baseUrl: string, customFormatters?: Record<string, (value: any, row?: any) => string>): IBashConfig {
+  createGenericApiConfig(
+    id: string,
+    title: string,
+    baseUrl: string
+  ): IBashConfig {
     return {
       id,
       title,
@@ -731,9 +649,8 @@ export class AtkBashConfigFactory {
               key: 'value',
               label: 'Value',
               width: '40%',
-              type: 'custom',
-              sortable: true,
-              formatter: customFormatters?.value || ((v: any) => v.toString())
+              type: 'text',
+              sortable: true
             }
           ],
           sidebarFields: [],
@@ -746,5 +663,4 @@ export class AtkBashConfigFactory {
       actions: []
     };
   }
-
 }
