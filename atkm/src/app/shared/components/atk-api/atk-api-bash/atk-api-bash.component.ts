@@ -10,9 +10,9 @@ import { BashData, IBashConfig, IBashLogEntry, IBashTerminalState } from '@share
 import { BinanceErrorHandlerService } from '@features/binance/services/binance-error-handler.service';
 import { TransactionStateService } from '@features/binance/services/binance-transaction-state.service';
 import { BinanceService } from '@features/binance/services/binance.service';
-import { AtkApiBashConfigFactory } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.factory';
+import { AtkApiBashFactory } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.factory';
 import { AtkApiBashService } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.service';
-import { IBashConfigEvent, SidebarBashConfigService } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
+import { IBashConfigEvent, AtkApiSidebarConfigService } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
 import { ToolsService } from '@shared/services/tools.service';
 
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
@@ -47,9 +47,9 @@ export class AtkApiBashComponent implements OnInit {
   autoLoad = input<boolean>(true);
   dataLoaded = output<BashData[]>();
   errorOccurred = output<string>();
-  public sidebarConfigService = inject(SidebarBashConfigService);
+  public sidebarConfigService = inject(AtkApiSidebarConfigService);
   public bashService = inject(AtkApiBashService);
-  private bashConfigFactory = inject(AtkApiBashConfigFactory);
+  private bashConfigFactory = inject(AtkApiBashFactory);
   private binanceService = inject(BinanceService);
   private errorHandler = inject(BinanceErrorHandlerService);
   private transactionState = inject(TransactionStateService);
@@ -176,8 +176,8 @@ export class AtkApiBashComponent implements OnInit {
       const latest = events.at(-1);
       if (!latest || this._isProcessingEvent) return;
 
-      // this.tools.consoleGroup({ // TAG AtkBashComponent -> effect(bashService.events)
-      //   title: `AtkBashComponent -> effect(bashService.events) -> configId()`, tag: 'check', palette: 'ac', collapsed: false,
+      // this.tools.consoleGroup({ // TAG AtkApiBashComponent -> effect(bashService.events)
+      //   title: `AtkApiBashComponent -> effect(bashService.events) -> configId()`, tag: 'check', palette: 'ac', collapsed: false,
       //   data: { latestEv: latest, curcfg: this.currentConfig() }
       // });
 
@@ -216,8 +216,8 @@ export class AtkApiBashComponent implements OnInit {
       const last = ev.at(-1);
       if (!last || this._isProcessingEvent) return;
 
-      // this.tools.consoleGroup({ // OFF AtkBashComponent -> effect(sidebarConfigService.events) ================= CONSOLE LOG IN PROGRESS
-      //   title: `AtkBashComponent -> effect(sidebarConfigService.events) -> configId()`, tag: 'check', palette: 'ac', collapsed: false,
+      // this.tools.consoleGroup({ // OFF AtkApiBashComponent -> effect(sidebarConfigService.events) ================= CONSOLE LOG IN PROGRESS
+      //   title: `AtkApiBashComponent -> effect(sidebarConfigService.events) -> configId()`, tag: 'check', palette: 'ac', collapsed: false,
       //   data: { latestEv: last, curcfg: this.currentConfig() }
       // });
 
@@ -353,8 +353,8 @@ export class AtkApiBashComponent implements OnInit {
     // Request sidebar to open via service event
     this.sidebarConfigService.requestSidebarOpen();
     this.addLog(`📋 Row selected: ${row.asset || row.symbol || row.id}`, 'info');
-    this.tools.consoleGroup({ // TAG AtkBashComponent -> onRowSelected()
-      title: `AtkBashComponent -> onRowSelected()`, tag: 'check', palette: 'ac', collapsed: false,
+    this.tools.consoleGroup({ // TAG AtkApiBashComponent -> onRowSelected()
+      title: `AtkApiBashComponent -> onRowSelected()`, tag: 'check', palette: 'ac', collapsed: false,
       data: row
     });
   }
@@ -727,8 +727,8 @@ export class AtkApiBashComponent implements OnInit {
       permissions: account.permissions || []
     };
     // Update sidebar config service with extracted data
-    this.tools.consoleGroup({ // TAG AtkBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData()
-      title: `AtkBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData() ${sidebarData.accountType}`, tag: 'check', palette: 'ac', collapsed: true,
+    this.tools.consoleGroup({ // TAG AtkApiBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData()
+      title: `AtkApiBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData() ${sidebarData.accountType}`, tag: 'check', palette: 'ac', collapsed: true,
       data: sidebarData
     });
     this.sidebarConfigService.updateSidebarData(sidebarData);

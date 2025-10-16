@@ -6,7 +6,7 @@ import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component
 
 import { IBashSidebarField } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 import { AtkApiBashService } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.service';
-import { SidebarBashConfigService } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
+import { AtkApiSidebarConfigService } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
 
 interface EndpointConfig {
   id: string;
@@ -28,7 +28,7 @@ export class SidebarBashConfigComponent {
   // ======================================================
 
   private readonly bashService = inject(AtkApiBashService);
-  private readonly sidebarService = inject(SidebarBashConfigService);
+  private readonly sidebarService = inject(AtkApiSidebarConfigService);
 
   // ======================================================
   // INPUTS / OUTPUTS

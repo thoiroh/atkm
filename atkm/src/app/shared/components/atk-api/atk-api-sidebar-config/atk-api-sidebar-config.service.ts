@@ -29,7 +29,7 @@ export interface IBashConfigEvent {
 
 @Injectable({ providedIn: 'root' })
 
-export class SidebarBashConfigService {
+export class AtkApiSidebarConfigService {
 
   // =========================
   // DEPENDENCIES
@@ -62,8 +62,8 @@ export class SidebarBashConfigService {
   public readonly events = this._events.asReadonly();
 
   constructor() {
-    this.tools.consoleGroup({ // TAG SidebarBashConfigService -> constructor() ================= CONSOLE LOG IN PROGRESS
-      title: 'SidebarBashConfigService -> constructor()', tag: 'recycle', palette: 'in', collapsed: true,
+    this.tools.consoleGroup({ // TAG AtkApiSidebarConfigService -> constructor() ================= CONSOLE LOG IN PROGRESS
+      title: 'AtkApiSidebarConfigService -> constructor()', tag: 'recycle', palette: 'in', collapsed: true,
       data: this._state()
     });
   }
@@ -109,8 +109,8 @@ export class SidebarBashConfigService {
   updateSidebarData(data: Record<string, any> | null): void {
     this._state.update(s => ({ ...s, sidebarData: data }));
     this.emitEvent('sidebar-data-updated', { sidebarData: data });
-    this.tools.consoleGroup({ // TAG SidebarBashConfigService -> updateSidebarData()
-      title: `SidebarBashConfigService -> updateSidebarData()`, tag: 'recycle', palette: 'ac', collapsed: false,
+    this.tools.consoleGroup({ // TAG AtkApiSidebarConfigService -> updateSidebarData()
+      title: `AtkApiSidebarConfigService -> updateSidebarData()`, tag: 'recycle', palette: 'ac', collapsed: false,
       data: this._state()
     });
 

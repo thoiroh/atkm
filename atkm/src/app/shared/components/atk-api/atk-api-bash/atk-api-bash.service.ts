@@ -44,8 +44,8 @@ export class AtkApiBashService {
   private cache = new Map<string, { data: any; timestamp: number; duration: number }>();
 
   constructor(private http: HttpClient) {
-    this.tools.consoleGroup({ // TAG AtkBashService -> constructor() ================ CONSOLE LOG IN PROGRESS
-      title: `AtkBashService -> constructor()`, tag: 'recycle', palette: 'su', collapsed: true,
+    this.tools.consoleGroup({ // TAG AtkApiBashService -> constructor() ================ CONSOLE LOG IN PROGRESS
+      title: `AtkApiBashService -> constructor()`, tag: 'recycle', palette: 'su', collapsed: true,
       data: null
     });
 

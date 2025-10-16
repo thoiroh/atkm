@@ -7,7 +7,7 @@ import { IBashConfig, IBashDataTransformResult, IBashEndpointConfig } from '@sha
 @Injectable({
   providedIn: 'root'
 })
-export class AtkApiBashConfigFactory {
+export class AtkApiBashFactory {
 
   /**
    * Create Binance debug configuration - EXTENDED

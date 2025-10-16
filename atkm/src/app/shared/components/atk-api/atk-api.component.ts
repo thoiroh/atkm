@@ -11,7 +11,7 @@ import { SidebarBashConfigComponent } from '@shared/components/atk-api/atk-api-s
 
 import { IBashConfig } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 import { AtkApiBashService } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.service';
-import { SidebarBashConfigService } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
+import { AtkApiSidebarConfigService } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
 
 import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
 import { BinanceService } from '@features/binance/services/binance.service';
@@ -37,7 +37,7 @@ export class AtkApiComponent implements OnInit {
   private readonly configStore = inject(ConfigStore);
   private readonly bashService = inject(AtkApiBashService); // NEW
   private readonly binanceService = inject(BinanceService);
-  private readonly sidebarConfigService = inject(SidebarBashConfigService);
+  private readonly sidebarConfigService = inject(AtkApiSidebarConfigService);
   private readonly tools = inject(ToolsService);
 
   config = this.configStore.config;
@@ -79,8 +79,8 @@ export class AtkApiComponent implements OnInit {
   // =========================================
 
   ngOnInit(): void {
-    // this.tools.consoleGroup({ // OFF HomeContentComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-    //   title: `HomeContentComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
+    // this.tools.consoleGroup({ // OFF AtkApiComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+    //   title: `AtkApiComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
     //   data: this.config()
     // });
 
@@ -121,8 +121,8 @@ export class AtkApiComponent implements OnInit {
    * Handle bash data loaded events
    */
   onBashDataLoaded(data: any[]): void {
-    this.tools.consoleGroup({ // TAG HomeContentComponent -> onBashDataLoaded() ================ CONSOLE LOG IN PROGRESS
-      title: `HomeContentComponent -> onBashDataLoaded()`, tag: 'check', palette: 'in', collapsed: false,
+    this.tools.consoleGroup({ // TAG AtkApiComponent -> onBashDataLoaded() ================ CONSOLE LOG IN PROGRESS
+      title: `AtkApiComponent -> onBashDataLoaded()`, tag: 'check', palette: 'in', collapsed: false,
       data: { data: data }
     });
   }
