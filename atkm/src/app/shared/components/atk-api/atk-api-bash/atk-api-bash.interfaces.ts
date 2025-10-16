@@ -80,6 +80,10 @@ export interface IBashEndpointConfig {
   url: string;
   /** HTTP method */
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  /** Icon name for the endpoint tab - ADD THIS */
+  icon?: string;
+  /** Whether the endpoint tab should be visible - ADD THIS */
+  visible?: boolean;
   /** Default headers */
   headers?: Record<string, string>;
   /** Default query parameters */

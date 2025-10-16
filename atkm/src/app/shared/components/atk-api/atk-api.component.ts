@@ -53,6 +53,7 @@ export class AtkApiComponent implements OnInit {
   account = signal<BinanceAccount | null>(null);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
+  bashConfigId = signal<string>('atkpi-debug-v1');
 
   private destroy$ = new Subject<void>();
 

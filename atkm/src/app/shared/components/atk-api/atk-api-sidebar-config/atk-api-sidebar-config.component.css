@@ -193,14 +193,11 @@
 }
 
 .status-badge.status-spot {
-  /* background: rgba(31, 111, 235, 0.2); */
-  color: #ff8c00;
-  /* var(--color-accent-fg); */
+  color: var(--color-fg-orange);
 }
 
 .status-badge.status-margin {
-  /* background: rgba(255, 140, 0, 0.2); */
-  color: #ff8c00;
+  color: var(--color-fg-orange);
 }
 
 /* Date values */
@@ -297,6 +294,28 @@
   gap: 12px;
   /* NEW - Espacement entre les sections */
   flex: 1 1 auto;
+}
+
+/* Sections */
+.bash-config-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: var(--color-canvas-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .bash-config-toggle {
@@ -424,11 +443,48 @@
 /* Tabs - Style "onglets classiques" sur une ligne */
 .bash-config-tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(var(--tab-columns, 4), 1fr);
   gap: 0;
-  margin-bottom: 12px;
-  border-bottom: 1px solid var(--color-border-subtle);
+
 }
+
+.bash-config-tabs.tabs-5 {
+  --tab-columns: 5;
+}
+
+.bash-config-tabs.tabs-6 {
+  --tab-columns: 6;
+}
+
+.bash-config-tabs.tabs-3 {
+  --tab-columns: 3;
+}
+
+.bash-config-tabs.tabs-2 {
+  --tab-columns: 2;
+}
+
+.bash-config-tabs-meta {
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+  border-top-color: transparent;
+  border-color: var(--color-border-subtle);
+  /* border-bottom: 0px; */
+  border-top: 0px;
+  margin-bottom: 12px;
+  background: var(--color-canvas-subtle);
+  padding: 20px;
+}
+
+.tabs-meta-title {
+  padding-top: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-fg-subtle);
+  letter-spacing: 0.05em;
+  background: var(--color-canvas-default);
+}
+
 
 .tab-button {
   display: flex;
@@ -436,8 +492,8 @@
   justify-content: center;
   gap: 6px;
   padding: 10px 8px;
-  border: none;
   border-top: 1px solid transparent;
+  border-bottom: 1px solid var(--color-border-subtle);
   border-right: 1px solid var(--color-border-muted);
   border-left: 1px solid var(--color-border-muted);
   border-radius: 6px 6px 0 0;
@@ -450,6 +506,7 @@
   position: relative;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  z-index: 5;
 }
 
 .tab-button:last-child {
@@ -463,49 +520,28 @@
 }
 
 .tab-button.active {
-  background: var(--color-canvas-default);
+  background: var(--color-canvas-subtle);
   border-top-color: var(--color-border-subtle);
   border-left-color: var(--color-border-subtle);
   border-right-color: var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-canvas-subtle);
   color: var(--color-accent-subtle);
   font-weight: 700;
 }
 
-.tab-button.active::after {
+/* .tab-button.active::after {
   content: '';
   position: absolute;
   bottom: -2px;
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--color-canvas-default);
-}
+  background: var(--color-canvas-subtle);
+} */
 
 .tab-button span,
 .tab-button atk-icon {
   padding-top: 4px;
-}
-
-/* Sections */
-.bash-config-section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 12px;
-  background: var(--color-canvas-subtle);
-  border: 1px solid var(--color-border-default);
-  border-radius: 6px;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--color-fg-default);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 /* Parameters */
@@ -860,6 +896,11 @@
   font-weight: 500;
   color: var(--color-fg-default);
   word-break: break-word;
+}
+
+.detail-field-value.type-text {
+  color: var(--color-fg-orange);
+
 }
 
 .detail-field-value.type-custom,

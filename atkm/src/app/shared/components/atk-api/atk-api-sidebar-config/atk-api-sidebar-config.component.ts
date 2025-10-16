@@ -49,12 +49,19 @@ export class SidebarBashConfigComponent {
     statusCode: number;
   } | null>(null);
 
-  endpoints: EndpointConfig[] = [
-    { id: 'account', name: 'Account', icon: 'users' },
-    { id: 'trades', name: 'Trades', icon: 'insights' },
-    { id: 'orders', name: 'Orders', icon: 'upload' },
-    { id: 'ticker', name: 'Ticker', icon: 'star' }
-  ];
+  configId = input<string>('atkpi-debug-v1');
+
+  endpoints = computed(() => {
+    const config = this.bashService.getConfig(this.configId());
+    if (!config) return [];
+    return config.endpoints
+      .filter(ep => ep.visible !== false)
+      .map(ep => ({
+        id: ep.id,
+        name: ep.name,
+        icon: ep.icon || 'file'
+      }));
+  });
 
   // ======================================================
   // HOST LISTENERS FOR AUTO-COLLAPSE
@@ -84,7 +91,8 @@ export class SidebarBashConfigComponent {
 
   currentEndpointConfig = computed(() => {
     const currentId = this.state().currentEndpoint;
-    return this.endpoints.find(ep => ep.id === currentId) || this.endpoints[0];
+    const endpointsList = this.endpoints(); // Call the signal to get the value
+    return endpointsList.find(ep => ep.id === currentId) || endpointsList[0];
   });
 
   /**
@@ -99,7 +107,7 @@ export class SidebarBashConfigComponent {
    */
   rowDetailFields = computed(() => {
     const currentEndpoint = this.state().currentEndpoint;
-    const config = this.bashService.getConfig('atkpi-debug-v1');
+    const config = this.bashService.getConfig(this.configId());
     const endpoint = config?.endpoints.find(ep => ep.id === currentEndpoint);
     return endpoint?.rowDetailFields || [];
   });
@@ -109,7 +117,7 @@ export class SidebarBashConfigComponent {
  */
   sidebarFields = computed(() => {
     const currentEndpoint = this.state().currentEndpoint;
-    const config = this.bashService.getConfig('atkpi-debug-v1');
+    const config = this.bashService.getConfig(this.configId());
     const endpoint = config?.endpoints.find(ep => ep.id === currentEndpoint);
     return endpoint?.sidebarFields || [];
   });

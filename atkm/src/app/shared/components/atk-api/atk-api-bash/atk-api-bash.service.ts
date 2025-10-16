@@ -10,7 +10,7 @@
 
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { effect, inject, Injectable, signal } from '@angular/core';
-import { BashData, IBashConfig, IBashEndpointConfig, IBashEvent } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { BashData, IBashConfig, IBashEndpointConfig, IBashEvent } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 import { ToolsService } from '@shared/services/tools.service';
 import { firstValueFrom } from 'rxjs';
 

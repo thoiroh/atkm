@@ -9,6 +9,7 @@
   --color-canvas-default: #0d1117;
   --color-canvas-subtle: #161b22;
   --color-canvas-inset: #30363d;
+  --color-canvas-emphasis: rgba(76, 135, 224, 0.1);
   --color-border-default: #30363d;
   --color-border-muted: #21262d;
   --color-border-subtle: #656d76ad;
@@ -16,6 +17,7 @@
   --color-fg-default: #e6edf3;
   --color-fg-muted: #343e4b;
   --color-fg-subtle: #656d76e4;
+  --color-fg-orange: #ff8c00;
   --color-accent-emphasis: #1f6feb;
   --color-accent-fg: #58a6ff;
   --color-btn-bg: #21262d;
@@ -898,7 +900,7 @@ li,
   padding: 8px;
   flex: 1;
   border: 1px solid var(--color-border-default);
-  background: var(--color-canvas-subtle);
+  background: var(--color-canvas-default);
   border-radius: 6px;
   transition: all 0.2s ease;
 }

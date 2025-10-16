@@ -166,20 +166,18 @@
 
 .bash-input {
   width: 100%;
-  /* min-height: var(--input-min-height); */
-  padding: 16px;
+  padding: 8px;
   border-radius: 6px 0 0 6px;
-  background: var(--color-canvas-subtle);
+  background: var(--color-canvas-emphasis);
   font-family: var(--fontStack-monospace);
   font-size: .68em;
-  line-height: 1.5;
+  line-height: 1.28;
   color: var(--color-fg-default);
   resize: none;
   white-space: pre;
   overflow-wrap: normal;
   overflow-x: hidden;
   overflow-y: auto;
-  /* Enable vertical scroll when content exceeds height */
   transition: all 0.2s ease;
 }
 

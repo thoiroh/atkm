@@ -15,7 +15,7 @@ export class AtkApiBashFactory {
   createBinanceDebugConfig(): IBashConfig {
     return {
       id: 'atkpi-debug-v1',
-      title: 'atkpi API Enhanced Debug Terminal',
+      title: 'atkpi - enhanced data debug bash',
       subtitle: 'Enhanced debugging with atk-bash component architecture',
       defaultEndpoint: 'account',
       terminal: {
@@ -47,9 +47,10 @@ export class AtkApiBashFactory {
       },
       endpoints: [
         this.createAccountEndpoint(),
-        // this.createTradesEndpoint(),
+        this.createTradesEndpoint(),
         // this.createOrdersEndpoint(),
         // this.createTickerEndpoint()
+        this.createNewEndpoint(),
       ],
       actions: []
     };
@@ -64,6 +65,8 @@ export class AtkApiBashFactory {
       id: 'account',
       name: 'Account Information',
       url: 'http://localhost:8000/api/v3/account',
+      icon: 'users',
+      visible: true,
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -281,6 +284,8 @@ export class AtkApiBashFactory {
       id: 'trades',
       name: 'My Trade History',
       url: 'http://localhost:8000/api/v3/myTrades',
+      icon: 'insights',
+      visible: true,
       method: 'GET',
       params: {
         symbol: 'BTCUSDT',
@@ -374,6 +379,8 @@ export class AtkApiBashFactory {
       id: 'orders',
       name: 'Order History',
       url: 'http://localhost:8000/api/v3/allOrders',
+      icon: 'upload',
+      visible: true,
       method: 'GET',
       params: {
         symbol: 'BTCUSDT',
@@ -474,6 +481,73 @@ export class AtkApiBashFactory {
       id: 'ticker',
       name: 'Price Ticker',
       url: 'http://localhost:8000/api/v3/ticker/price',
+      icon: 'star',
+      visible: true,
+      method: 'GET',
+      params: {
+        symbol: 'BTCUSDT'
+      },
+      cacheable: true,
+      cacheDuration: 10000,
+
+      // NO SIDEBAR DATA FOR TICKER
+      sidebarFields: [],
+
+      columns: [
+        {
+          key: 'symbol',
+          label: 'Symbol',
+          width: '40%',
+          align: 'left',
+          type: 'text',
+          sortable: true
+        },
+        {
+          key: 'price',
+          label: 'Price',
+          width: '30%',
+          align: 'right',
+          type: 'custom',
+          sortable: true,
+          formatter: (value: number) => this.formatPrice(value)
+        },
+        {
+          key: 'priceChangePercent',
+          label: '24h Change %',
+          width: '30%',
+          align: 'right',
+          type: 'percentage',
+          sortable: true,
+          cssClass: 'price-change-cell'
+        }
+      ],
+
+      dataTransformer: (apiResponse: any): IBashDataTransformResult => {
+        // Handle both single ticker and array of tickers
+        const data = apiResponse?.data;
+        const tickers = Array.isArray(data) ? data : [data];
+
+        const tableData = tickers.map((ticker: any, index: number) => ({
+          id: ticker.symbol || index,
+          symbol: ticker.symbol,
+          price: parseFloat(ticker.price || '0'),
+          // Add fake change data (would come from 24hr ticker in real implementation)
+          priceChange: Math.random() * 10 - 5,
+          priceChangePercent: Math.random() * 20 - 10
+        }));
+
+        return { sidebarData: {}, tableData };
+      }
+    };
+  }
+
+  private createNewEndpoint(): IBashEndpointConfig {
+    return {
+      id: 'new',
+      name: 'New end point',
+      url: 'http://localhost:8000/api/v3/ticker/price',
+      icon: 'star',
+      visible: true,
       method: 'GET',
       params: {
         symbol: 'BTCUSDT'

@@ -55,7 +55,7 @@
 
         <div class="section-content">
           <atk-icon class="terminal-toggle" name="triangle-down" color="var(--color-btn-bg-default)" />
-          <atk-api-bash configId="atkpi-debug-v1" [autoLoad]="true" />
+          <atk-api-bash [configId]="bashConfigId()" [autoLoad]="true" />
           <!-- <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
             (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" /> -->
         </div>
@@ -137,4 +137,7 @@
 <!-- <atk-sidebar-config [sections]="config().configPanel.sections" [isCollapsed]="config().configPanel.isCollapsed"
   (togglePanel)="toggleConfigPanel()" /> -->
 
-<atk-api-sidebar-config [isCollapsed]="configPanelCollapsed()" (togglePanel)="toggleConfigPanel()" />
+<atk-api-sidebar-config [configId]="bashConfigId()" [isCollapsed]="configPanelCollapsed()"
+  (togglePanel)="toggleConfigPanel()" />
+
+<!-- <atk-api-sidebar-config [isCollapsed]="configPanelCollapsed()" (togglePanel)="toggleConfigPanel()" /> -->
