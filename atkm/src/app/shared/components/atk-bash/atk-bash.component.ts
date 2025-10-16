@@ -350,17 +350,11 @@ export class AtkBashComponent implements OnInit {
    */
   public onRowSelected(row: BashData): void {
     this.selectedRowData.set(row);
-
     // Request sidebar to open via service event
     this.sidebarConfigService.requestSidebarOpen();
-
     this.addLog(`📋 Row selected: ${row.asset || row.symbol || row.id}`, 'info');
-
-    this.tools.consoleGroup({
-      title: `Row selected in bash component`,
-      tag: 'check',
-      palette: 'su',
-      collapsed: false,
+    this.tools.consoleGroup({ // TAG AtkBashComponent -> onRowSelected()
+      title: `AtkBashComponent -> onRowSelected()`, tag: 'check', palette: 'ac', collapsed: false,
       data: row
     });
   }
@@ -716,8 +710,9 @@ export class AtkBashComponent implements OnInit {
     if (!account?.balances) return [];
 
     // ====================================
-    // EXTRACT SIDEBAR DATA - NEW
+    // EXTRACT SIDEBAR DATA
     // ====================================
+
     const sidebarData = {
       canTrade: account.canTrade || false,
       canWithdraw: account.canWithdraw || false,
@@ -731,17 +726,13 @@ export class AtkBashComponent implements OnInit {
       sellerCommission: account.sellerCommission || 0,
       permissions: account.permissions || []
     };
-
     // Update sidebar config service with extracted data
+    this.tools.consoleGroup({ // TAG AtkBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData()
+      title: `AtkBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData() ${sidebarData.accountType}`, tag: 'check', palette: 'ac', collapsed: true,
+      data: sidebarData
+    });
     this.sidebarConfigService.updateSidebarData(sidebarData);
 
-    this.tools.consoleGroup({
-      title: `🔍 Sidebar Data Extracted`,
-      tag: 'check',
-      palette: 'su',
-      collapsed: false,
-      data: { sidebarData, accountType: account.accountType }
-    });
     // ====================================
 
     // Return table data (balances)

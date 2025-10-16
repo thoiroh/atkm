@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 24px;
+  gap: 12px;
 }
 
 /* ========================================
@@ -26,10 +26,10 @@
   flex-direction: row;
   width: 100%;
   gap: 20px;
-  padding: 20px 20px 4px 20px;
+  /* padding: 20px 20px 4px 20px;
   background: var(--color-canvas-default);
   border: 1px solid var(--color-border-default);
-  border-radius: 8px;
+  border-radius: 8px; */
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -39,6 +39,24 @@
   flex-direction: column;
   flex: 1;
   gap: 0;
+  width: 45%;
+  padding: 20px 20px 4px 20px;
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  position: relative;
+}
+
+.bash-side {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 8px;
+  width: 45%;
+  /* padding: 20px 20px 4px 20px;
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px; */
   position: relative;
 }
 
@@ -153,13 +171,13 @@
   border-radius: 6px 0 0 6px;
   background: var(--color-canvas-subtle);
   font-family: var(--fontStack-monospace);
-  font-size: 13px;
+  font-size: .68em;
   line-height: 1.5;
   color: var(--color-fg-default);
   resize: none;
   white-space: pre;
   overflow-wrap: normal;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
   /* Enable vertical scroll when content exceeds height */
   transition: all 0.2s ease;

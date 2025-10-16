@@ -72,7 +72,7 @@ export class AtkBashConfigFactory {
       cacheable: true,
       cacheDuration: 30000,
 
-      // SIDEBAR FIELDS CONFIGURATION
+      // ROW DETAILS FIELDS CONFIGURATION
       rowDetailFields: [
         {
           key: 'asset',
@@ -116,7 +116,24 @@ export class AtkBashConfigFactory {
 
         }
       ],
+      // SIDEBAR FIELDS CONFIGURATION
       sidebarFields: [
+        {
+          key: 'accountType',
+          label: 'Account Type',
+          type: 'status',
+          group: 'info',
+          icon: 'user',
+          cssClass: 'account-type-badge'
+        },
+        {
+          key: 'updateTime',
+          label: 'Last Update',
+          type: 'date',
+          group: 'info',
+          icon: 'clock',
+          formatter: (value: number) => new Date(value).toLocaleString('fr-FR')
+        },
         {
           key: 'canTrade',
           label: 'Can Trade',
@@ -137,22 +154,6 @@ export class AtkBashConfigFactory {
           type: 'boolean',
           group: 'permissions',
           icon: 'arrow-down-circle'
-        },
-        {
-          key: 'accountType',
-          label: 'Account Type',
-          type: 'status',
-          group: 'info',
-          icon: 'user',
-          cssClass: 'account-type-badge'
-        },
-        {
-          key: 'updateTime',
-          label: 'Last Update',
-          type: 'date',
-          group: 'info',
-          icon: 'clock',
-          formatter: (value: number) => new Date(value).toLocaleString('fr-FR')
         },
         {
           key: 'makerCommission',

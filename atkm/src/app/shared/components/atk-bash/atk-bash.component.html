@@ -57,7 +57,24 @@
           }
         </div>
       </div>
+
+      <div class="bash-side">
+
+        <div class="infos-item">
+          <!-- <atk-icon name="check" color="#ef4444" [size]="24" /> -->
+          <!-- <span>Trading</span> -->
+        </div>
+        <div class="infos-item">
+          <!-- <atk-icon name="check" color="#ef4444" [size]="24" /> -->
+          <!-- <span>Retrait</span> -->
+        </div>
+        <div class="infos-item">
+          <!-- <atk-icon name="check-thin" color="#ef4444" [size]="24" /> -->
+          <!-- <span>Dépôt</span> -->
+        </div>
+      </div>
     </section>
+
 
     <!-- <button (click)="testLoadData()">🧪 Test Load Account Data</button> -->
 
@@ -85,6 +102,26 @@
       </div>
     </section>
     }
+
+    <div class="infos-items">
+      <div class="infos-item">
+        <atk-icon name="check" color="var(--color-btn-bg-emphasis)" [size]="24" />
+        <span>{{ data().length }} items</span>
+        <!-- <span>Trading</span> -->
+      </div>
+      @if (terminalState().responseMetadata?.responseTime) {
+      <div class="infos-item">
+        <atk-icon name="check" color="var(--color-btn-bg-emphasis)" [size]="24" />
+        <span>{{ terminalState().responseMetadata.responseTime }}ms</span>
+        <!-- <span>Retrait</span> -->
+      </div>
+      }
+      <div class="infos-item">
+        <!-- <atk-icon name="check" color="#ef4444" [size]="24" />
+        <span>Dépôt</span> -->
+      </div>
+    </div>
+
 
     <!-- ======================= -->
     <!-- EMPTY STATE -->

@@ -198,7 +198,7 @@ export class SidebarBashConfigComponent {
       case 'boolean':
         return value ? 'Yes' : 'No';
       case 'date':
-        return new Date(value).toLocaleString('fr-FR');
+        return new Date(value).toLocaleString('us-EN');
       case 'number':
         return typeof value === 'number' ? value.toLocaleString('fr-FR') : value;
       default:

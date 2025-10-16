@@ -80,7 +80,7 @@
 }
 
 .datatable-body {
-  max-height: 400px;
+  max-height: 254px;
   overflow-y: auto;
   overflow-x: hidden;
 }

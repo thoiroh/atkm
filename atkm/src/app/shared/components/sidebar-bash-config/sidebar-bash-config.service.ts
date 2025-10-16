@@ -71,10 +71,7 @@ export class SidebarBashConfigService {
 
   constructor() {
     this.tools.consoleGroup({ // TAG SidebarBashConfigService -> constructor() ================= CONSOLE LOG IN PROGRESS
-      title: 'SidebarBashConfigService -> constructor()',
-      tag: 'check',
-      palette: 'in',
-      collapsed: true,
+      title: 'SidebarBashConfigService -> constructor()', tag: 'recycle', palette: 'in', collapsed: true,
       data: this._state()
     });
   }
@@ -120,13 +117,11 @@ export class SidebarBashConfigService {
   updateSidebarData(data: Record<string, any> | null): void {
     this._state.update(s => ({ ...s, sidebarData: data }));
     this.emitEvent('sidebar-data-updated', { sidebarData: data });
-    this.tools.consoleGroup({ // TAG SidebarBashConfigService -> updateSidebarData() ================= CONSOLE LOG IN PROGRESS
-      title: 'SidebarBashConfigService -> updateSidebarData()',
-      tag: 'check',
-      palette: 'in',
-      collapsed: true,
+    this.tools.consoleGroup({ // TAG SidebarBashConfigService -> updateSidebarData()
+      title: `SidebarBashConfigService -> updateSidebarData()`, tag: 'recycle', palette: 'ac', collapsed: false,
       data: this._state()
     });
+
   }
   // =========================
   // ROW SELECTION

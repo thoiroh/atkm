@@ -15,7 +15,7 @@
   --color-border-emphasis: #1f6feb;
   --color-fg-default: #e6edf3;
   --color-fg-muted: #343e4b;
-  --color-fg-subtle: #656d76ad;
+  --color-fg-subtle: #656d76e4;
   --color-accent-emphasis: #1f6feb;
   --color-accent-fg: #58a6ff;
   --color-btn-bg: #21262d;
@@ -796,7 +796,7 @@ li,
   width: 100%;
   min-height: 150px;
   margin-top: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
   container-type: inline-size;
 }
 
@@ -888,8 +888,8 @@ li,
 
 .infos-item {
   display: flex;
-  align-items: center;
   flex-direction: row;
+  align-items: center;
   gap: 6px;
   padding: 8px;
   flex: 1;
