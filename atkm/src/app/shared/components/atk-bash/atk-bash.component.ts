@@ -728,7 +728,8 @@ export class AtkBashComponent implements OnInit {
     };
     // Update sidebar config service with extracted data
     this.tools.consoleGroup({ // TAG AtkBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData()
-      title: `AtkBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData() ${sidebarData.accountType}`, tag: 'check', palette: 'ac', collapsed: true,
+      title: `AtkBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData() `,
+      tag: 'check', palette: 'in', collapsed: true, //${sidebarData.accountType}
       data: sidebarData
     });
     this.sidebarConfigService.updateSidebarData(sidebarData);

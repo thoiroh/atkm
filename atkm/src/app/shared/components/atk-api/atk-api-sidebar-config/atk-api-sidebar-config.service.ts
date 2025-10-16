@@ -110,7 +110,7 @@ export class AtkApiSidebarConfigService {
     this._state.update(s => ({ ...s, sidebarData: data }));
     this.emitEvent('sidebar-data-updated', { sidebarData: data });
     this.tools.consoleGroup({ // TAG AtkApiSidebarConfigService -> updateSidebarData()
-      title: `AtkApiSidebarConfigService -> updateSidebarData()`, tag: 'recycle', palette: 'ac', collapsed: false,
+      title: `AtkApiSidebarConfigService -> updateSidebarData()`, tag: 'recycle', palette: 'in', collapsed: true,
       data: this._state()
     });
 

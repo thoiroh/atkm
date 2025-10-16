@@ -14,9 +14,9 @@ export class AtkApiBashFactory {
    */
   createBinanceDebugConfig(): IBashConfig {
     return {
-      id: 'binance-debug-v2',
-      title: 'Binance API Enhanced Debug Terminal',
-      subtitle: 'Enhanced debugging with ATK Bash component architecture',
+      id: 'atkpi-debug-v1',
+      title: 'atkpi API Enhanced Debug Terminal',
+      subtitle: 'Enhanced debugging with atk-bash component architecture',
       defaultEndpoint: 'account',
       terminal: {
         editable: true,
@@ -47,9 +47,9 @@ export class AtkApiBashFactory {
       },
       endpoints: [
         this.createAccountEndpoint(),
-        this.createTradesEndpoint(),
-        this.createOrdersEndpoint(),
-        this.createTickerEndpoint()
+        // this.createTradesEndpoint(),
+        // this.createOrdersEndpoint(),
+        // this.createTickerEndpoint()
       ],
       actions: []
     };

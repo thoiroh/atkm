@@ -43,7 +43,7 @@ export class AtkApiComponent implements OnInit {
   config = this.configStore.config;
   sidebar = this.configStore.sidebar;
   configPanelCollapsed = this.configStore.configPanelCollapsed;
-  bashConfig = computed(() => this.bashService.getConfig('binance-debug-v2'));
+  bashConfig = computed(() => this.bashService.getConfig('atkpi-debug-v1'));
 
 
   // =========================================

@@ -44,10 +44,11 @@ export class AtkApiBashService {
   private cache = new Map<string, { data: any; timestamp: number; duration: number }>();
 
   constructor(private http: HttpClient) {
-    this.tools.consoleGroup({ // TAG AtkApiBashService -> constructor() ================ CONSOLE LOG IN PROGRESS
-      title: `AtkApiBashService -> constructor()`, tag: 'recycle', palette: 'su', collapsed: true,
-      data: null
-    });
+
+    // this.tools.consoleGroup({ // OFF AtkApiBashService -> constructor() ================ CONSOLE LOG IN PROGRESS
+    //   title: `AtkApiBashService -> constructor()`, tag: 'recycle', palette: 'in', collapsed: false,
+    //   data: { data: 'data' }
+    // });
 
     // Nettoyage automatique du cache via effect
     effect(() => {

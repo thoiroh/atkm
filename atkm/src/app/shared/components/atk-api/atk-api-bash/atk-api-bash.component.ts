@@ -12,7 +12,7 @@ import { TransactionStateService } from '@features/binance/services/binance-tran
 import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkApiBashFactory } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.factory';
 import { AtkApiBashService } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.service';
-import { IBashConfigEvent, AtkApiSidebarConfigService } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
+import { AtkApiSidebarConfigService, IBashConfigEvent } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
 import { ToolsService } from '@shared/services/tools.service';
 
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
@@ -43,7 +43,7 @@ export class AtkApiBashComponent implements OnInit {
   private terminalDirective = viewChild(TerminalInputDirective);
   private readonly tools = inject(ToolsService);
 
-  configId = input<string>('binance-debug-v2');
+  configId = input<string>('atkpi-debug-v1');
   autoLoad = input<boolean>(true);
   dataLoaded = output<BashData[]>();
   errorOccurred = output<string>();
@@ -293,7 +293,7 @@ export class AtkApiBashComponent implements OnInit {
     let cfg = this.bashService.getConfig(id);
 
     // If config absent and id matches, create it via factory
-    if (!cfg && id === 'binance-debug-v2') {
+    if (!cfg && id === 'atkpi-debug-v1') {
       cfg = this.bashConfigFactory.createBinanceDebugConfig();
       this.bashService.registerConfig(cfg);
     }
@@ -728,7 +728,8 @@ export class AtkApiBashComponent implements OnInit {
     };
     // Update sidebar config service with extracted data
     this.tools.consoleGroup({ // TAG AtkApiBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData()
-      title: `AtkApiBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData() ${sidebarData.accountType}`, tag: 'check', palette: 'ac', collapsed: true,
+      title: `AtkApiBashComponent -> loadAccountData() -> sidebarConfigService.updateSidebarData() ${sidebarData.accountType}`,
+      tag: 'check', palette: 'in', collapsed: true,
       data: sidebarData
     });
     this.sidebarConfigService.updateSidebarData(sidebarData);

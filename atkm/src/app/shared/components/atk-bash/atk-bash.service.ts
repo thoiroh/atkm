@@ -11,8 +11,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { BashData, IBashConfig, IBashEndpointConfig, IBashEvent } from '@shared/components/atk-bash/atk-bash.interfaces';
-import { firstValueFrom } from 'rxjs';
 import { ToolsService } from '@shared/services/tools.service';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,7 @@ import { ToolsService } from '@shared/services/tools.service';
 export class AtkBashService {
 
   private readonly tools = inject(ToolsService);
+  private readonly http = inject(HttpClient);
 
   // ======================================================
   // SIGNALS PUBLICS
@@ -43,11 +44,12 @@ export class AtkBashService {
 
   private cache = new Map<string, { data: any; timestamp: number; duration: number }>();
 
-  constructor(private http: HttpClient) {
-    this.tools.consoleGroup({ // TAG AtkBashService -> constructor() ================ CONSOLE LOG IN PROGRESS
-      title: `AtkBashService -> constructor()`, tag: 'recycle', palette: 'su', collapsed: true,
-      data: null
-    });
+  constructor() {
+
+    // this.tools.consoleGroup({ // TAG AtkBashService -> constructor() ================ CONSOLE LOG IN PROGRESS
+    //   title: `AtkBashService -> constructor()`, tag: 'recycle', palette: 'in', collapsed: false,
+    //   data: { data: 'data' }
+    // });
 
     // Nettoyage automatique du cache via effect
     effect(() => {

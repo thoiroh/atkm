@@ -99,7 +99,7 @@ export class SidebarBashConfigComponent {
    */
   rowDetailFields = computed(() => {
     const currentEndpoint = this.state().currentEndpoint;
-    const config = this.bashService.getConfig('binance-debug-v2');
+    const config = this.bashService.getConfig('atkpi-debug-v1');
     const endpoint = config?.endpoints.find(ep => ep.id === currentEndpoint);
     return endpoint?.rowDetailFields || [];
   });
@@ -109,7 +109,7 @@ export class SidebarBashConfigComponent {
  */
   sidebarFields = computed(() => {
     const currentEndpoint = this.state().currentEndpoint;
-    const config = this.bashService.getConfig('binance-debug-v2');
+    const config = this.bashService.getConfig('atkpi-debug-v1');
     const endpoint = config?.endpoints.find(ep => ep.id === currentEndpoint);
     return endpoint?.sidebarFields || [];
   });

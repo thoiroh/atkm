@@ -39,7 +39,7 @@
             {
               "icon": "dot",
               "label": "[dev] HomeComponent",
-              "link": "/dashboard",
+              "link": "/dashboard/home",
               "action": false,
               "isExpanded": false,
               "subMenu": []

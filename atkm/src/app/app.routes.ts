@@ -42,8 +42,13 @@ export const routes: Routes = [
       // Default dashboard home
       {
         path: '',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
+        loadComponent: () => import('./shared/components/atk-api/atk-api.component').then(m => m.AtkApiComponent),
+        title: 'atk-api | debug bash'
       },
+      // {
+      //   path: '',
+      //   loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
+      // },
       {
         path: 'home',
         loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)

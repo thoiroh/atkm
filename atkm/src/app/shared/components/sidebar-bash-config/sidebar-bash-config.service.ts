@@ -118,7 +118,7 @@ export class SidebarBashConfigService {
     this._state.update(s => ({ ...s, sidebarData: data }));
     this.emitEvent('sidebar-data-updated', { sidebarData: data });
     this.tools.consoleGroup({ // TAG SidebarBashConfigService -> updateSidebarData()
-      title: `SidebarBashConfigService -> updateSidebarData()`, tag: 'recycle', palette: 'ac', collapsed: false,
+      title: `SidebarBashConfigService -> updateSidebarData()`, tag: 'recycle', palette: 'in', collapsed: true,
       data: this._state()
     });
 
