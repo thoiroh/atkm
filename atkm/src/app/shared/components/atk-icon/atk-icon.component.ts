@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { IconRegistryService } from '@core/services/icon-registry.service';
+import { IconService } from '@app/core/services/icon.service';
 
 type PathDef = {
   d: string; fill?: string | null; stroke?: string | null; strokeWidth?: number; strokeLinecap?: string; strokeLinejoin?: string;
@@ -31,7 +31,7 @@ type RectDef = {
 })
 
 export class AtkIconComponent {
-  private iconRegistry = inject(IconRegistryService);
+  private iconRegistry = inject(IconService);
 
   name = input<string>('default');
   variant = input<string | null>(null);

@@ -163,7 +163,7 @@ export class BinanceTransactionHistoryComponent implements OnInit, OnDestroy {
   setSelectedSymbol(symbol: string): void {
     if (symbol && symbol !== this.selectedSymbol()) {
       this.transactionState.setSelectedSymbol(symbol.toUpperCase());
-      this.router.navigate(['/dashboard/binance/history', symbol.toUpperCase()]);
+      this.router.navigate(['/landing/binance/history', symbol.toUpperCase()]);
     }
   }
 

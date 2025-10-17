@@ -16,7 +16,7 @@
       "logo": {
         "svg": "atk-logo",
         "alt": "atkm",
-        "link": "/dashboard"
+        "link": "/landing"
       },
       "breadcrumb": ["Dashboard"],
       "centerTitle": "atomeek - api management for data integration",
@@ -39,7 +39,7 @@
             {
               "icon": "dot",
               "label": "[dev] HomeComponent",
-              "link": "/dashboard/home",
+              "link": "/landing/home",
               "action": false,
               "isExpanded": false,
               "subMenu": []
@@ -47,7 +47,7 @@
             {
               "icon": "dot",
               "label": "[dev] AtkApiComponent",
-              "link": "/dashboard/atkpi",
+              "link": "/landing/atkpi",
               "action": false,
               "isExpanded": false,
               "subMenu": []
@@ -66,7 +66,7 @@
             {
               "icon": "dot",
               "label": "[dev] BinanceDebugComponent",
-              "link": "/dashboard/binance/debug",
+              "link": "/landing/binance/debug",
               "action": false,
               "isExpanded": false,
               "subMenu": []
@@ -74,7 +74,7 @@
             {
               "icon": "dot",
               "label": "[dev] BinanceApiManagementComponent",
-              "link": "/dashboard/binance/bbash",
+              "link": "/landing/binance/bbash",
               "action": false,
               "isExpanded": false,
               "subMenu": []
@@ -82,7 +82,7 @@
             {
               "icon": "dot",
               "label": "Assets Inventory (user)",
-              "link": "/dashboard/binance/account",
+              "link": "/landing/binance/account",
               "action": false,
               "isExpanded": false,
               "subMenu": []
@@ -97,7 +97,7 @@
                 {
                   "icon": "trending-up",
                   "label": "Transaction History",
-                  "link": "/dashboard/binance/history",
+                  "link": "/landing/binance/history",
                   "action": {
                     "label": "new",
                     "action": "viewHistory"
@@ -107,14 +107,14 @@
                 {
                   "icon": "arrow-down",
                   "label": "Deposit History",
-                  "link": "/dashboard/binance/history?tab=transfers&type=deposits",
+                  "link": "/landing/binance/history?tab=transfers&type=deposits",
                   "action": false,
                   "isExpanded": false
                 },
                 {
                   "icon": "arrow-up",
                   "label": "Withdrawal History",
-                  "link": "/dashboard/binance/history?tab=transfers&type=withdrawals",
+                  "link": "/landing/binance/history?tab=transfers&type=withdrawals",
                   "action": false,
                   "isExpanded": false
                 }
@@ -130,7 +130,7 @@
                 {
                   "icon": "currency-bitcoin",
                   "label": "BTC/USDT",
-                  "link": "/dashboard/binance/history/BTCUSDT",
+                  "link": "/landing/binance/history/BTCUSDT",
                   "action": {
                     "label": "hot",
                     "action": "viewBTC"
@@ -140,21 +140,21 @@
                 {
                   "icon": "currency-ethereum",
                   "label": "ETH/USDT",
-                  "link": "/dashboard/binance/history/ETHUSDT",
+                  "link": "/landing/binance/history/ETHUSDT",
                   "action": false,
                   "isExpanded": false
                 },
                 {
                   "icon": "currency-binance",
                   "label": "BNB/USDT",
-                  "link": "/dashboard/binance/history/BNBUSDT",
+                  "link": "/landing/binance/history/BNBUSDT",
                   "action": false,
                   "isExpanded": false
                 },
                 {
                   "icon": "default",
                   "label": "ADA/USDT",
-                  "link": "/dashboard/binance/history/ADAUSDT",
+                  "link": "/landing/binance/history/ADAUSDT",
                   "action": false,
                   "isExpanded": false
                 }
@@ -163,14 +163,14 @@
             {
               "icon": "dot",
               "label": "Global Watchlist (user)",
-              "link": "/dashboard/binance/snapshot",
+              "link": "/landing/binance/snapshot",
               "action": false,
               "isExpanded": false
             },
             {
               "icon": "dot",
               "label": "Streaming Market Data",
-              "link": "/dashboard/binance/market-data",
+              "link": "/landing/binance/market-data",
               "action": {
                 "label": "on.going",
                 "action": "streamData"
@@ -191,19 +191,19 @@
             {
               "icon": "toggle",
               "label": "Account History",
-              "link": "/dashboard/ibkr/account",
+              "link": "/landing/ibkr/account",
               "action": false
             },
             {
               "icon": "toggle",
               "label": "Account Snapshot",
-              "link": "/dashboard/ibkr/snapshot",
+              "link": "/landing/ibkr/snapshot",
               "action": false
             },
             {
               "icon": "toggle",
               "label": "Live Market Data",
-              "link": "/dashboard/ibkr/market-data",
+              "link": "/landing/ibkr/market-data",
               "action": false
             }
           ]
@@ -392,7 +392,7 @@
       "logo": {
         "svg": "atk-logo",
         "alt": "atkm",
-        "link": "/dashboard"
+        "link": "/landing"
       },
       "breadcrumb": ["Dashboard"],
       "centerTitle": "atkcash - api management for data integration",
@@ -417,7 +417,7 @@
             {
               "icon": "dot",
               "label": "[dev] BinanceDebugComponent",
-              "link": "/dashboard/binance/debug",
+              "link": "/landing/binance/debug",
               "action": false,
               "isExpanded": false,
               "subMenu": []
@@ -425,7 +425,7 @@
             {
               "icon": "dot",
               "label": "[dev] BinanceApiManagementComponent",
-              "link": "/dashboard/binance/bbash",
+              "link": "/landing/binance/bbash",
               "action": false,
               "isExpanded": false,
               "subMenu": []
@@ -433,7 +433,7 @@
             {
               "icon": "dot",
               "label": "Assets Inventory (user)",
-              "link": "/dashboard/binance/account",
+              "link": "/landing/binance/account",
               "action": false,
               "isExpanded": false,
               "subMenu": []
@@ -448,7 +448,7 @@
                 {
                   "icon": "trending-up",
                   "label": "Transaction History",
-                  "link": "/dashboard/binance/history",
+                  "link": "/landing/binance/history",
                   "action": {
                     "label": "new",
                     "action": "viewHistory"
@@ -458,14 +458,14 @@
                 {
                   "icon": "arrow-down",
                   "label": "Deposit History",
-                  "link": "/dashboard/binance/history?tab=transfers&type=deposits",
+                  "link": "/landing/binance/history?tab=transfers&type=deposits",
                   "action": false,
                   "isExpanded": false
                 },
                 {
                   "icon": "arrow-up",
                   "label": "Withdrawal History",
-                  "link": "/dashboard/binance/history?tab=transfers&type=withdrawals",
+                  "link": "/landing/binance/history?tab=transfers&type=withdrawals",
                   "action": false,
                   "isExpanded": false
                 }
@@ -481,7 +481,7 @@
                 {
                   "icon": "currency-bitcoin",
                   "label": "BTC/USDT",
-                  "link": "/dashboard/binance/history/BTCUSDT",
+                  "link": "/landing/binance/history/BTCUSDT",
                   "action": {
                     "label": "hot",
                     "action": "viewBTC"
@@ -491,21 +491,21 @@
                 {
                   "icon": "currency-ethereum",
                   "label": "ETH/USDT",
-                  "link": "/dashboard/binance/history/ETHUSDT",
+                  "link": "/landing/binance/history/ETHUSDT",
                   "action": false,
                   "isExpanded": false
                 },
                 {
                   "icon": "currency-binance",
                   "label": "BNB/USDT",
-                  "link": "/dashboard/binance/history/BNBUSDT",
+                  "link": "/landing/binance/history/BNBUSDT",
                   "action": false,
                   "isExpanded": false
                 },
                 {
                   "icon": "default",
                   "label": "ADA/USDT",
-                  "link": "/dashboard/binance/history/ADAUSDT",
+                  "link": "/landing/binance/history/ADAUSDT",
                   "action": false,
                   "isExpanded": false
                 }
@@ -514,14 +514,14 @@
             {
               "icon": "dot",
               "label": "Global Watchlist (user)",
-              "link": "/dashboard/binance/snapshot",
+              "link": "/landing/binance/snapshot",
               "action": false,
               "isExpanded": false
             },
             {
               "icon": "dot",
               "label": "Streaming Market Data",
-              "link": "/dashboard/binance/market-data",
+              "link": "/landing/binance/market-data",
               "action": {
                 "label": "on.going",
                 "action": "streamData"
@@ -541,19 +541,19 @@
             {
               "icon": "toggle",
               "label": "Account History",
-              "link": "/dashboard/ibkr/account",
+              "link": "/landing/ibkr/account",
               "action": false
             },
             {
               "icon": "toggle",
               "label": "Account Snapshot",
-              "link": "/dashboard/ibkr/snapshot",
+              "link": "/landing/ibkr/snapshot",
               "action": false
             },
             {
               "icon": "toggle",
               "label": "Live Market Data",
-              "link": "/dashboard/ibkr/market-data",
+              "link": "/landing/ibkr/market-data",
               "action": false
             }
           ]

@@ -7,13 +7,13 @@ import { finalize, firstValueFrom } from 'rxjs';
 
 import { BashData, IBashConfig, IBashLogEntry, IBashTerminalState } from '@shared/components/atk-bash/atk-bash.interfaces';
 
+import { ToolsService } from '@core/services/tools.service';
 import { BinanceErrorHandlerService } from '@features/binance/services/binance-error-handler.service';
 import { TransactionStateService } from '@features/binance/services/binance-transaction-state.service';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkBashConfigFactory } from '@shared/components/atk-bash/atk-bash-config.factory';
 import { AtkBashService } from '@shared/components/atk-bash/atk-bash.service';
 import { IBashConfigEvent, SidebarBashConfigService } from '@shared/components/sidebar-bash-config/sidebar-bash-config.service';
-import { ToolsService } from '@shared/services/tools.service';
 
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { TerminalInputDirective, TerminalInputState } from '@shared/directives/terminal-input.directive';

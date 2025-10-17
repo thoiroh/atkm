@@ -5,20 +5,20 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
+import { ToolsService } from '@core/services/tools.service';
 import { ConfigStore } from '@core/store/config.store';
 import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
+import { IBashConfig } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { AtkBashService } from '@shared/components/atk-bash/atk-bash.service';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
+import { SidebarBashConfigService } from '@shared/components/sidebar-bash-config/sidebar-bash-config.service';
 import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
-import { ToolsService } from '@shared/services/tools.service';
-import { IBashConfig } from '../atk-bash/atk-bash.interfaces';
-import { AtkBashService } from '../atk-bash/atk-bash.service';
-import { SidebarBashConfigService } from '../sidebar-bash-config/sidebar-bash-config.service';
 
 @Component({
-  selector: 'atk-home-content',
+  selector: 'atk-shuttle',
   standalone: true,
   imports: [
     CommonModule,
@@ -27,10 +27,10 @@ import { SidebarBashConfigService } from '../sidebar-bash-config/sidebar-bash-co
     SidebarConfigComponent,
     SidebarBashConfigComponent
   ],
-  templateUrl: './home-content.component.html',
+  templateUrl: './shuttle.component.html',
   styles: []
 })
-export class HomeContentComponent implements OnInit {
+export class AtkShuttleComponent implements OnInit {
 
   // =========================================
   // DEPENDENCIES & COMPUTED SIGNALS
@@ -81,8 +81,8 @@ export class HomeContentComponent implements OnInit {
   // =========================================
 
   ngOnInit(): void {
-    // this.tools.consoleGroup({ // OFF HomeContentComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-    //   title: `HomeContentComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
+    // this.tools.consoleGroup({ // OFF AtkShuttleComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+    //   title: `AtkShuttleComponent -> ngOnInit()`, tag: 'check', palette: 'in', collapsed: false,
     //   data: this.config()
     // });
 
@@ -121,8 +121,8 @@ export class HomeContentComponent implements OnInit {
    * Handle bash data loaded events
    */
   onBashDataLoaded(data: any[]): void {
-    this.tools.consoleGroup({ // TAG HomeContentComponent -> onBashDataLoaded() ================ CONSOLE LOG IN PROGRESS
-      title: `HomeContentComponent -> onBashDataLoaded()`, tag: 'check', palette: 'in', collapsed: false,
+    this.tools.consoleGroup({ // TAG AtkShuttleComponent -> onBashDataLoaded() ================ CONSOLE LOG IN PROGRESS
+      title: `AtkShuttleComponent -> onBashDataLoaded()`, tag: 'check', palette: 'in', collapsed: false,
       data: { data: data }
     });
   }

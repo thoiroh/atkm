@@ -4,15 +4,10 @@ import { Component, computed, HostListener, inject, input, output, signal } from
 
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
+import { ToolsService } from '@core/services/tools.service';
 import { IBashSidebarField } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 import { AtkApiBashService } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.service';
 import { AtkApiSidebarConfigService } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
-
-interface EndpointConfig {
-  id: string;
-  name: string;
-  icon: string;
-}
 
 @Component({
   selector: 'atk-api-sidebar-config',
@@ -29,6 +24,7 @@ export class SidebarBashConfigComponent {
 
   private readonly bashService = inject(AtkApiBashService);
   private readonly sidebarService = inject(AtkApiSidebarConfigService);
+  private tools = inject(ToolsService);
 
   // ======================================================
   // INPUTS / OUTPUTS
@@ -163,6 +159,10 @@ export class SidebarBashConfigComponent {
   }
 
   selectEndpoint(endpointId: string): void {
+    this.tools.consoleGroup({ // TAG SidebarBashConfigComponent -> selectEndpoint()================ CONSOLE LOG IN PROGRESS
+      title: `SidebarBashConfigComponent -> selectEndpoint() -> `, tag: 'check', palette: 'ac', collapsed: true,
+      data: endpointId
+    });
     this.sidebarService.updateEndpoint(endpointId);
 
     // Set default parameters based on endpoint

@@ -1,6 +1,3 @@
-// atk-bash.interfaces.ts
-// Generic interfaces for the ATK Bash component - EXTENDED VERSION
-
 import { TemplateRef } from '@angular/core';
 import { Observable } from 'rxjs';
 

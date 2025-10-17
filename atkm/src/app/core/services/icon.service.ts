@@ -20,10 +20,10 @@ export interface IconRegistry {
 
 @Injectable({ providedIn: 'root' })
 
-export class IconRegistryService {
+export class IconService {
   private http = inject(HttpClient);
   private url = '/assets/config/icons.json';
-  // HACK IconRegistryService -> Signals for service status ====================================================
+  // HACK IconService -> Signals for service status ====================================================
   private _registry = signal<IconRegistry>(this.createEmptyRegistry());
   private _isLoaded = signal<boolean>(false);
   private _hasError = signal<boolean>(false);
@@ -35,7 +35,7 @@ export class IconRegistryService {
   readonly hasError = this._hasError.asReadonly();
 
   constructor() {
-    // HACK IconRegistryService -> Effect to load icons at first injection =======================================
+    // HACK IconService -> Effect to load icons at first injection =======================================
     effect(() => {
       if (!this._isLoaded() && !this._hasError()) {
         this.loadIcons();

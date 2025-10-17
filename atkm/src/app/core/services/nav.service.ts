@@ -1,5 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { computed, Injectable, signal } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 
 export interface NavigationItem {
@@ -13,56 +13,56 @@ export interface NavigationItem {
 @Injectable({
   providedIn: 'root'
 })
-export class NavigationStateService {
+export class NavService {
   // Current active route
-  private currentRoute = signal<string>('/dashboard/home');
-  
+  private currentRoute = signal<string>('/landing/home');
+
   // Navigation items with active state
   private navigationItems = signal<NavigationItem[]>([
     {
-      path: '/dashboard/home',
+      path: '/landing/home',
       label: 'Home',
       icon: 'home',
       isActive: true,
       category: 'home'
     },
     {
-      path: '/dashboard/binance/account',
+      path: '/landing/binance/account',
       label: 'Account History',
       icon: 'repo',
       isActive: false,
       category: 'binance'
     },
     {
-      path: '/dashboard/binance/snapshot',
+      path: '/landing/binance/snapshot',
       label: 'Account Snapshot',
       icon: 'repo',
       isActive: false,
       category: 'binance'
     },
     {
-      path: '/dashboard/binance/market-data',
+      path: '/landing/binance/market-data',
       label: 'Live Market Data',
       icon: 'repo',
       isActive: false,
       category: 'binance'
     },
     {
-      path: '/dashboard/ibkr/account',
+      path: '/landing/ibkr/account',
       label: 'Account History',
       icon: 'repo',
       isActive: false,
       category: 'ibkr'
     },
     {
-      path: '/dashboard/ibkr/snapshot',
+      path: '/landing/ibkr/snapshot',
       label: 'Account Snapshot',
       icon: 'repo',
       isActive: false,
       category: 'ibkr'
     },
     {
-      path: '/dashboard/ibkr/market-data',
+      path: '/landing/ibkr/market-data',
       label: 'Live Market Data',
       icon: 'repo',
       isActive: false,
@@ -73,16 +73,16 @@ export class NavigationStateService {
   // Computed properties
   public readonly currentRoute$ = this.currentRoute.asReadonly();
   public readonly navigationItems$ = this.navigationItems.asReadonly();
-  
-  public readonly binanceItems = computed(() => 
+
+  public readonly binanceItems = computed(() =>
     this.navigationItems().filter(item => item.category === 'binance')
   );
-  
-  public readonly ibkrItems = computed(() => 
+
+  public readonly ibkrItems = computed(() =>
     this.navigationItems().filter(item => item.category === 'ibkr')
   );
-  
-  public readonly activeItem = computed(() => 
+
+  public readonly activeItem = computed(() =>
     this.navigationItems().find(item => item.isActive)
   );
 
@@ -108,13 +108,13 @@ export class NavigationStateService {
    */
   private updateActiveRoute(url: string): void {
     this.currentRoute.set(url);
-    
+
     // Update navigation items active state
     const items = this.navigationItems().map(item => ({
       ...item,
       isActive: item.path === url
     }));
-    
+
     this.navigationItems.set(items);
   }
 

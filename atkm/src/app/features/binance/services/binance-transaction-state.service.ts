@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap, } from 'rxjs/operators';
-import { BinanceApiResponse } from '../models/binance.model';
+import { BinanceApiResponse } from '@features/binance/models/binance.model';
 import {
   BinanceOrderHistory,
   BinanceTradeHistory,
@@ -14,7 +14,7 @@ import {
   TransactionHistoryFilter,
   TransactionSummary,
   TransferHistoryFilter
-} from '../models/transaction-history.model';
+} from '@features/binance/models/transaction-history.model';
 
 export interface TransactionStateData {
   trades: BinanceTradeHistory[];

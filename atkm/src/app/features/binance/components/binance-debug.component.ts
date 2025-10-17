@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, effect, inject, NgZone, OnInit, signal, viewChild } from '@angular/core';
+import { ToolsService } from '@core/services/tools.service';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { TerminalInputDirective } from '@shared/directives/terminal-input.directive';
-import { ToolsService } from '@shared/services/tools.service';
-import { BinanceService } from '../services/binance.service';
+import { BinanceService } from '@features/binance/services/binance.service';
 
 @Component({
   selector: 'atk-binance-debug',

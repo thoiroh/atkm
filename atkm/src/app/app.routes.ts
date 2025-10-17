@@ -1,57 +1,23 @@
-/**
- * Route Configuration Notes:
- *
- * BINANCE TRANSACTION HISTORY ROUTES:
- * - /dashboard/binance/history - Main transaction history page
- * - /dashboard/binance/history/BTCUSDT - History for specific symbol
- * - /dashboard/binance/history/BTCUSDT/trades - History with specific tab
- *
- * URL EXAMPLES:
- * - /dashboard/binance/history
- * - /dashboard/binance/history/BTCUSDT
- * - /dashboard/binance/history/ETHUSDT
- * - /dashboard/binance/history/ADAUSDT/orders
- * - /dashboard/binance/history/BNBUSDT/transfers
- *
- * NAVIGATION FROM SIDEBAR:
- * The sidebar configuration in landing-data.json should be updated with:
- * - "Transaction History" -> "/dashboard/binance/history"
- * - Individual coins can link to specific symbols
- *
- * BREADCRUMBS:
- * The breadcrumb service can show:
- * Dashboard > Binance > Transaction History > BTCUSDT
- */
-
-
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  // Default redirect to landing
   {
     path: '',
-    redirectTo: '/dashboard',
+    redirectTo: '/landing',
     pathMatch: 'full'
   },
-
-  // Main dashboard layout
   {
-    path: 'dashboard',
+    path: 'landing',
     loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent),
     children: [
-      // Default dashboard home
       {
         path: '',
-        loadComponent: () => import('./shared/components/atk-api/atk-api.component').then(m => m.AtkApiComponent),
-        title: 'atk-api | debug bash'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent),
+        title: 'atk-shuttle | entry point to your data'
       },
-      // {
-      //   path: '',
-      //   loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
-      // },
       {
         path: 'home',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent)
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent)
       },
       {
         path: 'atkpi',
@@ -67,42 +33,42 @@ export const routes: Routes = [
       {
         path: 'binance/account',
         loadComponent: () => import('./features/binance/components/account-info/binance-account-info.component').then(m => m.AccountInfoComponent),
-        title: 'Binance Account | ATK Dashboard'
+        title: 'Binance Account'
       },
 
       // Binance transaction history - main route
       {
         path: 'binance/history',
         loadComponent: () => import('./features/binance/components/transaction-history/binance-transaction-history.component').then(m => m.BinanceTransactionHistoryComponent),
-        title: 'Transaction History | ATK Dashboard'
+        title: 'Transaction History'
       },
 
       // Binance transaction history with symbol parameter
       {
         path: 'binance/history/:symbol',
         loadComponent: () => import('./features/binance/components/transaction-history/binance-transaction-history.component').then(m => m.BinanceTransactionHistoryComponent),
-        title: 'Transaction History | ATK Dashboard'
+        title: 'Transaction History'
       },
 
       // Binance transaction history with symbol and tab
       {
         path: 'binance/history/:symbol/:tab',
         loadComponent: () => import('./features/binance/components/transaction-history/binance-transaction-history.component').then(m => m.BinanceTransactionHistoryComponent),
-        title: 'Transaction History | ATK Dashboard'
+        title: 'Transaction History'
       },
 
       // Binance market data (placeholder)
       {
         path: 'binance/market-data',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'Market Data | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'Market Data'
       },
 
       // Binance snapshot (placeholder)
       {
         path: 'binance/snapshot',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'Account Snapshot | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'Account Snapshot'
       },
 
       // ===============================================================================================
@@ -111,20 +77,20 @@ export const routes: Routes = [
 
       {
         path: 'ibkr/account',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'IBKR Account | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'IBKR Account'
       },
 
       {
         path: 'ibkr/snapshot',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'IBKR Snapshot | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'IBKR Snapshot'
       },
 
       {
         path: 'ibkr/market-data',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'IBKR Market Data | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'IBKR Market Data'
       },
 
       // ===============================================================================================
@@ -133,26 +99,26 @@ export const routes: Routes = [
 
       {
         path: 'config/display',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'Display Settings | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'Display Settings'
       },
 
       {
         path: 'config/preferences',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'User Preferences | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'User Preferences'
       },
 
       {
         path: 'config/shortcuts',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'Keyboard Shortcuts | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'Keyboard Shortcuts'
       },
 
       {
         path: 'config/layout',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'Component Layout | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'Component Layout'
       },
 
       // ===============================================================================================
@@ -161,46 +127,46 @@ export const routes: Routes = [
 
       {
         path: 'tools/export',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'Export Data | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'Export Data'
       },
 
       {
         path: 'tools/import',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'Import Files | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'Import Files'
       },
 
       {
         path: 'tools/quick-actions',
-        loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
-        title: 'Quick Actions | ATK Dashboard'
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
+        title: 'Quick Actions'
       }
     ]
   },
 
   // ===============================================================================================
-  // STANDALONE PAGES (Outside dashboard layout)
+  // STANDALONE PAGES (Outside landing layout)
   // ===============================================================================================
 
   // Login page (if needed)
   {
     path: 'login',
-    loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+    loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
     title: 'Login | ATK'
   },
 
-  // Settings page (if needed outside dashboard)
+  // Settings page (if needed outside landing)
   {
     path: 'settings',
-    loadComponent: () => import('./shared/components/home-content/home-content.component').then(m => m.HomeContentComponent), // Replace with actual component
+    loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent), // Replace with actual component
     title: 'Settings | ATK'
   },
 
-  // Catch-all route - redirect to dashboard
+  // Catch-all route - redirect to landing
   {
     path: '**',
-    redirectTo: '/dashboard'
+    redirectTo: '/landing'
   }
 ];
 

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
+import { ToolsService } from '@core/services/tools.service';
 import { ConfigStore } from '@core/store/config.store';
-import { ToolsService } from '../../services/tools.service';
 
 @Component({
   selector: 'atk-navbar-brand',

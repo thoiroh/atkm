@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ToolsService } from '@shared/services/tools.service';
+import { ToolsService } from '@core/services/tools.service';
 import { Observable, throwError } from 'rxjs';
 
 export interface ErrorDetails {

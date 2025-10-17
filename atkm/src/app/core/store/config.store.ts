@@ -4,7 +4,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { ConfigProfile, IAtomeekAppConfig, IConfigPanel, IFeed, ILandingConfig, INavbarConfig, ISidebarNavConfig } from '@core/models/config.models';
 import { ConfigService } from '@core/services/config.service';
-import { ToolsService } from '@shared/services/tools.service';
+import { ToolsService } from '@core/services/tools.service';
 
 /**
  * Default empty configuration to prevent null errors before loading

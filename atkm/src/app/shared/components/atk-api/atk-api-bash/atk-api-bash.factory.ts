@@ -1,6 +1,3 @@
-// atk-bash-config.factory.ts
-// EXTENDED - Factory for creating bash configurations with sidebar/table separation
-
 import { Injectable } from '@angular/core';
 import { IBashConfig, IBashDataTransformResult, IBashEndpointConfig } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 
@@ -48,9 +45,9 @@ export class AtkApiBashFactory {
       endpoints: [
         this.createAccountEndpoint(),
         this.createTradesEndpoint(),
-        // this.createOrdersEndpoint(),
-        // this.createTickerEndpoint()
-        this.createNewEndpoint(),
+        this.createOrdersEndpoint(),
+        this.createTickerEndpoint()
+        // this.createNewEndpoint(),
       ],
       actions: []
     };
@@ -116,7 +113,6 @@ export class AtkApiBashFactory {
           icon: 'dollar-sign',
           visible: true,
           formatter: (value: number) => this.formatPrice(value)
-
         }
       ],
       // SIDEBAR FIELDS CONFIGURATION

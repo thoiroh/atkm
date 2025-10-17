@@ -1,17 +1,7 @@
-// atk-bash.service.v03.ts
-// ======================================================
-// FULL SIGNALS VERSION (Angular 20+)
-// ------------------------------------------------------
-// Service de gestion du terminal Bash ATK, version 3
-// - Basé sur Signals Angular
-// - Suppression complète de RxJS réactif (plus de Subject/Observable)
-// - Utilisation ponctuelle de firstValueFrom() pour HttpClient
-// ======================================================
-
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { effect, inject, Injectable, signal } from '@angular/core';
+import { ToolsService } from '@core/services/tools.service';
 import { BashData, IBashConfig, IBashEndpointConfig, IBashEvent } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
-import { ToolsService } from '@shared/services/tools.service';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({

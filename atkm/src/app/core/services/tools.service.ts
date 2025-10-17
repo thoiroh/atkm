@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-import colors from '@assets/config/tools-configs/console-logger.config.colors.json';
-import symbols from '@assets/config/tools-configs/console-logger.config.symbols.json';
-import { ConsoleLogger, GroupOptions } from '@shared/components/atk-tools/console-logger.tool';
+import colors from '@core/tools/console-logger.config.colors.json';
+import symbols from '@core/tools/console-logger.config.symbols.json';
+import { ConsoleLogger, GroupOptions } from '@core/tools/console-logger.tool';
 // NOTE: enable in tsconfig.json:  "resolveJsonModule": true, "esModuleInterop": true
 
 

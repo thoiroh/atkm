@@ -1,5 +1,3 @@
-// atk-bash.component.v02.ts
-
 import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, effect, inject, input, NgZone, OnInit, output, signal, untracked, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -7,13 +5,13 @@ import { finalize, firstValueFrom } from 'rxjs';
 
 import { BashData, IBashConfig, IBashLogEntry, IBashTerminalState } from '@shared/components/atk-bash/atk-bash.interfaces';
 
+import { ToolsService } from '@core/services/tools.service';
 import { BinanceErrorHandlerService } from '@features/binance/services/binance-error-handler.service';
 import { TransactionStateService } from '@features/binance/services/binance-transaction-state.service';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { AtkApiBashFactory } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.factory';
 import { AtkApiBashService } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.service';
 import { AtkApiSidebarConfigService, IBashConfigEvent } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
-import { ToolsService } from '@shared/services/tools.service';
 
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { TerminalInputDirective, TerminalInputState } from '@shared/directives/terminal-input.directive';
@@ -694,12 +692,6 @@ export class AtkApiBashComponent implements OnInit {
    * @date 08/10/2025
    * @private
    * @return {*}
-   */
-  // atk-bash.component.ts
-  // MODIFICATION DE LA MÉTHODE loadAccountData() pour extraire sidebarData
-
-  /**
-   * Load account data
    */
   private async loadAccountData(): Promise<BashData[]> {
     const account = await firstValueFrom(

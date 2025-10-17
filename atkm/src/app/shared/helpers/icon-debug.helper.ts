@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { IconRegistryService } from '@core/services/icon-registry.service';
+import { IconService } from '@app/core/services/icon.service';
 
 /**
  * Utilitaire pour activer/désactiver le debug des icônes
@@ -12,27 +12,27 @@ import { IconRegistryService } from '@core/services/icon-registry.service';
  * }
  */
 
-let iconService: IconRegistryService | null = null;
+let iconService: IconService | null = null;
 
 export function enableIconDebug(): void {
   if (!iconService) {
-    iconService = inject(IconRegistryService);
+    iconService = inject(IconService);
   }
   iconService.enableDebug();
-  console.log('🐛 Debug mode activé pour IconRegistryService');
+  console.log('🐛 Debug mode activé pour IconService');
 }
 
 export function disableIconDebug(): void {
   if (!iconService) {
-    iconService = inject(IconRegistryService);
+    iconService = inject(IconService);
   }
   iconService.disableDebug();
-  console.log('🔇 Debug mode désactivé pour IconRegistryService');
+  console.log('🔇 Debug mode désactivé pour IconService');
 }
 
 export function reloadIcons(): Promise<void> {
   if (!iconService) {
-    iconService = inject(IconRegistryService);
+    iconService = inject(IconService);
   }
   console.log('🔄 Rechargement forcé des icônes...');
   return iconService.reload();

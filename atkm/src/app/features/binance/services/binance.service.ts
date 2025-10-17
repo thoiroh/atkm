@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ToolsService } from '@shared/services/tools.service';
+import { ToolsService } from '@core/services/tools.service';
 import { from, Observable, of } from 'rxjs';
 import { bufferCount, catchError, concatMap, delay, map, mergeMap, reduce, tap } from 'rxjs/operators';
-import { BinanceAccount, BinanceApiResponse } from '../models/binance.model';
+import { BinanceAccount, BinanceApiResponse } from '@features/binance/models/binance.model';
 import { BinanceErrorHandlerService } from './binance-error-handler.service';
 
 @Injectable({

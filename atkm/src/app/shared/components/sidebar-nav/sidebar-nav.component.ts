@@ -5,11 +5,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ToolsService } from '@core/services/tools.service';
 import { ConfigStore } from '@core/store/config.store';
 import { HoverDotDirective } from '@directives/hover-dot.directive';
 import { IconPipe } from '@pipes/icon.pipe';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { ToolsService } from '@shared/services/tools.service';
 
 @Component({
   selector: 'atk-sidebar-nav',

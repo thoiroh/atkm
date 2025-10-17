@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
+import { ToolsService } from '@core/services/tools.service';
 import { ConfigStore } from '@core/store/config.store';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { ToolsService } from '@shared/services/tools.service';
 
 import { AtkApiBashComponent } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.component';
 import { SidebarBashConfigComponent } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.component';

@@ -1,4 +1,3 @@
-<!-- atk-bash.component.v03.html -->
 <!-- ======================================================
      FULL SIGNALS VERSION
      Compatible avec AtkBashService.v03 et AtkBashComponent.v03
@@ -30,16 +29,16 @@
 
         <textarea class="bash-input" atkTerminalInput autocorrect="off" spellcheck="false"
           (stateChange)="onTerminalStateChange($event)" [style.height]="terminalHeight()"></textarea>
-        <!-- spellcheck="false" -->
-        <!-- autocorrect="off" -->
-        <!-- autocomplete="off" -->
-        <!-- autocapitalize="off" -->
-        <!-- [autoScroll]="true" -->
-        <!-- [maxHeight]="'200px'" -->
-        <!-- ou [smoothScroll]="true" -->
-        <!-- (scrollChange)="onTerminalScroll($event)" -->
-        <!-- [autoResize]="true" -->
-        <!-- readonly -->
+        <!-- spellcheck="false"
+        autocorrect="off"
+        autocomplete="off"
+        autocapitalize="off"
+        [autoScroll]="true"
+        [maxHeight]="'200px'"
+        ou [smoothScroll]="true"
+        (scrollChange)="onTerminalScroll($event)"
+        [autoResize]="true"
+        readonly -->
 
         <!-- Terminal Status -->
         <div class="bash-status">
@@ -81,6 +80,7 @@
     <!-- ======================= -->
     <!-- TABLE SECTION -->
     <!-- ======================= -->
+
     @if (data().length > 0 && visibleColumns().length > 0) {
     <section class="bash-data-section">
       <div class="bash-data-content">
@@ -126,6 +126,7 @@
     <!-- ======================= -->
     <!-- EMPTY STATE -->
     <!-- ======================= -->
+
     @if (data().length === 0 && !bashService.loading() && !error()) {
     <section class="bash-section">
       <div class="empty-state">
@@ -139,6 +140,7 @@
     <!-- ======================= -->
     <!-- ERROR STATE -->
     <!-- ======================= -->
+
     @if (error()) {
     <section class="bash-section">
       <div class="error-state">
@@ -162,6 +164,7 @@
     <!-- ======================= -->
     <!-- LOADING STATE -->
     <!-- ======================= -->
+
     @if (bashService.loading()) {
     <section class="bash-section">
       <div class="loading-state">

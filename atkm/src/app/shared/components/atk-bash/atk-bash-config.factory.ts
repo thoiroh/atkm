@@ -1,6 +1,3 @@
-// atk-bash-config.factory.ts
-// EXTENDED - Factory for creating bash configurations with sidebar/table separation
-
 import { Injectable } from '@angular/core';
 import { IBashConfig, IBashDataTransformResult, IBashEndpointConfig } from './atk-bash.interfaces';
 

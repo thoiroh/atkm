@@ -31,7 +31,7 @@
 // - This file merges features from the simplified auto-scroll version and the richer cursor-tracking version.
 
 import { Directive, ElementRef, inject, input, OnInit, output } from '@angular/core';
-// import { ToolsService } from '../services/tools.service';
+// import { ToolsService } from '@core/services/tools.service';
 
 // ----- State types -----
 export interface TerminalInputState {

@@ -8,8 +8,8 @@
 // ======================================================
 
 import { inject, Injectable, signal } from '@angular/core';
+import { ToolsService } from '@core/services/tools.service';
 import type { BashData } from '@shared/components/atk-bash/atk-bash.interfaces';
-import { ToolsService } from '@shared/services/tools.service';
 
 export interface IBashConfigState {
   currentEndpoint: string;

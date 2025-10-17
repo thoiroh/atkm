@@ -5,7 +5,7 @@ import {
   ElementRef, EnvironmentInjector,
   inject, Input, OnDestroy, OnInit, Renderer2
 } from '@angular/core';
-import { IconRegistryService } from '@core/services/icon-registry.service';
+import { IconService } from '@app/core/services/icon.service';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
 @Directive({
@@ -18,7 +18,7 @@ export class HoverDotDirective implements OnInit, OnDestroy {
   private dotIconRef: ComponentRef<AtkIconComponent> | null = null;
   private env = inject(EnvironmentInjector);
   private appRef = inject(ApplicationRef);
-  private iconRegistry = inject(IconRegistryService);
+  private iconRegistry = inject(IconService);
 
   private r = inject(Renderer2);
   private el = inject(ElementRef);

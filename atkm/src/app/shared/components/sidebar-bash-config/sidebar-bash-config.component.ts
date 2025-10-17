@@ -1,10 +1,10 @@
 // sidebar-bash-config.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, computed, HostListener, inject, input, output, signal } from '@angular/core';
+import { IBashSidebarField } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { AtkBashService } from '@shared/components/atk-bash/atk-bash.service';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { IBashSidebarField } from '../atk-bash/atk-bash.interfaces';
-import { AtkBashService } from '../atk-bash/atk-bash.service';
-import { SidebarBashConfigService } from './sidebar-bash-config.service';
+import { SidebarBashConfigService } from '@shared/components/sidebar-bash-config/sidebar-bash-config.service';
 
 interface EndpointConfig {
   id: string;

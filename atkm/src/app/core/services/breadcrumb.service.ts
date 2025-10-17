@@ -1,6 +1,6 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { filter, map } from 'rxjs/operators';
+import { computed, Injectable, signal } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 export interface BreadcrumbItem {
   label: string;
@@ -16,8 +16,8 @@ export class BreadcrumbService {
   private breadcrumbs = signal<BreadcrumbItem[]>([]);
 
   public readonly breadcrumbs$ = this.breadcrumbs.asReadonly();
-  
-  public readonly breadcrumbString = computed(() => 
+
+  public readonly breadcrumbString = computed(() =>
     this.breadcrumbs().map(item => item.label).join(' > ')
   );
 
@@ -36,34 +36,44 @@ export class BreadcrumbService {
   /**
    * Build breadcrumbs from current route
    */
+  /**
+ * Build breadcrumbs from current route
+ */
   private buildBreadcrumbs(): void {
     const breadcrumbs: BreadcrumbItem[] = [];
-    let route = this.activatedRoute.root;
+    let route: ActivatedRoute | null = this.activatedRoute.root; // ✅ peut devenir null via firstChild
     let url = '';
 
     while (route) {
-      if (route.snapshot.data['breadcrumb']) {
-        url += '/' + route.snapshot.url.map(segment => segment.path).join('/');
-        
+      const data = route.snapshot?.data;
+      const hasLabel = !!data?.['breadcrumb'];
+
+      // Concatène l'URL du segment courant si présent
+      const segment = route.snapshot?.url?.map(s => s.path).join('/') ?? '';
+      if (segment) {
+        url += '/' + segment;
+      }
+
+      if (hasLabel) {
         breadcrumbs.push({
-          label: route.snapshot.data['breadcrumb'],
-          path: url,
+          label: data!['breadcrumb'],
+          path: url || '/',         // évite une path vide
           isActive: false,
           isClickable: true
         });
       }
-      
-      route = route.firstChild;
+
+      route = route.firstChild ?? null; // ✅ peut être null
     }
 
-    // Mark the last item as active and not clickable
+    // Marque le dernier item comme actif/non cliquable
     if (breadcrumbs.length > 0) {
-      const lastItem = breadcrumbs[breadcrumbs.length - 1];
-      lastItem.isActive = true;
-      lastItem.isClickable = false;
+      const last = breadcrumbs[breadcrumbs.length - 1];
+      last.isActive = true;
+      last.isClickable = false;
     }
 
-    // Always add Dashboard as root if not present
+    // Ajoute toujours "Dashboard" en racine si absent
     if (breadcrumbs.length === 0 || breadcrumbs[0].label !== 'Dashboard') {
       breadcrumbs.unshift({
         label: 'Dashboard',
@@ -75,6 +85,7 @@ export class BreadcrumbService {
 
     this.breadcrumbs.set(breadcrumbs);
   }
+
 
   /**
    * Navigate to a breadcrumb item
@@ -101,7 +112,7 @@ export class BreadcrumbService {
       isActive: index === breadcrumbs.length - 1,
       isClickable: index !== breadcrumbs.length - 1
     }));
-    
+
     this.breadcrumbs.set(items);
   }
 
@@ -110,7 +121,7 @@ export class BreadcrumbService {
    */
   addBreadcrumb(label: string, path: string): void {
     const current = this.breadcrumbs();
-    
+
     // Mark previous items as not active and clickable
     const updated = current.map(item => ({
       ...item,
@@ -136,13 +147,13 @@ export class BreadcrumbService {
     const current = this.breadcrumbs();
     if (afterIndex < current.length) {
       const trimmed = current.slice(0, afterIndex + 1);
-      
+
       // Mark the last item as active
       if (trimmed.length > 0) {
         trimmed[trimmed.length - 1].isActive = true;
         trimmed[trimmed.length - 1].isClickable = false;
       }
-      
+
       this.breadcrumbs.set(trimmed);
     }
   }

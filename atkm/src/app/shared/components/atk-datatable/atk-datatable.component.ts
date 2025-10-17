@@ -1,6 +1,3 @@
-// src/app/shared/components/atk-datatable/atk-datatable.component.ts
-// Standalone component for displaying tabular data with factory-defined columns
-
 import { CommonModule } from '@angular/common';
 import { Component, input, output, signal } from '@angular/core';
 import type { BashData, IBashColumn } from '@shared/components/atk-bash/atk-bash.interfaces';

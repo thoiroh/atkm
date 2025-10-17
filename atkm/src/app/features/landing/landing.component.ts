@@ -10,11 +10,11 @@ import { NavbarMainComponent } from '@shared/components/navbar-main/navbar-main.
 import { NavbarToolsComponent } from '@shared/components/navbar-tools/navbar-tools.component';
 import { SidebarNavComponent } from '@shared/components/sidebar-nav/sidebar-nav.component';
 
+import { NavService } from '@app/core/services/nav.service';
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
-import { NavigationStateService } from '@core/services/navigation-state.service';
+import { ToolsService } from '@core/services/tools.service';
 import { ConfigStore } from '@core/store/config.store';
 import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
-import { ToolsService } from '@shared/services/tools.service';
 
 @Component({
   selector: 'atk-landing',
@@ -36,7 +36,7 @@ export class LandingComponent implements OnInit, AfterViewInit {
   // =========================================
 
   private readonly configStore = inject(ConfigStore);
-  private readonly navigationService = inject(NavigationStateService);
+  private readonly navigationService = inject(NavService);
   private readonly breadcrumbService = inject(BreadcrumbService);
   private readonly apiStateService = inject(ApiManagementStateService);
   private readonly tools = inject(ToolsService);

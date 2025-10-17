@@ -64,16 +64,15 @@ atk-api,
 atk-api-bash,
 atk-api-datatable atk-api-sidebar-bash-config,
 
-atk-icon,
-atk-bash,
 atk-landing,
+atk-shuttle,
+
+atk-icon,
+
+atk-bash,
 atk-datatable,
-atk-home-content,
-atk-bash-debug-template,
-atk-dev-integration,
 
 atk-binance-debug,
-atk-binance-api-management,
 atk-binance-account-info,
 atk-binance-account-snapshot,
 atk-binance-market-data,
@@ -88,8 +87,7 @@ atk-navbar-brand,
 atk-navbar-tools,
 atk-sidebar-nav,
 atk-sidebar-config,
-atk-sidebar-bash-config,
-atk-content-main {
+atk-sidebar-bash-config {
   display: contents;
 }
 

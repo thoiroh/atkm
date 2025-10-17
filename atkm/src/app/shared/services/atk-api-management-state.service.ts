@@ -2,9 +2,9 @@
 // EXTENDED - Angular 20 service for API management with separated data streams
 
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { ToolsService } from '@core/services/tools.service';
 import { BashData, IBashDataTransformResult, IBashEvent, IBashSidebarField } from '@shared/components/atk-bash/atk-bash.interfaces';
 import { Subject } from 'rxjs';
-import { ToolsService } from './tools.service';
 
 export interface ApiManagementState {
   configId: string | null;
@@ -126,6 +126,11 @@ export class ApiManagementStateService {
   // =========================================
 
   constructor() {
+    this.tools.consoleGroup({ // TAG ApiManagementStateService -> constructor()================ CONSOLE LOG IN PROGRESS
+      title: `ApiManagementStateService -> constructor() ${new Date()}`, tag: 'recycle', palette: 'su',
+      data: { date: new Date() }
+    });
+
     // Effect to emit events when data changes
     effect(() => {
       const sidebarData = this._sidebarData();
@@ -155,7 +160,7 @@ export class ApiManagementStateService {
     this._configId.set(configId);
     this.emitEvent('endpoint-changed', { configId });
     this.tools.consoleGroup({ // TAG ApiManagementStateService -> setConfigId()================ CONSOLE LOG IN PROGRESS
-      title: `ApiManagementStateService ∝ 159 -> setConfigId() -> configId: `, tag: 'recycle', palette: 'su',
+      title: `ApiManagementStateService -> setConfigId() -> configId: `, tag: 'recycle', palette: 'su',
       data: { configId: configId, state: this.state() }
     });
   }
@@ -164,6 +169,10 @@ export class ApiManagementStateService {
    * Set current endpoint
    */
   setCurrentEndpoint(endpoint: string): void {
+    this.tools.consoleGroup({ // TAG ApiManagementStateService -> setCurrentEndpoint()================ CONSOLE LOG IN PROGRESS
+      title: `ApiManagementStateService -> setCurrentEndpoint()`, tag: 'recycle', palette: 'su',
+      data: { endpoint: endpoint }
+    });
     this._currentEndpoint.set(endpoint);
     this.emitEvent('endpoint-changed', { endpoint });
   }
