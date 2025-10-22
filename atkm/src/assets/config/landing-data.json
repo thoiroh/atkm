@@ -39,7 +39,7 @@
             {
               "icon": "dot",
               "label": "[dev] HomeComponent",
-              "link": "/landing/home",
+              "link": "/landing/shuttle",
               "action": false,
               "isExpanded": false,
               "subMenu": []

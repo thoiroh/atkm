@@ -16,7 +16,7 @@ import { AtkApiSidebarConfigService } from '@shared/components/atk-api/atk-api-s
   templateUrl: './atk-api-sidebar-config.component.html',
   styleUrls: ['./atk-api-sidebar-config.component.css']
 })
-export class SidebarBashConfigComponent {
+export class AtkApiSidebarConfigComponent {
 
   // ======================================================
   // DEPENDENCIES

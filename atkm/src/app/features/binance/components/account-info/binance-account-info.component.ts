@@ -4,7 +4,7 @@ import { ToolsService } from '@core/services/tools.service';
 import { BinanceService } from '@features/binance/services/binance.service';
 import { Subject, takeUntil } from 'rxjs';
 
-import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
+import { AtkApiBashComponent } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.component';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
 import { NavService } from '@app/core/services/nav.service';
@@ -12,12 +12,12 @@ import { ILandingConfig } from '@core/models/config.models';
 import { BreadcrumbService } from '@core/services/breadcrumb.service';
 import { ConfigService } from '@core/services/config.service';
 import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
-import { IBashConfig, IBashTerminalState } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { IBashConfig, IBashTerminalState } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 
 @Component({
   selector: 'atk-binance-account-info',
   standalone: true,
-  imports: [CommonModule, AtkIconComponent, AtkBashComponent],
+  imports: [CommonModule, AtkIconComponent, AtkApiBashComponent],
   templateUrl: './binance-account-info.component.html',
   styleUrls: ['./../binance.component.css']
 })

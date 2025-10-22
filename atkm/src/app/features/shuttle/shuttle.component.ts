@@ -9,12 +9,12 @@ import { ToolsService } from '@core/services/tools.service';
 import { ConfigStore } from '@core/store/config.store';
 import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
 import { BinanceService } from '@features/binance/services/binance.service';
-import { AtkBashComponent } from '@shared/components/atk-bash/atk-bash.component';
-import { IBashConfig } from '@shared/components/atk-bash/atk-bash.interfaces';
-import { AtkBashService } from '@shared/components/atk-bash/atk-bash.service';
+import { AtkApiBashComponent } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.component';
+import { IBashConfig } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
+import { AtkApiBashService } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.service';
+import { AtkApiSidebarConfigComponent } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.component';
+import { AtkApiSidebarConfigService } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { SidebarBashConfigComponent } from '@shared/components/sidebar-bash-config/sidebar-bash-config.component';
-import { SidebarBashConfigService } from '@shared/components/sidebar-bash-config/sidebar-bash-config.service';
 import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 
 @Component({
@@ -23,9 +23,9 @@ import { SidebarConfigComponent } from '@shared/components/sidebar-config/sideba
   imports: [
     CommonModule,
     AtkIconComponent,
-    AtkBashComponent,
+    AtkApiBashComponent,
     SidebarConfigComponent,
-    SidebarBashConfigComponent
+    AtkApiSidebarConfigComponent
   ],
   templateUrl: './shuttle.component.html',
   styles: []
@@ -37,9 +37,9 @@ export class AtkShuttleComponent implements OnInit {
   // =========================================
 
   private readonly configStore = inject(ConfigStore);
-  private readonly bashService = inject(AtkBashService); // NEW
+  private readonly bashService = inject(AtkApiBashService); // NEW
   private readonly binanceService = inject(BinanceService);
-  private readonly sidebarConfigService = inject(SidebarBashConfigService);
+  private readonly sidebarConfigService = inject(AtkApiSidebarConfigService);
   private readonly tools = inject(ToolsService);
 
   config = this.configStore.config;
@@ -55,6 +55,7 @@ export class AtkShuttleComponent implements OnInit {
   account = signal<BinanceAccount | null>(null);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
+  bashConfigId = signal<string>('atkpi-debug-v2');
 
   private destroy$ = new Subject<void>();
 

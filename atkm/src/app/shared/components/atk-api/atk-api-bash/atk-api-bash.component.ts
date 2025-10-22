@@ -3,7 +3,7 @@ import { Component, computed, DestroyRef, effect, inject, input, NgZone, OnInit,
 import { FormsModule } from '@angular/forms';
 import { finalize, firstValueFrom } from 'rxjs';
 
-import { BashData, IBashConfig, IBashLogEntry, IBashTerminalState } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { BashData, IBashConfig, IBashLogEntry, IBashTerminalState } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 
 import { ToolsService } from '@core/services/tools.service';
 import { BinanceErrorHandlerService } from '@features/binance/services/binance-error-handler.service';
@@ -291,7 +291,7 @@ export class AtkApiBashComponent implements OnInit {
     let cfg = this.bashService.getConfig(id);
 
     // If config absent and id matches, create it via factory
-    if (!cfg && id === 'atkpi-debug-v1') {
+    if (!cfg && id === 'atkpi-debug-v2') {
       cfg = this.bashConfigFactory.createBinanceDebugConfig();
       this.bashService.registerConfig(cfg);
     }

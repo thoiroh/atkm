@@ -58,8 +58,9 @@ try {
   // Basic Binance endpoints
   $router->get('/api/v3/ticker/price', [\Atkb\Api\Controllers\BinanceController::class, 'getTickerPrice']);
   $router->get('/api/v3/account', [\Atkb\Api\Controllers\BinanceController::class, 'getAccount']);
-// User Assets endpoint (SAPI)
+  // User Assets endpoint (SAPI)
   $router->get('/sapi/v3/asset/getUserAsset', [\Atkb\Api\Controllers\BinanceController::class, 'getUserAssets']);
+  
   // ================================================================================================
   // NEW TRANSACTION HISTORY ROUTES
   // ================================================================================================

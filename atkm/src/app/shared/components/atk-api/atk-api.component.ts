@@ -7,7 +7,7 @@ import { ConfigStore } from '@core/store/config.store';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
 import { AtkApiBashComponent } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.component';
-import { SidebarBashConfigComponent } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.component';
+import { AtkApiSidebarConfigComponent } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.component';
 
 import { IBashConfig } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 import { AtkApiBashService } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.service';
@@ -23,7 +23,7 @@ import { BinanceService } from '@features/binance/services/binance.service';
     CommonModule,
     AtkIconComponent,
     AtkApiBashComponent,
-    SidebarBashConfigComponent
+    AtkApiSidebarConfigComponent
   ],
   templateUrl: './atk-api.component.html',
   styles: []
@@ -43,7 +43,7 @@ export class AtkApiComponent implements OnInit {
   config = this.configStore.config;
   sidebar = this.configStore.sidebar;
   configPanelCollapsed = this.configStore.configPanelCollapsed;
-  bashConfig = computed(() => this.bashService.getConfig('atkpi-debug-v1'));
+  bashConfig = computed(() => this.bashService.getConfig('atkpi-debug-v2'));
 
 
   // =========================================
@@ -53,7 +53,7 @@ export class AtkApiComponent implements OnInit {
   account = signal<BinanceAccount | null>(null);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
-  bashConfigId = signal<string>('atkpi-debug-v1');
+  bashConfigId = signal<string>('atkpi-debug-v2');
 
   private destroy$ = new Subject<void>();
 

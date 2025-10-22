@@ -3,7 +3,7 @@
 
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { ToolsService } from '@core/services/tools.service';
-import { BashData, IBashDataTransformResult, IBashEvent, IBashSidebarField } from '@shared/components/atk-bash/atk-bash.interfaces';
+import { BashData, IBashDataTransformResult, IBashEvent, IBashSidebarField } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 import { Subject } from 'rxjs';
 
 export interface ApiManagementState {

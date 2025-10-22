@@ -3,7 +3,7 @@
 
 import { CommonModule } from '@angular/common';
 import { Component, input, output, signal } from '@angular/core';
-import type { BashData, IBashColumn } from '@shared/components/atk-bash/atk-bash.interfaces';
+import type { BashData, IBashColumn } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 
 
 @Component({

@@ -16,13 +16,14 @@ export const routes: Routes = [
         title: 'atk-shuttle | entry point to your data'
       },
       {
-        path: 'home',
-        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent)
+        path: 'shuttle',
+        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent),
+        title: 'atk-shuttle | entry point to your data'
       },
       {
         path: 'atkpi',
         loadComponent: () => import('./shared/components/atk-api/atk-api.component').then(m => m.AtkApiComponent),
-        title: 'Binance Account | Debug'
+        title: 'atk-api | Debug'
       },
 
       // ===============================================================================================
