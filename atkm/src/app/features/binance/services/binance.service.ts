@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ToolsService } from '@core/services/tools.service';
+import { BinanceAccount, BinanceApiResponse, BinanceUserAssetsResponse } from '@features/binance/models/binance.model';
 import { from, Observable, of } from 'rxjs';
 import { bufferCount, catchError, concatMap, delay, map, mergeMap, reduce, tap } from 'rxjs/operators';
-import { BinanceAccount, BinanceApiResponse } from '@features/binance/models/binance.model';
 import { BinanceErrorHandlerService } from './binance-error-handler.service';
 
 @Injectable({
@@ -19,8 +19,8 @@ export class BinanceService {
    * Get Binance account information
    * Returns account data with validated balances array
    */
-  getAccount01(): Observable<BinanceAccount> {
-    const url = `${this.apiBaseUrl}/api/v3/account`;
+  getAccount00(): Observable<BinanceAccount> {
+    const url = `${this.apiBaseUrl}/sapi/v3/asset/getUserAsset`;
     return this.http.get<BinanceApiResponse<BinanceAccount>>(url).pipe(
       map(response => {
         // Validate response success using PHP structure
@@ -227,5 +227,72 @@ export class BinanceService {
         }),
         catchError(error => this.errorHandler.handleHttpError(error))
       );
+  }
+
+  /**
+     * Get user assets with detailed information
+     * Uses SAPI endpoint /sapi/v3/asset/getUserAsset
+     *
+     * @param asset Optional - Filter by specific asset (e.g., "BTC")
+     * @param needBtcValuation Optional - Include BTC valuation (default: false)
+     * @returns Observable with user assets data
+     */
+  getUserAssets(asset?: string, needBtcValuation: boolean = false): Observable<BinanceUserAssetsResponse> {
+    let url = `${this.apiBaseUrl}/sapi/v3/asset/getUserAsset`;
+
+    const params: string[] = [];
+    if (asset) {
+      params.push(`asset=${asset.toUpperCase()}`);
+    }
+    if (needBtcValuation) {
+      params.push(`needBtcValuation=true`);
+    }
+
+    if (params.length > 0) {
+      url += `?${params.join('&')}`;
+    }
+
+    return this.http.get<BinanceApiResponse<BinanceUserAssetsResponse>>(url).pipe(
+      map(response => {
+        // TAG: binance.service.getUserAssets ================ CONSOLE LOG IN PROGRESS
+        this.tools.consoleGroup({
+          title: 'BinanceService.getUserAssets: Raw API response received',
+          tag: 'check',
+          data: response,
+          palette: 'su',
+          collapsed: true,
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontSizePx: 13
+        });
+
+        // Validate response success
+        if (!response.success) {
+          const errorMessage = response.error?.message || response.message || 'Failed to get user assets';
+          throw this.errorHandler.handleDataValidationError('getUserAssets - API Error', response);
+        }
+
+        // Validate data presence
+        const assetsData = response.data;
+        if (!assetsData) {
+          throw this.errorHandler.handleDataValidationError('getUserAssets - No Data', response);
+        }
+
+        // TAG: binance.service.getUserAssets.success ================ CONSOLE LOG IN PROGRESS
+        this.tools.consoleGroup({
+          title: 'BinanceService.getUserAssets: User assets processed successfully',
+          tag: 'recycle',
+          palette: 'su',
+          collapsed: false,
+          data: {
+            assetsCount: assetsData.assets?.length || 0,
+            filters: assetsData.filters,
+            assets: assetsData.assets
+          }
+        });
+
+        return assetsData;
+      }),
+      catchError(error => this.errorHandler.handleHttpError(error))
+    );
   }
 }

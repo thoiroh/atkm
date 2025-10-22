@@ -380,18 +380,33 @@ class BinanceService
   /**
    * Get all user assets (SAPI endpoint)
    * GET /sapi/v3/asset/getUserAsset
+   * 
+   * @param string|null $asset Optional - Filter by specific asset (e.g., "BTC")
+   * @param bool $needBtcValuation Optional - Include BTC valuation (default: false)
+   * @return array Array of user assets with free, locked, freeze, withdrawing amounts
    */
-  public function getUserAssets(): array
+  public function getUserAssets(?string $asset = null, bool $needBtcValuation = false): array
   {
     $endpoint = '/sapi/v3/asset/getUserAsset';
     $params = [
       'timestamp' => $this->getTimestamp()
     ];
 
+    // Add optional asset filter
+    if ($asset) {
+      $params['asset'] = strtoupper($asset);
+    }
+
+    // Add optional BTC valuation
+    if ($needBtcValuation) {
+      $params['needBtcValuation'] = 'true';
+    }
+
     try {
       $cacheKey = $this->getCacheKey($endpoint, $params);
       $cachedData = $this->getCache($cacheKey);
 
+      // Cache for 60 seconds
       if ($cachedData !== null && (time() - ($cachedData['_cached_at'] ?? 0)) < 60) {
         return $cachedData;
       }

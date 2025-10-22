@@ -214,10 +214,10 @@ export class AtkApiBashComponent implements OnInit {
       const last = ev.at(-1);
       if (!last || this._isProcessingEvent) return;
 
-      // this.tools.consoleGroup({ // OFF AtkApiBashComponent -> effect(sidebarConfigService.events) ================= CONSOLE LOG IN PROGRESS
-      //   title: `AtkApiBashComponent -> effect(sidebarConfigService.events) -> configId()`, tag: 'check', palette: 'ac', collapsed: false,
-      //   data: { latestEv: last, curcfg: this.currentConfig() }
-      // });
+      this.tools.consoleGroup({ // TAG AtkApiBashComponent -> effect(sidebarConfigService.events) ================= CONSOLE LOG IN PROGRESS
+        title: `AtkApiBashComponent -> effect(sidebarConfigService.events) -> configId()`, tag: 'check', palette: 'ac', collapsed: false,
+        data: { latestEv: last, curcfg: this.currentConfig() }
+      });
 
       this._isProcessingEvent = true;
       untracked(() => {
@@ -429,12 +429,16 @@ export class AtkApiBashComponent implements OnInit {
   }
 
   /**
-   * Get endpoint name from current sidebar state
-   */
-  public getCurrentEndpointName(endpointId: string): string {
+     * Get current endpoint name for display
+     */
+  getCurrentEndpointName(endpointId: string | undefined): string {
+    if (!endpointId) return 'No endpoint selected';
+
     const config = this.currentConfig();
-    const endpoint = config?.endpoints.find(ep => ep.id === endpointId);
-    return endpoint?.name || '';
+    if (!config) return endpointId;
+
+    const endpoint = config.endpoints.find(ep => ep.id === endpointId);
+    return endpoint?.name || endpointId;
   }
 
   /**
@@ -499,6 +503,8 @@ export class AtkApiBashComponent implements OnInit {
         return { symbol: 'BTCUSDT', limit: 100 };
       case 'ticker':
         return { symbol: 'BTCUSDT' };
+      case 'userAssets':
+        return {}; // No required params, all are optional
       case 'account':
       default:
         return {};
@@ -512,7 +518,7 @@ export class AtkApiBashComponent implements OnInit {
   /**
    * Load data from current endpoint using existing services
    *
-   * @date 08/10/2025
+   * @date 22/10/2025
    * @param [params={}]
    * @return {*}
    */
@@ -527,7 +533,10 @@ export class AtkApiBashComponent implements OnInit {
 
     this.addLog(`🔄 Loading data from ${endpointId}...`, 'info');
     this.sidebarConfigService.updateLoadingState(true);
-
+    this.tools.consoleGroup({ // TAG AtkBashComponent -> onRowSelected()
+      title: `AtkBashComponent -> onRowSelected()`, tag: 'check', palette: 'ac', collapsed: false,
+      data: endpointId
+    });
     const startTime = performance.now();
 
     try {
@@ -546,6 +555,9 @@ export class AtkApiBashComponent implements OnInit {
           break;
         case 'ticker':
           data = await this.loadTickerData(params);
+          break;
+        case 'userAssets':
+          data = await this.loadUserAssetsData(params);
           break;
         default:
           throw new Error(`Unknown endpoint: ${endpointId}`);
@@ -587,13 +599,12 @@ export class AtkApiBashComponent implements OnInit {
     }
   }
 
-
   /**
-   * Test connection to current endpoint
-   *
-   * @date 08/10/2025
-   * @return {*}
-   */
+     * Test connection to current endpoint
+     *
+     * @date 22/10/2025
+     * @return {*}
+     */
   async testConnection(): Promise<void> {
     const sidebarState = this.sidebarConfigService.state();
     const endpointId = sidebarState.currentEndpoint;
@@ -604,12 +615,10 @@ export class AtkApiBashComponent implements OnInit {
     }
 
     this.addLog(`🌐 Testing connection to ${endpointId}...`, 'info');
-    this.sidebarConfigService.updateConnectionStatus('connecting');
+
+    const startTime = performance.now();
 
     try {
-      const startTime = performance.now();
-
-      // Test the actual selected endpoint
       switch (endpointId) {
         case 'account':
           await firstValueFrom(this.binanceService.getAccount());
@@ -625,6 +634,11 @@ export class AtkApiBashComponent implements OnInit {
         case 'ticker':
           const tickerSymbol = sidebarState.parameters.symbol || 'BTCUSDT';
           await firstValueFrom(this.binanceService.getTickerPrice(tickerSymbol));
+          break;
+        case 'userAssets':
+          const asset = sidebarState.parameters.asset;
+          const needBtcValuation = sidebarState.parameters.needBtcValuation === 'true';
+          await firstValueFrom(this.binanceService.getUserAssets(asset, needBtcValuation));
           break;
         default:
           throw new Error(`Unknown endpoint: ${endpointId}`);
@@ -840,6 +854,121 @@ export class AtkApiBashComponent implements OnInit {
       priceChange: Math.random() * 10 - 5,
       priceChangePercent: Math.random() * 20 - 10
     }));
+  }
+
+  /**
+   * Load user assets data from SAPI endpoint
+   *
+   * @date 22/10/2025
+   * @private
+   * @param params
+   * @return {*}
+   */
+  private async loadUserAssetsData(params: Record<string, any>): Promise<BashData[]> {
+    const asset = params.asset; // Optional filter by specific asset
+    const needBtcValuation = params.needBtcValuation === 'true' || params.needBtcValuation === true;
+
+    this.tools.consoleGroup({ // TAG AtkApiBashComponent -> loadUserAssetsData() START
+      title: `AtkApiBashComponent -> loadUserAssetsData() START`,
+      tag: 'arrow-right', palette: 'in', collapsed: true,
+      data: { asset, needBtcValuation, params }
+    });
+
+    const response = await firstValueFrom(
+      this.binanceService.getUserAssets(asset, needBtcValuation)
+        .pipe(finalize(() => this.sidebarConfigService.updateLoadingState(false)))
+    );
+
+    this.tools.consoleGroup({ // TAG AtkApiBashComponent -> loadUserAssetsData() RESPONSE
+      title: `AtkApiBashComponent -> loadUserAssetsData() RESPONSE`,
+      tag: 'check', palette: 'su', collapsed: true,
+      data: response
+    });
+
+    if (!response?.assets || !Array.isArray(response.assets)) {
+      this.tools.consoleGroup({ // TAG AtkApiBashComponent -> loadUserAssetsData() ERROR
+        title: `AtkApiBashComponent -> loadUserAssetsData() ERROR - Invalid response`,
+        tag: 'cross', palette: 'er', collapsed: false,
+        data: { response, expectedStructure: 'response.assets should be an array' }
+      });
+      return [];
+    }
+
+    // ====================================
+    // EXTRACT SIDEBAR DATA
+    // ====================================
+
+    const assetsArray = response.assets;
+    const filteredAssets = assetsArray.filter((asset: any) =>
+      parseFloat(asset.free || '0') > 0 ||
+      parseFloat(asset.locked || '0') > 0 ||
+      parseFloat(asset.freeze || '0') > 0 ||
+      parseFloat(asset.withdrawing || '0') > 0
+    );
+
+    // Calculate summary statistics
+    let totalFree = 0;
+    let totalLocked = 0;
+    let totalFrozen = 0;
+    let btcValuationEnabled = false;
+
+    filteredAssets.forEach((asset: any) => {
+      totalFree += parseFloat(asset.free || '0');
+      totalLocked += parseFloat(asset.locked || '0');
+      totalFrozen += parseFloat(asset.freeze || '0');
+      if (asset.btcValuation) {
+        btcValuationEnabled = true;
+      }
+    });
+
+    const sidebarData = {
+      totalAssets: assetsArray.length,
+      assetsWithBalance: filteredAssets.length,
+      totalFree: totalFree,
+      totalLocked: totalLocked,
+      totalFrozen: totalFrozen,
+      btcValuationEnabled: btcValuationEnabled
+    };
+
+    // Update sidebar config service with extracted data
+    this.tools.consoleGroup({ // TAG AtkApiBashComponent -> loadUserAssetsData() SIDEBAR DATA
+      title: `AtkApiBashComponent -> loadUserAssetsData() -> sidebarConfigService.updateSidebarData()`,
+      tag: 'check', palette: 'in', collapsed: true,
+      data: sidebarData
+    });
+    this.sidebarConfigService.updateSidebarData(sidebarData);
+
+    // ====================================
+    // PREPARE TABLE DATA
+    // ====================================
+
+    const tableData = filteredAssets.map((asset: any) => {
+      const free = parseFloat(asset.free || '0');
+      const locked = parseFloat(asset.locked || '0');
+      const freeze = parseFloat(asset.freeze || '0');
+      const withdrawing = parseFloat(asset.withdrawing || '0');
+      const totalBalance = free + locked + freeze + withdrawing;
+
+      return {
+        id: asset.asset,
+        asset: asset.asset,
+        free: asset.free,
+        locked: asset.locked,
+        freeze: asset.freeze,
+        withdrawing: asset.withdrawing,
+        ipoable: asset.ipoable || '0',
+        btcValuation: asset.btcValuation || null,
+        totalBalance: totalBalance
+      };
+    });
+
+    this.tools.consoleGroup({ // TAG AtkApiBashComponent -> loadUserAssetsData() TABLE DATA
+      title: `AtkApiBashComponent -> loadUserAssetsData() TABLE DATA`,
+      tag: 'check', palette: 'su', collapsed: true,
+      data: { count: tableData.length, sample: tableData.slice(0, 3) }
+    });
+
+    return tableData;
   }
 
   /**

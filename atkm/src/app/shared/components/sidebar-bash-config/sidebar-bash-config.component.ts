@@ -5,6 +5,7 @@ import { IBashSidebarField } from '@shared/components/atk-bash/atk-bash.interfac
 import { AtkBashService } from '@shared/components/atk-bash/atk-bash.service';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 import { SidebarBashConfigService } from '@shared/components/sidebar-bash-config/sidebar-bash-config.service';
+import { ToolsService } from '../../../core/services/tools.service';
 
 interface EndpointConfig {
   id: string;
@@ -27,6 +28,7 @@ export class SidebarBashConfigComponent {
 
   private readonly bashService = inject(AtkBashService);
   private readonly sidebarService = inject(SidebarBashConfigService);
+  private readonly tools = inject(ToolsService);
 
   // ======================================================
   // INPUTS / OUTPUTS
@@ -49,6 +51,7 @@ export class SidebarBashConfigComponent {
 
   endpoints: EndpointConfig[] = [
     { id: 'account', name: 'Account', icon: 'users' },
+    { id: 'userAssets', name: 'User Assets', icon: 'users' },
     { id: 'trades', name: 'Trades', icon: 'insights' },
     { id: 'orders', name: 'Orders', icon: 'upload' },
     { id: 'ticker', name: 'Ticker', icon: 'star' }
@@ -154,6 +157,10 @@ export class SidebarBashConfigComponent {
 
   selectEndpoint(endpointId: string): void {
     this.sidebarService.updateEndpoint(endpointId);
+    this.tools.consoleGroup({ // TAG SidebarBashConfigComponent -> selectEndpoint() ================= CONSOLE LOG IN PROGRESS
+      title: `SidebarBashConfigComponent -> selectEndpoint() `, tag: 'check', palette: 'ac', collapsed: false,
+      data: { endpointId: endpointId }
+    });
 
     // Set default parameters based on endpoint
     if (endpointId !== 'account') {

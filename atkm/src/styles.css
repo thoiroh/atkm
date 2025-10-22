@@ -323,6 +323,12 @@ atk-sidebar-bash-config {
   justify-content: center;
 }
 
+.navbar-btn.big {
+  width: 48px;
+  height: 48px;
+  padding: 4px;
+}
+
 .user-btn:hover,
 .navbar-btn:hover {
   background-color: #424a53;

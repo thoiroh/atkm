@@ -246,6 +246,56 @@ class BinanceController
   }
 
   /**
+   * Get user assets with optional filters
+   * GET /sapi/v3/asset/getUserAsset
+   * 
+   * Query parameters:
+   * - asset (optional): Filter by specific asset (e.g., "BTC")
+   * - needBtcValuation (optional): Include BTC valuation ("true" or "false")
+   */
+  public function getUserAssets(Request $request): Response
+  {
+    try {
+      if (!isset($this->binanceService)) {
+        return $this->handleServiceError('Binance service not available');
+      }
+
+      // Get optional parameters
+      $asset = $this->getRequestParam($request, 'asset');
+      $needBtcValuation = $this->getRequestParam($request, 'needBtcValuation') === 'true';
+
+      // Get user assets from Binance
+      $userAssets = $this->binanceService->getUserAssets($asset, $needBtcValuation);
+
+      // Filter out assets with zero balance if no specific asset requested
+      if (!$asset && is_array($userAssets)) {
+        $userAssets = array_filter($userAssets, function ($assetData) {
+          return (float)($assetData['free'] ?? 0) > 0 
+              || (float)($assetData['locked'] ?? 0) > 0
+              || (float)($assetData['freeze'] ?? 0) > 0
+              || (float)($assetData['withdrawing'] ?? 0) > 0;
+        });
+        
+        // Re-index array after filtering
+        $userAssets = array_values($userAssets);
+      }
+
+      $responseData = [
+        'assets' => $userAssets,
+        'count' => count($userAssets),
+        'filters' => [
+          'asset' => $asset,
+          'needBtcValuation' => $needBtcValuation
+        ]
+      ];
+
+      return Response::success($responseData, 'User assets retrieved successfully');
+    } catch (Exception $e) {
+      return $this->handleBinanceError($e, 'getUserAssets');
+    }
+  }
+  
+  /**
    * Get transaction summary for a symbol
    * GET /api/v1/transaction/summary
    */

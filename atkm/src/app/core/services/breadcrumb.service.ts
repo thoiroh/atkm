@@ -36,12 +36,9 @@ export class BreadcrumbService {
   /**
    * Build breadcrumbs from current route
    */
-  /**
- * Build breadcrumbs from current route
- */
   private buildBreadcrumbs(): void {
     const breadcrumbs: BreadcrumbItem[] = [];
-    let route: ActivatedRoute | null = this.activatedRoute.root; // ✅ peut devenir null via firstChild
+    let route: ActivatedRoute | null = this.activatedRoute.root;
     let url = '';
 
     while (route) {
@@ -57,13 +54,13 @@ export class BreadcrumbService {
       if (hasLabel) {
         breadcrumbs.push({
           label: data!['breadcrumb'],
-          path: url || '/',         // évite une path vide
+          path: url || '/',
           isActive: false,
           isClickable: true
         });
       }
 
-      route = route.firstChild ?? null; // ✅ peut être null
+      route = route.firstChild ?? null;
     }
 
     // Marque le dernier item comme actif/non cliquable
@@ -85,7 +82,6 @@ export class BreadcrumbService {
 
     this.breadcrumbs.set(breadcrumbs);
   }
-
 
   /**
    * Navigate to a breadcrumb item

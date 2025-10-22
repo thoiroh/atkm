@@ -219,6 +219,32 @@ export interface BinanceAccountInfo extends BinanceAccount {
 }
 
 /**
+ * User Asset Information (SAPI endpoint)
+ * Represents detailed asset information including locked, frozen, and withdrawing amounts
+ */
+export interface BinanceUserAsset {
+  asset: string;              // Asset symbol (e.g., "BTC", "ETH")
+  free: string;               // Available balance
+  locked: string;             // Locked balance (in orders)
+  freeze: string;             // Frozen balance
+  withdrawing: string;        // Amount currently being withdrawn
+  ipoable: string;            // Amount available for IPO
+  btcValuation?: string;      // BTC valuation (only if needBtcValuation=true)
+}
+
+/**
+ * User Assets Response (from getUserAssets endpoint)
+ */
+export interface BinanceUserAssetsResponse {
+  assets: BinanceUserAsset[];
+  count: number;
+  filters: {
+    asset: string | null;
+    needBtcValuation: boolean;
+  };
+}
+
+/**
  * Type Guards for Response Validation
  */
 

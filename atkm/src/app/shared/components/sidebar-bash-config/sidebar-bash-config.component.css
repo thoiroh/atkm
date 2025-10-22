@@ -795,7 +795,7 @@
   width: calc(50% - 4px);
   min-width: 180px;
   flex: 1 1 auto;
-  height: 3em;
+  height: 2em;
   padding: 8px;
   background: var(--color-canvas-default);
   border-radius: 4px;
@@ -806,7 +806,6 @@
 /* NEW - Si c'est le dernier élément ET qu'il est impair, prendre toute la largeur */
 .detail-field-row:last-child:nth-child(odd) {
   width: calc(50% - 4px);
-  /* Garde la même largeur que les autres */
 }
 
 .detail-field-row:hover {
