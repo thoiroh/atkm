@@ -15,7 +15,6 @@ import { AtkApiBashService } from '@shared/components/atk-api/atk-api-bash/atk-a
 import { AtkApiSidebarConfigComponent } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.component';
 import { AtkApiSidebarConfigService } from '@shared/components/atk-api/atk-api-sidebar-config/atk-api-sidebar-config.service';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
-import { SidebarConfigComponent } from '@shared/components/sidebar-config/sidebar-config.component';
 
 @Component({
   selector: 'atk-shuttle',
@@ -24,7 +23,6 @@ import { SidebarConfigComponent } from '@shared/components/sidebar-config/sideba
     CommonModule,
     AtkIconComponent,
     AtkApiBashComponent,
-    SidebarConfigComponent,
     AtkApiSidebarConfigComponent
   ],
   templateUrl: './shuttle.component.html',

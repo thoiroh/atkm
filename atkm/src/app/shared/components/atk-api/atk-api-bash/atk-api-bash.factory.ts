@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IBashConfig, IBashDataTransformResult, IBashEndpointConfig } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
+import { Formatters } from '@shared/components/atk-api/atk-api.formatters';
 
 @Injectable({
   providedIn: 'root'
@@ -88,7 +89,7 @@ export class AtkApiBashFactory {
           type: 'custom',
           group: 'balances',
           icon: 'circle',
-          formatter: (value: number) => this.formatBalance(value)
+          formatter: (value: number) => Formatters.balance(value)
         },
         {
           key: 'locked',
@@ -96,7 +97,7 @@ export class AtkApiBashFactory {
           type: 'custom',
           group: 'balances',
           icon: 'lock',
-          formatter: (value: number) => this.formatBalance(value)
+          formatter: (value: number) => Formatters.balance(value)
         },
         {
           key: 'total',
@@ -104,7 +105,7 @@ export class AtkApiBashFactory {
           type: 'custom',
           group: 'balances',
           icon: 'trending-up',
-          formatter: (value: number) => this.formatBalance(value)
+          formatter: (value: number) => Formatters.balance(value)
         },
         {
           key: 'usdValue',
@@ -113,7 +114,7 @@ export class AtkApiBashFactory {
           group: 'valuation',
           icon: 'dollar-sign',
           visible: true,
-          formatter: (value: number) => this.formatPrice(value)
+          formatter: (value: number) => Formatters.price(value)
         }
       ],
       // SIDEBAR FIELDS CONFIGURATION
@@ -132,7 +133,7 @@ export class AtkApiBashFactory {
           type: 'date',
           group: 'info',
           icon: 'clock',
-          formatter: (value: number) => new Date(value).toLocaleString('fr-FR')
+          formatter: (value: number) => Formatters.date(value, 'fr-FR')
         },
         {
           key: 'canTrade',
@@ -202,7 +203,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatBalance(value)
+          formatter: (value: number) => Formatters.balance(value)
         },
         {
           key: 'locked',
@@ -211,7 +212,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: false,
-          formatter: (value: number) => this.formatBalance(value),
+          formatter: (value: number) => Formatters.balance(value),
           cssClass: 'locked-balance'
         },
         {
@@ -221,7 +222,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatBalance(value),
+          formatter: (value: number) => Formatters.balance(value),
           cssClass: 'total-balance font-weight-bold'
         },
         {
@@ -234,6 +235,7 @@ export class AtkApiBashFactory {
           visible: true // Hidden for now
         }
       ],
+
       // DATA TRANSFORMER - EXTENDED
       dataTransformer: (apiResponse: any): IBashDataTransformResult => {
         if (!apiResponse?.data) {
@@ -276,10 +278,6 @@ export class AtkApiBashFactory {
     };
   }
 
-  /**
-   * User Assets Endpoint Configuration
-   * GET /sapi/v3/asset/getUserAsset
-   */
   private createUserAssetsEndpoint(): IBashEndpointConfig {
     return {
       id: 'userAssets',
@@ -315,7 +313,7 @@ export class AtkApiBashFactory {
           type: 'custom',
           group: 'balances',
           icon: 'circle',
-          formatter: (value: string) => this.formatBalance(parseFloat(value))
+          formatter: (value: string) => Formatters.balance(parseFloat(value))
         },
         {
           key: 'locked',
@@ -323,7 +321,7 @@ export class AtkApiBashFactory {
           type: 'custom',
           group: 'balances',
           icon: 'lock',
-          formatter: (value: string) => this.formatBalance(parseFloat(value))
+          formatter: (value: string) => Formatters.balance(parseFloat(value))
         },
         {
           key: 'freeze',
@@ -331,7 +329,7 @@ export class AtkApiBashFactory {
           type: 'custom',
           group: 'balances',
           icon: 'snowflake',
-          formatter: (value: string) => this.formatBalance(parseFloat(value))
+          formatter: (value: string) => Formatters.balance(parseFloat(value))
         },
         {
           key: 'withdrawing',
@@ -339,7 +337,7 @@ export class AtkApiBashFactory {
           type: 'custom',
           group: 'balances',
           icon: 'arrow-up',
-          formatter: (value: string) => this.formatBalance(parseFloat(value))
+          formatter: (value: string) => Formatters.balance(parseFloat(value))
         },
         {
           key: 'ipoable',
@@ -347,7 +345,7 @@ export class AtkApiBashFactory {
           type: 'custom',
           group: 'balances',
           icon: 'gift',
-          formatter: (value: string) => this.formatBalance(parseFloat(value))
+          formatter: (value: string) => Formatters.balance(parseFloat(value))
         },
         {
           key: 'btcValuation',
@@ -356,7 +354,7 @@ export class AtkApiBashFactory {
           group: 'valuation',
           icon: 'bitcoin',
           visible: true,
-          formatter: (value: string) => value ? this.formatBalance(parseFloat(value)) + ' BTC' : 'N/A'
+          formatter: (value: string) => value ? Formatters.balance(parseFloat(value)) + ' BTC' : 'N/A'
         },
         {
           key: 'totalBalance',
@@ -364,7 +362,7 @@ export class AtkApiBashFactory {
           type: 'custom',
           group: 'calculated',
           icon: 'trending-up',
-          formatter: (value: number) => this.formatBalance(value)
+          formatter: (value: number) => Formatters.balance(value)
         }
       ],
 
@@ -436,7 +434,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: string) => this.formatBalance(parseFloat(value))
+          formatter: (value: string) => Formatters.balance(parseFloat(value))
         },
         {
           key: 'locked',
@@ -445,7 +443,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: string) => this.formatBalance(parseFloat(value)),
+          formatter: (value: string) => Formatters.balance(parseFloat(value)),
           cssClass: 'locked-balance'
         },
         {
@@ -455,7 +453,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: string) => this.formatBalance(parseFloat(value)),
+          formatter: (value: string) => Formatters.balance(parseFloat(value)),
           cssClass: 'frozen-balance'
         },
         {
@@ -465,7 +463,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: string) => this.formatBalance(parseFloat(value))
+          formatter: (value: string) => Formatters.balance(parseFloat(value))
         },
         {
           key: 'totalBalance',
@@ -474,7 +472,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatBalance(value),
+          formatter: (value: number) => Formatters.balance(value),
           cssClass: 'total-balance font-weight-bold'
         },
         {
@@ -485,7 +483,7 @@ export class AtkApiBashFactory {
           type: 'custom',
           sortable: true,
           visible: false, // Hidden by default
-          formatter: (value: string) => value ? this.formatBalance(parseFloat(value)) : 'N/A'
+          formatter: (value: string) => value ? Formatters.balance(parseFloat(value)) : 'N/A'
         }
       ],
 
@@ -608,7 +606,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatQuantity(value)
+          formatter: (value: number) => Formatters.quantity(value)
         },
         {
           key: 'price',
@@ -617,7 +615,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatPrice(value)
+          formatter: (value: number) => Formatters.price(value)
         },
         {
           key: 'quoteQuantity',
@@ -626,7 +624,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatPrice(value)
+          formatter: (value: number) => Formatters.price(value)
         },
         {
           key: 'commission',
@@ -635,7 +633,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatFee(value)
+          formatter: (value: number) => Formatters.fee(value)
         }
       ],
 
@@ -710,7 +708,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatQuantity(value)
+          formatter: (value: number) => Formatters.quantity(value)
         },
         {
           key: 'price',
@@ -719,7 +717,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatPrice(value)
+          formatter: (value: number) => Formatters.price(value)
         },
         {
           key: 'status',
@@ -736,7 +734,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatQuantity(value)
+          formatter: (value: number) => Formatters.quantity(value)
         }
       ],
 
@@ -795,7 +793,7 @@ export class AtkApiBashFactory {
           align: 'right',
           type: 'custom',
           sortable: true,
-          formatter: (value: number) => this.formatPrice(value)
+          formatter: (value: number) => Formatters.price(value)
         },
         {
           key: 'priceChangePercent',
@@ -825,110 +823,6 @@ export class AtkApiBashFactory {
         return { sidebarData: {}, tableData };
       }
     };
-  }
-
-  private createNewEndpoint(): IBashEndpointConfig {
-    return {
-      id: 'new',
-      name: 'New end point',
-      url: 'http://localhost:8000/api/v3/ticker/price',
-      icon: 'star',
-      visible: true,
-      method: 'GET',
-      params: {
-        symbol: 'BTCUSDT'
-      },
-      cacheable: true,
-      cacheDuration: 10000,
-
-      // NO SIDEBAR DATA FOR TICKER
-      sidebarFields: [],
-
-      columns: [
-        {
-          key: 'symbol',
-          label: 'Symbol',
-          width: '40%',
-          align: 'left',
-          type: 'text',
-          sortable: true
-        },
-        {
-          key: 'price',
-          label: 'Price',
-          width: '30%',
-          align: 'right',
-          type: 'custom',
-          sortable: true,
-          formatter: (value: number) => this.formatPrice(value)
-        },
-        {
-          key: 'priceChangePercent',
-          label: '24h Change %',
-          width: '30%',
-          align: 'right',
-          type: 'percentage',
-          sortable: true,
-          cssClass: 'price-change-cell'
-        }
-      ],
-
-      dataTransformer: (apiResponse: any): IBashDataTransformResult => {
-        // Handle both single ticker and array of tickers
-        const data = apiResponse?.data;
-        const tickers = Array.isArray(data) ? data : [data];
-
-        const tableData = tickers.map((ticker: any, index: number) => ({
-          id: ticker.symbol || index,
-          symbol: ticker.symbol,
-          price: parseFloat(ticker.price || '0'),
-          // Add fake change data (would come from 24hr ticker in real implementation)
-          priceChange: Math.random() * 10 - 5,
-          priceChangePercent: Math.random() * 20 - 10
-        }));
-
-        return { sidebarData: {}, tableData };
-      }
-    };
-  }
-
-  // =========================================
-  // FORMATTERS - Existing logic maintained
-  // =========================================
-
-  private formatBalance(value: number): string {
-    if (value === 0 || !value) return '0';
-    if (value < 0.00001) return value.toExponential(2);
-    if (value < 1) return value.toFixed(8);
-
-    return value.toLocaleString('fr-FR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 8
-    });
-  }
-
-  private formatPrice(value: number): string {
-    if (!value) return '0';
-
-    if (value < 0.01) return value.toFixed(8);
-    if (value < 1) return value.toFixed(6);
-    if (value < 100) return value.toFixed(4);
-
-    return value.toFixed(2);
-  }
-
-  private formatQuantity(value: number): string {
-    if (!value) return '0';
-
-    return value.toLocaleString('fr-FR', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 8
-    });
-  }
-
-  private formatFee(value: number): string {
-    if (!value) return '0';
-    return value.toFixed(8);
   }
 
   // =========================================

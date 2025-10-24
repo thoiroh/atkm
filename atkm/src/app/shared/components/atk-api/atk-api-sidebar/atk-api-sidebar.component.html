@@ -1,0 +1,344 @@
+<!-- atk-api-sidebar.component.html -->
+<!-- ATK API Sidebar - Configuration and Control Panel -->
+
+<aside
+  class="bash-config-panel"
+  [class.collapsed]="isCollapsed()"
+  [class.expanded]="!isCollapsed()"
+  [class.pinned]="state().sidebarPinned">
+
+  <!-- ======================= -->
+  <!-- TOGGLE BUTTON -->
+  <!-- ======================= -->
+
+  <button
+    class="bash-config-toggle"
+    (click)="onToggle()"
+    [attr.aria-label]="isCollapsed() ? 'Open configuration panel' : 'Close configuration panel'">
+    @if (!isCollapsed()) {
+      <atk-icon class="toggle-arrow right" name="triangle-right" [size]="16" color="#656d76" />
+    } @else {
+      <atk-icon class="toggle-arrow left" name="triangle-left" [size]="16" color="#656d76" />
+    }
+  </button>
+
+  <div class="bash-config-wrapper">
+
+    <!-- ======================= -->
+    <!-- HEADER -->
+    <!-- ======================= -->
+
+    <div class="bash-config-header">
+      <div class="bash-config-title">
+        <atk-icon name="terminalpc" [size]="16" color="var(--color-accent-fg)" />
+        <h3>API Configuration</h3>
+      </div>
+
+      <!-- Pin button -->
+      <button
+        class="pin-button"
+        [class.pinned]="state().sidebarPinned"
+        (click)="togglePin()"
+        [title]="state().sidebarPinned ? 'Unpin sidebar' : 'Pin sidebar open'">
+        <atk-icon [name]="state().sidebarPinned ? 'dot-point' : 'cross'" [size]="14" />
+      </button>
+    </div>
+
+    <!-- ======================= -->
+    <!-- ENDPOINTS TABS -->
+    <!-- ======================= -->
+
+    <div class="bash-config-tabs" [ngClass]="'tabs-' + endpoints().length">
+      @for (endpoint of endpoints(); track endpoint.id) {
+        <button
+          class="tab-button"
+          [class.active]="state().currentEndpoint === endpoint.id"
+          [title]="endpoint.description"
+          (click)="selectEndpoint(endpoint.id)">
+          <atk-icon [name]="endpoint.icon" [size]="14" />
+          <span>{{ endpoint.id }}</span>
+        </button>
+      }
+    </div>
+
+    <div class="bash-config-content">
+
+      <!-- ======================= -->
+      <!-- PARAMETERS SECTION -->
+      <!-- ======================= -->
+
+      @if (currentEndpointConfig(); as endpoint) {
+        <div class="bash-config-section sidebar-data-section">
+          <div class="section-title">
+            <span>Parameters</span>
+          </div>
+
+          <div class="params-grid">
+            <!-- Symbol Parameter (for non-account endpoints) -->
+            @if (endpoint.id !== 'account') {
+              <div class="param-item">
+                <label for="symbol-input">Symbol</label>
+                <input
+                  id="symbol-input"
+                  type="text"
+                  class="param-input"
+                  [value]="state().parameters['symbol'] || 'BTCUSDT'"
+                  (input)="updateParameter('symbol', $any($event.target).value)"
+                  placeholder="BTCUSDT">
+              </div>
+            }
+
+            <!-- Limit Parameter (for trades/orders) -->
+            @if (endpoint.id === 'trades' || endpoint.id === 'orders') {
+              <div class="param-item">
+                <label for="limit-input">Limit</label>
+                <input
+                  id="limit-input"
+                  type="number"
+                  class="param-input"
+                  [value]="state().parameters['limit'] || 100"
+                  (input)="updateParameter('limit', +$any($event.target).value)"
+                  min="1"
+                  max="1000"
+                  placeholder="100">
+              </div>
+            }
+          </div>
+
+          <!-- Current Parameters Display -->
+          @if (parameterKeys().length > 0) {
+            <div class="params-display">
+              <div class="params-display-title">Current Parameters:</div>
+              @for (key of parameterKeys(); track key) {
+                <div class="param-row">
+                  <span class="param-key">{{ key }}</span>
+                  <span class="param-value">{{ parameters()[key] }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ======================= -->
+      <!-- STATUS SECTION -->
+      <!-- ======================= -->
+
+      @if (state().loading || state().responseMetadata) {
+        <div class="bash-config-section sidebar-data-section">
+          <div class="section-title">
+            <atk-icon name="activity" [size]="14" color="var(--color-fg-muted)" />
+            <span>Status</span>
+          </div>
+
+          <div class="status-grid">
+            @if (state().loading) {
+              <div class="status-item loading">
+                <span class="status-label">Loading...</span>
+                <div class="spinner-small"></div>
+              </div>
+            }
+
+            @if (state().responseMetadata; as meta) {
+              <div class="status-item">
+                <span class="status-label">Response Time</span>
+                <span class="status-value">{{ meta.responseTime }}ms</span>
+              </div>
+              <div class="status-item">
+                <span class="status-label">Data Count</span>
+                <span class="status-value">{{ meta.dataCount }} items</span>
+              </div>
+              <div class="status-item">
+                <span class="status-label">Status Code</span>
+                <span class="status-value" [class.success]="meta.statusCode === 200">
+                  {{ meta.statusCode }}
+                </span>
+              </div>
+              @if (meta.fromCache) {
+                <div class="status-item">
+                  <span class="status-label">Source</span>
+                  <span class="status-value cache">Cache ⚡</span>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ======================= -->
+      <!-- SIDEBAR FIELDS (Account-level Data) -->
+      <!-- ======================= -->
+
+      @if (hasSidebarData()) {
+        <div class="bash-config-section sidebar-data-section">
+          <div class="section-title">
+            <span>Account Information</span>
+          </div>
+
+          <!-- Grouped Fields -->
+          @for (group of groupedSidebarFields(); track group.group) {
+            @if (group.group !== 'default') {
+              <div class="field-group-label">{{ group.group | titlecase }}</div>
+            }
+
+            <div class="row-details-grid">
+              @for (field of group.fields; track field.key) {
+                @if (sidebarData(); as data) {
+                  <div class="detail-field-row" [attr.data-group]="field.group">
+                    <div class="detail-field-label">
+                      @if (field.icon) {
+                        <atk-icon [name]="field.icon" [size]="12" color="var(--color-fg-muted)" />
+                      }
+                      <span>{{ field.label }}</span>
+                    </div>
+                    <div class="detail-field-value" [ngClass]="'type-' + (field.type || 'text')">
+                      @switch (field.type) {
+                        @case ('boolean') {
+                          <span class="boolean-badge" [class]="data[field.key] ? 'true' : 'false'">
+                            {{ formatFieldValue(data[field.key], field) }}
+                          </span>
+                        }
+                        @case ('status') {
+                          <span class="status-badge status-{{ data[field.key]?.toLowerCase() }}">
+                            {{ formatFieldValue(data[field.key], field) }}
+                          </span>
+                        }
+                        @default {
+                          <span [ngClass]="field.cssClass">
+                            {{ formatFieldValue(data[field.key], field) }}
+                          </span>
+                        }
+                      }
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ======================= -->
+      <!-- SELECTED ROW DETAILS -->
+      <!-- ======================= -->
+
+      @if (hasSelectedRow() && selectedRowData(); as rowData) {
+        <div class="bash-config-section sidebar-data-section">
+          <div class="section-title">
+            <span>Selected Row Details</span>
+            <button class="clear-selection-btn" (click)="clearSelection()" title="Clear selection">
+              <atk-icon name="cross" [size]="12" />
+            </button>
+          </div>
+
+          @if (visibleRowDetailFields().length > 0) {
+            <!-- Grouped Fields -->
+            @for (group of groupedRowDetailFields(); track group.group) {
+              @if (group.group !== 'default') {
+                <div class="field-group-label">{{ group.group | titlecase }}</div>
+              }
+
+              <div class="row-details-grid">
+                @for (field of group.fields; track field.key) {
+                  <div class="detail-field-row" [attr.data-group]="field.group">
+                    <div class="detail-field-label">
+                      @if (field.icon) {
+                        <atk-icon [name]="field.icon" [size]="12" color="var(--color-fg-muted)" />
+                      }
+                      <span>{{ field.label }}</span>
+                    </div>
+                    <div class="detail-field-value" [ngClass]="'type-' + (field.type || 'text')">
+                      @switch (field.type) {
+                        @case ('boolean') {
+                          <span class="boolean-badge" [class]="rowData[field.key] ? 'true' : 'false'">
+                            {{ formatFieldValue(rowData[field.key], field) }}
+                          </span>
+                        }
+                        @case ('status') {
+                          <span class="status-badge status-{{ rowData[field.key]?.toLowerCase() }}">
+                            {{ formatFieldValue(rowData[field.key], field) }}
+                          </span>
+                        }
+                        @case ('badge') {
+                          <span class="type-badge badge-{{ rowData[field.key]?.toLowerCase() }}">
+                            {{ formatFieldValue(rowData[field.key], field) }}
+                          </span>
+                        }
+                        @default {
+                          <span [ngClass]="field.cssClass">
+                            {{ formatFieldValue(rowData[field.key], field) }}
+                          </span>
+                        }
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Raw Data Debug -->
+            <details class="raw-data-details">
+              <summary>View Raw Data</summary>
+              <pre class="raw-data-pre">{{ rowData | json }}</pre>
+            </details>
+          } @else {
+            <div class="no-fields-message">
+              <atk-icon name="info" [size]="16" color="var(--color-fg-muted)" />
+              <span>No detail fields configured for this endpoint</span>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ======================= -->
+      <!-- ACTIONS SECTION -->
+      <!-- ======================= -->
+
+      <div class="bash-config-section sidebar-data-section">
+        <div class="section-title">
+          <span>Actions</span>
+        </div>
+
+        <div class="actions-grid">
+          <button
+            class="action-btn"
+            [disabled]="state().loading"
+            (click)="triggerLoadData()">
+            <atk-icon name="action" color="var(--color-accent-fg)" [size]="14" />
+            <span>{{ state().loading ? 'Loading...' : 'Load Data' }}</span>
+          </button>
+
+          <button
+            class="action-btn"
+            [disabled]="state().connectionStatus === 'connecting'"
+            (click)="testConnection()">
+            <atk-icon name="action" [size]="14" color="var(--color-btn-bg-emphasis)" />
+            <span>Test Connection</span>
+          </button>
+
+          <button class="action-btn" (click)="clearCache()">
+            <atk-icon name="action" [size]="14" color="var(--color-btn-bg-emphasis)" />
+            <span>Clear Cache</span>
+          </button>
+
+          <button
+            class="action-btn"
+            [disabled]="state().tableData.length === 0"
+            (click)="exportData()">
+            <atk-icon name="action" [size]="14" color="var(--color-btn-bg-emphasis)" />
+            <span>Export JSON</span>
+          </button>
+
+          <button
+            class="action-btn"
+            [disabled]="state().tableData.length === 0"
+            (click)="exportToCsv()">
+            <atk-icon name="action" [size]="14" color="var(--color-btn-bg-emphasis)" />
+            <span>Export CSV</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</aside>

@@ -1,35 +1,34 @@
-<div class="content-wrapper">
+<!-- atk-api.component.html -->
+<!-- Main container for ATK API component -->
 
-  <!-- [class.config-collapsed]="configPanelCollapsed()" -->
-  <!-- {{ configPanelCollapsed() }} / {{ sidebar().userContext.username }} -->
+<div class="content-wrapper">
 
   <!-- ======================= -->
   <!-- HEADER  -->
   <!-- ======================= -->
 
   <header class="content-header">
-    <h1>atk-api </h1>
+    <h1>ATK API</h1>
   </header>
+
   <div class="terminal-wrapper">
+    @if (config(); as cfg) {
     <header class="terminal-header">
-      @if (bashConfig(); as config) {
-      <h1>{{ config.title }}</h1>
-      <!-- <h1>atomeek.home.content Component</h1> -->
+      <h1>{{ cfg.title }}</h1>
       <div class="terminal-details">
-        <h2>{{ config.subtitle }}</h2>
-        <!-- <h2>{{ sidebar().userContext.title }}</h2> -->
+        <h2>{{ cfg.subtitle }}</h2>
       </div>
-      }
     </header>
+    }
 
     <!-- ======================= -->
     <!-- LOADING STATE -->
     <!-- ======================= -->
 
-    @if (loading() ) {
+    @if (state().loading) {
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>Chargement des informations du compte...</p>
+      <p>Loading data...</p>
     </div>
     }
 
@@ -37,11 +36,13 @@
     <!-- ERROR STATE -->
     <!-- ======================= -->
 
-    @if (error()) {
+    @if (state().error; as errorMsg) {
     <div class="error-state">
       <atk-icon name="error-2" color="currentColor" />
-      <p>{{ error() }}</p>
-      <button class="retry-btn" (click)="refreshAccount()">Réessayer</button>
+      <p>{{ errorMsg }}</p>
+      <button class="retry-btn" (click)="loadData()">
+        Retry
+      </button>
     </div>
     }
 
@@ -50,94 +51,18 @@
     <!-- ======================= -->
 
     <div class="terminal-main">
-
       <div class="terminal-section">
-
         <div class="section-content">
           <atk-icon class="terminal-toggle" name="triangle-down" color="var(--color-btn-bg-default)" />
-          <atk-api-bash [configId]="bashConfigId()" [autoLoad]="true" />
-          <!-- <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
-            (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" /> -->
+          <atk-api-bash />
         </div>
       </div>
-
-      <!-- ======================= -->
-      <!-- INFOS SECTION -->
-      <!-- ======================= -->
-
-      <!-- <div class="terminal-section">
-        <div class="infos-items">
-          <div class="infos-item">
-            <atk-icon name="check" color="#ef4444" [size]="24" />
-            <span>Trading</span>
-          </div>
-          <div class="infos-item">
-            <atk-icon name="check" color="#ef4444" [size]="24" />
-            <span>Retrait</span>
-          </div>
-          <div class="infos-item">
-            <atk-icon name="check" color="#ef4444" [size]="24" />
-            <span>Dépôt</span>
-          </div>
-        </div>
-        <div class="terminal-cmd">
-          <div class="cmd-item">
-            <label>Type de compte</label>
-          </div>
-          <div class="cmd-item">
-            <label>Dernière mise à jour</label>
-          </div>
-        </div>
-      </div> -->
-
     </div>
-
-    <!-- ======================= -->
-    <!-- CONTENT SECTION -->
-    <!-- ======================= -->
-
-    <!-- <div class="terminal-section">
-      <div class="section-content">
-        <atk-icon class="datatable-toggle" name="triangle-down" color="var(--color-btn-bg-default)" />
-        <div class="infos-title">
-          <h3>Content Section</h3>
-        </div>
-
-        <div class="terminal-table">
-
-          <div class="table-header">
-            <div class="header-cell left">Actif</div>
-            <div class="header-cell right">Disponible</div>
-            <div class="header-cell right">Bloqué</div>
-            <div class="header-cell right">Total</div>
-          </div>
-
-          <div class="balance-row">
-            <div class="balance-cell asset-cell">
-            </div>
-            <div class="balance-cell amount-cell">
-            </div>
-            <div class="balance-cell amount-cell">
-            </div>
-            <div class="balance-cell amount-cell total-cell">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- <div class="cmd-text">
-      <p>No account information available. Please set up your API connection.</p>
-    </div> -->
   </div>
 </div>
 
-<!-- <atk-sidebar-config /> -->
+<!-- ======================= -->
+<!-- SIDEBAR -->
+<!-- ======================= -->
 
-<!-- <atk-sidebar-config [sections]="config().configPanel.sections" [isCollapsed]="config().configPanel.isCollapsed"
-  (togglePanel)="toggleConfigPanel()" /> -->
-
-<atk-api-sidebar-config [configId]="bashConfigId()" [isCollapsed]="configPanelCollapsed()"
-  (togglePanel)="toggleConfigPanel()" />
-
-<!-- <atk-api-sidebar-config [isCollapsed]="configPanelCollapsed()" (togglePanel)="toggleConfigPanel()" /> -->
+<atk-api-sidebar [isCollapsed]="state().sidebarCollapsed" (togglePanel)="toggleSidebar()" />

@@ -1,0 +1,155 @@
+<!-- atk-api-bash.component.html -->
+<!-- LIGHT VERSION - Simple terminal display with datatable -->
+
+<div class="bash-wrapper">
+
+  <!-- ======================= -->
+  <!-- HEADER -->
+  <!-- ======================= -->
+
+  <header class="bash-header">
+    @if (config(); as cfg) {
+    <h1>{{ cfg.title }}</h1>
+    }
+  </header>
+
+  <main class="bash-main">
+
+    <!-- ======================= -->
+    <!-- TERMINAL SECTION -->
+    <!-- ======================= -->
+
+    <section class="bash-section">
+      <div class="bash-content">
+
+        <!-- Read-only terminal with config info -->
+        <textarea class="bash-terminal" [value]="terminalText()" readonly spellcheck="false" autocorrect="off">
+        </textarea>
+
+        <!-- Status Bar -->
+        <div class="bash-status">
+          <span>{{ statusBarText() }}</span>
+
+          @if (state().loading) {
+          <span class="bash-loading">Loading...</span>
+          }
+        </div>
+      </div>
+
+      <!-- Side Info Badges -->
+      <div class="bash-side">
+        <div class="infos-item">
+          <atk-icon name="check"
+            [color]="state().connectionStatus === 'connected' ? 'var(--color-btn-bg-emphasis)' : '#ef4444'"
+            [size]="24" />
+          <span>{{ state().connectionStatus }}</span>
+        </div>
+
+        @if (state().responseMetadata?.responseTime) {
+        <div class="infos-item">
+          <atk-icon name="zap" color="var(--color-btn-bg-emphasis)" [size]="24" />
+          <span>{{ state().responseMetadata.responseTime }}ms</span>
+        </div>
+        }
+
+        <div class="infos-item">
+          <atk-icon name="database" color="var(--color-btn-bg-emphasis)" [size]="24" />
+          <span>{{ state().tableData.length }} items</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= -->
+    <!-- TABLE SECTION -->
+    <!-- ======================= -->
+
+    @if (state().tableData.length > 0 && visibleColumns().length > 0) {
+    <section class="bash-data-section">
+      <div class="bash-data-content">
+        <span class="bash-data-label">current endpoint</span>
+
+        <header class="bash-data-header">
+          <h1>{{ endpointName() }}</h1>
+          <div class="bash-data-meta">
+            <span>records: {{ state().tableData.length }} items</span>
+            @if (state().responseMetadata?.responseTime) {
+            <span>-</span>
+            <span>responseTime: {{ state().responseMetadata.responseTime }}ms</span>
+            }
+          </div>
+        </header>
+
+        <!-- Datatable Component -->
+        <atk-api-datatable [columns]="visibleColumns()" [data]="state().tableData" [loading]="state().loading"
+          [error]="state().error" (selectedRow)="onRowSelected($event)" />
+      </div>
+    </section>
+    }
+
+    <!-- Bottom Status Info -->
+    <div class="infos-items">
+      <div class="infos-item">
+        <atk-icon name="check" color="var(--color-btn-bg-emphasis)" [size]="24" />
+        <span>{{ state().tableData.length }} items</span>
+      </div>
+
+      @if (state().responseMetadata?.responseTime) {
+      <div class="infos-item">
+        <atk-icon name="zap" color="var(--color-btn-bg-emphasis)" [size]="24" />
+        <span>{{ state().responseMetadata.responseTime }}ms</span>
+      </div>
+      }
+
+      @if (state().responseMetadata?.fromCache) {
+      <div class="infos-item">
+        <atk-icon name="zap" color="var(--color-accent-fg)" [size]="24" />
+        <span>from cache</span>
+      </div>
+      }
+    </div>
+
+    <!-- ======================= -->
+    <!-- EMPTY STATE -->
+    <!-- ======================= -->
+
+    @if (state().tableData.length === 0 && !state().loading && !state().error) {
+    <section class="bash-section">
+      <div class="empty-state">
+        <atk-icon name="database" color="var(--color-fg-muted)" [size]="48" />
+        <h3>No Data Available</h3>
+        <p>Select an endpoint in the sidebar to load data.</p>
+      </div>
+    </section>
+    }
+
+    <!-- ======================= -->
+    <!-- ERROR STATE -->
+    <!-- ======================= -->
+
+    @if (state().error) {
+    <section class="bash-section">
+      <div class="error-state">
+        <atk-icon name="alert-circle" color="#ef4444" [size]="24" />
+        <h3>Error Loading Data</h3>
+        <p class="error-message">{{ state().error }}</p>
+      </div>
+    </section>
+    }
+
+    <!-- ======================= -->
+    <!-- LOADING STATE -->
+    <!-- ======================= -->
+
+    @if (state().loading) {
+    <section class="bash-section">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading <strong>{{ state().currentEndpoint }}</strong>...</p>
+        @if (state().parameters?.symbol) {
+        <p class="loading-detail">Symbol: {{ state().parameters.symbol }}</p>
+        }
+      </div>
+    </section>
+    }
+  </main>
+</div>
