@@ -2,6 +2,7 @@
 
 import type { IconSpec } from '@shared/models/icon.model';
 
+
 /**
  * Application metadata and versioning information
  */
@@ -148,12 +149,27 @@ export interface IConfigPanel {
   sections: IConfigPanelSection[];
 }
 
+// ============================================
+// NAVIGATION INTERFACES
+// ============================================
+
 /**
- * Complete landing page configuration
- * This is the main configuration object used throughout the app
+ * Navigation item from config
+ */
+export interface INavigationItem {
+  path: string;
+  label: string;
+  icon?: string;
+  category: 'home' | 'binance' | 'ibkr' | 'config' | 'tools' | 'other';
+}
+
+/**
+ * Landing configuration interface
+ * UPDATED: Added navigation property
  */
 export interface ILandingConfig {
   atkapp: IAtomeekAppConfig;
+  navigation: INavigationItem[];  // ← NOUVELLE PROPRIÉTÉ
   navbar: INavbarConfig;
   sidebar: ISidebarNavConfig;
   feeds: IFeed[];

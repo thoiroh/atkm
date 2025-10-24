@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { IconService } from '@app/core/services/icon.service';
+import { AtkAppStateService } from '@core/state/atk-app-state.service';
 
 type PathDef = {
   d: string; fill?: string | null; stroke?: string | null; strokeWidth?: number; strokeLinecap?: string; strokeLinejoin?: string;
@@ -31,7 +31,7 @@ type RectDef = {
 })
 
 export class AtkIconComponent {
-  private iconRegistry = inject(IconService);
+  private readonly appState = inject(AtkAppStateService);
 
   name = input<string>('default');
   variant = input<string | null>(null);
@@ -50,7 +50,7 @@ export class AtkIconComponent {
   });
 
   private iconData = computed(() => {
-    const registry = this.iconRegistry.registry();
+    const registry = this.appState.iconRegistry();
     const iconName = this.key();
 
     // Chercher l'icône demandée, sinon fallback
@@ -71,7 +71,7 @@ export class AtkIconComponent {
   rects = computed<RectDef[]>(() => this.iconData()?.rects ?? []);
 
   viewBox = computed(() => {
-    const registry = this.iconRegistry.registry();
+    const registry = this.appState.iconRegistry();
     return this.iconData()?.viewBox ?? registry.defaults.viewBox;
   });
 

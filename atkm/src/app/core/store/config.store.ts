@@ -2,7 +2,7 @@
 // Provides reactive access to configuration across the application
 
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { ConfigProfile, IAtomeekAppConfig, IConfigPanel, IFeed, ILandingConfig, INavbarConfig, ISidebarNavConfig } from '@core/models/config.models';
+import { ConfigProfile, IAtomeekAppConfig, IConfigPanel, IFeed, ILandingConfig, INavbarConfig, INavigationItem, ISidebarNavConfig } from '@core/models/config.models';
 import { ConfigService } from '@core/services/config.service';
 import { ToolsService } from '@core/services/tools.service';
 
@@ -37,6 +37,7 @@ const DEFAULT_CONFIG: ILandingConfig = {
     },
     sections: []
   },
+  navigation: [],  // ← AJOUT
   feeds: [],
   configPanel: {
     isCollapsed: true,
@@ -75,6 +76,7 @@ export class ConfigStore {
   // Specific configuration sections
   readonly atkapp = computed<IAtomeekAppConfig>(() => this._config().atkapp);
   readonly navbar = computed<INavbarConfig>(() => this._config().navbar);
+  readonly navigation = computed<INavigationItem[]>(() => this._config().navigation || []);
   readonly sidebar = computed<ISidebarNavConfig>(() => this._config().sidebar);
   readonly feeds = computed<IFeed[]>(() => this._config().feeds);
   readonly configPanel = computed<IConfigPanel>(() => this._config().configPanel);
@@ -145,7 +147,7 @@ export class ConfigStore {
       this._profile.set(targetProfile);
 
       this.tools.consoleGroup({ // TAG ConfigStore -> loadLandingConfig() ================ CONSOLE LOG IN PROGRESS
-        title: `ConfigStore -> loadLandingConfig()`, tag: 'blackSquare', palette: 'in', collapsed: true,
+        title: `ConfigStore -> loadLandingConfig()`, tag: 'blackSquare', palette: 'su', collapsed: true,
         data: this.config()
       });
 
@@ -155,7 +157,7 @@ export class ConfigStore {
       this._error.set(errorMessage);
 
       this.tools.consoleGroup({ // TAG ConfigStore -> loadLandingConfig() ================ CONSOLE LOG IN PROGRESS
-        title: `ConfigStore -> loadLandingConfig() -> Error loading configuration`, tag: 'check', palette: 'er', collapsed: false,
+        title: `ConfigStore -> loadLandingConfig() -> Error loading configuration`, tag: 'cross', palette: 'er', collapsed: false,
         data: { profile: targetProfile, error: err }
       });
 

@@ -7,10 +7,10 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { ToolsService } from '@core/services/tools.service';
 
-import type { BashData } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
 import type {
   AtkApiConnectionStatus,
   AtkApiEventType,
+  BashData,
   IAtkApiEvent,
   IAtkApiResponseMetadata,
   IAtkApiUnifiedState

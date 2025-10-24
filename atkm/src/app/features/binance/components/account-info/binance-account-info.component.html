@@ -31,8 +31,7 @@
     <div class="terminal-section">
       <div class="section-content">
         <atk-icon class="terminal-toggle" name="triangle-right" color="var(--color-btn-bg-default)" />
-        <atk-api-bash configId="binance-debug-v2" [autoLoad]="true" (dataLoaded)="onBashDataLoaded($event)"
-          (errorOccurred)="onBashError($event)" />
+        <atk-api-bash />
       </div>
       <!-- (configRequest)="onBashConfigRequest($event)" -->
       <div class="terminal-section">

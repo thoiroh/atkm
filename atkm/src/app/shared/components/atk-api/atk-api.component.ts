@@ -17,13 +17,13 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, inject, input, OnInit, untracked } from '@angular/core';
 
 import { ToolsService } from '@core/services/tools.service';
-import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
+import { AtkApiHttpService } from '@shared/components/atk-api/atk-api-http.service';
+import { AtkApiStateService } from '@shared/components/atk-api/atk-api-state.service';
 
 import { AtkApiBashComponent } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.component';
 import { AtkApiSidebarComponent } from '@shared/components/atk-api/atk-api-sidebar/atk-api-sidebar.component';
+import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
-import { AtkApiHttpService } from '@shared/components/atk-api/atk-api-http.service';
-import { AtkApiStateService } from '@shared/components/atk-api/atk-api-state.service';
 import { AtkApiFactory } from '@shared/components/atk-api/atk-api.factory';
 
 /**
@@ -49,10 +49,10 @@ export class AtkApiComponent implements OnInit {
   // DEPENDENCIES
   // =========================================
 
-  private readonly stateService = inject(AtkApiStateService);
-  private readonly httpService = inject(AtkApiHttpService);
-  private readonly factory = inject(AtkApiFactory);
   private readonly tools = inject(ToolsService);
+  private readonly factory = inject(AtkApiFactory);
+  private readonly httpService = inject(AtkApiHttpService);
+  private readonly stateService = inject(AtkApiStateService);
 
   // =========================================
   // INPUTS
@@ -77,10 +77,7 @@ export class AtkApiComponent implements OnInit {
 
   constructor() {
     this.tools.consoleGroup({ // TAG AtkApiComponent -> constructor() ================ CONSOLE LOG IN PROGRESS
-      title: 'AtkApiComponent -> constructor()',
-      tag: 'recycle',
-      palette: 'in',
-      collapsed: true,
+      title: `AtkApiComponent -> ngOnInit() -> this.configType(): ${this.configType()}`, tag: 'check', palette: 'su', collapsed: true,
       data: { configType: this.configType() }
     });
 

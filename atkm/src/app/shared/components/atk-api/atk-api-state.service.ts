@@ -14,7 +14,7 @@
  * @architecture Signals-based with effects for reactive updates
  */
 
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { ToolsService } from '@core/services/tools.service';
 
 import type {
@@ -196,11 +196,8 @@ export class AtkApiStateService {
   // ======================================================
 
   constructor() {
-    this.tools.consoleGroup({
-      title: 'AtkApiStateService -> constructor()',
-      tag: 'recycle',
-      palette: 'in',
-      collapsed: true,
+    this.tools.consoleGroup({ // TAG AtkApiStateService -> constructor() ================ CONSOLE LOG IN PROGRESS
+      title: 'AtkApiStateService -> constructor()', tag: 'recycle', palette: 'su', collapsed: true,
       data: { state: this._state() }
     });
 
@@ -221,17 +218,14 @@ export class AtkApiStateService {
    */
   initialize(config: IAtkApiConfig, restoreFromStorage: boolean = true): void {
     this._config.set(config);
-
     // Try to restore from localStorage
     let restored = false;
     if (restoreFromStorage) {
       restored = this.loadFromLocalStorage();
     }
-
     // If not restored, use default endpoint
     if (!restored) {
       const defaultEndpoint = config.defaultEndpoint || config.endpoints[0]?.id || '';
-
       this._state.update(s => ({
         ...s,
         configId: config.id,
@@ -241,17 +235,12 @@ export class AtkApiStateService {
         lastUpdated: new Date()
       }));
     }
-
     this.emitEvent('state-initialized', {
       configId: config.id,
       defaultEndpoint: this._state().currentEndpoint
     });
-
-    this.tools.consoleGroup({
-      title: 'AtkApiStateService -> initialize()',
-      tag: 'check',
-      palette: 'su',
-      collapsed: true,
+    this.tools.consoleGroup({ // TAG AtkApiStateService -> initialize() ================ CONSOLE LOG IN PROGRESS
+      title: 'AtkApiStateService -> initialize()', tag: 'recycle', palette: 'su', collapsed: true,
       data: { config, state: this._state(), restored }
     });
   }
@@ -286,12 +275,8 @@ export class AtkApiStateService {
     });
 
     this.saveToLocalStorage();
-
-    this.tools.consoleGroup({
-      title: 'AtkApiStateService -> updateEndpoint()',
-      tag: 'check',
-      palette: 'ac',
-      collapsed: true,
+    this.tools.consoleGroup({ // TAG AtkApiStateService -> saveToLocalStorage() ================ CONSOLE LOG IN PROGRESS
+      title: 'AtkApiStateService -> saveToLocalStorage()', tag: 'recycle', palette: 'in', collapsed: true,
       data: { oldEndpoint, newEndpoint: endpointId }
     });
   }
@@ -623,11 +608,8 @@ export class AtkApiStateService {
       });
 
       if (cleanedCount > 0) {
-        this.tools.consoleGroup({
-          title: 'AtkApiStateService -> Cache Cleanup',
-          tag: 'check',
-          palette: 'in',
-          collapsed: true,
+        this.tools.consoleGroup({ // TAG AtkApiStateService -> setupCacheCleanup() ================ CONSOLE LOG IN PROGRESS
+          title: 'AtkApiStateService -> setupCacheCleanup()', tag: 'recycle', palette: 'su', collapsed: true,
           data: { cleanedCount, remainingEntries: this._cache().size }
         });
       }
@@ -682,11 +664,8 @@ export class AtkApiStateService {
 
     // Also log to ToolsService for debugging
     if (level === 'error') {
-      this.tools.consoleGroup({
-        title: `AtkApiStateService -> Log: ${message}`,
-        tag: 'cross',
-        palette: 'er',
-        collapsed: true,
+      this.tools.consoleGroup({ // TAG AtkApiStateService -> addLog(error) ================ CONSOLE LOG IN PROGRESS
+        title: `AtkApiStateService -> addLog( ${message})`, tag: 'cross', palette: 'er', collapsed: true,
         data: { log }
       });
     }
@@ -722,11 +701,8 @@ export class AtkApiStateService {
 
     // Debug log for important events
     if (this.shouldLogEvent(type)) {
-      this.tools.consoleGroup({
-        title: `AtkApiStateService -> Event: ${type}`,
-        tag: 'check',
-        palette: 'ac',
-        collapsed: true,
+      this.tools.consoleGroup({ // TAG AtkApiStateService -> emitEvent() ================ CONSOLE LOG IN PROGRESS
+        title: `AtkApiStateService -> emitEvent(${type})`, tag: 'recycle', palette: 'ac', collapsed: true,
         data: { event, currentState: this._state() }
       });
     }
@@ -774,11 +750,8 @@ export class AtkApiStateService {
     try {
       localStorage.setItem(key, JSON.stringify(persistedState));
     } catch (error: any) {
-      this.tools.consoleGroup({
-        title: 'AtkApiStateService -> saveToLocalStorage() ERROR',
-        tag: 'cross',
-        palette: 'er',
-        collapsed: false,
+      this.tools.consoleGroup({ // TAG AtkApiStateService -> saveToLocalStorage(error) ================ CONSOLE LOG IN PROGRESS
+        title: 'AtkApiStateService -> saveToLocalStorage(ERROR)', tag: 'cross', palette: 'er', collapsed: false,
         data: { error, configId }
       });
     }
@@ -824,21 +797,15 @@ export class AtkApiStateService {
         lastUpdated: new Date()
       }));
 
-      this.tools.consoleGroup({
-        title: 'AtkApiStateService -> loadFromLocalStorage() SUCCESS',
-        tag: 'check',
-        palette: 'su',
-        collapsed: true,
+      this.tools.consoleGroup({ // TAG AtkApiStateService -> loadFromLocalStorage(SUCCESS) ================ CONSOLE LOG IN PROGRESS
+        title: 'AtkApiStateService -> loadFromLocalStorage(SUCCESS) ', tag: 'recycle', palette: 'su', collapsed: true,
         data: { restoredState: persistedState }
       });
 
       return true;
     } catch (error: any) {
-      this.tools.consoleGroup({
-        title: 'AtkApiStateService -> loadFromLocalStorage() ERROR',
-        tag: 'cross',
-        palette: 'er',
-        collapsed: false,
+      this.tools.consoleGroup({ // TAG AtkApiStateService -> loadFromLocalStorage(ERROR) ================ CONSOLE LOG IN PROGRESS
+        title: 'AtkApiStateService -> loadFromLocalStorage(ERROR) ', tag: 'cross', palette: 'er', collapsed: false,
         data: { error, key }
       });
 
@@ -857,11 +824,8 @@ export class AtkApiStateService {
     localStorage.removeItem(key);
     this._persistenceConfirmed.set(false);
 
-    this.tools.consoleGroup({
-      title: 'AtkApiStateService -> clearLocalStorage()',
-      tag: 'check',
-      palette: 'in',
-      collapsed: true,
+    this.tools.consoleGroup({ // TAG AtkApiStateService -> clearLocalStorage() ================ CONSOLE LOG IN PROGRESS
+      title: 'AtkApiStateService -> clearLocalStorage()', tag: 'recycle', palette: 'in', collapsed: true,
       data: { configId, key }
     });
   }
@@ -896,11 +860,8 @@ export class AtkApiStateService {
 
     this.emitEvent('state-reset', { reason });
 
-    this.tools.consoleGroup({
-      title: 'AtkApiStateService -> resetState()',
-      tag: 'cross',
-      palette: 'wa',
-      collapsed: true,
+    this.tools.consoleGroup({ // TAG AtkApiStateService -> resetState() ================ CONSOLE LOG IN PROGRESS
+      title: 'AtkApiStateService -> resetState()', tag: 'cross', palette: 'wa', collapsed: true,
       data: { reason, state: this._state() }
     });
   }

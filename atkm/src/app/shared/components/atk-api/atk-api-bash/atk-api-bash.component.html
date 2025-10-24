@@ -1,133 +1,154 @@
-<!-- atk-bash.component.v03.html -->
-<!-- ======================================================
-     FULL SIGNALS VERSION
-     Compatible avec AtkBashService.v03 et AtkBashComponent.v03
-     ====================================================== -->
+<!-- atk-api-bash-advanced.component.html -->
+<!-- ADVANCED/FULL VERSION - Editable terminal with all features -->
 
 <div class="bash-wrapper">
-  @let sidebarState = sidebarConfigService.state();
 
-  <!-- Header -->
+  <!-- ======================= -->
+  <!-- HEADER -->
+  <!-- ======================= -->
+
   <header class="bash-header">
-    @if (currentConfig(); as config) {
-    <h1>Bash</h1>
-    <!-- <h1>{{ config.title }}</h1> -->
-    <!-- <div class="bash-details">
-      @if (lastLog(); as log) {
-      <span class="message">{{ log.message }}</span>
-      }
-    </div> -->
+    @if (config(); as cfg) {
+    <h1>Bash Advanced</h1>
+    <!-- Optional: Show last log in header -->
+    @if (lastLog(); as log) {
+    <div class="bash-header-log">
+      <span class="log-level-{{ log.level }}">{{ log.message }}</span>
+    </div>
+    }
     }
   </header>
 
   <main class="bash-main">
 
     <!-- ======================= -->
-    <!-- TERMINAL OUTPUT SECTION -->
+    <!-- TERMINAL SECTION (Editable) -->
     <!-- ======================= -->
+
     <section class="bash-section">
       <div class="bash-content">
 
-        <textarea class="bash-input" atkTerminalInput autocorrect="off" spellcheck="false"
-          (stateChange)="onTerminalStateChange($event)" [style.height]="terminalHeight()"></textarea>
-        <!-- spellcheck="false" -->
-        <!-- autocorrect="off" -->
-        <!-- autocomplete="off" -->
-        <!-- autocapitalize="off" -->
-        <!-- [autoScroll]="true" -->
-        <!-- [maxHeight]="'200px'" -->
-        <!-- ou [smoothScroll]="true" -->
-        <!-- (scrollChange)="onTerminalScroll($event)" -->
-        <!-- [autoResize]="true" -->
-        <!-- readonly -->
+        <!-- Editable terminal with directive -->
+        <textarea class="bash-input" atkTerminalInput autocorrect="off" spellcheck="false" [value]="terminalText()"
+          [style.height]="terminalHeight()" (stateChange)="onTerminalStateChange($event)">
+        </textarea>
 
-        <!-- Terminal Status -->
+        <!-- Terminal Status Bar -->
         <div class="bash-status">
           <span>Ln {{ line() }}</span>
           <span>Col {{ column() }}</span>
           <span>Idx {{ caretIndex() }}</span>
+
           @if (selectionText(); as text) {
           <span class="bash-selection">Sel "{{ text }}"</span>
           }
-          <span class="bash-connection" [class]="'status-' + sidebarState.connectionStatus">
-            {{ sidebarState.connectionStatus | titlecase }}
+
+          <span class="bash-connection" [class]="'status-' + state().connectionStatus">
+            {{ state().connectionStatus | titlecase }}
           </span>
-          @if (bashService.loading()) {
+
+          @if (state().loading) {
           <span class="bash-loading">Loading...</span>
           }
+
+          <!-- Log count -->
+          <span class="bash-log-count">
+            {{ logs().length }} logs
+          </span>
+
+          <!-- Clear logs button -->
+          <button class="bash-clear-logs" (click)="clearLogs()" title="Clear logs">
+            <atk-icon name="trash" [size]="12" />
+          </button>
         </div>
       </div>
 
+      <!-- Side Info Badges -->
       <div class="bash-side">
+        <div class="infos-item">
+          <atk-icon name="check"
+            [color]="state().connectionStatus === 'connected' ? 'var(--color-btn-bg-emphasis)' : '#ef4444'"
+            [size]="24" />
+          <span>{{ state().connectionStatus }}</span>
+        </div>
+
+        @if (state().responseMetadata?.responseTime) {
+        <div class="infos-item">
+          <atk-icon name="zap" color="var(--color-btn-bg-emphasis)" [size]="24" />
+          <span>{{ state().responseMetadata.responseTime }}ms</span>
+        </div>
+        }
 
         <div class="infos-item">
-          <!-- <atk-icon name="check" color="#ef4444" [size]="24" /> -->
-          <!-- <span>Trading</span> -->
-        </div>
-        <div class="infos-item">
-          <!-- <atk-icon name="check" color="#ef4444" [size]="24" /> -->
-          <!-- <span>Retrait</span> -->
-        </div>
-        <div class="infos-item">
-          <!-- <atk-icon name="check-thin" color="#ef4444" [size]="24" /> -->
-          <!-- <span>Dépôt</span> -->
+          <atk-icon name="database" color="var(--color-btn-bg-emphasis)" [size]="24" />
+          <span>{{ state().tableData.length }} items</span>
         </div>
       </div>
     </section>
-
-
-    <!-- <button (click)="testLoadData()">🧪 Test Load Account Data</button> -->
 
     <!-- ======================= -->
     <!-- TABLE SECTION -->
     <!-- ======================= -->
 
-    @if (data().length > 0 && visibleColumns().length > 0) {
+    @if (state().tableData.length > 0 && visibleColumns().length > 0) {
     <section class="bash-data-section">
       <div class="bash-data-content">
         <span class="bash-data-label">current endpoint</span>
+
         <header class="bash-data-header">
-          <h1>{{ getCurrentEndpointName(sidebarState.currentEndpoint) || 'Data Results' }}</h1>
+          <h1>{{ endpointName() }}</h1>
           <div class="bash-data-meta">
-            <span>records: {{ data().length }} items</span>
-            @if (terminalState().responseMetadata?.responseTime) {
+            <span>records: {{ state().tableData.length }} items</span>
+            @if (state().responseMetadata?.responseTime) {
             <span>-</span>
-            <span>responseTime: {{ terminalState().responseMetadata.responseTime }}ms</span>
+            <span>responseTime: {{ state().responseMetadata.responseTime }}ms</span>
+            }
+            @if (state().responseMetadata?.fromCache) {
+            <span>-</span>
+            <span class="cache-badge">cached ⚡</span>
             }
           </div>
         </header>
 
         <!-- Datatable Component -->
-        <atk-api-datatable [columns]="visibleColumns()" [data]="data()" [loading]="bashService.loading()"
-          [error]="error()" (selectedRow)="onRowSelected($event)" />
+        <atk-api-datatable [columns]="visibleColumns()" [data]="state().tableData" [loading]="state().loading"
+          [error]="state().error" (selectedRow)="onRowSelected($event)" />
       </div>
     </section>
     }
 
+    <!-- Bottom Status Info -->
     <div class="infos-items">
       <div class="infos-item">
         <atk-icon name="check" color="var(--color-btn-bg-emphasis)" [size]="24" />
-        <span>{{ data().length }} items</span>
-        <!-- <span>Trading</span> -->
+        <span>{{ state().tableData.length }} items</span>
       </div>
-      @if (terminalState().responseMetadata?.responseTime) {
+
+      @if (state().responseMetadata?.responseTime) {
       <div class="infos-item">
-        <atk-icon name="check" color="var(--color-btn-bg-emphasis)" [size]="24" />
-        <span>{{ terminalState().responseMetadata.responseTime }}ms</span>
-        <!-- <span>Retrait</span> -->
+        <atk-icon name="zap" color="var(--color-btn-bg-emphasis)" [size]="24" />
+        <span>{{ state().responseMetadata.responseTime }}ms</span>
       </div>
       }
+
+      @if (state().responseMetadata?.fromCache) {
       <div class="infos-item">
-        <!-- <atk-icon name="check" color="#ef4444" [size]="24" />
-        <span>Dépôt</span> -->
+        <atk-icon name="zap" color="var(--color-accent-fg)" [size]="24" />
+        <span>from cache</span>
+      </div>
+      }
+
+      <div class="infos-item">
+        <atk-icon name="file-text" color="var(--color-btn-bg-emphasis)" [size]="24" />
+        <span>{{ logs().length }} logs</span>
       </div>
     </div>
-
 
     <!-- ======================= -->
     <!-- EMPTY STATE -->
     <!-- ======================= -->
-    @if (data().length === 0 && !bashService.loading() && !error()) {
+
+    @if (state().tableData.length === 0 && !state().loading && !state().error) {
     <section class="bash-section">
       <div class="empty-state">
         <atk-icon name="database" color="var(--color-fg-muted)" [size]="48" />
@@ -140,22 +161,13 @@
     <!-- ======================= -->
     <!-- ERROR STATE -->
     <!-- ======================= -->
-    @if (error()) {
+
+    @if (state().error) {
     <section class="bash-section">
       <div class="error-state">
         <atk-icon name="alert-circle" color="#ef4444" [size]="24" />
         <h3>Error Loading Data</h3>
-        <p class="error-message">{{ error() }}</p>
-        <div class="error-actions">
-          <button class="cmd-btn retry-btn" (click)="loadData()">
-            <atk-icon name="refresh-cw" />
-            Retry
-          </button>
-          <button class="cmd-btn" (click)="testConnection()">
-            <atk-icon name="wifi" />
-            Test Connection
-          </button>
-        </div>
+        <p class="error-message">{{ state().error }}</p>
       </div>
     </section>
     }
@@ -163,13 +175,14 @@
     <!-- ======================= -->
     <!-- LOADING STATE -->
     <!-- ======================= -->
-    @if (bashService.loading()) {
+
+    @if (state().loading) {
     <section class="bash-section">
       <div class="loading-state">
         <div class="spinner"></div>
-        <p>Loading <strong>{{ sidebarState.currentEndpoint }}</strong>...</p>
-        @if (sidebarState.parameters?.symbol) {
-        <p class="loading-detail">Symbol: {{ sidebarState.parameters.symbol }}</p>
+        <p>Loading <strong>{{ state().currentEndpoint }}</strong>...</p>
+        @if (state().parameters?.symbol) {
+        <p class="loading-detail">Symbol: {{ state().parameters.symbol }}</p>
         }
       </div>
     </section>

@@ -7,12 +7,10 @@ import { Subject, takeUntil } from 'rxjs';
 import { AtkApiBashComponent } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.component';
 import { AtkIconComponent } from '@shared/components/atk-icon/atk-icon.component';
 
-import { NavService } from '@app/core/services/nav.service';
 import { ILandingConfig } from '@core/models/config.models';
-import { BreadcrumbService } from '@core/services/breadcrumb.service';
 import { ConfigService } from '@core/services/config.service';
 import { BinanceAccount, BinanceBalance } from '@features/binance/models/binance.model';
-import { IBashConfig, IBashTerminalState } from '@shared/components/atk-api/atk-api-bash/atk-api-bash.interfaces';
+import { IBashConfig, IBashTerminalState } from '@shared/components/atk-api/atk-api.interfaces';
 
 @Component({
   selector: 'atk-binance-account-info',
@@ -35,8 +33,6 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private binanceService = inject(BinanceService);
   private configService = inject(ConfigService);
-  private navigationService = inject(NavService);
-  private breadcrumbService = inject(BreadcrumbService);
   private tools = inject(ToolsService);
 
   // Computed property for significant balances - UPDATED with better filtering

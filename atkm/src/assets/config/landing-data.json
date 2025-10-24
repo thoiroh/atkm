@@ -217,6 +217,56 @@
         }
       ]
     },
+    "navigation": [
+      {
+        "path": "/landing/shuttle",
+        "label": "Home",
+        "icon": "home",
+        "category": "home"
+      },
+      {
+        "path": "/landing/binance/account",
+        "label": "Assets Inventory",
+        "icon": "repo",
+        "category": "binance"
+      },
+      {
+        "path": "/landing/binance/history",
+        "label": "Transaction History",
+        "icon": "trending-up",
+        "category": "binance"
+      },
+      {
+        "path": "/landing/binance/snapshot",
+        "label": "Global Watchlist",
+        "icon": "dot",
+        "category": "binance"
+      },
+      {
+        "path": "/landing/binance/market-data",
+        "label": "Streaming Market Data",
+        "icon": "dot",
+        "category": "binance"
+      },
+      {
+        "path": "/landing/ibkr/account",
+        "label": "Account History",
+        "icon": "toggle",
+        "category": "ibkr"
+      },
+      {
+        "path": "/landing/ibkr/snapshot",
+        "label": "Account Snapshot",
+        "icon": "toggle",
+        "category": "ibkr"
+      },
+      {
+        "path": "/landing/ibkr/market-data",
+        "label": "Live Market Data",
+        "icon": "toggle",
+        "category": "ibkr"
+      }
+    ],
     "feeds": [
       {
         "id": "feed-1",

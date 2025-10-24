@@ -1,6 +1,17 @@
-// src/app/features/landing/landing.component.ts
-// Main landing component using centralized ConfigStore
-// Angular 20 - Full signal-based approach
+/**
+ * Landing Component
+ * Main layout wrapper with navigation, sidebar, and router outlet
+ *
+ * Responsibilities:
+ * - Load app configuration
+ * - Initialize app state service
+ * - Provide layout structure
+ * - NO API management (delegated to child components)
+ *
+ * @file landing.component.ts
+ * @version 2.0.0
+ * @architecture Layout-only component with centralized state management
+ */
 
 import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
@@ -10,11 +21,9 @@ import { NavbarMainComponent } from '@shared/components/navbar-main/navbar-main.
 import { NavbarToolsComponent } from '@shared/components/navbar-tools/navbar-tools.component';
 import { SidebarNavComponent } from '@shared/components/sidebar-nav/sidebar-nav.component';
 
-import { NavService } from '@app/core/services/nav.service';
-import { BreadcrumbService } from '@core/services/breadcrumb.service';
 import { ToolsService } from '@core/services/tools.service';
+import { AtkAppStateService } from '@core/state/atk-app-state.service';
 import { ConfigStore } from '@core/store/config.store';
-import { ApiManagementStateService } from '@shared/services/atk-api-management-state.service';
 
 @Component({
   selector: 'atk-landing',
@@ -36,9 +45,7 @@ export class LandingComponent implements OnInit, AfterViewInit {
   // =========================================
 
   private readonly configStore = inject(ConfigStore);
-  private readonly navigationService = inject(NavService);
-  private readonly breadcrumbService = inject(BreadcrumbService);
-  private readonly apiStateService = inject(ApiManagementStateService);
+  private readonly appState = inject(AtkAppStateService);
   private readonly tools = inject(ToolsService);
 
   // =========================================
@@ -48,111 +55,46 @@ export class LandingComponent implements OnInit, AfterViewInit {
   config = this.configStore.config;
   loading = this.configStore.loading;
   error = this.configStore.error;
-  configPanelCollapsed = this.configStore.configPanelCollapsed;
 
   // =========================================
   // LIFECYCLE HOOKS
   // =========================================
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // Load configuration on component initialization
-    this.configStore.loadLandingConfig()
+    await this.configStore.loadLandingConfig()
       .catch(err => {
         console.error('Error loading configuration in LandingComponent:', err);
       });
 
-    // this.tools.consoleGroup({ // OFF LandingComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-    //   title: `LandingComponent -> ngOnInit() -> configStore.loadLandingConfig()`, tag: 'check', palette: 'in', collapsed: true,
-    //   data: this.config()
-    //   // data: {
-    //   //   config: this.config(),
-    //   //   loading: this.loading(),
-    //   //   error: this.error(),
-    //   //   configPanelCollapsed: this.configPanelCollapsed()
-    //   // }
-    // });
+    // Initialize app state service with navigation items from config
+    const navigationItems = this.configStore.navigation();
+
+    if (navigationItems && navigationItems.length > 0) {
+      await this.appState.initialize(
+        navigationItems.map(item => ({
+          ...item,
+          isActive: false // Will be set by router
+        }))
+      );
+
+      this.tools.consoleGroup({
+        title: 'LandingComponent -> ngOnInit() -> App initialized',
+        tag: 'check',
+        palette: 'su',
+        collapsed: true,
+        data: {
+          config: this.config(),
+          navigationItemsCount: navigationItems.length,
+          appStateInitialized: this.appState.initialized()
+        }
+      });
+    } else {
+      console.warn('No navigation items found in configuration');
+    }
   }
 
   ngAfterViewInit(): void {
     // Additional initialization after view is ready
-  }
-
-  // =========================================
-  // PUBLIC METHODS
-  // =========================================
-
-  /**
-   * Toggle the configuration panel
-   */
-  toggleConfigPanel(): void {
-    this.configStore.toggleConfigPanel();
-  }
-
-  /**
-   * Toggle the bash configuration panel
-   * Currently delegates to regular config panel
-   */
-  toggleBashConfigPanel(): void {
-    this.toggleConfigPanel();
-  }
-
-  /**
-   * Handle configuration changes from bash component
-   * @param event - Configuration change event
-   */
-  onBashConfigChange(event: any): void {
-    this.tools.consoleGroup({ // TAG LandingComponent -> onBashConfigChange() ================ CONSOLE LOG IN PROGRESS
-      title: `LandingComponent -> onBashConfigChange()`, tag: 'check', palette: 'in', collapsed: false,
-      data: { type: event.type, payload: event.payload },
-    });
-
-    // Handle specific event types
-    switch (event.type) {
-      case 'endpoint-change':
-        this.apiStateService.setCurrentEndpoint(event.payload.endpointId);
-        break;
-
-      case 'parameter-change':
-        console.log('Parameter change:', event.payload);
-        break;
-
-      case 'action-execute':
-        console.log('Action execute:', event.payload);
-        break;
-
-      case 'account-refresh':
-        console.log('Account refresh requested');
-        break;
-
-      case 'config-update':
-        if (event.payload.reset) {
-          console.log('Config reset requested');
-        }
-        break;
-    }
-  }
-
-  /**
-   * Get API state service instance
-   * @returns ApiManagementStateService instance
-   */
-  getApiStateService(): ApiManagementStateService {
-    return this.apiStateService;
-  }
-
-  /**
-   * Handle navigation changes
-   * @param route - Current route
-   */
-  onNavigationChange(route: string): void {
-    if (!route.includes('binance') && !route.includes('ibkr')) {
-      this.tools.consoleGroup({
-        title: `LandingComponent -> Navigation away from API pages`,
-        tag: 'check',
-        palette: 'in',
-        collapsed: false,
-        data: { route }
-      });
-    }
   }
 }

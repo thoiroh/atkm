@@ -8,26 +8,25 @@
   <header class="content-header">
     <h1>shuttle </h1>
   </header>
+
   <div class="terminal-wrapper">
+    @if (config(); as cfg) {
     <header class="terminal-header">
-      @if (bashConfig(); as config) {
-      <h1>{{ config.title }}</h1>
-      <!-- <h1>atomeek.home.content Component</h1> -->
+      <h1>{{ cfg.title }}</h1>
       <div class="terminal-details">
-        <h2>{{ config.subtitle }}</h2>
-        <!-- <h2>{{ sidebar().userContext.title }}</h2> -->
+        <h2>{{ cfg.subtitle }}</h2>
       </div>
-      }
     </header>
+    }
 
     <!-- ======================= -->
     <!-- LOADING STATE -->
     <!-- ======================= -->
 
-    @if (loading() ) {
+    @if (state().loading) {
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>Chargement des informations du compte...</p>
+      <p>Loading data...</p>
     </div>
     }
 
@@ -35,11 +34,13 @@
     <!-- ERROR STATE -->
     <!-- ======================= -->
 
-    @if (error()) {
+    @if (state().error; as errorMsg) {
     <div class="error-state">
       <atk-icon name="error-2" color="currentColor" />
-      <p>{{ error() }}</p>
-      <button class="retry-btn" (click)="refreshAccount()">Réessayer</button>
+      <p>{{ errorMsg }}</p>
+      <button class="retry-btn" (click)="loadData()">
+        Retry
+      </button>
     </div>
     }
 
@@ -53,7 +54,7 @@
 
         <div class="section-content">
           <atk-icon class="terminal-toggle" name="triangle-down" color="var(--color-btn-bg-default)" />
-          <atk-api-bash [configId]="bashConfigId()" [autoLoad]="true" />
+          <atk-api-bash />
           <!-- <atk-api-bash configId="binance-debug-v2" [autoLoad]="true" /> -->
           <!-- <atk-bash configId="binance-debug-v2" [autoLoad]="true" (configRequest)="onBashConfigRequest($event)"
             (dataLoaded)="onBashDataLoaded($event)" (errorOccurred)="onBashError($event)" /> -->
@@ -136,4 +137,4 @@
 <!-- <atk-sidebar-config [sections]="config().configPanel.sections" [isCollapsed]="config().configPanel.isCollapsed"
   (togglePanel)="toggleConfigPanel()" /> -->
 
-<atk-api-sidebar-config [isCollapsed]="configPanelCollapsed()" (togglePanel)="toggleConfigPanel()" />
+<atk-api-sidebar [isCollapsed]="state().sidebarCollapsed" (togglePanel)="toggleSidebar()" />
