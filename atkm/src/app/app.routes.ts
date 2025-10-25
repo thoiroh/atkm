@@ -23,7 +23,7 @@ export const routes: Routes = [
       {
         path: 'atkpi',
         loadComponent: () => import('./shared/components/atk-api/atk-api.component').then(m => m.AtkApiComponent),
-        title: 'atk-api | Debug'
+        // data: { configType: 'binance' }
       },
 
       // ===============================================================================================

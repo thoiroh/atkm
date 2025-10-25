@@ -46,26 +46,26 @@ import type {
 })
 export class AtkApiBashComponent implements OnInit {
 
-  // ======================================================
+  // ====================================================
   // DEPENDENCIES
-  // ======================================================
+  // ====================================================
 
   private readonly stateService = inject(AtkApiStateService);
   private readonly tools = inject(ToolsService);
   private readonly terminalDirective = viewChild(TerminalInputDirective);
 
-  // ======================================================
+  // ====================================================
   // PUBLIC READONLY SIGNALS (from state service)
-  // ======================================================
+  // ====================================================
 
   readonly state = this.stateService.state;
   readonly config = this.stateService.config;
   readonly currentEndpointConfig = this.stateService.currentEndpointConfig;
   readonly visibleColumns = this.stateService.visibleColumns;
 
-  // ======================================================
+  // ====================================================
   // LOCAL STATE SIGNALS
-  // ======================================================
+  // ====================================================
 
   /** Log entries for terminal display */
   logs = signal<IAtkApiLogEntry[]>([]);
@@ -104,31 +104,29 @@ export class AtkApiBashComponent implements OnInit {
 
     let output = '';
 
-    // ═══════════════════════════════════════
+    // ====================================================
     // HEADER SECTION
-    // ═══════════════════════════════════════
+    // ====================================================
 
     if (cfg) {
-      output += `╔═══════════════════════════════════════════════════════════════╗\n`;
-      output += `║  ${cfg.title.padEnd(59)}║\n`;
-      output += `║  ${cfg.subtitle.padEnd(59)}║\n`;
-      output += `╠═══════════════════════════════════════════════════════════════╣\n`;
-      output += `║  Domain: ${cfg.domain.toUpperCase().padEnd(52)}║\n`;
-      output += `║  Config ID: ${cfg.id.padEnd(49)}║\n`;
-      output += `╚═══════════════════════════════════════════════════════════════╝\n\n`;
+      output += `${cfg.title.padEnd(59)}\n`;
+      output += `${cfg.subtitle.padEnd(59)}\n`;
+      output += `Domain: ${cfg.domain.toUpperCase().padEnd(52)}\n`;
+      output += `Config ID: ${cfg.id.padEnd(49)}\n`;
+      output += `\n\n`;
     }
 
-    // ═══════════════════════════════════════
+    // ====================================================
     // CONNECTION STATUS
-    // ═══════════════════════════════════════
+    // ====================================================
 
     const statusIcon = this.getStatusIcon(state.connectionStatus);
     output += `Connection Status:\n`;
     output += `  ${statusIcon} ${state.connectionStatus.toUpperCase()}\n\n`;
 
-    // ═══════════════════════════════════════
+    // ====================================================
     // CURRENT ENDPOINT
-    // ═══════════════════════════════════════
+    // ====================================================
 
     if (endpoint) {
       output += `Current Endpoint:\n`;
@@ -139,9 +137,9 @@ export class AtkApiBashComponent implements OnInit {
       output += `  Cacheable: ${endpoint.cacheable ? 'Yes' : 'No'}\n\n`;
     }
 
-    // ═══════════════════════════════════════
+    // ====================================================
     // PARAMETERS
-    // ═══════════════════════════════════════
+    // ====================================================
 
     if (Object.keys(state.parameters).length > 0) {
       output += `Request Parameters:\n`;
@@ -151,9 +149,9 @@ export class AtkApiBashComponent implements OnInit {
       output += `\n`;
     }
 
-    // ═══════════════════════════════════════
+    // ====================================================
     // LAST RESPONSE METADATA
-    // ═══════════════════════════════════════
+    // ====================================================
 
     if (state.responseMetadata) {
       const meta = state.responseMetadata;
@@ -168,9 +166,9 @@ export class AtkApiBashComponent implements OnInit {
       output += `\n`;
     }
 
-    // ═══════════════════════════════════════
+    // ====================================================
     // LOGS SECTION
-    // ═══════════════════════════════════════
+    // ====================================================
 
     output += `-----------------------------------------\n`;
     output += `Terminal Log:\n`;
@@ -189,9 +187,9 @@ export class AtkApiBashComponent implements OnInit {
       });
     }
 
-    // ═══════════════════════════════════════
+    // ====================================================
     // CURSOR (Typewriter Effect)
-    // ═══════════════════════════════════════
+    // ====================================================
 
     const cursor = this.cursorVisible() && this.typingActive() ? ' ▮' : '';
     output += cursor;
@@ -231,14 +229,15 @@ export class AtkApiBashComponent implements OnInit {
   caretIndex = computed(() => this.terminalInputState().caretIndex);
   selectionText = computed(() => this.terminalInputState().selectionText);
 
-  // ======================================================
+  // ====================================================
   // CONSTRUCTOR
-  // ======================================================
+  // ====================================================
 
   constructor() {
-    // ═══════════════════════════════════════
+
+    // ====================================================
     // EFFECT 1: Listen to state service events for logs
-    // ═══════════════════════════════════════
+    // ====================================================
 
     effect(() => {
       const events = this.stateService.events();
@@ -309,35 +308,32 @@ export class AtkApiBashComponent implements OnInit {
       });
     });
 
-    // ═══════════════════════════════════════
+    // ====================================================
     // EFFECT 2: Cursor blink animation
-    // ═══════════════════════════════════════
+    // ====================================================
 
-    setInterval(() => {
-      this.cursorVisible.update(v => !v);
-    }, 500);
+    // setInterval(() => {
+    //   this.cursorVisible.update(v => !v);
+    // }, 500);
   }
 
-  // ======================================================
+  // ====================================================
   // LIFECYCLE
-  // ======================================================
+  // ====================================================
 
   ngOnInit(): void {
     this.addLog('Terminal initialized', 'info');
     this.addLog('Waiting for commands...', 'info');
 
-    this.tools.consoleGroup({
-      title: 'AtkApiBashAdvancedComponent -> ngOnInit()',
-      tag: 'check',
-      palette: 'in',
-      collapsed: true,
-      data: { config: this.config() }
-    });
+    // this.tools.consoleGroup({ // OFF AtkApiBashComponent -> loadData() ================ CONSOLE LOG IN PROGRESS
+    //   title: 'AtkApiBashComponent -> ngOnInit()', tag: 'check', palette: 'in', collapsed: true,
+    //   data: { config: this.config() }
+    // });
   }
 
-  // ======================================================
+  // ====================================================
   // PUBLIC METHODS - LOG MANAGEMENT
-  // ======================================================
+  // ====================================================
 
   /**
    * Add log entry to terminal
@@ -373,9 +369,9 @@ export class AtkApiBashComponent implements OnInit {
     this.addLog('Logs cleared', 'info');
   }
 
-  // ======================================================
+  // ====================================================
   // PUBLIC METHODS - TERMINAL INPUT
-  // ======================================================
+  // ====================================================
 
   /**
    * Handle terminal input state changes from directive
@@ -385,9 +381,9 @@ export class AtkApiBashComponent implements OnInit {
     this.typingActive.set(state.textValue.length > 0);
   }
 
-  // ======================================================
+  // ====================================================
   // PUBLIC METHODS - UI ACTIONS
-  // ======================================================
+  // ====================================================
 
   /**
    * Handle row selection from datatable
@@ -397,9 +393,9 @@ export class AtkApiBashComponent implements OnInit {
     this.addLog(`Row selected: ${rowData.id || rowData.symbol || 'unknown'}`, 'info');
   }
 
-  // ======================================================
+  // ====================================================
   // PRIVATE METHODS - FORMATTING
-  // ======================================================
+  // ====================================================
 
   /**
    * Get status icon based on connection status

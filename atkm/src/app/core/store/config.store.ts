@@ -137,25 +137,19 @@ export class ConfigStore {
    */
   async loadLandingConfig(profile?: ConfigProfile): Promise<void> {
     const targetProfile = profile || this._profile();
-
     this._loading.set(true);
     this._error.set(null);
-
     try {
       const cfg = await this.configService.loadLandingConfigOnce(targetProfile);
       this._config.set(cfg);
       this._profile.set(targetProfile);
-
       this.tools.consoleGroup({ // TAG ConfigStore -> loadLandingConfig() ================ CONSOLE LOG IN PROGRESS
-        title: `ConfigStore -> loadLandingConfig()`, tag: 'blackSquare', palette: 'su', collapsed: true,
+        title: `ConfigStore -> loadLandingConfig()`, tag: 'blackSquare', palette: 'in', collapsed: true,
         data: this.config()
       });
-
-
     } catch (err: any) {
       const errorMessage = err?.message || 'Unknown error loading configuration';
       this._error.set(errorMessage);
-
       this.tools.consoleGroup({ // TAG ConfigStore -> loadLandingConfig() ================ CONSOLE LOG IN PROGRESS
         title: `ConfigStore -> loadLandingConfig() -> Error loading configuration`, tag: 'cross', palette: 'er', collapsed: false,
         data: { profile: targetProfile, error: err }

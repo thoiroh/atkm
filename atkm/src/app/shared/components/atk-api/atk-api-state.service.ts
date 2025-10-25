@@ -94,19 +94,18 @@ export class AtkApiStateService {
 
   /** Main state - single source of truth */
   private readonly _state = signal<IAtkApiUnifiedState>(DEFAULT_STATE);
-
   /** Current configuration */
   private readonly _config = signal<IAtkApiConfig | null>(null);
-
+  /** Dedicated signal for endpoint tracking (prevents effect loops) */
+  private readonly _currentEndpoint = signal<string>('');
+  /** Dedicated signal for parameters tracking (prevents effect loops) */
+  private readonly _currentParameters = signal<Record<string, any>>({});
   /** Event history (last 100 events) */
   private readonly _events = signal<IAtkApiEvent[]>([]);
-
   /** Cache storage */
   private readonly _cache = signal<Map<string, IAtkApiCacheEntry>>(new Map());
-
   /** Cache configuration */
   private readonly _cacheConfig = signal<IAtkApiCacheConfig>(DEFAULT_CACHE_CONFIG);
-
   /** Persistence confirmation required */
   private readonly _persistenceConfirmed = signal<boolean>(false);
 
@@ -116,16 +115,35 @@ export class AtkApiStateService {
 
   /** Public readonly state */
   readonly state = this._state.asReadonly();
-
   /** Public readonly configuration */
   readonly config = this._config.asReadonly();
-
   /** Public readonly events */
   readonly events = this._events.asReadonly();
 
   // ======================================================
-  // COMPUTED SIGNALS
+  // COMPUTED SIGNALS - For effect tracking
   // ======================================================
+
+  /**
+   * Dedicated signal for endpoint tracking
+   * Updated only when endpoint actually changes
+   */
+  readonly endpointSignal = this._currentEndpoint.asReadonly();
+
+  /**
+   * Dedicated signal for parameters tracking
+   * Updated only when parameters actually change
+   */
+  readonly parametersSignal = this._currentParameters.asReadonly();
+
+  /**
+   * Combined computed for endpoint + parameters
+   * Only recalculates when these specific signals change
+   */
+  readonly endpointContextSignal = computed(() => ({
+    endpoint: this._currentEndpoint(),
+    parameters: this._currentParameters()
+  }));
 
   /**
    * Get current endpoint configuration
@@ -133,9 +151,7 @@ export class AtkApiStateService {
   readonly currentEndpointConfig = computed<IAtkApiEndpointConfig | null>(() => {
     const config = this._config();
     const currentId = this._state().currentEndpoint;
-
     if (!config || !currentId) return null;
-
     return config.endpoints.find(ep => ep.id === currentId) || null;
   });
 
@@ -145,7 +161,6 @@ export class AtkApiStateService {
   readonly visibleColumns = computed<IAtkApiColumn[]>(() => {
     const endpointConfig = this.currentEndpointConfig();
     if (!endpointConfig) return [];
-
     return endpointConfig.columns.filter(col => col.visible !== false);
   });
 
@@ -155,7 +170,6 @@ export class AtkApiStateService {
   readonly sidebarFields = computed<IAtkApiSidebarField[]>(() => {
     const endpointConfig = this.currentEndpointConfig();
     if (!endpointConfig) return [];
-
     return endpointConfig.sidebarFields?.filter(field => field.visible !== false) || [];
   });
 
@@ -165,7 +179,6 @@ export class AtkApiStateService {
   readonly rowDetailFields = computed<IAtkApiSidebarField[]>(() => {
     const endpointConfig = this.currentEndpointConfig();
     if (!endpointConfig) return [];
-
     return endpointConfig.rowDetailFields?.filter(field => field.visible !== false) || [];
   });
 
@@ -196,10 +209,10 @@ export class AtkApiStateService {
   // ======================================================
 
   constructor() {
-    this.tools.consoleGroup({ // TAG AtkApiStateService -> constructor() ================ CONSOLE LOG IN PROGRESS
-      title: 'AtkApiStateService -> constructor()', tag: 'recycle', palette: 'su', collapsed: true,
-      data: { state: this._state() }
-    });
+    // this.tools.consoleGroup({ // OFF AtkApiStateService -> constructor() ================ CONSOLE LOG IN PROGRESS
+    //   title: 'AtkApiStateService -> constructor()', tag: 'recycle', palette: 'su', collapsed: true,
+    //   data: { state: this._state() }
+    // });
 
     // Setup cache cleanup effect
     this.setupCacheCleanup();
@@ -218,12 +231,8 @@ export class AtkApiStateService {
    */
   initialize(config: IAtkApiConfig, restoreFromStorage: boolean = true): void {
     this._config.set(config);
-    // Try to restore from localStorage
-    let restored = false;
-    if (restoreFromStorage) {
-      restored = this.loadFromLocalStorage();
-    }
-    // If not restored, use default endpoint
+    let restored = false; // Try to restore from localStorage
+    if (restoreFromStorage) { restored = this.loadFromLocalStorage(); }
     if (!restored) {
       const defaultEndpoint = config.defaultEndpoint || config.endpoints[0]?.id || '';
       this._state.update(s => ({
@@ -234,13 +243,20 @@ export class AtkApiStateService {
         connectionStatus: 'disconnected',
         lastUpdated: new Date()
       }));
+      this._currentEndpoint.set(defaultEndpoint);      // Initialize dedicated tracking signals
+      this._currentParameters.set({});
+    } else {
+      this._state.update(s => ({      // When restored, signals are already set by loadFromLocalStorage() / Just ensure config is set
+        ...s,
+        configId: config.id
+      }));
     }
     this.emitEvent('state-initialized', {
       configId: config.id,
       defaultEndpoint: this._state().currentEndpoint
     });
     this.tools.consoleGroup({ // TAG AtkApiStateService -> initialize() ================ CONSOLE LOG IN PROGRESS
-      title: 'AtkApiStateService -> initialize()', tag: 'recycle', palette: 'su', collapsed: true,
+      title: `AtkApiStateService -> initialize(${config.id})`, tag: 'recycle', palette: 'in', collapsed: true,
       data: { config, state: this._state(), restored }
     });
   }
@@ -269,16 +285,20 @@ export class AtkApiStateService {
       lastUpdated: new Date()
     }));
 
+    // Update dedicated tracking signals
+    this._currentEndpoint.set(endpointId);
+    this._currentParameters.set({});
+
     this.emitEvent('endpoint-changed', {
       oldEndpoint,
       newEndpoint: endpointId
     });
 
     this.saveToLocalStorage();
-    this.tools.consoleGroup({ // TAG AtkApiStateService -> saveToLocalStorage() ================ CONSOLE LOG IN PROGRESS
-      title: 'AtkApiStateService -> saveToLocalStorage()', tag: 'recycle', palette: 'in', collapsed: true,
-      data: { oldEndpoint, newEndpoint: endpointId }
-    });
+    // this.tools.consoleGroup({ // OFF AtkApiStateService -> saveToLocalStorage() ================ CONSOLE LOG IN PROGRESS
+    //   title: 'AtkApiStateService -> saveToLocalStorage()', tag: 'recycle', palette: 'in', collapsed: false,
+    //   data: { oldEndpoint, newEndpoint: endpointId }
+    // });
   }
 
   /**
@@ -289,12 +309,16 @@ export class AtkApiStateService {
    */
   updateParameters(params: Record<string, any>): void {
     const changedKeys = Object.keys(params);
+    const newParams = { ...this._state().parameters, ...params };
 
     this._state.update(s => ({
       ...s,
-      parameters: { ...s.parameters, ...params },
+      parameters: newParams,
       lastUpdated: new Date()
     }));
+
+    // Update dedicated tracking signal
+    this._currentParameters.set(newParams);
 
     this.emitEvent('parameters-updated', {
       parameters: params,
@@ -314,10 +338,7 @@ export class AtkApiStateService {
    * @param tableData - Array of data rows
    * @param sidebarData - Global endpoint data (optional)
    */
-  updateData(
-    tableData: BashData[],
-    sidebarData: Record<string, any> | null = null
-  ): void {
+  updateData(tableData: BashData[], sidebarData: Record<string, any> | null = null): void {
     this._state.update(s => ({
       ...s,
       tableData,
@@ -590,28 +611,23 @@ export class AtkApiStateService {
     // Run cleanup every minute
     setInterval(() => {
       if (!this._cacheConfig().enabled) return;
-
       const now = Date.now();
       let cleanedCount = 0;
-
       this._cache.update(cache => {
         const newCache = new Map(cache);
-
         for (const [key, entry] of newCache.entries()) {
           if (now - entry.timestamp > entry.duration) {
             newCache.delete(key);
             cleanedCount++;
           }
         }
-
         return newCache;
       });
-
       if (cleanedCount > 0) {
-        this.tools.consoleGroup({ // TAG AtkApiStateService -> setupCacheCleanup() ================ CONSOLE LOG IN PROGRESS
-          title: 'AtkApiStateService -> setupCacheCleanup()', tag: 'recycle', palette: 'su', collapsed: true,
-          data: { cleanedCount, remainingEntries: this._cache().size }
-        });
+        // this.tools.consoleGroup({ // OFF AtkApiStateService -> setupCacheCleanup() ================ CONSOLE LOG IN PROGRESS
+        //   title: 'AtkApiStateService -> setupCacheCleanup()', tag: 'recycle', palette: 'su', collapsed: true,
+        //   data: { cleanedCount, remainingEntries: this._cache().size }
+        // });
       }
     }, 60000); // 1 minute
   }
@@ -658,16 +674,14 @@ export class AtkApiStateService {
       metadata,
       source: 'AtkApiStateService'
     };
-
     // Emit as event (not stored in state)
     this.emitEvent('log-added' as AtkApiEventType, { log });
-
     // Also log to ToolsService for debugging
     if (level === 'error') {
-      this.tools.consoleGroup({ // TAG AtkApiStateService -> addLog(error) ================ CONSOLE LOG IN PROGRESS
-        title: `AtkApiStateService -> addLog( ${message})`, tag: 'cross', palette: 'er', collapsed: true,
-        data: { log }
-      });
+      // this.tools.consoleGroup({ // TAG AtkApiStateService -> addLog(error) ================ CONSOLE LOG IN PROGRESS
+      //   title: `AtkApiStateService -> addLog( ${message})`, tag: 'cross', palette: 'er', collapsed: true,
+      //   data: { log }
+      // });
     }
   }
 
@@ -682,10 +696,7 @@ export class AtkApiStateService {
    * @param type - Event type
    * @param payload - Event payload
    */
-  emitEvent<T extends AtkApiEventType>(
-    type: T,
-    payload: AtkApiEventPayload<T>
-  ): void {
+  emitEvent<T extends AtkApiEventType>(type: T, payload: AtkApiEventPayload<T>): void {
     const event: IAtkApiEvent = {
       type,
       payload,
@@ -701,10 +712,10 @@ export class AtkApiStateService {
 
     // Debug log for important events
     if (this.shouldLogEvent(type)) {
-      this.tools.consoleGroup({ // TAG AtkApiStateService -> emitEvent() ================ CONSOLE LOG IN PROGRESS
-        title: `AtkApiStateService -> emitEvent(${type})`, tag: 'recycle', palette: 'ac', collapsed: true,
-        data: { event, currentState: this._state() }
-      });
+      // this.tools.consoleGroup({ // OFF AtkApiStateService -> emitEvent() ================ CONSOLE LOG IN PROGRESS
+      //   title: `AtkApiStateService -> emitEvent(${type})`, tag: 'recycle', palette: 'ac', collapsed: true,
+      //   data: { event, currentState: this._state() }
+      // });
     }
   }
 
@@ -790,16 +801,24 @@ export class AtkApiStateService {
     try {
       const persistedState = JSON.parse(stored);
 
+      // After state update from localStorage
       this._state.update(s => ({
         ...s,
-        configId: config.id,
         ...persistedState,
         lastUpdated: new Date()
       }));
 
+      // Synchronize dedicated tracking signals
+      if (persistedState.currentEndpoint) {
+        this._currentEndpoint.set(persistedState.currentEndpoint);
+      }
+      if (persistedState.parameters) {
+        this._currentParameters.set(persistedState.parameters);
+      }
+
       this.tools.consoleGroup({ // TAG AtkApiStateService -> loadFromLocalStorage(SUCCESS) ================ CONSOLE LOG IN PROGRESS
         title: 'AtkApiStateService -> loadFromLocalStorage(SUCCESS) ', tag: 'recycle', palette: 'su', collapsed: true,
-        data: { restoredState: persistedState }
+        data: { persistedState: persistedState }
       });
 
       return true;
@@ -854,12 +873,14 @@ export class AtkApiStateService {
    */
   resetState(reason?: string): void {
     this._state.set(DEFAULT_STATE);
+    this._config.set(null);
     this._events.set([]);
+    // Reset dedicated tracking signals
+    this._currentEndpoint.set('');
+    this._currentParameters.set({});
     this.clearCache();
     this.clearLocalStorage();
-
     this.emitEvent('state-reset', { reason });
-
     this.tools.consoleGroup({ // TAG AtkApiStateService -> resetState() ================ CONSOLE LOG IN PROGRESS
       title: 'AtkApiStateService -> resetState()', tag: 'cross', palette: 'wa', collapsed: true,
       data: { reason, state: this._state() }

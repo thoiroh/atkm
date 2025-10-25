@@ -78,17 +78,10 @@ export class LandingComponent implements OnInit, AfterViewInit {
         }))
       );
 
-      this.tools.consoleGroup({
-        title: 'LandingComponent -> ngOnInit() -> App initialized',
-        tag: 'check',
-        palette: 'su',
-        collapsed: true,
-        data: {
-          config: this.config(),
-          navigationItemsCount: navigationItems.length,
-          appStateInitialized: this.appState.initialized()
-        }
-      });
+      // this.tools.consoleGroup({ // OFF LandingComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+      //   title: 'LandingComponent -> ngOnInit()', tag: 'check', palette: 'in', collapsed: true,
+      //   data: { config: this.config(), navigationItemsCount: navigationItems.length, appStateInitialized: this.appState.initialized() }
+      // });
     } else {
       console.warn('No navigation items found in configuration');
     }

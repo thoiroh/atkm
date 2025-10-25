@@ -13,14 +13,13 @@
  * @architecture Injectable service with instance methods
  */
 
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Formatters } from './atk-api.formatters';
 
+import { ToolsService } from '@core/services/tools.service';
 import type {
   AtkApiAlign,
-  AtkApiColumnType,
   AtkApiFieldType,
-  BashData,
   IAtkApiColumn,
   IAtkApiConfig,
   IAtkApiDataTransformResult,
@@ -30,6 +29,12 @@ import type {
 
 @Injectable({ providedIn: 'root' })
 export class AtkApiFactory {
+
+  // ======================================================
+  // DEPENDENCIES
+  // ======================================================
+
+  private readonly tools = inject(ToolsService);
 
   // ======================================================
   // PUBLIC API - DOMAIN CONFIGURATIONS
@@ -49,7 +54,6 @@ export class AtkApiFactory {
       baseUrl: 'http://localhost:8000',
       globalHeaders: {
         'Content-Type': 'application/json',
-        'X-Debug': 'true'
       },
       enableCaching: true,
       ui: {
@@ -61,7 +65,7 @@ export class AtkApiFactory {
       },
       endpoints: [
         this.createBinanceAccountEndpoint(),
-        this.createBinanceUserAssetsEndpoint(),
+        // this.createBinanceUserAssetsEndpoint(),
         this.createBinanceTradesEndpoint(),
         this.createBinanceOrdersEndpoint(),
         this.createBinanceTickerEndpoint()
@@ -117,7 +121,7 @@ export class AtkApiFactory {
       method: 'GET',
       icon: 'users',
       visible: true,
-      cacheable: true,
+      cacheable: false,
       cacheDuration: 30000, // 30 seconds
 
       // Sidebar fields for account-level information
@@ -151,15 +155,23 @@ export class AtkApiFactory {
         this.createCurrencyColumn('usdValue', 'USD', '10%', 'right', true)
       ],
 
-      // Data transformer
+
+      // DATA TRANSFORMER - EXTENDED
       dataTransformer: (apiResponse: any): IAtkApiDataTransformResult => {
+
         if (!apiResponse?.data) {
           return { sidebarData: {}, tableData: [] };
         }
 
-        const accountData = apiResponse.data;
-
-        // Sidebar data - account info
+        // Handle different response structures
+        // Case 1: { data: { balances: [...] } } - wrapped response
+        // Case 2: { balances: [...] } - direct response
+        const accountData = apiResponse;
+        this.tools.consoleGroup({ // TAG AtkApiFactory -> dataTransformer() ================ CONSOLE LOG IN PROGRESS
+          title: 'AtkApiFactory -> dataTransformer()', tag: 'recycle', palette: 'su', collapsed: false,
+          data: accountData
+        });
+        // SIDEBAR DATA - Account info fields (UPDATED)
         const sidebarData = {
           canTrade: accountData.canTrade || false,
           canWithdraw: accountData.canWithdraw || false,
@@ -172,8 +184,11 @@ export class AtkApiFactory {
           sellerCommission: accountData.sellerCommission || 0,
           permissions: accountData.permissions || []
         };
-
-        // Table data - balances with significant amounts only
+        this.tools.consoleGroup({ // TAG AtkApiFactory -> dataTransformer() ================ CONSOLE LOG IN PROGRESS
+          title: 'AtkApiFactory -> dataTransformer()', tag: 'recycle', palette: 'su', collapsed: false,
+          data: sidebarData
+        });
+        // TABLE DATA - Balances with significant amounts only
         const tableData = (accountData.balances || [])
           .filter((balance: any) =>
             parseFloat(balance.free || '0') > 0 ||
@@ -187,7 +202,10 @@ export class AtkApiFactory {
             total: parseFloat(balance.free || '0') + parseFloat(balance.locked || '0'),
             usdValue: 0 // Would need price conversion
           }));
-
+        this.tools.consoleGroup({ // TAG AtkApiFactory -> dataTransformer() ================ CONSOLE LOG IN PROGRESS
+          title: 'AtkApiFactory -> dataTransformer()', tag: 'recycle', palette: 'su', collapsed: false,
+          data: tableData
+        });
         return { sidebarData, tableData };
       }
     };

@@ -179,10 +179,10 @@ export class AtkAppStateService {
   // =========================================
 
   constructor() {
-    this.tools.consoleGroup({ // TAG AtkAppStateService -> constructor() ================ CONSOLE LOG IN PROGRESS
-      title: 'AtkAppStateService -> constructor()', tag: 'recycle', palette: 'su', collapsed: true,
-      data: { service: 'AtkAppStateService' }
-    });
+    // this.tools.consoleGroup({ // OFF AtkAppStateService -> constructor() ================ CONSOLE LOG IN PROGRESS
+    //   title: 'AtkAppStateService -> constructor()', tag: 'recycle', palette: 'su', collapsed: true,
+    //   data: { service: 'AtkAppStateService' }
+    // });
 
     // Setup router listener for navigation updates
     this.setupRouterListener();
@@ -200,13 +200,10 @@ export class AtkAppStateService {
    */
   async initialize(navigationItems: NavigationItem[]): Promise<void> {
     if (this._initialized()) {
-      this.tools.consoleGroup({
-        title: 'AtkAppStateService -> initialize() SKIP: Already initialized',
-        tag: 'check',
-        palette: 'wa',
-        collapsed: true,
-        data: { initialized: true }
-      });
+      // this.tools.consoleGroup({ // OFF AtkAppStateService -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
+      //   title: 'AtkAppStateService -> initialize(SKIP) ', tag: 'check', palette: 'wa', collapsed: true,
+      //   data: { initialized: true }
+      // });
       return;
     }
 
@@ -226,24 +223,14 @@ export class AtkAppStateService {
       // Mark as initialized
       this._initialized.set(true);
 
-      this.tools.consoleGroup({
-        title: 'AtkAppStateService -> initialize() SUCCESS',
-        tag: 'check',
-        palette: 'su',
-        collapsed: true,
-        data: {
-          navigationItemsCount: navigationItems.length,
-          iconsLoaded: this._iconsLoaded(),
-          currentRoute: this._currentRoute()
-        }
+      this.tools.consoleGroup({ // TAG AtkAppStateService -> initialize(SUCCESS) ================ CONSOLE LOG IN PROGRESS
+        title: 'AtkAppStateService -> initialize(SUCCESS)', tag: 'check', palette: 'su', collapsed: true,
+        data: { navigationItemsCount: navigationItems.length, iconsLoaded: this._iconsLoaded(), currentRoute: this._currentRoute() }
       });
 
     } catch (error: any) {
-      this.tools.consoleGroup({
-        title: 'AtkAppStateService -> initialize() ERROR',
-        tag: 'cross',
-        palette: 'er',
-        collapsed: false,
+      this.tools.consoleGroup({ // TAG AtkAppStateService -> initialize(ERROR) ================ CONSOLE LOG IN PROGRESS
+        title: 'AtkAppStateService -> initialize(ERROR)', tag: 'cross', palette: 'er', collapsed: false,
         data: { error: error.message }
       });
       throw error;

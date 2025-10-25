@@ -73,13 +73,10 @@ export class AtkApiHttpService {
   // ======================================================
 
   constructor() {
-    this.tools.consoleGroup({
-      title: 'AtkApiHttpService -> constructor()',
-      tag: 'recycle',
-      palette: 'in',
-      collapsed: true,
-      data: { service: 'AtkApiHttpService' }
-    });
+    // this.tools.consoleGroup({ // OFF AtkApiHttpService -> constructor() ================ CONSOLE LOG IN PROGRESS
+    //   title: 'AtkApiHttpService -> constructor()', tag: 'recycle', palette: 'in', collapsed: true,
+    //   data: { service: 'AtkApiHttpService' }
+    // });
   }
 
   // ======================================================
@@ -94,79 +91,44 @@ export class AtkApiHttpService {
    * @param params - Request parameters
    * @returns Promise with transformed data and metadata
    */
-  async loadData(
-    endpointConfig: IAtkApiEndpointConfig,
-    params: Record<string, any> = {}
-  ): Promise<IAtkApiResponse<BashData[]>> {
+  async loadData(endpointConfig: IAtkApiEndpointConfig, params: Record<string, any> = {}):
+    Promise<IAtkApiResponse<BashData[]>> {
     const startTime = performance.now();
 
     try {
-      // Build cache key
-      const cacheKey = this.stateService.buildCacheKey(endpointConfig.id, params);
-
-      // Check cache first
-      if (endpointConfig.cacheable) {
+      const cacheKey = this.stateService.buildCacheKey(endpointConfig.id, params);      // Build cache key
+      if (endpointConfig.cacheable) {      // Check cache first
         const cached = this.stateService.getCache<BashData[]>(cacheKey);
         if (cached) {
           const responseTime = Math.round(performance.now() - startTime);
-
-          this.tools.consoleGroup({
-            title: 'AtkApiHttpService -> loadData() FROM CACHE',
-            tag: 'check',
-            palette: 'su',
-            collapsed: true,
+          this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(CACHE) ================ CONSOLE LOG IN PROGRESS
+            title: 'AtkApiHttpService -> loadData(CACHE)', tag: 'check', palette: 'in', collapsed: true,
             data: { endpointConfig, params, dataCount: cached.length, responseTime }
           });
 
-          return {
-            data: cached,
-            statusCode: 200,
-            responseTime,
-            fromCache: true
-          };
+          return { data: cached, statusCode: 200, responseTime, fromCache: true };
         }
       }
-
-      // Execute HTTP request
-      const rawData = await this.executeRequest(endpointConfig, params);
-
-      // Transform data if transformer exists
-      let transformedData: BashData[];
-
+      this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData() ================ CONSOLE LOG IN PROGRESS
+        title: 'AtkApiHttpService -> loadData()', tag: 'recycle', palette: 'in', collapsed: true,
+        data: endpointConfig       // data: { endpointConfig: endpointConfig, params: params }
+      });
+      const rawData = await this.executeRequest(endpointConfig, params);      // Execute HTTP request
+      let transformedData: BashData[];      // Transform data if transformer exists
       if (endpointConfig.dataTransformer) {
         const result = endpointConfig.dataTransformer(rawData);
         transformedData = result.tableData;
-
-        // Update sidebar data in state
-        this.stateService.updateData([], result.sidebarData);
+        this.stateService.updateData([], result.sidebarData);        // Update sidebar data in state
       } else {
-        // No transformer - normalize data
-        transformedData = this.normalizeData(rawData);
+        transformedData = this.normalizeData(rawData);        // No transformer - normalize data
       }
-
       // Cache the transformed data
-      if (endpointConfig.cacheable) {
-        this.stateService.setCache(
-          cacheKey,
-          transformedData,
-          endpointConfig.cacheDuration
-        );
-      }
-
+      if (endpointConfig.cacheable) { this.stateService.setCache(cacheKey, transformedData, endpointConfig.cacheDuration); }
       const responseTime = Math.round(performance.now() - startTime);
 
-      this.tools.consoleGroup({
-        title: 'AtkApiHttpService -> loadData() SUCCESS',
-        tag: 'check',
-        palette: 'su',
-        collapsed: true,
-        data: {
-          endpointConfig,
-          params,
-          dataCount: transformedData.length,
-          responseTime,
-          cached: endpointConfig.cacheable
-        }
+      this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(SUCCESS) ================ CONSOLE LOG IN PROGRESS
+        title: 'AtkApiHttpService -> loadData(SUCCESS) ', tag: 'recycle', palette: 'in', collapsed: false,
+        data: { endpointConfig, params, dataCount: transformedData.length, responseTime, cached: endpointConfig.cacheable }
       });
 
       return {
@@ -180,11 +142,8 @@ export class AtkApiHttpService {
       const responseTime = Math.round(performance.now() - startTime);
       const errorMessage = this.extractErrorMessage(error);
 
-      this.tools.consoleGroup({
-        title: 'AtkApiHttpService -> loadData() ERROR',
-        tag: 'cross',
-        palette: 'er',
-        collapsed: false,
+      this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(ERROR) ================ CONSOLE LOG IN PROGRESS
+        title: 'AtkApiHttpService -> loadData(ERROR)', tag: 'cross', palette: 'er', collapsed: false,
         data: { endpointConfig, params, error, errorMessage, responseTime }
       });
 
