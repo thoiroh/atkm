@@ -366,6 +366,7 @@ export class AtkApiStateService {
     this._state.update(s => ({
       ...s,
       selectedRowData: rowData,
+      sidebarCollapsed: rowData ? false : s.sidebarCollapsed,
       lastUpdated: new Date()
     }));
 

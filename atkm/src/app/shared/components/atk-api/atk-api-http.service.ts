@@ -109,18 +109,23 @@ export class AtkApiHttpService {
           return { data: cached, statusCode: 200, responseTime, fromCache: true };
         }
       }
-      this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData() ================ CONSOLE LOG IN PROGRESS
-        title: 'AtkApiHttpService -> loadData()', tag: 'recycle', palette: 'in', collapsed: true,
-        data: endpointConfig       // data: { endpointConfig: endpointConfig, params: params }
-      });
+
       const rawData = await this.executeRequest(endpointConfig, params);      // Execute HTTP request
       let transformedData: BashData[];      // Transform data if transformer exists
+      let sidebarData: Record<string, any> | null = null;
+
       if (endpointConfig.dataTransformer) {
         const result = endpointConfig.dataTransformer(rawData);
         transformedData = result.tableData;
-        this.stateService.updateData([], result.sidebarData);        // Update sidebar data in state
+        sidebarData = result.sidebarData;  // ✅ Garde la référence au sidebarData
+        this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData() ================ CONSOLE LOG IN PROGRESS
+          title: 'AtkApiHttpService -> loadData(sidebarData)', tag: 'recycle', palette: 'ac', collapsed: false,
+          data: sidebarData
+        });
+
+        // this.stateService.updateData(result.tableData, result.sidebarData);
       } else {
-        transformedData = this.normalizeData(rawData);        // No transformer - normalize data
+        transformedData = this.normalizeData(rawData);  // No transformer - normalize data
       }
       // Cache the transformed data
       if (endpointConfig.cacheable) { this.stateService.setCache(cacheKey, transformedData, endpointConfig.cacheDuration); }
@@ -130,9 +135,9 @@ export class AtkApiHttpService {
         title: 'AtkApiHttpService -> loadData(SUCCESS) ', tag: 'recycle', palette: 'in', collapsed: false,
         data: { endpointConfig, params, dataCount: transformedData.length, responseTime, cached: endpointConfig.cacheable }
       });
-
       return {
         data: transformedData,
+        sidebarData: sidebarData,
         statusCode: 200,
         responseTime,
         fromCache: false

@@ -28,11 +28,8 @@ import type {
 } from './atk-api.interfaces';
 
 @Injectable({ providedIn: 'root' })
-export class AtkApiFactory {
 
-  // ======================================================
-  // DEPENDENCIES
-  // ======================================================
+export class AtkApiFactory {
 
   private readonly tools = inject(ToolsService);
 
@@ -121,7 +118,7 @@ export class AtkApiFactory {
       method: 'GET',
       icon: 'users',
       visible: true,
-      cacheable: false,
+      cacheable: true,
       cacheDuration: 30000, // 30 seconds
 
       // Sidebar fields for account-level information
@@ -155,23 +152,15 @@ export class AtkApiFactory {
         this.createCurrencyColumn('usdValue', 'USD', '10%', 'right', true)
       ],
 
-
-      // DATA TRANSFORMER - EXTENDED
+      // Data transformer
       dataTransformer: (apiResponse: any): IAtkApiDataTransformResult => {
-
         if (!apiResponse?.data) {
           return { sidebarData: {}, tableData: [] };
         }
 
-        // Handle different response structures
-        // Case 1: { data: { balances: [...] } } - wrapped response
-        // Case 2: { balances: [...] } - direct response
-        const accountData = apiResponse;
-        this.tools.consoleGroup({ // TAG AtkApiFactory -> dataTransformer() ================ CONSOLE LOG IN PROGRESS
-          title: 'AtkApiFactory -> dataTransformer()', tag: 'recycle', palette: 'su', collapsed: false,
-          data: accountData
-        });
-        // SIDEBAR DATA - Account info fields (UPDATED)
+        const accountData = apiResponse.data;
+
+        // Sidebar data - account info
         const sidebarData = {
           canTrade: accountData.canTrade || false,
           canWithdraw: accountData.canWithdraw || false,
@@ -184,28 +173,49 @@ export class AtkApiFactory {
           sellerCommission: accountData.sellerCommission || 0,
           permissions: accountData.permissions || []
         };
-        this.tools.consoleGroup({ // TAG AtkApiFactory -> dataTransformer() ================ CONSOLE LOG IN PROGRESS
-          title: 'AtkApiFactory -> dataTransformer()', tag: 'recycle', palette: 'su', collapsed: false,
-          data: sidebarData
-        });
-        // TABLE DATA - Balances with significant amounts only
-        const tableData = (accountData.balances || [])
+
+        // IMPORTANT: Convert balances to real array if it's an object
+        let balancesArray: any[] = [];
+
+        if (accountData.balances) {
+          if (Array.isArray(accountData.balances)) {
+            // Already an array
+            balancesArray = accountData.balances;
+          } else if (typeof accountData.balances === 'object') {
+            // Convert object with numeric keys to array
+            balancesArray = Object.values(accountData.balances);
+          }
+        }
+
+        // Table data - transform balances with filter and map
+        const tableData = balancesArray
           .filter((balance: any) =>
-            parseFloat(balance.free || '0') > 0 ||
-            parseFloat(balance.locked || '0') > 0
+            parseFloat(balance.free || '0') > 0 || parseFloat(balance.locked || '0') > 0
           )
-          .map((balance: any) => ({
-            id: balance.asset,
-            asset: balance.asset,
-            free: parseFloat(balance.free || '0'),
-            locked: parseFloat(balance.locked || '0'),
-            total: parseFloat(balance.free || '0') + parseFloat(balance.locked || '0'),
-            usdValue: 0 // Would need price conversion
-          }));
-        this.tools.consoleGroup({ // TAG AtkApiFactory -> dataTransformer() ================ CONSOLE LOG IN PROGRESS
-          title: 'AtkApiFactory -> dataTransformer()', tag: 'recycle', palette: 'su', collapsed: false,
-          data: tableData
+          .map((balance: any) => {
+            const freeAmount = parseFloat(balance.free || '0');
+            const lockedAmount = parseFloat(balance.locked || '0');
+
+            return {
+              id: balance.asset,
+              asset: balance.asset,
+              free: freeAmount,
+              locked: lockedAmount,
+              total: freeAmount + lockedAmount,
+              usdValue: 0  // To be implemented with price conversion
+            };
+          });
+
+        this.tools.consoleGroup({ // TAG AtkApiComponent -> constructor() ================ CONSOLE LOG IN PROGRESS
+          title: 'AtkApiFactory -> dataTransformer(RESULT)', tag: 'recycle', palette: 'wa', collapsed: false,
+          data: {
+            sidebarData,
+            balancesType: Array.isArray(accountData.balances) ? 'array' : typeof accountData.balances,
+            tableDataCount: tableData.length,
+            tableDataSample: tableData.slice(0, 10)
+          }
         });
+
         return { sidebarData, tableData };
       }
     };

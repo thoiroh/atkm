@@ -210,24 +210,18 @@ export class AtkAppStateService {
     try {
       // Set navigation items
       this._navigationItems.set(navigationItems);
-
       // Load icons
       await this.loadIcons();
-
       // Update active route based on current URL
       this.updateActiveRoute(this.router.url);
-
       // Build initial breadcrumbs
       this.buildBreadcrumbs();
-
       // Mark as initialized
       this._initialized.set(true);
-
-      this.tools.consoleGroup({ // TAG AtkAppStateService -> initialize(SUCCESS) ================ CONSOLE LOG IN PROGRESS
-        title: 'AtkAppStateService -> initialize(SUCCESS)', tag: 'check', palette: 'su', collapsed: true,
-        data: { navigationItemsCount: navigationItems.length, iconsLoaded: this._iconsLoaded(), currentRoute: this._currentRoute() }
-      });
-
+      // this.tools.consoleGroup({ // OFF AtkAppStateService -> initialize(SUCCESS) ================ CONSOLE LOG IN PROGRESS
+      //   title: 'AtkAppStateService -> initialize(SUCCESS)', tag: 'check', palette: 'in', collapsed: true,
+      //   data: { navigationItemsCount: navigationItems.length, iconsLoaded: this._iconsLoaded(), currentRoute: this._currentRoute() }
+      // });
     } catch (error: any) {
       this.tools.consoleGroup({ // TAG AtkAppStateService -> initialize(ERROR) ================ CONSOLE LOG IN PROGRESS
         title: 'AtkAppStateService -> initialize(ERROR)', tag: 'cross', palette: 'er', collapsed: false,

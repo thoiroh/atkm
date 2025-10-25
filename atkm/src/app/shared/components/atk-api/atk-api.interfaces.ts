@@ -843,6 +843,8 @@ export interface IAtkApiRequestOptions {
 export interface IAtkApiResponse<T = any> {
   /** Response data */
   data: T;
+  /** sidebarData data */
+  sidebarData?: Record<string, any> | null;  // ✅ AJOUT
 
   /** HTTP status code */
   statusCode: number;

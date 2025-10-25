@@ -202,8 +202,7 @@ export class AtkApiComponent implements OnInit {
         return;
       }
       // Update state with successful response
-      this.stateService.updateData(response.data);
-      // Set response metadata
+      this.stateService.updateData(response.data, response.sidebarData || null);  // ✅ Passe sidebarData depuis response      // Set response metadata
       this.stateService.setResponseMetadata({
         statusCode: response.statusCode,
         responseTime: response.responseTime,
