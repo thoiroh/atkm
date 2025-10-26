@@ -9,7 +9,7 @@
   "cloud": { "char": "☁", "description": "Cloud" },
   "club": { "char": "♣", "description": "Club suit" },
   "coffee": { "char": "☕", "description": "Hot beverage / Coffee cup" },
-  "cross": { "char": "✝", "description": "Christian cross" },
+  "cross": { "char": "✖", "description": "Cross mark" },
   "crescentMoon": { "char": "☾", "description": "Crescent moon" },
   "degree": { "char": "°", "description": "Degree sign" },
   "diamond": { "char": "♦", "description": "Diamond suit" },

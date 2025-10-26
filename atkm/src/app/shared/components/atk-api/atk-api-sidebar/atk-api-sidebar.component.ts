@@ -128,16 +128,10 @@ export class AtkApiSidebarComponent {
   hasSidebarData = computed(() => {
     const data = this.sidebarData();
     const fields = this.sidebarFields();
-
-    // 🔍 DEBUG LOG - À RETIRER APRÈS
-    console.log('🔍 hasSidebarData DEBUG:', {
-      data,
-      dataKeys: data ? Object.keys(data) : [],
-      fields,
-      fieldsCount: fields.length,
-      result: data !== null && Object.keys(data).length > 0 && fields.length > 0
-    });
-
+    // this.tools.consoleGroup({ // OFF AtkApiSidebarComponent -> hasSidebarData = computed()  ================ CONSOLE LOG IN PROGRESS
+    //   title: 'AtkApiSidebarComponent -> hasSidebarData = computed()', tag: 'blackDiamond', palette: 'ac', collapsed: false,
+    //   data: { data, dataKeys: data ? Object.keys(data) : [], fields, fieldsCount: fields.length, result: data !== null && Object.keys(data).length > 0 && fields.length > 0 }
+    // });
     return data !== null && Object.keys(data).length > 0 && fields.length > 0;
   });
 

@@ -47,14 +47,7 @@
 
 .bash-side {
   display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 8px;
-  width: 45%;
-  /* padding: 20px 20px 4px 20px;
-  background: var(--color-canvas-default);
-  border: 1px solid var(--color-border-default);
-  border-radius: 8px; */
+  width: 24%;
   position: relative;
 }
 
@@ -112,7 +105,7 @@
 
 .bash-status>span:not(:last-child)::after {
   content: "-";
-  margin: 0 8px;
+  margin: 0 4px;
 }
 
 .bash-selection {

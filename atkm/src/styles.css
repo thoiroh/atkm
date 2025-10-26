@@ -649,7 +649,7 @@ atk-sidebar-bash-config {
 .content-header h1 {
   font-size: 1em;
   font-weight: 600;
-  margin: 10px 0 5px -10px;
+  margin: 0px 0 0px -6px;
   color: var(--color-fg-muted);
   transition: all 0.3s ease-in-out;
 }
@@ -752,7 +752,7 @@ li,
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 30px;
+  padding: 20px 30px;
 }
 
 .terminal-main {
@@ -765,7 +765,7 @@ li,
   position: relative;
   display: flex;
   flex-direction: column;
-  margin: 0 3px 22px 3px;
+  margin: 0 3px 8px 3px;
 }
 
 .terminal-header h1 {
@@ -888,9 +888,8 @@ li,
 
 .infos-items {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
-  border-radius: 8px;
   gap: 6px;
   font-size: .8em;
   width: 100%;
@@ -900,9 +899,10 @@ li,
   display: flex;
   flex-direction: row;
   align-items: center;
+  flex: 1;
   gap: 6px;
   padding: 8px;
-  flex: 1;
+  max-height: 3.5em;
   border: 1px solid var(--color-border-default);
   background: var(--color-canvas-default);
   border-radius: 6px;

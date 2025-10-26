@@ -30,8 +30,8 @@
       <div class="bash-content">
 
         <!-- Editable terminal with directive -->
-        <textarea class="bash-input" atkTerminalInput autocorrect="off" spellcheck="false" [value]="terminalText()"
-          [style.height]="terminalHeight()" (stateChange)="onTerminalStateChange($event)">
+        <textarea class="bash-input" atkTerminalInput [autoScroll]="true" autocorrect="off" spellcheck="false"
+          [value]="terminalText()" [style.height]="terminalHeight()" (stateChange)="onTerminalStateChange($event)">
         </textarea>
 
         <!-- Terminal Status Bar -->
@@ -66,35 +66,37 @@
 
       <!-- Side Info Badges -->
       <div class="bash-side">
-        <div class="infos-item">
-          <atk-icon name="check"
-            [color]="state().connectionStatus === 'connected' ? 'var(--color-btn-bg-emphasis)' : '#ef4444'"
-            [size]="24" />
-          <span>{{ state().connectionStatus }}</span>
-        </div>
+        <div class="infos-items">
+          <div class="infos-item">
+            <atk-icon name="check"
+              [color]="state().connectionStatus === 'connected' ? 'var(--color-btn-bg-emphasis)' : '#ef4444'"
+              [size]="24" />
+            <span>{{ state().connectionStatus }}</span>
+          </div>
 
-        <div class="infos-item">
-          <atk-icon name="database" color="var(--color-btn-bg-emphasis)" [size]="24" />
-          <span>{{ state().tableData.length }} items</span>
-        </div>
+          <div class="infos-item">
+            <atk-icon name="database" color="var(--color-btn-bg-emphasis)" [size]="24" />
+            <span>{{ state().tableData.length }} items</span>
+          </div>
 
-        @if (state().responseMetadata?.responseTime) {
-        <div class="infos-item">
-          <atk-icon name="zap" color="var(--color-btn-bg-emphasis)" [size]="24" />
-          <span>{{ state().responseMetadata.responseTime }}ms</span>
-        </div>
-        }
+          @if (state().responseMetadata?.responseTime) {
+          <div class="infos-item">
+            <atk-icon name="zap" color="var(--color-btn-bg-emphasis)" [size]="24" />
+            <span>{{ state().responseMetadata.responseTime }}ms</span>
+          </div>
+          }
 
-        @if (state().responseMetadata?.fromCache) {
-        <div class="infos-item">
-          <atk-icon name="zap" color="var(--color-accent-fg)" [size]="24" />
-          <span>from cache</span>
-        </div>
-        }
+          @if (state().responseMetadata?.fromCache) {
+          <div class="infos-item">
+            <atk-icon name="zap" color="var(--color-accent-fg)" [size]="24" />
+            <span>from cache</span>
+          </div>
+          }
 
-        <div class="infos-item">
+          <!-- <div class="infos-item">
           <atk-icon name="file-text" color="var(--color-btn-bg-emphasis)" [size]="24" />
           <span>{{ logs().length }} logs</span>
+        </div> -->
         </div>
       </div>
     </section>
@@ -132,7 +134,7 @@
 
     <!-- Bottom Status Info -->
     <div class="infos-items">
-      <div class="infos-item">
+      <!-- <div class="infos-item">
         <atk-icon name="check" color="var(--color-btn-bg-emphasis)" [size]="24" />
         <span>{{ state().tableData.length }} items</span>
       </div>
@@ -154,7 +156,7 @@
       <div class="infos-item">
         <atk-icon name="file-text" color="var(--color-btn-bg-emphasis)" [size]="24" />
         <span>{{ logs().length }} logs</span>
-      </div>
+      </div> -->
     </div>
 
     <!-- ======================= -->

@@ -378,7 +378,7 @@ export class AtkApiBashComponent implements OnInit {
    */
   onTerminalStateChange(state: TerminalInputState): void {
     this.terminalInputState.set(state);
-    this.typingActive.set(state.textValue.length > 0);
+    // this.typingActive.set(state.textValue.length > 0);
   }
 
   // ====================================================

@@ -12,20 +12,19 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent),
+        loadComponent: () => import('./shared/components/atk-api/atk-api.component').then(m => m.AtkApiComponent),
         title: 'atk-shuttle | entry point to your data'
+      },
+      {
+        path: 'atkpi',
+        loadComponent: () => import('./shared/components/atk-api/atk-api.component').then(m => m.AtkApiComponent),
+        data: { configType: 'binance' }
       },
       {
         path: 'shuttle',
         loadComponent: () => import('./features/shuttle/shuttle.component').then(m => m.AtkShuttleComponent),
         title: 'atk-shuttle | entry point to your data'
       },
-      {
-        path: 'atkpi',
-        loadComponent: () => import('./shared/components/atk-api/atk-api.component').then(m => m.AtkApiComponent),
-        // data: { configType: 'binance' }
-      },
-
       // ===============================================================================================
       // BINANCE ROUTES
       // ===============================================================================================

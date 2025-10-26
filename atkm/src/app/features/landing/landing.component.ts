@@ -66,10 +66,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
       .catch(err => {
         console.error('Error loading configuration in LandingComponent:', err);
       });
-
     // Initialize app state service with navigation items from config
     const navigationItems = this.configStore.navigation();
-
     if (navigationItems && navigationItems.length > 0) {
       await this.appState.initialize(
         navigationItems.map(item => ({
@@ -77,11 +75,6 @@ export class LandingComponent implements OnInit, AfterViewInit {
           isActive: false // Will be set by router
         }))
       );
-
-      // this.tools.consoleGroup({ // OFF LandingComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-      //   title: 'LandingComponent -> ngOnInit()', tag: 'check', palette: 'in', collapsed: true,
-      //   data: { config: this.config(), navigationItemsCount: navigationItems.length, appStateInitialized: this.appState.initialized() }
-      // });
     } else {
       console.warn('No navigation items found in configuration');
     }

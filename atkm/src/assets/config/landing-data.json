@@ -38,16 +38,16 @@
           "items": [
             {
               "icon": "dot",
-              "label": "[dev] HomeComponent",
-              "link": "/landing/shuttle",
+              "label": "[dev] Atkpi",
+              "link": "/landing/atkpi",
               "action": false,
               "isExpanded": false,
               "subMenu": []
             },
             {
               "icon": "dot",
-              "label": "[dev] AtkApiComponent",
-              "link": "/landing/atkpi",
+              "label": "[dev] HomeComponent",
+              "link": "/landing/shuttle",
               "action": false,
               "isExpanded": false,
               "subMenu": []

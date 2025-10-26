@@ -30,7 +30,7 @@ import { AtkApiFactory } from '@shared/components/atk-api/atk-api.factory';
 /**
  * Supported API domain types
  */
-export type AtkApiDomain = 'binance' | 'ibkr';
+export type AtkApiDomain = 'binance' | 'ibkr' | 'noconfig';
 
 @Component({
   selector: 'atk-api',
@@ -57,16 +57,6 @@ export class AtkApiComponent implements OnInit {
   private readonly stateService = inject(AtkApiStateService);
 
   // =========================================
-  // INPUTS
-  // =========================================
-
-  /**
-   * API domain type to use (binance, ibkr, etc.)
-   * Determines which factory method to call
-   */
-  // configType = input<AtkApiDomain>('binance');
-
-  // =========================================
   // PUBLIC READONLY SIGNALS (for template)
   // =========================================
 
@@ -78,28 +68,15 @@ export class AtkApiComponent implements OnInit {
   // =========================================
 
   constructor() {
-    // this.tools.consoleGroup({ // OFF AtkApiComponent -> constructor() ================ CONSOLE LOG IN PROGRESS
-    //   title: `AtkApiComponent -> constructor() -> this.configType(${this.configType()})`, tag: 'check', palette: 'ac', collapsed: false,
-    //   data: { configType: this.configType(), config: this.config() }
-    // });
 
     // =====================================
-    // EFFECT: Auto-load data on endpoint/parameters change
-    // Uses dedicated signals to avoid loops
+    // EFFECT: Auto-load data on
+    // endpoint/parameters change
     // =====================================
 
     effect(() => {
-      const context = this.stateService.endpointContextSignal();      // Track only endpoint and parameters changes, not full state
-      // console.log('🔄 EFFECT TRIGGERED', { endpoint: context.endpoint, parameters: context.parameters, timestamp: new Date().toISOString() });
-      if (!context.endpoint) {
-        // console.log('⏭️ EFFECT SKIPPED: No endpoint');
-        return;
-      }
-      // this.tools.consoleGroup({// OFF AtkApiComponent -> constructor(Effect): Endpoint/Params Changed ================ CONSOLE LOG IN PROGRESS
-      //   title: 'AtkApiComponent -> constructor(Effect): Endpoint/Params Changed', tag: 'check', palette: 'ac', collapsed: true,
-      //   data: context
-      // });
-      // Load data outside tracking context
+      const context = this.stateService.endpointContextSignal();
+      if (!context.endpoint) { return; }
       untracked(() => this.loadData());
     });
   }
@@ -107,14 +84,11 @@ export class AtkApiComponent implements OnInit {
   // =========================================
   // LIFECYCLE
   // =========================================
+  // console.log(`✅ configTypeInput: ${configType}`);
 
   ngOnInit(): void {
-    const configType = this.route.snapshot.data['configType'] as AtkApiDomain || 'binance';
+    const configType = this.route.snapshot.data['configType'] as AtkApiDomain || 'noconfig';
     const config = this.getConfigForDomain(configType);
-    // this.tools.consoleGroup({ // OFF AtkApiComponent -> ngOnInit() ================ CONSOLE LOG IN PROGRESS
-    //   title: `AtkApiComponent -> ngOnInit() -> this.configType(${configType})`, tag: 'check', palette: 'ac', collapsed: false,
-    //   data: { configType: configType, config: this.config() }
-    // });
     if (!config) {
       this.tools.consoleGroup({ // TAG AtkApiComponent -> ngOnInit(ERROR)  ================ CONSOLE LOG IN PROGRESS
         title: 'AtkApiComponent -> ngOnInit(ERROR): No config found', tag: 'cross', palette: 'er', collapsed: true,
@@ -124,10 +98,6 @@ export class AtkApiComponent implements OnInit {
     }
     // Initialize state service with config // true = attempt to restore from localStorage with user confirmation
     this.stateService.initialize(config, true);
-    // this.tools.consoleGroup({ // OFF AtkApiComponent -> ngOnInit(SUCCESS) SUCCESS ================ CONSOLE LOG IN PROGRESS
-    //   title: 'AtkApiComponent -> ngOnInit(SUCCESS) ', tag: 'check', palette: 'in', collapsed: true,
-    //   data: { config: config.id, domain: config.domain, endpoints: config.endpoints.length }
-    // });
   }
 
   // =========================================
@@ -148,10 +118,8 @@ export class AtkApiComponent implements OnInit {
       case 'ibkr':
         return this.factory.createIBKRConfig();
       default:
-        this.tools.consoleGroup({  // TAG AtkApiComponent -> getConfigForDomain(ERROR) ================ CONSOLE LOG IN PROGRESS
-          title: 'AtkApiComponent -> getConfigForDomain(ERROR) ', tag: 'cross', palette: 'er', collapsed: false,
-          data: { domain, error: 'Unsupported domain type' }
-        });
+        this.stateService.setError('Unsupported domain type');
+        this.stateService.setConnectionStatus('disconnected');
         return null;
     }
   }
@@ -174,35 +142,25 @@ export class AtkApiComponent implements OnInit {
   public async loadData(): Promise<void> {
     const state = this.stateService.state();
     const endpointConfig = this.stateService.currentEndpointConfig();
+    if (!endpointConfig) { return; }
 
-    if (!endpointConfig) {
-      this.tools.consoleGroup({  // TAG AtkApiComponent -> loadData(SKIP) ================ CONSOLE LOG IN PROGRESS
-        title: 'AtkApiComponent -> loadData(SKIP) ', tag: 'check', palette: 'wa', collapsed: true,
-        data: { currentEndpoint: state.currentEndpoint }
-      });
-      return;
-    }
     // Set loading state
     this.stateService.setLoading(true);
     this.stateService.setError(null);
+
     try {
-      // Call HTTP service to fetch data
       const response = await this.httpService.loadData(
         endpointConfig,
         state.parameters
       );
-      // Check for errors in response
+
       if (response.error) {
         this.stateService.setError(response.error);
         this.stateService.setConnectionStatus('disconnected');
-        this.tools.consoleGroup({  // TAG AtkApiComponent -> loadData(ERROR) -> effect() ================ CONSOLE LOG IN PROGRESS
-          title: 'AtkApiComponent -> loadData(ERROR) ', tag: 'cross', palette: 'er', collapsed: false,
-          data: { endpoint: endpointConfig.id, error: response.error, statusCode: response.statusCode }
-        });
         return;
       }
-      // Update state with successful response
-      this.stateService.updateData(response.data, response.sidebarData || null);  // ✅ Passe sidebarData depuis response      // Set response metadata
+
+      this.stateService.updateData(response.data, response.sidebarData || null);
       this.stateService.setResponseMetadata({
         statusCode: response.statusCode,
         responseTime: response.responseTime,
@@ -210,25 +168,14 @@ export class AtkApiComponent implements OnInit {
         fromCache: response.fromCache,
         timestamp: new Date()
       });
-      // Update connection status
+
       this.stateService.setConnectionStatus('connected');
-      this.tools.consoleGroup({  // TAG AtkApiComponent -> loadData(SUCCESS) -> effect() ================ CONSOLE LOG IN PROGRESS
-        title: 'AtkApiComponent -> loadData(SUCCESS) ', tag: 'check', palette: 'su', collapsed: true,
-        data: { endpoint: endpointConfig.id, dataCount: response.data.length, responseTime: response.responseTime, fromCache: response.fromCache }
-      });
+
     } catch (error: any) {
       // Handle unexpected errors
       const errorMessage = error.message || 'Unknown error occurred';
       this.stateService.setError(errorMessage);
       this.stateService.setConnectionStatus('disconnected');
-      this.tools.consoleGroup({  // TAG AtkApiComponent -> loadData(EXCEPTION) -> effect() ================ CONSOLE LOG IN PROGRESS
-        title: 'AtkApiComponent -> loadData(EXCEPTION) ', tag: 'cross', palette: 'er', collapsed: false,
-        data: {
-          endpoint: endpointConfig.id,
-          error: errorMessage,
-          exception: error
-        }
-      });
 
     } finally {
       // Always clear loading state

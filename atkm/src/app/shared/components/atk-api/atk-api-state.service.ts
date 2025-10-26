@@ -80,6 +80,7 @@ const PERSISTED_PROPERTIES = [
 ] as const;
 
 @Injectable({ providedIn: 'root' })
+
 export class AtkApiStateService {
 
   // ======================================================
@@ -428,6 +429,10 @@ export class AtkApiStateService {
         endpoint: this._state().currentEndpoint,
         parameters: this._state().parameters
       });
+
+      this.tools.consoleGroup({  // TAG AtkApiStateService -> setError() ================ CONSOLE LOG IN PROGRESS
+        title: `AtkApiStateService -> setError(${error})`, tag: 'cross', palette: 'er', collapsed: true, data: error
+      });
     }
   }
 
@@ -438,6 +443,23 @@ export class AtkApiStateService {
    */
   setConnectionStatus(status: AtkApiConnectionStatus): void {
     this._state.update(s => ({ ...s, connectionStatus: status }));
+    let palette: "er" | "de" | "in" | "wa" | "ac" | "su" | "se" | undefined;
+    let tag: string | undefined
+    switch (status) {
+      case 'connected':
+        palette = 'su';
+        tag = 'check';
+        break;
+      case 'disconnected':
+        palette = 'er';
+        tag = 'cross';
+        break;
+      default:
+        palette = 'in';
+    }
+    this.tools.consoleGroup({  // TAG AtkApiStateService -> setConnectionStatus() ================ CONSOLE LOG IN PROGRESS
+      title: `AtkApiStateService -> setConnectionStatus(${status})`, tag: tag, palette: palette, collapsed: true, data: status
+    });
   }
 
   /**
