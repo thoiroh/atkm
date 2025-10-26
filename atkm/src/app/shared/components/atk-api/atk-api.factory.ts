@@ -44,7 +44,7 @@ export class AtkApiFactory {
   createBinanceConfig(): IAtkApiConfig {
     return {
       id: 'atkpi-binance-v2',
-      title: 'atkpi - Binance API Debug',
+      title: 'atkpi - binance api debug',
       subtitle: 'Enhanced Binance API debugging with data visualization',
       domain: 'binance',
       defaultEndpoint: 'account',
@@ -58,7 +58,8 @@ export class AtkApiFactory {
         showTerminalControls: true,
         tableItemsPerPage: 100,
         enableSearch: true,
-        showEmptyState: true
+        showEmptyState: true,
+        sbTitle: 'binance api configuration'
       },
       endpoints: [
         this.createBinanceAccountEndpoint(),
@@ -90,7 +91,8 @@ export class AtkApiFactory {
         showTerminalControls: true,
         tableItemsPerPage: 50,
         enableSearch: true,
-        showEmptyState: true
+        showEmptyState: true,
+        sbTitle: 'ibkr api configuration'
       },
       endpoints: [
         // TODO: Implement IBKR endpoints

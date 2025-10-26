@@ -16,7 +16,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, OnInit, signal, untracked, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AtkApiDatatableComponent } from '@shared/components/atk-api/atk-api-datatable/atk-api-datatable.component';
@@ -26,10 +26,7 @@ import { TerminalInputDirective, TerminalInputState } from '@shared/directives/t
 import { ToolsService } from '@core/services/tools.service';
 import { AtkApiStateService } from '@shared/components/atk-api/atk-api-state.service';
 
-import type {
-  AtkApiLogLevel,
-  IAtkApiLogEntry
-} from '@shared/components/atk-api/atk-api.interfaces';
+import type { AtkApiLogLevel, IAtkApiLogEntry } from '@shared/components/atk-api/atk-api.interfaces';
 
 @Component({
   selector: 'atk-api-bash',
@@ -52,7 +49,6 @@ export class AtkApiBashComponent implements OnInit {
 
   private readonly stateService = inject(AtkApiStateService);
   private readonly tools = inject(ToolsService);
-  private readonly terminalDirective = viewChild(TerminalInputDirective);
 
   // ====================================================
   // PUBLIC READONLY SIGNALS (from state service)
@@ -110,10 +106,10 @@ export class AtkApiBashComponent implements OnInit {
 
     if (cfg) {
       output += `${cfg.title.padEnd(59)}\n`;
-      output += `${cfg.subtitle.padEnd(59)}\n`;
+      // output += `${cfg.subtitle.padEnd(59)}\n`;
       output += `Domain: ${cfg.domain.toUpperCase().padEnd(52)}\n`;
       output += `Config ID: ${cfg.id.padEnd(49)}\n`;
-      output += `\n\n`;
+      output += `\n`;
     }
 
     // ====================================================
@@ -121,20 +117,20 @@ export class AtkApiBashComponent implements OnInit {
     // ====================================================
 
     const statusIcon = this.getStatusIcon(state.connectionStatus);
-    output += `Connection Status:\n`;
-    output += `  ${statusIcon} ${state.connectionStatus.toUpperCase()}\n\n`;
+    output += `Connection Status:${state.connectionStatus}\n`;
+    // output += `  ${statusIcon} ${state.connectionStatus.toUpperCase()}\n\n`;
 
     // ====================================================
     // CURRENT ENDPOINT
     // ====================================================
 
     if (endpoint) {
-      output += `Current Endpoint:\n`;
-      output += `  Name: ${endpoint.name}\n`;
-      output += `  ID: ${endpoint.id}\n`;
-      output += `  Method: ${endpoint.method}\n`;
-      output += `  URL: ${endpoint.url}\n`;
-      output += `  Cacheable: ${endpoint.cacheable ? 'Yes' : 'No'}\n\n`;
+      output += `Current Endpoint: ${endpoint.name}\n`;
+      // output += `  Name: ${endpoint.name}\n`;
+      // output += `  ID: ${endpoint.id}\n`;
+      // output += `  Method: ${endpoint.method}\n`;
+      // output += `  URL: ${endpoint.url}\n`;
+      // output += `  Cacheable: ${endpoint.cacheable ? 'Yes' : 'No'}\n\n`;
     }
 
     // ====================================================
@@ -155,13 +151,15 @@ export class AtkApiBashComponent implements OnInit {
 
     if (state.responseMetadata) {
       const meta = state.responseMetadata;
-      output += `Last Response:\n`;
-      output += `  Status Code: ${meta.statusCode}\n`;
-      output += `  Response Time: ${meta.responseTime}ms\n`;
-      output += `  Data Count: ${meta.dataCount} items\n`;
-      output += `  Source: ${meta.fromCache ? 'Cache ⚡' : 'API 🌐'}\n`;
+      output += `Source: ${meta.fromCache ? 'Cache ⚡' : 'API 🌐'}\n`;
+
+      // output += `Last Response:\n`;
+      // output += `  Status Code: ${meta.statusCode}\n`;
+      // output += `  Response Time: ${meta.responseTime}ms\n`;
+      // output += `  Data Count: ${meta.dataCount} items\n`;
+      // output += `  Source: ${meta.fromCache ? 'Cache ⚡' : 'API 🌐'}\n`;
       if (meta.timestamp) {
-        output += `  Timestamp: ${meta.timestamp.toLocaleTimeString()}\n`;
+        output += `Timestamp: ${meta.timestamp.toLocaleTimeString()}\n`;
       }
       output += `\n`;
     }

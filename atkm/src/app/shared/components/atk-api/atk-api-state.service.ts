@@ -48,7 +48,7 @@ const DEFAULT_STATE: IAtkApiUnifiedState = {
   loading: false,
   error: null,
   connectionStatus: 'disconnected',
-  sidebarCollapsed: true,
+  sidebarCollapsed: false,
   sidebarPinned: false,
   responseMetadata: null,
   lastUpdated: undefined

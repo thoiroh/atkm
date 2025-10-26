@@ -16,30 +16,31 @@
  */ -->
 
 <div class="content-wrapper">
+  @if (config(); as cfg) {
+  @if (state(); as stt) {
 
   <!-- ======================= -->
   <!-- HEADER  -->
   <!-- ======================= -->
 
   <header class="content-header">
-    <h1>ATK API</h1>
+    <h1>{{ cfg.id }}</h1>
   </header>
 
   <div class="terminal-wrapper">
-    @if (config(); as cfg) {
     <header class="terminal-header">
       <h1>{{ cfg.title }}</h1>
       <div class="terminal-details">
         <h2>{{ cfg.subtitle }}</h2>
       </div>
     </header>
-    }
 
     <!-- ======================= -->
     <!-- LOADING STATE -->
     <!-- ======================= -->
 
-    @if (state().loading) {
+
+    @if (stt.loading) {
     <div class="loading-state">
       <div class="spinner"></div>
       <p>Loading data...</p>
@@ -50,7 +51,7 @@
     <!-- ERROR STATE -->
     <!-- ======================= -->
 
-    @if (state().error; as errorMsg) {
+    @if (stt.error; as errorMsg) {
     <div class="error-state">
       <atk-icon name="error-2" color="currentColor" />
       <p>{{ errorMsg }}</p>
@@ -73,10 +74,24 @@
       </div>
     </div>
   </div>
+  }
+  } @else {
+  <div class="terminal-wrapper">
+    <div class="terminal-section">
+      <div class="section-content">
+        <div class="app-loading-spinner"></div>
+        <div class="app-loading-text">There is no configuration on this route ..</div>
+        <div class="spinner"></div>
+        <p>please select another link.</p>
+      </div>
+    </div>
+  </div>
+  }
 </div>
 
 <!-- ======================= -->
 <!-- SIDEBAR -->
 <!-- ======================= -->
-
-<atk-api-sidebar [isCollapsed]="state().sidebarCollapsed" (togglePanel)="toggleSidebar()" />
+@if (state(); as stt) {
+<atk-api-sidebar [isCollapsed]="stt.sidebarCollapsed" (togglePanel)="toggleSidebar()" />
+}

@@ -462,6 +462,9 @@ export interface IAtkApiUiConfig {
   /** Whether to show empty state when no data */
   showEmptyState?: boolean;
 
+  /** Whether to show empty state when no data */
+  sbTitle?: string;
+
   /** Track by function for table performance */
   trackByFn?: AtkApiTrackByFn;
 }

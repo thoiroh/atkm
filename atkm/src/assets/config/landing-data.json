@@ -38,16 +38,16 @@
           "items": [
             {
               "icon": "dot",
-              "label": "[dev] Atkpi",
-              "link": "/landing/atkpi",
+              "label": "[dev] binanceapi",
+              "link": "/landing/binanceapi",
               "action": false,
               "isExpanded": false,
               "subMenu": []
             },
             {
               "icon": "dot",
-              "label": "[dev] HomeComponent",
-              "link": "/landing/shuttle",
+              "label": "[dev] ibkrapi",
+              "link": "/landing/ibkrapi",
               "action": false,
               "isExpanded": false,
               "subMenu": []

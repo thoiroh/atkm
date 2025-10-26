@@ -9,12 +9,12 @@
 
   <header class="bash-header">
     @if (config(); as cfg) {
-    <h1>Bash Advanced</h1>
+    <h1>Bash</h1>
     <!-- Optional: Show last log in header -->
     @if (lastLog(); as log) {
-    <div class="bash-header-log">
+    <!-- <div class="bash-header-log">
       <span class="log-level-{{ log.level }}">{{ log.message }}</span>
-    </div>
+    </div> -->
     }
     }
   </header>
@@ -70,28 +70,28 @@
           <div class="infos-item">
             <atk-icon name="check"
               [color]="state().connectionStatus === 'connected' ? 'var(--color-btn-bg-emphasis)' : '#ef4444'"
-              [size]="24" />
+              [size]="16" />
             <span>{{ state().connectionStatus }}</span>
-          </div>
-
-          <div class="infos-item">
-            <atk-icon name="database" color="var(--color-btn-bg-emphasis)" [size]="24" />
-            <span>{{ state().tableData.length }} items</span>
           </div>
 
           @if (state().responseMetadata?.responseTime) {
           <div class="infos-item">
-            <atk-icon name="zap" color="var(--color-btn-bg-emphasis)" [size]="24" />
+            <atk-icon name="upload" color="var(--color-btn-bg-emphasis)" [size]="16" />
             <span>{{ state().responseMetadata.responseTime }}ms</span>
           </div>
           }
 
           @if (state().responseMetadata?.fromCache) {
           <div class="infos-item">
-            <atk-icon name="zap" color="var(--color-accent-fg)" [size]="24" />
+            <atk-icon name="folder" color="var(--color-accent-fg)" [size]="16" />
             <span>from cache</span>
           </div>
           }
+
+          <div class="infos-item">
+            <atk-icon name="record" color="var(--color-btn-bg-emphasis)" [size]="16" />
+            <span>{{ state().tableData.length }} items</span>
+          </div>
 
           <!-- <div class="infos-item">
           <atk-icon name="file-text" color="var(--color-btn-bg-emphasis)" [size]="24" />

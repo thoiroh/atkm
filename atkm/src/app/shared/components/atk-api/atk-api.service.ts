@@ -41,7 +41,7 @@ export class AtkApiService {
     loading: false,
     error: null,
     connectionStatus: 'disconnected',
-    sidebarCollapsed: false,
+    sidebarCollapsed: true,
     sidebarPinned: false,
     responseMetadata: null
   };

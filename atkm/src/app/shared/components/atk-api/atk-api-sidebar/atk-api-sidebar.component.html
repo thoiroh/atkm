@@ -26,7 +26,9 @@
     <div class="bash-config-header">
       <div class="bash-config-title">
         <atk-icon name="terminalpc" [size]="16" color="var(--color-accent-fg)" />
-        <h3>API Configuration</h3>
+        @if (config(); as cfg) {
+        <h3>{{ cfg.ui.sbTitle }}</h3>
+        }
       </div>
 
       <!-- Pin button -->
@@ -102,7 +104,7 @@
       <!-- ======================= -->
 
       @if (state().loading || state().responseMetadata) {
-      <div class="bash-config-section sidebar-data-section">
+      <!-- <div class="bash-config-section sidebar-data-section">
         <div class="section-title">
           <atk-icon name="activity" [size]="14" color="var(--color-fg-muted)" />
           <span>Status</span>
@@ -139,7 +141,7 @@
           }
           }
         </div>
-      </div>
+      </div> -->
       }
 
       <!-- ======================= -->

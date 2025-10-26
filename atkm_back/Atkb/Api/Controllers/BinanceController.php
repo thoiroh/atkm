@@ -215,6 +215,39 @@ class BinanceController
   }
 
   /**
+   * Get ticker price for a specific symbol
+   * GET /api/v3/ticker/price
+   */
+  public function getTickerPrice(Request $request): Response
+  {
+    try {
+      if (!isset($this->binanceService)) {
+        return $this->handleServiceError('Binance service not available');
+      }
+
+      // Get and validate symbol parameter (required)
+      $symbol = $this->getRequestParam($request, 'symbol');
+      if (empty($symbol)) {
+        return Response::error('Symbol parameter is required', 400);
+      }
+
+      // Get ticker price from Binance
+      $ticker = $this->binanceService->getTickerPrice($symbol);
+
+      // Build response data
+      $responseData = [
+        'symbol' => strtoupper($symbol),
+        'price' => $ticker['price'] ?? null,
+        'tickerData' => $ticker
+      ];
+
+      return Response::success($responseData, 'Ticker price retrieved successfully');
+    } catch (Exception $e) {
+      return $this->handleBinanceError($e, 'tickerPrice');
+    }
+  }
+
+  /**
    * Get account information
    * GET /api/v3/account
    */
@@ -248,7 +281,7 @@ class BinanceController
   /**
    * Get user assets with optional filters
    * GET /sapi/v3/asset/getUserAsset
-   * 
+   *
    * Query parameters:
    * - asset (optional): Filter by specific asset (e.g., "BTC")
    * - needBtcValuation (optional): Include BTC valuation ("true" or "false")
@@ -270,12 +303,12 @@ class BinanceController
       // Filter out assets with zero balance if no specific asset requested
       if (!$asset && is_array($userAssets)) {
         $userAssets = array_filter($userAssets, function ($assetData) {
-          return (float)($assetData['free'] ?? 0) > 0 
-              || (float)($assetData['locked'] ?? 0) > 0
-              || (float)($assetData['freeze'] ?? 0) > 0
-              || (float)($assetData['withdrawing'] ?? 0) > 0;
+          return (float)($assetData['free'] ?? 0) > 0
+            || (float)($assetData['locked'] ?? 0) > 0
+            || (float)($assetData['freeze'] ?? 0) > 0
+            || (float)($assetData['withdrawing'] ?? 0) > 0;
         });
-        
+
         // Re-index array after filtering
         $userAssets = array_values($userAssets);
       }
@@ -294,7 +327,7 @@ class BinanceController
       return $this->handleBinanceError($e, 'getUserAssets');
     }
   }
-  
+
   /**
    * Get transaction summary for a symbol
    * GET /api/v1/transaction/summary
