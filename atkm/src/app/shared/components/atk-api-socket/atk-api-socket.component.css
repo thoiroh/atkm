@@ -1,0 +1,460 @@
+/* Binance Socket Component Styles */
+
+/* Container */
+.binance-socket-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Header Section */
+.socket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.header-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.header-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.125rem;
+  color: #111827;
+  font-weight: 700;
+}
+
+/* Connection Status */
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-connected {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-connected .status-dot {
+  background-color: #10b981;
+}
+
+.status-connecting {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-connecting .status-dot {
+  background-color: #f59e0b;
+}
+
+.status-reconnecting {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-reconnecting .status-dot {
+  background-color: #f59e0b;
+}
+
+.status-disconnected {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.status-disconnected .status-dot {
+  background-color: #9ca3af;
+}
+
+.status-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.status-error .status-dot {
+  background-color: #ef4444;
+}
+
+.btn-reconnect {
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-reconnect:hover {
+  background-color: #2563eb;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+/* Error State */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.error-icon {
+  font-size: 4rem;
+}
+
+.error-message {
+  font-size: 1.125rem;
+  color: #dc2626;
+  font-weight: 600;
+  text-align: center;
+}
+
+.btn-retry {
+  padding: 0.75rem 2rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-retry:hover {
+  background-color: #2563eb;
+}
+
+/* Empty State */
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.empty-icon {
+  font-size: 4rem;
+}
+
+.empty-message {
+  font-size: 1.25rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.empty-hint {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* Assets Grid */
+.assets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Asset Card */
+.asset-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.asset-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.asset-symbol {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.price-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.indicator-icon {
+  font-size: 1.25rem;
+}
+
+.indicator-up .indicator-icon {
+  animation: bounce 1s ease-in-out;
+}
+
+.indicator-down .indicator-icon {
+  animation: bounce 1s ease-in-out;
+}
+
+/* Card Body */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.info-label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.info-value {
+  color: #111827;
+  font-weight: 600;
+}
+
+.price-value {
+  font-size: 1rem;
+  color: #3b82f6;
+}
+
+.total-row {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.total-value {
+  font-size: 1.125rem;
+  color: #059669;
+  font-weight: 700;
+}
+
+.change-row {
+  padding-top: 0.5rem;
+}
+
+.change-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.change-positive {
+  color: #059669;
+}
+
+.change-negative {
+  color: #dc2626;
+}
+
+.change-neutral {
+  color: #6b7280;
+}
+
+/* Card Footer */
+.card-footer {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.last-update {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* WebSocket Error Banner */
+.ws-error-banner {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background-color: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.ws-error-banner .error-text {
+  font-size: 0.875rem;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+/* Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .binance-socket-container {
+    padding: 1rem;
+  }
+  
+  .socket-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .header-title {
+    font-size: 1.5rem;
+  }
+  
+  .header-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .assets-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .asset-card {
+    padding: 1rem;
+  }
+  
+  .ws-error-banner {
+    left: 1rem;
+    right: 1rem;
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-title {
+    font-size: 1.25rem;
+  }
+  
+  .stat-value {
+    font-size: 1rem;
+  }
+  
+  .asset-symbol {
+    font-size: 1.25rem;
+  }
+}

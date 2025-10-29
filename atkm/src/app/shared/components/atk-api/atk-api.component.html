@@ -93,5 +93,7 @@
 <!-- SIDEBAR -->
 <!-- ======================= -->
 @if (state(); as stt) {
-<atk-api-sidebar [isCollapsed]="stt.sidebarCollapsed" (togglePanel)="toggleSidebar()" />
+<atk-api-sidebar [isCollapsed]="stt.sidebarCollapsed" (togglePanel)="toggleSidebar()"
+  (loadRequest)="onSidebarLoadRequest()" />
+
 }

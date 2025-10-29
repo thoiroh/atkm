@@ -66,6 +66,7 @@ export class AtkApiService {
   /** Public readonly events */
   public readonly events = this._events.asReadonly();
 
+
   // ======================================================
   // CONSTRUCTOR
   // ======================================================

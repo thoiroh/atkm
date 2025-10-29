@@ -3,7 +3,46 @@
 /**
  * ATK Backend API Entry Point - Extended for Transaction History
  * Main entry point for all API requests including comprehensive trading history
+ *
+ * This file sets up the routing for various API endpoints, including:
+ * - Basic Binance endpoints (ticker price, account info)
+ * - New transaction history endpoints (trades, orders, deposits, withdrawals, summaries)
+ * - Utility endpoints for cache management and API status
+ * It also includes CORS handling for development purposes.
+ *
+ * Available API Endpoints:
+ *
+ * BASIC ENDPOINTS:
+ * GET  /health                           - Health check
+ * GET  /api/v3/ticker/price              - Get ticker price (optional symbol)
+ * GET  /api/v3/account                   - Get account information
+ *
+ * TRANSACTION HISTORY ENDPOINTS:
+ * GET  /api/v3/myTrades                  - Get trade history (requires symbol)
+ * GET  /api/v3/allOrders                 - Get order history (requires symbol)
+ * GET  /api/v1/capital/deposit/history   - Get deposit history (optional coin)
+ * GET  /api/v1/capital/withdraw/history  - Get withdrawal history (optional coin)
+ * GET  /api/v1/transaction/summary       - Get comprehensive summary (requires symbol)
+ *
+ * UTILITY ENDPOINTS:
+ * GET  /api/v1/cache/stats               - Get cache statistics
+ * DEL  /api/v1/cache/clear               - Clear cache
+ * GET  /api/v1/status                    - Get API status
+ *
+ * QUERY PARAMETERS:
+ * - symbol: Trading pair (e.g., BTCUSDT) - required for trades/orders
+ * - coin: Asset symbol (e.g., BTC) - optional for deposits/withdrawals
+ * - startTime: Start timestamp in milliseconds
+ * - endTime: End timestamp in milliseconds
+ * - limit: Number of records to return (max 1000)
+ *
+ * EXAMPLES:
+ * /api/v3/myTrades?symbol=BTCUSDT&limit=100
+ * /api/v3/myTrades?symbol=BTCUSDT&startTime=1609459200000&endTime=1640995199000
+ * /api/v1/capital/deposit/history?coin=BTC&limit=50
+ * /api/v1/transaction/summary?symbol=BTCUSDT
  */
+
 
 // Enable CORS for development
 header('Access-Control-Allow-Origin: *');
@@ -60,7 +99,7 @@ try {
   $router->get('/api/v3/account', [\Atkb\Api\Controllers\BinanceController::class, 'getAccount']);
   // User Assets endpoint (SAPI)
   $router->get('/sapi/v3/asset/getUserAsset', [\Atkb\Api\Controllers\BinanceController::class, 'getUserAssets']);
-  
+
   // ================================================================================================
   // NEW TRANSACTION HISTORY ROUTES
   // ================================================================================================
@@ -104,37 +143,3 @@ try {
 
   $errorResponse->send();
 }
-
-/**
- * Available API Endpoints:
- *
- * BASIC ENDPOINTS:
- * GET  /health                           - Health check
- * GET  /api/v3/ticker/price              - Get ticker price (optional symbol)
- * GET  /api/v3/account                   - Get account information
- *
- * TRANSACTION HISTORY ENDPOINTS:
- * GET  /api/v3/myTrades                  - Get trade history (requires symbol)
- * GET  /api/v3/allOrders                 - Get order history (requires symbol)
- * GET  /api/v1/capital/deposit/history   - Get deposit history (optional coin)
- * GET  /api/v1/capital/withdraw/history  - Get withdrawal history (optional coin)
- * GET  /api/v1/transaction/summary       - Get comprehensive summary (requires symbol)
- *
- * UTILITY ENDPOINTS:
- * GET  /api/v1/cache/stats               - Get cache statistics
- * DEL  /api/v1/cache/clear               - Clear cache
- * GET  /api/v1/status                    - Get API status
- *
- * QUERY PARAMETERS:
- * - symbol: Trading pair (e.g., BTCUSDT) - required for trades/orders
- * - coin: Asset symbol (e.g., BTC) - optional for deposits/withdrawals
- * - startTime: Start timestamp in milliseconds
- * - endTime: End timestamp in milliseconds
- * - limit: Number of records to return (max 1000)
- *
- * EXAMPLES:
- * /api/v3/myTrades?symbol=BTCUSDT&limit=100
- * /api/v3/myTrades?symbol=BTCUSDT&startTime=1609459200000&endTime=1640995199000
- * /api/v1/capital/deposit/history?coin=BTC&limit=50
- * /api/v1/transaction/summary?symbol=BTCUSDT
- */

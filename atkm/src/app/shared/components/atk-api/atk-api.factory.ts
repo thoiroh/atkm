@@ -63,10 +63,10 @@ export class AtkApiFactory {
       },
       endpoints: [
         this.createBinanceAccountEndpoint(),
+        this.createBinanceTickerEndpoint(),
         // this.createBinanceUserAssetsEndpoint(),
         this.createBinanceTradesEndpoint(),
-        this.createBinanceOrdersEndpoint(),
-        this.createBinanceTickerEndpoint()
+        this.createBinanceOrdersEndpoint()
       ]
     };
   }
@@ -208,15 +208,15 @@ export class AtkApiFactory {
             };
           });
 
-        this.tools.consoleGroup({ // TAG AtkApiComponent -> constructor() ================ CONSOLE LOG IN PROGRESS
-          title: 'AtkApiFactory -> dataTransformer(RESULT)', tag: 'recycle', palette: 'wa', collapsed: false,
-          data: {
-            sidebarData,
-            balancesType: Array.isArray(accountData.balances) ? 'array' : typeof accountData.balances,
-            tableDataCount: tableData.length,
-            tableDataSample: tableData.slice(0, 10)
-          }
-        });
+        // this.tools.consoleGroup({ // OFF AtkApiComponent -> constructor() ================ CONSOLE LOG IN PROGRESS
+        //   title: 'AtkApiFactory -> dataTransformer(RESULT)', tag: 'recycle', palette: 'wa', collapsed: false,
+        //   data: {
+        //     sidebarData,
+        //     balancesType: Array.isArray(accountData.balances) ? 'array' : typeof accountData.balances,
+        //     tableDataCount: tableData.length,
+        //     tableDataSample: tableData.slice(0, 10)
+        //   }
+        // });
 
         return { sidebarData, tableData };
       }
@@ -295,7 +295,7 @@ export class AtkApiFactory {
       icon: 'activity',
       visible: true,
       params: {
-        symbol: 'BTCUSDT',
+        symbol: 'BTCUSDC',
         limit: 100
       },
       cacheable: true,
@@ -356,7 +356,7 @@ export class AtkApiFactory {
       icon: 'upload',
       visible: true,
       params: {
-        symbol: 'BTCUSDT',
+        symbol: 'BTCUSDC',
         limit: 100
       },
       cacheable: true,
@@ -409,7 +409,7 @@ export class AtkApiFactory {
       icon: 'star',
       visible: true,
       params: {
-        symbol: 'BTCUSDT'
+        symbol: 'BTCUSDC'
       },
       cacheable: true,
       cacheDuration: 10000, // 10 seconds

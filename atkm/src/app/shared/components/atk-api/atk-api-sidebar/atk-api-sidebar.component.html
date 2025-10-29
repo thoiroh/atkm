@@ -69,8 +69,8 @@
           @if (endpoint.id !== 'account') {
           <div class="param-item">
             <label for="symbol-input">Symbol</label>
-            <input id="symbol-input" type="text" class="param-input" [value]="state().parameters['symbol'] || 'BTCUSDT'"
-              (input)="updateParameter('symbol', $any($event.target).value)" placeholder="BTCUSDT">
+            <input type="text" class="param-input" [value]="parameters()['symbol'] || 'BTCUSDC'"
+              (input)="updateParameter('symbol', $any($event.target).value)" placeholder="BTCUSDC" />
           </div>
           }
 
@@ -78,24 +78,24 @@
           @if (endpoint.id === 'trades' || endpoint.id === 'orders') {
           <div class="param-item">
             <label for="limit-input">Limit</label>
-            <input id="limit-input" type="number" class="param-input" [value]="state().parameters['limit'] || 100"
-              (input)="updateParameter('limit', +$any($event.target).value)" min="1" max="1000" placeholder="100">
+            <input type="number" class="param-input" [value]="parameters()['limit'] ?? 100"
+              (input)="updateParameter('limit', +$any($event.target).value)" min="1" max="1000" placeholder="100" />
           </div>
           }
         </div>
 
         <!-- Current Parameters Display -->
-        @if (parameterKeys().length > 0) {
+        <!-- @if (parameters().length > 0) {
         <div class="params-display">
           <div class="params-display-title">Current Parameters:</div>
-          @for (key of parameterKeys(); track key) {
+          @for (key of parameters(); track key) {
           <div class="param-row">
             <span class="param-key">{{ key }}</span>
             <span class="param-value">{{ parameters()[key] }}</span>
           </div>
           }
         </div>
-        }
+        } -->
       </div>
       }
 
@@ -279,8 +279,9 @@
         </div>
 
         <div class="actions-grid">
-          <button class="action-btn" [disabled]="state().loading" (click)="triggerLoadData()">
-            <atk-icon name="action" color="var(--color-accent-fg)" [size]="14" />
+          <button class="action-btn" [class.primary]="isDirty()" [disabled]="state().loading"
+            (click)="triggerLoadData()">
+            <atk-icon name="action" color="var(--color-accent-fg)" [size]="14"></atk-icon>
             <span>{{ state().loading ? 'Loading...' : 'Load Data' }}</span>
           </button>
 

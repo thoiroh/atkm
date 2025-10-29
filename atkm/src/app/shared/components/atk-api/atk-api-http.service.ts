@@ -102,8 +102,8 @@ export class AtkApiHttpService {
         if (cached) {
           const responseTime = Math.round(performance.now() - startTime);
           this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(CACHE) ================ CONSOLE LOG IN PROGRESS
-            title: 'AtkApiHttpService -> loadData(CACHE)', tag: 'check', palette: 'in', collapsed: true,
-            data: { endpointConfig, params, dataCount: cached.length, responseTime }
+            title: 'AtkApiHttpService -> loadData(CACHE)', tag: 'check', palette: 'ht', collapsed: true,
+            data: { cahed: cached }
           });
 
           return { data: cached, statusCode: 200, responseTime, fromCache: true };
@@ -118,9 +118,9 @@ export class AtkApiHttpService {
         const result = endpointConfig.dataTransformer(rawData);
         transformedData = result.tableData;
         sidebarData = result.sidebarData;  // ✅ Garde la référence au sidebarData
-        this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData() ================ CONSOLE LOG IN PROGRESS
-          title: 'AtkApiHttpService -> loadData(sidebarData)', tag: 'recycle', palette: 'ac', collapsed: false,
-          data: sidebarData
+        this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(dataTransformer) ================ CONSOLE LOG IN PROGRESS
+          title: 'AtkApiHttpService -> loadData(dataTransformer)', tag: 'recycle', palette: 'ht', collapsed: true,
+          data: { dataTransformer: result }
         });
 
         // this.stateService.updateData(result.tableData, result.sidebarData);
@@ -131,10 +131,7 @@ export class AtkApiHttpService {
       if (endpointConfig.cacheable) { this.stateService.setCache(cacheKey, transformedData, endpointConfig.cacheDuration); }
       const responseTime = Math.round(performance.now() - startTime);
 
-      this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(SUCCESS) ================ CONSOLE LOG IN PROGRESS
-        title: 'AtkApiHttpService -> loadData(SUCCESS) ', tag: 'recycle', palette: 'in', collapsed: false,
-        data: { endpointConfig, params, dataCount: transformedData.length, responseTime, cached: endpointConfig.cacheable }
-      });
+
       return {
         data: transformedData,
         sidebarData: sidebarData,

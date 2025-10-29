@@ -53,9 +53,10 @@ export class AtkApiSidebarComponent {
 
   /** Whether sidebar is collapsed */
   isCollapsed = input<boolean>(false);
-
   /** Emit when toggle button clicked */
   togglePanel = output<void>();
+  /** Emit when load button clicked */
+  loadRequest = output<void>();
 
   // ======================================================
   // PUBLIC READONLY SIGNALS (from state service)
@@ -213,16 +214,18 @@ export class AtkApiSidebarComponent {
   /**
    * Get parameters from current state
    */
-  parameters = computed(() => {
-    return this.state().parameters;
-  });
+  parameters = computed(() => this.stateService.pendingParameters());
+  // parameters = computed(() => { return this.state().parameters; });
 
   /**
    * Get parameter keys for iteration
    */
-  parameterKeys = computed(() => {
-    return Object.keys(this.parameters());
-  });
+  parameterKeys = computed(() => { Object.keys(this.parameters()) });
+
+  /**
+   * Get parameter keys for iteration
+   */
+  isDirty = computed(() => this.stateService.isParamsDirty());
 
   // Expose Object.keys for template
   Object = Object;
@@ -274,11 +277,8 @@ export class AtkApiSidebarComponent {
    * Select an endpoint
    */
   selectEndpoint(endpointId: string): void {
-    this.tools.consoleGroup({
-      title: 'AtkApiSidebarComponent -> selectEndpoint()',
-      tag: 'check',
-      palette: 'ac',
-      collapsed: true,
+    this.tools.consoleGroup({ // TAG AtkApiSidebarComponent -> selectEndpoint()  ================ CONSOLE LOG IN PROGRESS
+      title: `AtkApiSidebarComponent -> selectEndpoint(${endpointId})`, tag: 'check', palette: 'ac', collapsed: true,
       data: { endpointId }
     });
 
@@ -287,16 +287,16 @@ export class AtkApiSidebarComponent {
     // Set default parameters based on endpoint
     // (This logic could be moved to factory or state service)
     if (endpointId !== 'account') {
-      const defaultParams: Record<string, any> = { symbol: 'BTCUSDT' };
+      const defaultParams: Record<string, any> = { symbol: 'BTCUSDC' };
 
-      if (endpointId === 'trades' || endpointId === 'orders') {
-        defaultParams.limit = 100;
-      }
+      if (endpointId === 'trades' || endpointId === 'orders') { defaultParams.limit = 100; }
 
-      this.stateService.updateParameters(defaultParams);
+      this.stateService.resetPendingParameters(defaultParams);
+      // this.stateService.updateParameters(defaultParams);
     } else {
       // Clear parameters for account endpoint
-      this.stateService.updateParameters(({ all: true }));
+      this.stateService.resetPendingParameters({});
+      // this.stateService.updateParameters(({ all: true }));
     }
   }
 
@@ -304,13 +304,15 @@ export class AtkApiSidebarComponent {
    * Update a parameter value
    */
   updateParameter(key: string, value: any): void {
-    this.stateService.updateParameters({ [key]: value });
+    this.stateService.setPendingParameters({ [key]: value }); // 🔵 buffer seulement
+    // this.stateService.updateParameters({ [key]: value });
   }
 
   /**
    * Trigger data load action
    */
-  async triggerLoadData(): Promise<void> {
+  async offtriggerLoadData(): Promise<void> {
+
     const endpoint = this.currentEndpointConfig();
     const params = this.parameters();
 
@@ -350,7 +352,9 @@ export class AtkApiSidebarComponent {
       this.stateService.setLoading(false);
     }
   }
-
+  triggerLoadData(): void {
+    this.loadRequest.emit(); // le parent commit + load
+  }
   /**
    * Test connection to endpoint
    */

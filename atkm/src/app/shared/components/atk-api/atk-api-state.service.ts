@@ -17,23 +17,8 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { ToolsService } from '@core/services/tools.service';
 
-import type {
-  AtkApiConnectionStatus,
-  AtkApiEventPayload,
-  AtkApiEventType,
-  AtkApiLogLevel,
-  BashData,
-  IAtkApiCacheConfig,
-  IAtkApiCacheEntry,
-  IAtkApiColumn,
-  IAtkApiConfig,
-  IAtkApiEndpointConfig,
-  IAtkApiEvent,
-  IAtkApiLogEntry,
-  IAtkApiResponseMetadata,
-  IAtkApiSidebarField,
-  IAtkApiUnifiedState
-} from './atk-api.interfaces';
+import { ConsoleLoggerOptions } from '@core/tools/console-logger.tool';
+import type { AtkApiConnectionStatus, AtkApiEventPayload, AtkApiEventType, AtkApiLogLevel, BashData, IAtkApiCacheConfig, IAtkApiCacheEntry, IAtkApiColumn, IAtkApiConfig, IAtkApiEndpointConfig, IAtkApiEvent, IAtkApiLogEntry, IAtkApiResponseMetadata, IAtkApiSidebarField, IAtkApiUnifiedState } from './atk-api.interfaces';
 
 /**
  * Default state configuration
@@ -109,33 +94,32 @@ export class AtkApiStateService {
   private readonly _cacheConfig = signal<IAtkApiCacheConfig>(DEFAULT_CACHE_CONFIG);
   /** Persistence confirmation required */
   private readonly _persistenceConfirmed = signal<boolean>(false);
+  /** Buffer local de paramètres non commités */
+  private readonly _pendingParameters = signal<Record<string, any>>({});
 
   // ======================================================
   // PUBLIC READONLY SIGNALS
   // ======================================================
 
-  /** Public readonly state */
   readonly state = this._state.asReadonly();
-  /** Public readonly configuration */
   readonly config = this._config.asReadonly();
-  /** Public readonly events */
   readonly events = this._events.asReadonly();
-
-  // ======================================================
-  // COMPUTED SIGNALS - For effect tracking
-  // ======================================================
-
   /**
    * Dedicated signal for endpoint tracking
    * Updated only when endpoint actually changes
    */
   readonly endpointSignal = this._currentEndpoint.asReadonly();
-
   /**
    * Dedicated signal for parameters tracking
    * Updated only when parameters actually change
    */
   readonly parametersSignal = this._currentParameters.asReadonly();
+  readonly pendingParameters = this._pendingParameters.asReadonly();
+
+  // ======================================================
+  // COMPUTED SIGNALS - For effect tracking
+  // ======================================================
+
 
   /**
    * Combined computed for endpoint + parameters
@@ -205,6 +189,13 @@ export class AtkApiStateService {
     return this._cache().size;
   });
 
+  /**
+   * Dirty = pending !== parameters (committed)
+   */
+  readonly isParamsDirty = computed(() =>
+    this.stableStringify(this._pendingParameters()) !== this.stableStringify(this._state().parameters)
+  );
+
   // ======================================================
   // CONSTRUCTOR
   // ======================================================
@@ -220,7 +211,7 @@ export class AtkApiStateService {
   }
 
   // ======================================================
-  // INITIALIZATION
+  // CONFIG INITIALIZATION
   // ======================================================
 
   /**
@@ -244,10 +235,10 @@ export class AtkApiStateService {
         connectionStatus: 'disconnected',
         lastUpdated: new Date()
       }));
-      this._currentEndpoint.set(defaultEndpoint);      // Initialize dedicated tracking signals
+      this._currentEndpoint.set(defaultEndpoint);
       this._currentParameters.set({});
     } else {
-      this._state.update(s => ({      // When restored, signals are already set by loadFromLocalStorage() / Just ensure config is set
+      this._state.update(s => ({
         ...s,
         configId: config.id
       }));
@@ -257,7 +248,7 @@ export class AtkApiStateService {
       defaultEndpoint: this._state().currentEndpoint
     });
     this.tools.consoleGroup({ // TAG AtkApiStateService -> initialize() ================ CONSOLE LOG IN PROGRESS
-      title: `AtkApiStateService -> initialize(${config.id})`, tag: 'recycle', palette: 'in', collapsed: true,
+      title: `AtkApiStateService -> initialize(${config.id})`, tag: 'recycle', palette: 'st', collapsed: true,
       data: { config, state: this._state(), restored }
     });
   }
@@ -286,15 +277,11 @@ export class AtkApiStateService {
       lastUpdated: new Date()
     }));
 
-    // Update dedicated tracking signals
     this._currentEndpoint.set(endpointId);
     this._currentParameters.set({});
+    this.resetPendingParameters({});
 
-    this.emitEvent('endpoint-changed', {
-      oldEndpoint,
-      newEndpoint: endpointId
-    });
-
+    this.emitEvent('endpoint-changed', { oldEndpoint, newEndpoint: endpointId });
     this.saveToLocalStorage();
     // this.tools.consoleGroup({ // OFF AtkApiStateService -> saveToLocalStorage() ================ CONSOLE LOG IN PROGRESS
     //   title: 'AtkApiStateService -> saveToLocalStorage()', tag: 'recycle', palette: 'in', collapsed: false,
@@ -443,12 +430,12 @@ export class AtkApiStateService {
    */
   setConnectionStatus(status: AtkApiConnectionStatus): void {
     this._state.update(s => ({ ...s, connectionStatus: status }));
-    let palette: "er" | "de" | "in" | "wa" | "ac" | "su" | "se" | undefined;
+    let palette: ConsoleLoggerOptions['palette'];
     let tag: string | undefined
     switch (status) {
       case 'connected':
-        palette = 'su';
-        tag = 'check';
+        palette = 'ss';
+        tag = 'recycle';
         break;
       case 'disconnected':
         palette = 'er';
@@ -473,6 +460,46 @@ export class AtkApiStateService {
       responseMetadata: metadata,
       lastUpdated: new Date()
     }));
+  }
+
+  /**
+   * Update/merge keys in pending (without touching the committed ones)
+   *
+   * @param params - Response params from API call
+   */
+  setPendingParameters(params: Record<string, any>): void {
+    this._pendingParameters.update(prev => {
+      const next = { ...prev };
+      Object.keys(params).forEach(k => {
+        const v = params[k];
+        if (v === undefined || v === null) delete next[k];
+        else next[k] = v;
+      });
+      return next;
+    });
+    // optional: emit event to trace that
+    this.emitEvent('parameters-updated', {
+      parameters: params,
+      changedKeys: Object.keys(params)
+    });
+  }
+
+  /**
+   * Completely replace the pending (useful for changing endpoint)
+   *
+   * @param params - Response params from API call
+   */
+  resetPendingParameters(params: Record<string, any> = {}): void {
+    this._pendingParameters.set({ ...params });
+  }
+
+  /**
+   * Commit: pending -> committed, puis dirty redevient false
+   */
+  commitPendingParameters(): Record<string, any> {
+    const pending = this._pendingParameters();
+    this.updateParameters(pending); // met à jour le committed + signaux + storage
+    return pending;
   }
 
   /**
@@ -934,4 +961,15 @@ export class AtkApiStateService {
       ...config
     }));
   }
+
+  /**
+   * Compare JSON stable pour deep-equality
+   */
+  private stableStringify(obj: any): string {
+    const allKeys: string[] = [];
+    JSON.stringify(obj, (k, v) => (allKeys.push(k), v));
+    allKeys.sort();
+    return JSON.stringify(obj, allKeys);
+  }
+
 }

@@ -75,10 +75,13 @@ export class AtkApiComponent implements OnInit {
     // =====================================
 
     effect(() => {
-      const context = this.stateService.endpointContextSignal();
-      if (!context.endpoint) { return; }
+      // const context = this.stateService.endpointContextSignal();
+      // if (!context.endpoint) { return; }
+      const endpointId = this.stateService.endpointSignal();
+      if (!endpointId) return;
       untracked(() => this.loadData());
     });
+
   }
 
   // =========================================
@@ -91,7 +94,7 @@ export class AtkApiComponent implements OnInit {
     const config = this.getConfigForDomain(configType);
     if (!config) {
       this.tools.consoleGroup({ // TAG AtkApiComponent -> ngOnInit(ERROR)  ================ CONSOLE LOG IN PROGRESS
-        title: 'AtkApiComponent -> ngOnInit(ERROR): No config found', tag: 'cross', palette: 'er', collapsed: true,
+        title: `AtkApiComponent -> ngOnInit(ERROR): No config (${configType}) found`, tag: 'cross', palette: 'er', collapsed: true,
         data: { configType: configType }
       });
       return;
@@ -193,5 +196,13 @@ export class AtkApiComponent implements OnInit {
    */
   toggleSidebar(): void {
     this.stateService.toggleSidebar();
+  }
+
+  /**
+   * Received from the sidebar: commit then load the data
+   */
+  onSidebarLoadRequest(): void {
+    this.stateService.commitPendingParameters();
+    this.loadData();
   }
 }

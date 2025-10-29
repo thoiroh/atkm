@@ -1,0 +1,148 @@
+<div class="binance-socket-container">
+  
+  <!-- Header Section -->
+  <header class="socket-header">
+    <div class="header-content">
+      <h1 class="header-title">Real-time Wallet</h1>
+      <div class="header-stats">
+        <div class="stat-item">
+          <span class="stat-label">Assets:</span>
+          <span class="stat-value">{{ assetCount() }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Total Value:</span>
+          <span class="stat-value">${{ formatLargeNumber(totalPortfolioValue()) }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- WebSocket Status Indicator -->
+    <div class="connection-status" [ngClass]="getConnectionStatusClass()">
+      <span class="status-dot"></span>
+      <span class="status-text">{{ getConnectionStatusText() }}</span>
+      @if (wsState().status === 'error' || wsState().status === 'disconnected') {
+        <button 
+          class="btn-reconnect" 
+          (click)="reconnectWebSocket()"
+          type="button">
+          Reconnect
+        </button>
+      }
+    </div>
+  </header>
+  
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Loading wallet assets...</p>
+    </div>
+  }
+  
+  <!-- Error State -->
+  @if (error() && !loading()) {
+    <div class="error-container">
+      <div class="error-icon">⚠️</div>
+      <p class="error-message">{{ error() }}</p>
+      <button 
+        class="btn-retry" 
+        (click)="retryLoad()"
+        type="button">
+        Retry
+      </button>
+    </div>
+  }
+  
+  <!-- Empty State -->
+  @if (!loading() && !error() && assetCount() === 0) {
+    <div class="empty-container">
+      <div class="empty-icon">📊</div>
+      <p class="empty-message">No assets found in your wallet</p>
+      <p class="empty-hint">Your wallet appears to be empty or all balances are zero</p>
+    </div>
+  }
+  
+  <!-- Assets Grid -->
+  @if (!loading() && !error() && assetCount() > 0) {
+    <div class="assets-grid">
+      @for (asset of sortedAssets(); track asset.symbol) {
+        <div class="asset-card">
+          
+          <!-- Card Header -->
+          <div class="card-header">
+            <h2 class="asset-symbol">{{ asset.symbol }}</h2>
+            <div class="price-indicator" [ngClass]="'indicator-' + asset.priceDirection">
+              @if (asset.priceDirection === 'up') {
+                <span class="indicator-icon">🟢</span>
+              }
+              @if (asset.priceDirection === 'down') {
+                <span class="indicator-icon">🔴</span>
+              }
+              @if (asset.priceDirection === 'neutral') {
+                <span class="indicator-icon">⚪</span>
+              }
+            </div>
+          </div>
+          
+          <!-- Card Body -->
+          <div class="card-body">
+            
+            <!-- Balance Info -->
+            <div class="info-row">
+              <span class="info-label">Balance:</span>
+              <span class="info-value">{{ formatNumber(asset.balance, 8) }}</span>
+            </div>
+            
+            <!-- Price Info -->
+            <div class="info-row">
+              <span class="info-label">Price:</span>
+              <span class="info-value price-value">
+                ${{ formatNumber(asset.currentPrice, 2) }}
+              </span>
+            </div>
+            
+            <!-- Total Value -->
+            <div class="info-row total-row">
+              <span class="info-label">Value:</span>
+              <span class="info-value total-value">
+                ${{ formatNumber(asset.totalValue, 2) }}
+              </span>
+            </div>
+            
+            <!-- 24h Change -->
+            <div class="info-row change-row">
+              <span class="info-label">24h:</span>
+              <span 
+                class="info-value change-value" 
+                [ngClass]="{
+                  'change-positive': asset.priceChange24h > 0,
+                  'change-negative': asset.priceChange24h < 0,
+                  'change-neutral': asset.priceChange24h === 0
+                }">
+                {{ asset.priceChange24h > 0 ? '+' : '' }}{{ formatNumber(asset.priceChange24h, 2) }}%
+              </span>
+            </div>
+            
+          </div>
+          
+          <!-- Card Footer (Optional - Last Update Time) -->
+          <div class="card-footer">
+            <span class="last-update">
+              Updated: {{ asset.lastUpdate | date:'HH:mm:ss' }}
+            </span>
+          </div>
+          
+        </div>
+      }
+    </div>
+  }
+  
+  <!-- WebSocket Error Message -->
+  @if (wsState().error) {
+    <div class="ws-error-banner">
+      <span class="error-icon">⚠️</span>
+      <span class="error-text">{{ wsState().error }}</span>
+    </div>
+  }
+  
+</div>

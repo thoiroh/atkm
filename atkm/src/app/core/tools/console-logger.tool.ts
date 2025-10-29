@@ -1,7 +1,7 @@
 export type ColorConfig = Record<string, { hex: string; description: string; }>;
 export type SymbolsConfig = Record<string, { char: string; description: string; }>;
 
-export interface GroupOptions {
+export interface ConsoleLoggerOptions {
   /** Title displayed in the group header. Defaults to inferred call site. */
   title?: string;
   /** Symbol key from symbols config or a literal string to display before the title. */
@@ -9,7 +9,7 @@ export interface GroupOptions {
   /** Any data to dump inside the group. */
   data: any;
   /** Predefined color palette. */
-  palette?: 'de' | 'in' | 'wa' | 'er' | 'ac' | 'su' | 'se';
+  palette?: 'de' | 'in' | 'wa' | 'er' | 'ac' | 'su' | 'se' | 'st' | 'ss' | 'ht';
   /** Use console.groupCollapsed when true. */
   collapsed?: boolean;
   /** Optional CSS font-family for header text. */
@@ -47,7 +47,7 @@ export class ConsoleLogger {
     private symbols: SymbolsConfig
   ) { }
 
-  public group(opts: GroupOptions): void {
+  public group(opts: ConsoleLoggerOptions): void {
     const {
       title,
       tag,
@@ -159,8 +159,6 @@ export class ConsoleLogger {
       }
     };
 
-
-
     switch (true) {
       case value instanceof Error: {
         // keep heading styled, then dump the real Error object for stack/expand
@@ -193,8 +191,7 @@ export class ConsoleLogger {
             })()
           );
 
-        if (wantsTable) {
-          // header + table for better inspection
+        if (wantsTable) { // header + table for better inspection
           console.log(`%c${keyLabel}`, keyStyle);
           console.table(value);
           return;
@@ -209,7 +206,6 @@ export class ConsoleLogger {
         value.forEach((v, i) => this.dump(v, pal, `[${i}]`, fmt));
         return;
       }
-
 
       case value instanceof Map: {
         if (fmt?.objectRender === 'tree') {
@@ -259,7 +255,7 @@ export class ConsoleLogger {
     }
   }
 
-  private getPalette(name: GroupOptions['palette']) {
+  private getPalette(name: ConsoleLoggerOptions['palette']) {
     const base = {
       tag: this.hex('#FFFF30'),
       title: this.hex('#FFFFFF'),
@@ -271,10 +267,13 @@ export class ConsoleLogger {
     const named: Record<string, typeof base> = {
       de: base,
       su: { ...base, title: this.hex('#ebebebff'), key: this.hex('#64ff64'), tag: this.hex('#64ff64'), value: this.hex('#2cf72c'), meta: this.hex('#abababff') },
-      in: { ...base, title: this.hex('#ebebebff'), key: this.hex('#ddf7ff'), tag: this.hex('#1E90FF'), value: this.hex('#1E90FF'), meta: this.hex('#abababff') },
+      in: { ...base, title: this.hex('#ebebebff'), key: this.hex('#64b1feff'), tag: this.hex('#1E90FF'), value: this.hex('#1E90FF'), meta: this.hex('#abababff') },
       wa: { ...base, title: this.hex('#ebebebff'), key: this.hex('#FFD700'), tag: this.hex('#FFA500'), value: this.hex('#FFA500'), meta: this.hex('#abababff') },
       er: { ...base, title: this.hex('#ebebebff'), key: this.hex('#FA8072'), tag: this.hex('#E81123'), value: this.hex('#E81123'), meta: this.hex('#abababff') },
-      ac: { ...base, title: this.hex('#ebebebff'), key: this.hex('#EE82EE'), tag: this.hex('#FF00FF'), value: this.hex('#FF00FF'), meta: this.hex('#abababff') }
+      ac: { ...base, title: this.hex('#ebebebff'), key: this.hex('#EE82EE'), tag: this.hex('#FF00FF'), value: this.hex('#FF00FF'), meta: this.hex('#abababff') },
+      st: { ...base, title: this.hex('#00FFFF'), key: this.hex('#abababff'), tag: this.hex('#00FFFF'), value: this.hex('#abababff'), meta: this.hex('#abababff') },
+      ss: { ...base, title: this.hex('#00FFFF'), key: this.hex('#abababff'), tag: this.hex('#00FFFF'), value: this.hex('#2cf72c'), meta: this.hex('#abababff') },
+      ht: { ...base, title: this.hex('#90EE90'), key: this.hex('#abababff'), tag: this.hex('#90EE90'), value: this.hex('#abababff'), meta: this.hex('#abababff') },
     };
     return named[name ?? 'default'];
   }
