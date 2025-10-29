@@ -18,7 +18,9 @@
         "alt": "atkm",
         "link": "/landing"
       },
-      "breadcrumb": ["Dashboard"],
+      "breadcrumb": [
+        "Dashboard"
+      ],
       "centerTitle": "atomeek - api management for data integration",
       "centerSubtitle": "{ v.0.2025.09.12.120032 }",
       "centerBadge": " β "
@@ -444,7 +446,9 @@
         "alt": "atkm",
         "link": "/landing"
       },
-      "breadcrumb": ["Dashboard"],
+      "breadcrumb": [
+        "Dashboard"
+      ],
       "centerTitle": "atkcash - api management for data integration",
       "centerSubtitle": "{ v.0.2025.09.12.120032 }",
       "centerBadge": " β "

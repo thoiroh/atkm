@@ -16,7 +16,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, OnInit, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, untracked, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AtkApiDatatableComponent } from '@shared/components/atk-api/atk-api-datatable/atk-api-datatable.component';
@@ -42,6 +42,13 @@ import type { AtkApiLogLevel, IAtkApiLogEntry } from '@shared/components/atk-api
   styleUrls: ['./atk-api-bash.component.css']
 })
 export class AtkApiBashComponent implements OnInit {
+
+  // ====================================================
+  // VIEW CHILDREN
+  // ====================================================
+
+  @ViewChild(TerminalInputDirective)
+  private terminalDirective?: TerminalInputDirective;
 
   // ====================================================
   // DEPENDENCIES
@@ -249,6 +256,10 @@ export class AtkApiBashComponent implements OnInit {
       const events = this.stateService.events();
       const latestEvent = events.at(-1);
       if (!latestEvent) return;
+      this.tools.consoleGroup({ // TAG AtkApiBashComponent -> effect(1) ================ CONSOLE LOG IN PROGRESS
+        title: 'AtkApiBashComponent -> effect(1)', tag: 'rook', palette: 'aapi', collapsed: false, arrayAsTable: false,
+        data: { latestEvent: latestEvent }
+      });
       untracked(() => {
         // Check if event is a log event
         if (latestEvent.type === 'log-added' as any) {
@@ -282,7 +293,7 @@ export class AtkApiBashComponent implements OnInit {
 
           case 'connection-tested':
             if (latestEvent.payload.success) {
-              this.addLog(`✅ Connection test successful: ${latestEvent.payload.responseTime}ms`, 'success');
+              this.addLog(`Connection test successful: ${latestEvent.payload.responseTime}ms`, 'success');
             } else {
               this.addLog(`❌ Connection test failed: ${latestEvent.payload.error}`, 'error');
             }
@@ -298,6 +309,26 @@ export class AtkApiBashComponent implements OnInit {
     setInterval(() => {
       this.cursorVisible.update(v => !v);
     }, 500);
+
+    // ====================================================
+    // EFFECT 3: Auto-scroll when logs change
+    // ====================================================
+
+    effect(() => {
+      // Track logs count changes
+      const logCount = this.logs().length;
+
+      // Execute scroll outside tracking context to avoid loops
+      untracked(() => {
+        if (logCount > 0 && this.terminalDirective) {
+          // Small delay to ensure DOM is fully updated by Angular
+          setTimeout(() => {
+            this.terminalDirective?.scrollToBottom();
+          }, 150);
+        }
+      });
+    });
+
   }
 
   // ====================================================

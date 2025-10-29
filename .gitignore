@@ -143,3 +143,5 @@ karma.conf.js
 *.pem
 *.p12
 *.pfx
+.prettierrc
+.gitignore

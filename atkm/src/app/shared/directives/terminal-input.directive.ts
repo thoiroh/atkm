@@ -57,6 +57,7 @@ export interface TerminalScrollState {
 @Directive({
   selector: 'textarea[atkTerminalInput]',
   standalone: true,
+  exportAs: 'atkTerminalInput',
   host: {
     '(input)': 'onContentChange()',
     '(scroll)': 'onScrollEvent()',
@@ -75,17 +76,14 @@ export class TerminalInputDirective implements OnInit {
   private elementRef = inject(ElementRef<HTMLTextAreaElement>);
   // private readonly tools = inject(ToolsService);
 
-  // ----- Inputs (signals API) -----
   autoResize = input<boolean>(false);
   autoScroll = input<boolean>(true);
-  // Back-compat for existing templates using [smoothScroll]
   smoothScroll = input<boolean | null>(null);
   maxHeight = input<string>('200px');
-  // ----- Outputs -----
+
   stateChange = output<TerminalInputState>();
   contentChange = output<string>();
   scrollChange = output<TerminalScrollState>();
-  // ----- Element ref -----
 
   // ======================================================
   // LIFECYCLE

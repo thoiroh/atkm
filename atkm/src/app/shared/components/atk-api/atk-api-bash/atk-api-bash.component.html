@@ -2,7 +2,6 @@
 <!-- ADVANCED/FULL VERSION - Editable terminal with all features -->
 
 <div class="bash-wrapper">
-
   <!-- ======================= -->
   <!-- HEADER -->
   <!-- ======================= -->
@@ -15,24 +14,28 @@
     <!-- <div class="bash-header-log">
       <span class="log-level-{{ log.level }}">{{ log.message }}</span>
     </div> -->
-    }
-    }
+    } }
   </header>
 
   <main class="bash-main">
-
     <!-- ======================= -->
     <!-- TERMINAL SECTION (Editable) -->
     <!-- ======================= -->
 
     <section class="bash-section">
-
       <div class="bash-content">
-
         <!-- Editable terminal with directive -->
-        <textarea class="bash-input" atkTerminalInput [autoScroll]="true" autocorrect="off" spellcheck="false"
-          [value]="terminalText()" [style.height]="terminalHeight()" (stateChange)="onTerminalStateChange($event)">
-        </textarea>
+        <!-- REPLACE lines 37-39 (textarea opening tag) with: -->
+        <textarea
+          class="bash-input"
+          atkTerminalInput
+          #terminalInput="atkTerminalInput"
+          [autoScroll]="true"
+          autocorrect="off"
+          spellcheck="false"
+          [value]="terminalText()"
+          [style.height]="terminalHeight()"
+          (stateChange)="onTerminalStateChange($event)"></textarea>
 
         <!-- Terminal Status Bar -->
         <div class="bash-status">
@@ -42,20 +45,14 @@
 
           @if (selectionText(); as text) {
           <span class="bash-selection">Sel "{{ text }}"</span>
-          }
-
-          @if (state().loading) {
+          } @if (state().loading) {
           <span class="bash-loading">Loading...</span>
           }
 
           <!-- Log count -->
-          <span class="bash-log-count">
-            {{ logs().length }} logs
-          </span>
+          <span class="bash-log-count">{{ logs().length }} logs</span>
 
-          <span class="bash-connection" [class]="'status-' + state().connectionStatus">
-            {{ state().connectionStatus | titlecase }}
-          </span>
+          <span class="bash-connection" [class]="'status-' + state().connectionStatus">{{ state().connectionStatus | titlecase }}</span>
 
           <!-- Clear logs button -->
           <!-- <button class="bash-clear-logs" (click)="clearLogs()" title="Clear logs">
@@ -68,9 +65,7 @@
       <div class="bash-side">
         <div class="infos-items">
           <div class="infos-item">
-            <atk-icon name="check"
-              [color]="state().connectionStatus === 'connected' ? 'var(--color-btn-bg-emphasis)' : '#ef4444'"
-              [size]="16" />
+            <atk-icon name="check" [color]="state().connectionStatus === 'connected' ? 'var(--color-btn-bg-emphasis)' : '#ef4444'" [size]="16" />
             <span>{{ state().connectionStatus }}</span>
           </div>
 
@@ -79,9 +74,7 @@
             <atk-icon name="upload" color="var(--color-btn-bg-emphasis)" [size]="16" />
             <span>{{ state().responseMetadata.responseTime }}ms</span>
           </div>
-          }
-
-          @if (state().responseMetadata?.fromCache) {
+          } @if (state().responseMetadata?.fromCache) {
           <div class="infos-item">
             <atk-icon name="folder" color="var(--color-accent-fg)" [size]="16" />
             <span>from cache</span>
@@ -108,7 +101,6 @@
     @if (state().tableData.length > 0 && visibleColumns().length > 0) {
     <section class="bash-data-section">
       <div class="bash-data-content">
-
         <span class="bash-data-label">current endpoint</span>
         <header class="bash-data-header">
           <h1>{{ endpointName() }} - ({{ endpointId() }})</h1>
@@ -117,8 +109,7 @@
             @if (state().responseMetadata?.responseTime) {
             <span>-</span>
             <span>responseTime: {{ state().responseMetadata.responseTime }}ms</span>
-            }
-            @if (state().responseMetadata?.fromCache) {
+            } @if (state().responseMetadata?.fromCache) {
             <span>-</span>
             <span class="cache-badge">cached ⚡</span>
             }
@@ -126,8 +117,12 @@
         </header>
 
         <!-- Datatable Component -->
-        <atk-api-datatable [columns]="visibleColumns()" [data]="state().tableData" [loading]="state().loading"
-          [error]="state().error" (selectedRow)="onRowSelected($event)" />
+        <atk-api-datatable
+          [columns]="visibleColumns()"
+          [data]="state().tableData"
+          [loading]="state().loading"
+          [error]="state().error"
+          (selectedRow)="onRowSelected($event)" />
       </div>
     </section>
     }
@@ -195,7 +190,11 @@
     <section class="bash-section">
       <div class="loading-state">
         <div class="spinner"></div>
-        <p>Loading <strong>{{ state().currentEndpoint }}</strong>...</p>
+        <p>
+          Loading
+          <strong>{{ state().currentEndpoint }}</strong>
+          ...
+        </p>
         @if (state().parameters?.symbol) {
         <p class="loading-detail">Symbol: {{ state().parameters.symbol }}</p>
         }

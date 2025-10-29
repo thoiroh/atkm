@@ -847,7 +847,7 @@ export interface IAtkApiResponse<T = any> {
   /** Response data */
   data: T;
   /** sidebarData data */
-  sidebarData?: Record<string, any> | null;  // ✅ AJOUT
+  sidebarData?: Record<string, any> | null;
 
   /** HTTP status code */
   statusCode: number;

@@ -360,6 +360,7 @@ export class AtkApiSidebarComponent {
     });
     this.loadRequest.emit(); // le parent commit + load
   }
+
   /**
    * Test connection to endpoint
    */
