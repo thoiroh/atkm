@@ -142,7 +142,7 @@ export class AtkApiHttpService {
       const errorMessage = this.extractErrorMessage(error);
 
       this.tools.consoleGroup({ // TAG AtkApiHttpService  -> loadData(ERROR) ================ CONSOLE LOG IN PROGRESS
-        title: 'AtkApiHttpService  -> loadData(ERROR)', tag: 'cross', palette: 'he', collapsed: false,
+        title: 'AtkApiHttpService  -> loadData(ERROR)', tag: 'cross', palette: 'he', collapsed: true,
         data: { endpointConfig, params, error, errorMessage, responseTime }
       });
 

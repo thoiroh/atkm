@@ -280,9 +280,9 @@ export class ConsoleLogger {
       ht: { ...base, title: this.hex('#90EE90'), key: this.hex('#abababff'), tag: this.hex('#90EE90'), value: this.hex('#abababff'), meta: this.hex('#abababff') },
       hs: { ...base, title: this.hex('#90EE90'), key: this.hex('#abababff'), tag: this.hex('#90EE90'), value: this.hex('#2cf72c'), meta: this.hex('#abababff') },
       he: { ...base, title: this.hex('#90EE90'), key: this.hex('#abababff'), tag: this.hex('#E81123'), value: this.hex('#E81123'), meta: this.hex('#abababff') },
-      sb: { ...base, title: this.hex('#fd7949ff'), key: this.hex('#abababff'), tag: this.hex('#fd7949ff'), value: this.hex('#abababff'), meta: this.hex('#abababff') },
-      sbs: { ...base, title: this.hex('#fd7949ff'), key: this.hex('#abababff'), tag: this.hex('#fd7949ff'), value: this.hex('#2cf72c'), meta: this.hex('#abababff') },
-      sbe: { ...base, title: this.hex('#fd7949ff'), key: this.hex('#abababff'), tag: this.hex('#E81123'), value: this.hex('#E81123'), meta: this.hex('#abababff') },
+      sb: { ...base, title: this.hex('#FF8C00'), key: this.hex('#abababff'), tag: this.hex('#FF8C00'), value: this.hex('#abababff'), meta: this.hex('#abababff') },
+      sbs: { ...base, title: this.hex('#FF8C00'), key: this.hex('#abababff'), tag: this.hex('#FF8C00'), value: this.hex('#2cf72c'), meta: this.hex('#abababff') },
+      sbe: { ...base, title: this.hex('#FF8C00'), key: this.hex('#abababff'), tag: this.hex('#E81123'), value: this.hex('#E81123'), meta: this.hex('#abababff') },
     };
     return named[name ?? 'default'];
   }

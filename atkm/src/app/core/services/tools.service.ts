@@ -8,8 +8,8 @@ import { ConsoleLogger, ConsoleLoggerOptions } from '@core/tools/console-logger.
 import { filter, pairwise, take } from 'rxjs';
 
 interface Timer { id: number; timer: any; };
-
 let busy = false;
+
 export function navigateSafely(commands: any[], extras?: any) {
   if (busy) return;
   busy = true;
@@ -38,6 +38,7 @@ export async function processBigList<T>(
 
 @Injectable({ providedIn: 'root' })
 export class ToolsService {
+
   private timers: Timer[] = [];
   private logger = new ConsoleLogger(colors, symbols);
   private router = inject(Router);
@@ -49,6 +50,7 @@ export class ToolsService {
   private readonly ROUTE_BANNER_PAD_L = '22px';
   private readonly ROUTE_BANNER_PAD_R = '22px';
   private readonly ROUTE_BANNER_WIDTH = 85;
+
 
   /**
    * Enable logging of route changes with unified banner
@@ -65,7 +67,8 @@ export class ToolsService {
       )
       .subscribe(first => {
         // Ton splash habituel, puis la bannière d’init
-        this.logAtk?.();
+        this.logAtkClassic();
+        // this.logAtk(1, {          env: 'production',          version: '1.8.2',          commit: '0852815',          feature_flag: true        });
         this.logRouteBanner('(init)', first.urlAfterRedirects);
       });
 
@@ -215,7 +218,6 @@ export class ToolsService {
     return parseFloat(m[1]);
   }
 
-
   /**
    * Pad number to 3 digits with leading zeros.
    * @param n
@@ -224,7 +226,6 @@ export class ToolsService {
   public formatSourceToStringPad(n: number): string {
     return n.toString().padStart(3, '0');
   }
-
 
   /**
    * Log a console group with custom options.
@@ -235,40 +236,48 @@ export class ToolsService {
     this.logger.group(opts);
   }
 
-  /**
-   * @description Logs atk
-   */
-  public logAtk(): void {
-    const tsms = Math.floor(Date.now() / 1000);
-    const tss = tsms * 1000;
-    const date = new Date(tss);
-    // const event = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
+  // ======================================================
+  // PRIVATE METHODS
+  // ======================================================
+
+
+  private formatDate(d: Date, locale = 'en-US'): string {
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'short',
       year: 'numeric',
-      month: '2-digit',   // Assure que le mois est sur deux chiffres
-      day: '2-digit',     // Assure que le jour est sur deux chiffres
+      month: '2-digit',
+      day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit'
     };
-    const dateFormated = date.toLocaleDateString('en-US', options)
-
-    console.log("  ");
-    console.log("%c/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\", "color: #FFFF00;");
-    console.log("%c\\/                                                                                      \\/", "color: #FFFF00;");
-    console.log("%c/\\%c                              ###     #########     ##                              %c  /\\", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
-    console.log("%c\\/%c                             ## ##           ##     ##                              %c  \\/", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
-    console.log("%c/\\%c                            ##   ##          ##     ##                              %c  /\\", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
-    console.log("%c\\/%c                           ##     ##         ##     ###                             %c  \\/", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
-    console.log("%c/\\%c                          ##       ##        ##     ## ##                           %c  /\\", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
-    console.log("%c\\/%c                         ##         ##       ##     ##   ##                         %c  \\/", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
-    console.log("%c/\\%c                        ##    #########      ##     ##     ##                       %c  /\\", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
-    console.log("%c\\/                                                                                      \\/", "color: #FFFF00;");
-    console.log(`%c/\\              {  atomeek_matrix }   =>   { [ ${tsms}, ${tsms} ] }               /\\`, "color: #FFFF00;");
-    console.log(`%c\\/              {  \u{1F496}  iasct  \u{1F496} }   =>   { [ ${dateFormated} ] }         \\/`, "color: #FFFF00;");
-    console.log("%c/\\                                                                                      /\\", "color: #FFFF00;");
-    console.log("%c\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/", "color: #FFFF00;");
-    // console.log("  ");
+    return d.toLocaleDateString(locale, options);
   }
+
+  /**
+   * Petit clin d’œil à ton ancien log
+   * @date 29/10/2025
+   */
+  public logAtkClassic(): void {
+    const tsms = Math.floor(Date.now() / 1000);
+    const dateFormated = this.formatDate(new Date(tsms * 1000), 'en-US');
+
+    console.log('%c', ' ');
+    console.log("%c/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\", "color: #39FF14;");
+    console.log("%c\\/                                                                                      \\/", "color: #39FF14;");
+    console.log("%c/\\%c                              ###     #########     ##                              %c  /\\", "color: #39FF14", "color: #FF8C00;", "color: #39FF14;");
+    console.log("%c\\/%c                             ## ##           ##     ##                              %c  \\/", "color: #39FF14;", "color: #FF8C00;", "color: #39FF14;");
+    console.log("%c/\\%c                            ##   ##          ##     ##                              %c  /\\", "color: #39FF14;", "color: #FF8C00;", "color: #39FF14;");
+    console.log("%c\\/%c                           ##     ##         ##     ###                             %c  \\/", "color: #39FF14;", "color: #FF8C00;", "color: #39FF14;");
+    console.log("%c/\\%c                          ##       ##        ##     ## ##                           %c  /\\", "color: #39FF14;", "color: #FF8C00;", "color: #39FF14;");
+    console.log("%c\\/%c                         ##         ##       ##     ##   ##                         %c  \\/", "color: #39FF14;", "color: #FF8C00;", "color: #39FF14;");
+    console.log("%c/\\%c                        ##    #########      ##     ##     ##                       %c  /\\", "color: #39FF14;", "color: #FF8C00;", "color: #39FF14;");
+    console.log("%c\\/                                                                                      \\/", "color: #39FF14;");
+    console.log(`%c/\\              {  atomeek_matrix }   =>   { [ ${tsms}, ${tsms} ] }               /\\`, "color: #39FF14;");
+    // Cette ligne était irrégulière : remplacée désormais par la bannière centralisée via logAtk()
+    console.log(`%c\\/              {  💖  iasct  💖 }   =>   { [ ${dateFormated} ] }         \\/`, "color: #39FF14;");
+    console.log("%c/\\                                                                                      /\\", "color: #39FF14;");
+    console.log("%c\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/", "color: #39FF14;");
+  }
+
 }
