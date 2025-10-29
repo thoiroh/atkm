@@ -248,7 +248,7 @@ export class AtkApiStateService {
       defaultEndpoint: this._state().currentEndpoint
     });
     this.tools.consoleGroup({ // TAG AtkApiStateService -> initialize() ================ CONSOLE LOG IN PROGRESS
-      title: `AtkApiStateService -> initialize(${config.id})`, tag: 'recycle', palette: 'st', collapsed: true,
+      title: `AtkApiStateService -> initialize( ${config.id} )`, tag: 'recycle', palette: 'st', collapsed: true,
       data: { config, state: this._state(), restored }
     });
   }
@@ -418,7 +418,7 @@ export class AtkApiStateService {
       });
 
       this.tools.consoleGroup({  // TAG AtkApiStateService -> setError() ================ CONSOLE LOG IN PROGRESS
-        title: `AtkApiStateService -> setError(${error})`, tag: 'cross', palette: 'se', collapsed: true, data: error
+        title: `AtkApiStateService -> setError( ${error} )`, tag: 'cross', palette: 'se', collapsed: true, data: error
       });
     }
   }
@@ -445,7 +445,7 @@ export class AtkApiStateService {
         palette = 'in';
     }
     this.tools.consoleGroup({  // TAG AtkApiStateService -> setConnectionStatus() ================ CONSOLE LOG IN PROGRESS
-      title: `AtkApiStateService -> setConnectionStatus(${status})`, tag: tag, palette: palette, collapsed: true, data: status
+      title: `AtkApiStateService -> setConnectionStatus( ${status} )`, tag: tag, palette: palette, collapsed: true, data: status
     });
   }
 
@@ -729,7 +729,7 @@ export class AtkApiStateService {
     // Also log to ToolsService for debugging
     if (level === 'error') {
       // this.tools.consoleGroup({ // OFF AtkApiStateService -> addLog(error) ================ CONSOLE LOG IN PROGRESS
-      //   title: `AtkApiStateService -> addLog( ${message})`, tag: 'cross', palette: 'er', collapsed: true,
+      //   title: `AtkApiStateService -> addLog( ${message} )`, tag: 'cross', palette: 'er', collapsed: true,
       //   data: { log }
       // });
     }
@@ -763,7 +763,7 @@ export class AtkApiStateService {
     // Debug log for important events
     if (this.shouldLogEvent(type)) {
       // this.tools.consoleGroup({ // OFF AtkApiStateService -> emitEvent() ================ CONSOLE LOG IN PROGRESS
-      //   title: `AtkApiStateService -> emitEvent(${type})`, tag: 'recycle', palette: 'ac', collapsed: true,
+      //   title: `AtkApiStateService -> emitEvent( ${type} )`, tag: 'recycle', palette: 'ac', collapsed: true,
       //   data: { event, currentState: this._state() }
       // });
     }
@@ -932,7 +932,7 @@ export class AtkApiStateService {
     this.clearLocalStorage();
     this.emitEvent('state-reset', { reason });
     this.tools.consoleGroup({ // TAG AtkApiStateService -> resetState() ================ CONSOLE LOG IN PROGRESS
-      title: `AtkApiStateService -> resetState(${reason})`, tag: 'recycle', palette: 'ss', collapsed: true,
+      title: `AtkApiStateService -> resetState( ${reason} )`, tag: 'recycle', palette: 'ss', collapsed: true,
       data: { state: this._state() }
     });
   }

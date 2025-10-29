@@ -108,10 +108,10 @@
     @if (state().tableData.length > 0 && visibleColumns().length > 0) {
     <section class="bash-data-section">
       <div class="bash-data-content">
-        <span class="bash-data-label">current endpoint</span>
 
+        <span class="bash-data-label">current endpoint</span>
         <header class="bash-data-header">
-          <h1>{{ endpointName() }}</h1>
+          <h1>{{ endpointName() }} - ({{ endpointId() }})</h1>
           <div class="bash-data-meta">
             <span>records: {{ state().tableData.length }} items</span>
             @if (state().responseMetadata?.responseTime) {

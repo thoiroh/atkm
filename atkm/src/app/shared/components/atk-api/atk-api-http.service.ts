@@ -68,8 +68,8 @@ export class AtkApiHttpService {
   // ======================================================
 
   constructor() {
-    // this.tools.consoleGroup({ // OFF AtkApiHttpService -> constructor() ================ CONSOLE LOG IN PROGRESS
-    //   title: 'AtkApiHttpService -> constructor()', tag: 'recycle', palette: 'in', collapsed: true,
+    // this.tools.consoleGroup({ // OFF AtkApiHttpService  -> constructor() ================ CONSOLE LOG IN PROGRESS
+    //   title: 'AtkApiHttpService  -> constructor()', tag: 'recycle', palette: 'in', collapsed: true,
     //   data: { service: 'AtkApiHttpService' }
     // });
   }
@@ -96,8 +96,8 @@ export class AtkApiHttpService {
         const cached = this.stateService.getCache<BashData[]>(cacheKey);
         if (cached) {
           const responseTime = Math.round(performance.now() - startTime);
-          this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(CACHE) ================ CONSOLE LOG IN PROGRESS
-            title: 'AtkApiHttpService -> loadData(CACHE)', tag: 'recycle', palette: 'ht', collapsed: true,
+          this.tools.consoleGroup({ // TAG AtkApiHttpService  -> loadData(CACHE) ================ CONSOLE LOG IN PROGRESS
+            title: 'AtkApiHttpService  -> loadData(CACHE)', tag: 'recycle', palette: 'ht', collapsed: true,
             data: { cahed: cached }
           });
 
@@ -115,8 +115,8 @@ export class AtkApiHttpService {
         sidebarData = result.sidebarData;
 
         // console.log(`🔥 configTypeInput: ${endpointConfig}`, endpointConfig);
-        this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(dataTransformer) ================ CONSOLE LOG IN PROGRESS
-          title: `AtkApiHttpService -> loadData( ${endpointConfig.id} )`, tag: 'recycle', palette: 'ht', collapsed: true,
+        this.tools.consoleGroup({ // TAG AtkApiHttpService  -> loadData(dataTransformer) ================ CONSOLE LOG IN PROGRESS
+          title: `AtkApiHttpService  -> loadData( ${endpointConfig.id} )`, tag: 'recycle', palette: 'ht', collapsed: true,
           data: { dataTransformer: result }
         });
 
@@ -141,8 +141,8 @@ export class AtkApiHttpService {
       const responseTime = Math.round(performance.now() - startTime);
       const errorMessage = this.extractErrorMessage(error);
 
-      this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(ERROR) ================ CONSOLE LOG IN PROGRESS
-        title: 'AtkApiHttpService -> loadData(ERROR)', tag: 'cross', palette: 'he', collapsed: false,
+      this.tools.consoleGroup({ // TAG AtkApiHttpService  -> loadData(ERROR) ================ CONSOLE LOG IN PROGRESS
+        title: 'AtkApiHttpService  -> loadData(ERROR)', tag: 'cross', palette: 'he', collapsed: false,
         data: { endpointConfig, params, error, errorMessage, responseTime }
       });
 
@@ -174,7 +174,7 @@ export class AtkApiHttpService {
       const responseTime = Math.round(performance.now() - startTime);
 
       this.tools.consoleGroup({
-        title: 'AtkApiHttpService -> testEndpoint() SUCCESS',
+        title: 'AtkApiHttpService  -> testEndpoint() SUCCESS',
         tag: 'check',
         palette: 'su',
         collapsed: true,
@@ -190,7 +190,7 @@ export class AtkApiHttpService {
       const errorMessage = this.extractErrorMessage(error);
 
       this.tools.consoleGroup({
-        title: 'AtkApiHttpService -> testEndpoint() ERROR',
+        title: 'AtkApiHttpService  -> testEndpoint() ERROR',
         tag: 'cross',
         palette: 'er',
         collapsed: false,
@@ -235,7 +235,7 @@ export class AtkApiHttpService {
             const delay = RETRY_CONFIG.delays[retryCount - 1] || 4000;
 
             this.tools.consoleGroup({
-              title: `AtkApiHttpService -> Retry ${retryCount}/${RETRY_CONFIG.maxRetries}`,
+              title: `AtkApiHttpService  -> Retry ${retryCount}/${RETRY_CONFIG.maxRetries}`,
               tag: 'check',
               palette: 'wa',
               collapsed: true,

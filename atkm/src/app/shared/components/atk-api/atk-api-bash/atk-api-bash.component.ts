@@ -220,6 +220,14 @@ export class AtkApiBashComponent implements OnInit {
   });
 
   /**
+   * Endpoint name for section header
+   */
+  endpointId = computed(() => {
+    const endpoint = this.currentEndpointConfig();
+    return endpoint?.id || 'Data Results';
+  });
+
+  /**
    * Terminal input state shortcuts
    */
   line = computed(() => this.terminalInputState().line);
@@ -252,52 +260,31 @@ export class AtkApiBashComponent implements OnInit {
         // Auto-log for important events
         switch (latestEvent.type) {
           case 'data-loaded':
-            this.addLog(
-              `Data loaded: ${latestEvent.payload.dataCount} items in ${latestEvent.payload.responseTime}ms`,
-              'success'
-            );
+            this.addLog(`Data loaded: ${latestEvent.payload.dataCount} items in ${latestEvent.payload.responseTime}ms`, 'success');
             break;
 
           case 'data-error':
-            this.addLog(
-              `❌ Error: ${latestEvent.payload.error}`,
-              'error'
-            );
+            this.addLog(`❌ Error: ${latestEvent.payload.error}`, 'error');
             break;
 
           case 'endpoint-changed':
-            this.addLog(
-              `📍 Endpoint changed: ${latestEvent.payload.oldEndpoint} → ${latestEvent.payload.newEndpoint}`,
-              'info'
-            );
+            this.addLog(`📍 Endpoint changed: ${latestEvent.payload.oldEndpoint} → ${latestEvent.payload.newEndpoint}`, 'info');
             break;
 
           case 'parameters-updated':
             const paramKeys = latestEvent.payload.changedKeys.join(', ');
-            this.addLog(
-              `⚙️ Parameters updated: ${paramKeys}`,
-              'info'
-            );
+            this.addLog(`⚙️ Parameters updated: ${paramKeys}`, 'info');
             break;
 
           case 'cache-cleared':
-            this.addLog(
-              `🗑️ Cache cleared: ${latestEvent.payload.clearedCount} entries`,
-              'info'
-            );
+            this.addLog(`🗑️ Cache cleared: ${latestEvent.payload.clearedCount} entries`, 'info');
             break;
 
           case 'connection-tested':
             if (latestEvent.payload.success) {
-              this.addLog(
-                `✅ Connection test successful: ${latestEvent.payload.responseTime}ms`,
-                'success'
-              );
+              this.addLog(`✅ Connection test successful: ${latestEvent.payload.responseTime}ms`, 'success');
             } else {
-              this.addLog(
-                `❌ Connection test failed: ${latestEvent.payload.error}`,
-                'error'
-              );
+              this.addLog(`❌ Connection test failed: ${latestEvent.payload.error}`, 'error');
             }
             break;
         }
@@ -319,7 +306,7 @@ export class AtkApiBashComponent implements OnInit {
 
   ngOnInit(): void {
     this.addLog('Terminal initialized', 'info');
-    this.addLog('Waiting for commands...', 'info');
+    // this.addLog('Waiting for commands...', 'info');
 
     // this.tools.consoleGroup({ // OFF AtkApiBashComponent -> loadData() ================ CONSOLE LOG IN PROGRESS
     //   title: 'AtkApiBashComponent -> ngOnInit()', tag: 'check', palette: 'in', collapsed: true,
@@ -353,7 +340,8 @@ export class AtkApiBashComponent implements OnInit {
     this.logs.update(list => {
       const updated = [...list, log];
       // Keep only last 100 logs
-      return updated.length > 100 ? updated.slice(-100) : updated;
+      // return updated.length > 100 ? updated.slice(-100) : updated;
+      return updated;
     });
   }
 

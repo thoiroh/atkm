@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 
 import colors from '@core/tools/console-logger.config.colors.json';
 import symbols from '@core/tools/console-logger.config.symbols.json';
 import { ConsoleLogger, ConsoleLoggerOptions } from '@core/tools/console-logger.tool';
+import { filter, pairwise, take } from 'rxjs';
 
 interface Timer { id: number; timer: any; };
 
@@ -39,8 +40,79 @@ export async function processBigList<T>(
 export class ToolsService {
   private timers: Timer[] = [];
   private logger = new ConsoleLogger(colors, symbols);
+  private router = inject(Router);
 
   constructor(private httpClient: HttpClient) { }
+
+  private readonly ROUTE_BANNER_BG = '#656565ff';
+  private readonly ROUTE_BANNER_PAD_Y = '10px';
+  private readonly ROUTE_BANNER_PAD_L = '22px';
+  private readonly ROUTE_BANNER_PAD_R = '22px';
+  private readonly ROUTE_BANNER_WIDTH = 85;
+
+  /**
+   * Enable logging of route changes with unified banner
+   * - Log d'init (first NavigationEnd)
+   * - Logs "from → to" ensuite
+   * @date 29/10/2025
+   */
+  public setupRouteChangeLogging(): void {
+    // Première navigation terminée -> log d’init
+    this.router.events
+      .pipe(
+        filter((e: any): e is NavigationEnd => e instanceof NavigationEnd),
+        take(1)
+      )
+      .subscribe(first => {
+        // Ton splash habituel, puis la bannière d’init
+        this.logAtk?.();
+        this.logRouteBanner('(init)', first.urlAfterRedirects);
+      });
+
+    // Navigations suivantes -> from → to
+    this.router.events
+      .pipe(
+        filter((e: any): e is NavigationEnd => e instanceof NavigationEnd),
+        pairwise()
+      )
+      .subscribe(([prev, curr]) => {
+        const from = prev.urlAfterRedirects;
+        const to = curr.urlAfterRedirects;
+        if (from === to) return;
+        this.logRouteBanner(from, to);
+      });
+  }
+
+  /**
+   * rendering of the banner with constant width
+   *
+   * @date 29/10/2025
+   * @param from @param to
+   */
+  private logRouteBanner(from: string, to: string): void {
+    const plain = ` ROUTE CHANGE from ${from} → ${to} `;
+    const padCount = Math.max(0, this.ROUTE_BANNER_WIDTH - plain.length);
+    const filler = ' '.repeat(padCount);
+
+    const bg = this.ROUTE_BANNER_BG;
+    const padY = this.ROUTE_BANNER_PAD_Y;
+    const padLeft = this.ROUTE_BANNER_PAD_L;
+    const padRight = this.ROUTE_BANNER_PAD_R;
+
+    const styleLabel = `background:${bg}; color:#fff; font-weight:bold; text-decoration:underline; padding:${padY} 0 ${padY} ${padLeft}; border-radius:6px 0 0 6px;`;
+    const styleSep = `background:${bg}; color:#bbb; padding:${padY} 0;`;
+    const styleFrom = `background:${bg}; color:#4fc3f7; padding:${padY} 0;`;
+    const styleTo = `background:${bg}; color:#4fc3f7; padding:${padY} ${padRight} ${padY} 0; border-radius:0 6px 6px 0;`;
+
+    console.log(
+      `\n%cROUTE CHANGE%c from%c ${from} %c→%c ${to}${filler}`,
+      styleLabel, // "ROUTE CHANGE"
+      styleSep,   // " from"
+      styleFrom,  // route from
+      styleSep,   // arrow
+      styleTo     // route to + filler final
+    );
+  }
 
   /**
    * Start a one-shot timer and auto-clean it on completion.
@@ -161,5 +233,42 @@ export class ToolsService {
    */
   public consoleGroup(opts: ConsoleLoggerOptions): void {
     this.logger.group(opts);
+  }
+
+  /**
+   * @description Logs atk
+   */
+  public logAtk(): void {
+    const tsms = Math.floor(Date.now() / 1000);
+    const tss = tsms * 1000;
+    const date = new Date(tss);
+    // const event = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'short',
+      year: 'numeric',
+      month: '2-digit',   // Assure que le mois est sur deux chiffres
+      day: '2-digit',     // Assure que le jour est sur deux chiffres
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    };
+    const dateFormated = date.toLocaleDateString('en-US', options)
+
+    console.log("  ");
+    console.log("%c/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\", "color: #FFFF00;");
+    console.log("%c\\/                                                                                      \\/", "color: #FFFF00;");
+    console.log("%c/\\%c                              ###     #########     ##                              %c  /\\", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
+    console.log("%c\\/%c                             ## ##           ##     ##                              %c  \\/", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
+    console.log("%c/\\%c                            ##   ##          ##     ##                              %c  /\\", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
+    console.log("%c\\/%c                           ##     ##         ##     ###                             %c  \\/", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
+    console.log("%c/\\%c                          ##       ##        ##     ## ##                           %c  /\\", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
+    console.log("%c\\/%c                         ##         ##       ##     ##   ##                         %c  \\/", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
+    console.log("%c/\\%c                        ##    #########      ##     ##     ##                       %c  /\\", "color: #FFFF00;", "color: #FF00FF;", "color: #FFFF00;");
+    console.log("%c\\/                                                                                      \\/", "color: #FFFF00;");
+    console.log(`%c/\\              {  atomeek_matrix }   =>   { [ ${tsms}, ${tsms} ] }               /\\`, "color: #FFFF00;");
+    console.log(`%c\\/              {  \u{1F496}  iasct  \u{1F496} }   =>   { [ ${dateFormated} ] }         \\/`, "color: #FFFF00;");
+    console.log("%c/\\                                                                                      /\\", "color: #FFFF00;");
+    console.log("%c\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/", "color: #FFFF00;");
+    // console.log("  ");
   }
 }
