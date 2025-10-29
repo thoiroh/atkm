@@ -129,8 +129,9 @@ export class AtkApiSidebarComponent {
   hasSidebarData = computed(() => {
     const data = this.sidebarData();
     const fields = this.sidebarFields();
-    // this.tools.consoleGroup({ // OFF AtkApiSidebarComponent -> hasSidebarData = computed()  ================ CONSOLE LOG IN PROGRESS
-    //   title: 'AtkApiSidebarComponent -> hasSidebarData = computed()', tag: 'blackDiamond', palette: 'ac', collapsed: false,
+
+    // this.tools.consoleGroup({ // OFF AtkApiSidebarComponent -> hasSidebarData()  ================ CONSOLE LOG IN PROGRESS
+    //   title: `AtkApiSidebarComponent -> hasSidebarData( ${this.config()?.id} )`, tag: 'rook', palette: 'sb', collapsed: true,
     //   data: { data, dataKeys: data ? Object.keys(data) : [], fields, fieldsCount: fields.length, result: data !== null && Object.keys(data).length > 0 && fields.length > 0 }
     // });
     return data !== null && Object.keys(data).length > 0 && fields.length > 0;
@@ -278,8 +279,8 @@ export class AtkApiSidebarComponent {
    */
   selectEndpoint(endpointId: string): void {
     this.tools.consoleGroup({ // TAG AtkApiSidebarComponent -> selectEndpoint()  ================ CONSOLE LOG IN PROGRESS
-      title: `AtkApiSidebarComponent -> selectEndpoint(${endpointId})`, tag: 'check', palette: 'ac', collapsed: true,
-      data: { endpointId }
+      title: `AtkApiSidebarComponent -> selectEndpoint(${endpointId})`, tag: 'rook', palette: 'sb', collapsed: true,
+      data: endpointId
     });
 
     this.stateService.updateEndpoint(endpointId);
@@ -318,7 +319,7 @@ export class AtkApiSidebarComponent {
 
     if (!endpoint) return;
 
-    this.tools.consoleGroup({
+    this.tools.consoleGroup({ // TAG AtkApiSidebarComponent -> triggerLoadData()  ================ CONSOLE LOG IN PROGRESS
       title: 'AtkApiSidebarComponent -> triggerLoadData()',
       tag: 'check',
       palette: 'ac',
@@ -364,7 +365,7 @@ export class AtkApiSidebarComponent {
 
     if (!endpoint) return;
 
-    this.tools.consoleGroup({
+    this.tools.consoleGroup({ // TAG AtkApiSidebarComponent -> testConnection()  ================ CONSOLE LOG IN PROGRESS
       title: 'AtkApiSidebarComponent -> testConnection()',
       tag: 'check',
       palette: 'ac',
@@ -400,7 +401,7 @@ export class AtkApiSidebarComponent {
    * Clear cache
    */
   clearCache(): void {
-    this.tools.consoleGroup({
+    this.tools.consoleGroup({ // TAG AtkApiSidebarComponent -> testConnection()  ================ CONSOLE LOG IN PROGRESS
       title: 'AtkApiSidebarComponent -> clearCache()',
       data: {},
       tag: 'check',
@@ -425,7 +426,7 @@ export class AtkApiSidebarComponent {
 
     const filename = `${endpoint?.id || 'data'}-${Date.now()}.json`;
 
-    this.tools.consoleGroup({
+    this.tools.consoleGroup({ // TAG AtkApiSidebarComponent -> testConnection()  ================ CONSOLE LOG IN PROGRESS
       title: 'AtkApiSidebarComponent -> exportData()',
       tag: 'check',
       palette: 'ac',
@@ -451,7 +452,7 @@ export class AtkApiSidebarComponent {
 
     const filename = `${endpoint?.id || 'data'}-${Date.now()}.csv`;
 
-    this.tools.consoleGroup({
+    this.tools.consoleGroup({ // TAG AtkApiSidebarComponent -> testConnection()  ================ CONSOLE LOG IN PROGRESS
       title: 'AtkApiSidebarComponent -> exportToCsv()',
       tag: 'check',
       palette: 'ac',

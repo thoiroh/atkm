@@ -87,7 +87,7 @@ export class AtkApiComponent implements OnInit {
   // =========================================
   // LIFECYCLE
   // =========================================
-  // console.log(`✅ configTypeInput: ${configType}`);
+  // console.log(`🔥 configTypeInput: ${endpointConfig}`, endpointConfig);
 
   ngOnInit(): void {
     const configType = this.route.snapshot.data['configType'] as AtkApiDomain || 'noconfig';

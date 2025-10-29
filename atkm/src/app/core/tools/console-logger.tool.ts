@@ -9,7 +9,7 @@ export interface ConsoleLoggerOptions {
   /** Any data to dump inside the group. */
   data: any;
   /** Predefined color palette. */
-  palette?: 'de' | 'in' | 'wa' | 'er' | 'ac' | 'su' | 'se' | 'st' | 'ss' | 'ht';
+  palette?: 'de' | 'in' | 'wa' | 'er' | 'ac' | 'su' | 'se' | 'st' | 'ss' | 'ht' | 'hs' | 'he' | 'sb' | 'sbs' | 'sbe' | 'ma' | 'mae' | 'mas';
   /** Use console.groupCollapsed when true. */
   collapsed?: boolean;
   /** Optional CSS font-family for header text. */
@@ -266,6 +266,9 @@ export class ConsoleLogger {
     // HACK ConsoleLogger -> getPalette() ====================================================
     const named: Record<string, typeof base> = {
       de: base,
+      ma: { ...base, title: this.hex('#ffffffff'), key: this.hex('#FAEBD7'), tag: this.hex('#ffffffff'), value: this.hex('#FAEBD7'), meta: this.hex('#ffffffff') },
+      mas: { ...base, title: this.hex('#ffffffff'), key: this.hex('#FAEBD7'), tag: this.hex('#2cf72c'), value: this.hex('#2cf72c'), meta: this.hex('#ffffffff') },
+      mae: { ...base, title: this.hex('#ffffffff'), key: this.hex('#FAEBD7'), tag: this.hex('#E81123'), value: this.hex('#E81123'), meta: this.hex('#ffffffff') },
       su: { ...base, title: this.hex('#ebebebff'), key: this.hex('#64ff64'), tag: this.hex('#64ff64'), value: this.hex('#2cf72c'), meta: this.hex('#abababff') },
       in: { ...base, title: this.hex('#ebebebff'), key: this.hex('#64b1feff'), tag: this.hex('#1E90FF'), value: this.hex('#1E90FF'), meta: this.hex('#abababff') },
       wa: { ...base, title: this.hex('#ebebebff'), key: this.hex('#FFD700'), tag: this.hex('#FFA500'), value: this.hex('#FFA500'), meta: this.hex('#abababff') },
@@ -273,7 +276,13 @@ export class ConsoleLogger {
       ac: { ...base, title: this.hex('#ebebebff'), key: this.hex('#EE82EE'), tag: this.hex('#FF00FF'), value: this.hex('#FF00FF'), meta: this.hex('#abababff') },
       st: { ...base, title: this.hex('#00FFFF'), key: this.hex('#abababff'), tag: this.hex('#00FFFF'), value: this.hex('#abababff'), meta: this.hex('#abababff') },
       ss: { ...base, title: this.hex('#00FFFF'), key: this.hex('#abababff'), tag: this.hex('#00FFFF'), value: this.hex('#2cf72c'), meta: this.hex('#abababff') },
+      se: { ...base, title: this.hex('#00FFFF'), key: this.hex('#abababff'), tag: this.hex('#E81123'), value: this.hex('#E81123'), meta: this.hex('#abababff') },
       ht: { ...base, title: this.hex('#90EE90'), key: this.hex('#abababff'), tag: this.hex('#90EE90'), value: this.hex('#abababff'), meta: this.hex('#abababff') },
+      hs: { ...base, title: this.hex('#90EE90'), key: this.hex('#abababff'), tag: this.hex('#90EE90'), value: this.hex('#2cf72c'), meta: this.hex('#abababff') },
+      he: { ...base, title: this.hex('#90EE90'), key: this.hex('#abababff'), tag: this.hex('#E81123'), value: this.hex('#E81123'), meta: this.hex('#abababff') },
+      sb: { ...base, title: this.hex('#fd7949ff'), key: this.hex('#abababff'), tag: this.hex('#fd7949ff'), value: this.hex('#abababff'), meta: this.hex('#abababff') },
+      sbs: { ...base, title: this.hex('#fd7949ff'), key: this.hex('#abababff'), tag: this.hex('#fd7949ff'), value: this.hex('#2cf72c'), meta: this.hex('#abababff') },
+      sbe: { ...base, title: this.hex('#fd7949ff'), key: this.hex('#abababff'), tag: this.hex('#E81123'), value: this.hex('#E81123'), meta: this.hex('#abababff') },
     };
     return named[name ?? 'default'];
   }

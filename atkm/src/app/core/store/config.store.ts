@@ -144,14 +144,14 @@ export class ConfigStore {
       this._config.set(cfg);
       this._profile.set(targetProfile);
       this.tools.consoleGroup({ // TAG ConfigStore -> loadLandingConfig() ================ CONSOLE LOG IN PROGRESS
-        title: `ConfigStore -> loadLandingConfig()`, tag: 'blackSquare', palette: 'in', collapsed: true,
+        title: `ConfigStore -> loadLandingConfig()`, tag: 'cube', palette: 'mas', collapsed: true,
         data: this.config()
       });
     } catch (err: any) {
       const errorMessage = err?.message || 'Unknown error loading configuration';
       this._error.set(errorMessage);
       this.tools.consoleGroup({ // TAG ConfigStore -> loadLandingConfig() ================ CONSOLE LOG IN PROGRESS
-        title: `ConfigStore -> loadLandingConfig() -> Error loading configuration`, tag: 'cross', palette: 'er', collapsed: false,
+        title: `ConfigStore -> loadLandingConfig() -> Error loading configuration`, tag: 'cross', palette: 'mae', collapsed: false,
         data: { profile: targetProfile, error: err }
       });
 

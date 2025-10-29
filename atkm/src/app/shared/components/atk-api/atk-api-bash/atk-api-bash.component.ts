@@ -240,9 +240,7 @@ export class AtkApiBashComponent implements OnInit {
     effect(() => {
       const events = this.stateService.events();
       const latestEvent = events.at(-1);
-
       if (!latestEvent) return;
-
       untracked(() => {
         // Check if event is a log event
         if (latestEvent.type === 'log-added' as any) {
@@ -255,7 +253,7 @@ export class AtkApiBashComponent implements OnInit {
         switch (latestEvent.type) {
           case 'data-loaded':
             this.addLog(
-              `✅ Data loaded: ${latestEvent.payload.dataCount} items in ${latestEvent.payload.responseTime}ms`,
+              `Data loaded: ${latestEvent.payload.dataCount} items in ${latestEvent.payload.responseTime}ms`,
               'success'
             );
             break;
@@ -310,9 +308,9 @@ export class AtkApiBashComponent implements OnInit {
     // EFFECT 2: Cursor blink animation
     // ====================================================
 
-    // setInterval(() => {
-    //   this.cursorVisible.update(v => !v);
-    // }, 500);
+    setInterval(() => {
+      this.cursorVisible.update(v => !v);
+    }, 500);
   }
 
   // ====================================================

@@ -21,12 +21,7 @@ import { ToolsService } from '@core/services/tools.service';
 import { catchError, firstValueFrom, retry, throwError, timeout, timer } from 'rxjs';
 
 import { AtkApiStateService } from './atk-api-state.service';
-import type {
-  BashData,
-  IAtkApiEndpointConfig,
-  IAtkApiRequestOptions,
-  IAtkApiResponse
-} from './atk-api.interfaces';
+import type { BashData, IAtkApiEndpointConfig, IAtkApiRequestOptions, IAtkApiResponse } from './atk-api.interfaces';
 
 /**
  * Default timeout for HTTP requests (30 seconds)
@@ -102,7 +97,7 @@ export class AtkApiHttpService {
         if (cached) {
           const responseTime = Math.round(performance.now() - startTime);
           this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(CACHE) ================ CONSOLE LOG IN PROGRESS
-            title: 'AtkApiHttpService -> loadData(CACHE)', tag: 'check', palette: 'ht', collapsed: true,
+            title: 'AtkApiHttpService -> loadData(CACHE)', tag: 'recycle', palette: 'ht', collapsed: true,
             data: { cahed: cached }
           });
 
@@ -117,9 +112,11 @@ export class AtkApiHttpService {
       if (endpointConfig.dataTransformer) {
         const result = endpointConfig.dataTransformer(rawData);
         transformedData = result.tableData;
-        sidebarData = result.sidebarData;  // ✅ Garde la référence au sidebarData
+        sidebarData = result.sidebarData;
+
+        // console.log(`🔥 configTypeInput: ${endpointConfig}`, endpointConfig);
         this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(dataTransformer) ================ CONSOLE LOG IN PROGRESS
-          title: 'AtkApiHttpService -> loadData(dataTransformer)', tag: 'recycle', palette: 'ht', collapsed: true,
+          title: `AtkApiHttpService -> loadData( ${endpointConfig.id} )`, tag: 'recycle', palette: 'ht', collapsed: true,
           data: { dataTransformer: result }
         });
 
@@ -145,7 +142,7 @@ export class AtkApiHttpService {
       const errorMessage = this.extractErrorMessage(error);
 
       this.tools.consoleGroup({ // TAG AtkApiHttpService -> loadData(ERROR) ================ CONSOLE LOG IN PROGRESS
-        title: 'AtkApiHttpService -> loadData(ERROR)', tag: 'cross', palette: 'er', collapsed: false,
+        title: 'AtkApiHttpService -> loadData(ERROR)', tag: 'cross', palette: 'he', collapsed: false,
         data: { endpointConfig, params, error, errorMessage, responseTime }
       });
 
