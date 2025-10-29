@@ -222,6 +222,7 @@ export class AtkApiStateService {
    * @param restoreFromStorage - Whether to attempt localStorage restoration
    */
   initialize(config: IAtkApiConfig, restoreFromStorage: boolean = true): void {
+
     this._config.set(config);
     let restored = false; // Try to restore from localStorage
     if (restoreFromStorage) { restored = this.loadFromLocalStorage(); }
@@ -249,7 +250,7 @@ export class AtkApiStateService {
     });
     this.tools.consoleGroup({ // TAG AtkApiStateService -> initialize() ================ CONSOLE LOG IN PROGRESS
       title: `AtkApiStateService -> initialize( ${config.id} )`, tag: 'recycle', palette: 'st', collapsed: true,
-      data: { config, state: this._state(), restored }
+      data: { config }
     });
   }
 
@@ -399,12 +400,14 @@ export class AtkApiStateService {
    * @param error - Error message (null to clear)
    */
   setError(error: string | null): void {
+
     this._state.update(s => ({
       ...s,
       error,
       loading: false,
       lastUpdated: new Date()
     }));
+
 
     if (error) {
       this.emitEvent('data-error', {
@@ -418,8 +421,10 @@ export class AtkApiStateService {
       });
 
       this.tools.consoleGroup({  // TAG AtkApiStateService -> setError() ================ CONSOLE LOG IN PROGRESS
-        title: `AtkApiStateService -> setError( ${error} )`, tag: 'cross', palette: 'se', collapsed: true, data: error
+        title: `AtkApiStateService -> setError( ${error} )`, tag: 'cross', palette: 'se', collapsed: false,
+        data: { state: this.state() }
       });
+
     }
   }
 

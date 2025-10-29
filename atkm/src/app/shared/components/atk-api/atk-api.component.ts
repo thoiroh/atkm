@@ -94,8 +94,8 @@ export class AtkApiComponent implements OnInit {
     const config = this.getConfigForDomain(configType);
     if (!config) {
       this.tools.consoleGroup({ // TAG AtkApiComponent -> ngOnInit(ERROR)  ================ CONSOLE LOG IN PROGRESS
-        title: `AtkApiComponent -> ngOnInit(ERROR): No config (${configType}) found`, tag: 'cross', palette: 'er', collapsed: true,
-        data: { configType: configType }
+        title: `AtkApiComponent -> ngOnInit(ERROR): No config found`, tag: 'cross', palette: 'aapie', collapsed: true,
+        data: configType
       });
       return;
     }
@@ -145,17 +145,19 @@ export class AtkApiComponent implements OnInit {
   public async loadData(): Promise<void> {
     const state = this.stateService.state();
     const endpointConfig = this.stateService.currentEndpointConfig();
+
     if (!endpointConfig) { return; }
 
     // Set loading state
     this.stateService.setLoading(true);
     this.stateService.setError(null);
 
+    this.tools.consoleGroup({ // TAG AtkApiComponent -> loadData()  ================ CONSOLE LOG IN PROGRESS
+      title: `AtkApiComponent -> loadData( ${endpointConfig?.id} )`, tag: 'rook', palette: 'aapi', collapsed: true,
+      data: { endpointConfig: endpointConfig }
+    });
     try {
-      const response = await this.httpService.loadData(
-        endpointConfig,
-        state.parameters
-      );
+      const response = await this.httpService.loadData(endpointConfig, state.parameters);
 
       if (response.error) {
         this.stateService.setError(response.error);

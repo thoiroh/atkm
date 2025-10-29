@@ -97,7 +97,7 @@ export class AtkApiHttpService {
         if (cached) {
           const responseTime = Math.round(performance.now() - startTime);
           this.tools.consoleGroup({ // TAG AtkApiHttpService  -> loadData(CACHE) ================ CONSOLE LOG IN PROGRESS
-            title: 'AtkApiHttpService  -> loadData(CACHE)', tag: 'recycle', palette: 'ht', collapsed: true,
+            title: `AtkApiHttpService  -> loadData( ${cacheKey} )`, tag: 'recycle', palette: 'ht', collapsed: true,
             data: { cahed: cached }
           });
 

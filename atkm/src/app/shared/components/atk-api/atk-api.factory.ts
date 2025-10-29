@@ -44,7 +44,7 @@ export class AtkApiFactory {
   createBinanceConfig(): IAtkApiConfig {
     return {
       id: 'atkpi-binance-v2',
-      title: 'atkpi - binance api debug',
+      title: 'atkpi - binance api management',
       subtitle: 'Enhanced Binance API debugging with data visualization',
       domain: 'binance',
       defaultEndpoint: 'account',
@@ -77,11 +77,11 @@ export class AtkApiFactory {
   createIBKRConfig(): IAtkApiConfig {
     return {
       id: 'atkpi-ibkr-v1',
-      title: 'atkpi - IBKR API Debug',
+      title: 'atkpi - ibkr api management',
       subtitle: 'Interactive Brokers API debugging and portfolio analysis',
       domain: 'ibkr',
       defaultEndpoint: 'account',
-      baseUrl: 'http://localhost:8001', // Different port for IBKR
+      baseUrl: 'http://localhost:8000', // Different port for IBKR
       globalHeaders: {
         'Content-Type': 'application/json'
       },
@@ -96,11 +96,127 @@ export class AtkApiFactory {
       },
       endpoints: [
         // TODO: Implement IBKR endpoints
-        // this.createIBKRAccountEndpoint(),
-        // this.createIBKRPositionsEndpoint(),
-        // this.createIBKROrdersEndpoint(),
-        // this.createIBKRMarketDataEndpoint()
+        // this.createIbkrEndpoint(),
       ]
+    };
+  }
+
+  // ======================================================
+  // IBKR ENDPOINTS
+  // ======================================================
+
+  /**
+   * Create Ibkr endpoint configuration
+   */
+  private createIbkrEndpoint(): IAtkApiEndpointConfig {
+    return {
+      id: 'account',
+      name: 'Account Information',
+      description: 'Retrieve account information including permissions and balances',
+      url: '/api/v3/account',
+      method: 'GET',
+      icon: 'users',
+      visible: true,
+      cacheable: true,
+      cacheDuration: 30000, // 30 seconds
+
+      // Sidebar fields for account-level information
+      sidebarFields: [
+        this.createTextField('accountType', 'Account Type', 'status', 'user'),
+        this.createDateField('updateTime', 'Last Update', 'clock'),
+        this.createBooleanField('canTrade', 'Can Trade', 'trending-up'),
+        this.createBooleanField('canWithdraw', 'Can Withdraw', 'arrow-up-circle'),
+        this.createBooleanField('canDeposit', 'Can Deposit', 'arrow-down-circle'),
+        this.createNumberField('makerCommission', 'Maker Commission', 'percent'),
+        this.createNumberField('takerCommission', 'Taker Commission', 'percent'),
+        this.createNumberField('buyerCommission', 'Buyer Commission', 'percent'),
+        this.createNumberField('sellerCommission', 'Seller Commission', 'percent')
+      ],
+
+      // Row detail fields for selected balance
+      rowDetailFields: [
+        this.createTextField('asset', 'Asset Symbol', 'text', 'coins'),
+        this.createCryptoBalanceField('free', 'Available Balance', 'circle'),
+        this.createCryptoBalanceField('locked', 'Locked Balance', 'lock'),
+        this.createCryptoBalanceField('total', 'Total Balance', 'trending-up'),
+        this.createPriceField('usdValue', 'USD Value (est.)', 'dollar-sign')
+      ],
+
+      // Table columns for balances list
+      columns: [
+        this.createTextColumn('asset', 'Asset', '15%', 'left', true),
+        this.createCryptoBalanceColumn('free', 'Available', '25%', 'right', true),
+        this.createCryptoBalanceColumn('locked', 'Locked', '25%', 'right', false),
+        this.createCryptoBalanceColumn('total', 'Total Balance', '25%', 'right', true),
+        this.createCurrencyColumn('usdValue', 'USD', '10%', 'right', true)
+      ],
+
+      // Data transformer
+      dataTransformer: (apiResponse: any): IAtkApiDataTransformResult => {
+        if (!apiResponse?.data) {
+          return { sidebarData: {}, tableData: [] };
+        }
+
+        const accountData = apiResponse.data;
+
+        // Sidebar data - account info
+        const sidebarData = {
+          canTrade: accountData.canTrade || false,
+          canWithdraw: accountData.canWithdraw || false,
+          canDeposit: accountData.canDeposit || false,
+          accountType: accountData.accountType || 'SPOT',
+          updateTime: accountData.updateTime || Date.now(),
+          makerCommission: accountData.makerCommission || 0,
+          takerCommission: accountData.takerCommission || 0,
+          buyerCommission: accountData.buyerCommission || 0,
+          sellerCommission: accountData.sellerCommission || 0,
+          permissions: accountData.permissions || []
+        };
+
+        // IMPORTANT: Convert balances to real array if it's an object
+        let balancesArray: any[] = [];
+
+        if (accountData.balances) {
+          if (Array.isArray(accountData.balances)) {
+            // Already an array
+            balancesArray = accountData.balances;
+          } else if (typeof accountData.balances === 'object') {
+            // Convert object with numeric keys to array
+            balancesArray = Object.values(accountData.balances);
+          }
+        }
+
+        // Table data - transform balances with filter and map
+        const tableData = balancesArray
+          .filter((balance: any) =>
+            parseFloat(balance.free || '0') > 0 || parseFloat(balance.locked || '0') > 0
+          )
+          .map((balance: any) => {
+            const freeAmount = parseFloat(balance.free || '0');
+            const lockedAmount = parseFloat(balance.locked || '0');
+
+            return {
+              id: balance.asset,
+              asset: balance.asset,
+              free: freeAmount,
+              locked: lockedAmount,
+              total: freeAmount + lockedAmount,
+              usdValue: 0  // To be implemented with price conversion
+            };
+          });
+
+        // this.tools.consoleGroup({ // OFF AtkApiComponent -> constructor() ================ CONSOLE LOG IN PROGRESS
+        //   title: 'AtkApiFactory -> dataTransformer(RESULT)', tag: 'recycle', palette: 'wa', collapsed: false,
+        //   data: {
+        //     sidebarData,
+        //     balancesType: Array.isArray(accountData.balances) ? 'array' : typeof accountData.balances,
+        //     tableDataCount: tableData.length,
+        //     tableDataSample: tableData.slice(0, 10)
+        //   }
+        // });
+
+        return { sidebarData, tableData };
+      }
     };
   }
 
